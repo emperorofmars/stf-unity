@@ -17,10 +17,14 @@ namespace stf.serialisation
 				var texture = (Texture2D)resource;
 				var ret = new JObject();
 				ret.Add("type", "STF.texture");
+
+				var path = AssetDatabase.GetAssetPath(texture);
+				
+				ret.Add("name", texture.name);
+				ret.Add("format", path.Substring(path.LastIndexOf('.') + 1, path.Length - path.LastIndexOf('.') - 1));
 				ret.Add("width", texture.width);
 				ret.Add("height", texture.height);
 
-				var path = AssetDatabase.GetAssetPath(texture);
 				byte[] bytes = File.ReadAllBytes(path);
 
 				var bufferId = state.RegisterBuffer(bytes);
@@ -42,8 +46,13 @@ namespace stf.serialisation
 
 		public override UnityEngine.Object parseFromJson(ISTFImporter state, JToken json, string id)
 		{
-			//var ret = new Texture2D()
-			return null;
+			var arrayBuffer = state.GetBuffer((string)json["buffer"]);
+
+			var ret = new Texture2D((int)json["width"], (int)json["height"]);
+			ret.name = (string)json["name"];
+			ret.LoadImage(arrayBuffer);
+			
+			return ret;
 		}
 	}
 }

@@ -178,7 +178,6 @@ namespace stf.serialisation
 			if(json["color"] != null) bufferWidth += 4;
 			if(json["uvs"] != null) { bufferWidth += 2 * (int)json["uvs"]; numUVs = (int)json["uvs"]; }
 
-			//var buffer = json["buffer"].ToObject<List<float>>();
 			var arrayBuffer = state.GetBuffer((string)json["buffer"]);
 
 			var vertexbuffer = new float[vertexCount * bufferWidth];

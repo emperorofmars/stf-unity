@@ -7,6 +7,7 @@
   "unityRelease": "31f1",
   "documentationUrl": "https://example.com/",
   "changelogUrl": "https://example.com/changelog.html",
+  "license": "MIT",
   "licensesUrl": "https://example.com/licensing.html",
   "dependencies": {
     "com.unity.nuget.newtonsoft-json": "2.0.2"
