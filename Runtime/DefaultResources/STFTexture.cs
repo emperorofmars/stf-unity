@@ -13,8 +13,8 @@ namespace stf.serialisation
 				var texture = (Texture2D)resource;
 				var ret = new JObject();
 				ret.Add("type", "STF.texture");
-				
 				ret.Add("name", texture.name);
+				
 				ret.Add("format", "png");
 				ret.Add("width", texture.width);
 				ret.Add("height", texture.height);

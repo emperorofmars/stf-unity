@@ -15,6 +15,8 @@ namespace stf
 	{
 		private Vector2 scrollPos;
 		private GameObject go;
+		private bool mapTexturesFromPath = false;
+		private string mapTexturesPath = "Assets/stf-tmp";
 
 		[MenuItem("STF Tools/Export")]
 		public static void Init()
@@ -62,6 +64,9 @@ namespace stf
 				}
 			}
 
+			if(go) mapTexturesFromPath = GUILayout.Toggle(mapTexturesFromPath, "Map Encoded Textures from Folder");
+			if(go && mapTexturesFromPath) mapTexturesPath = GUILayout.TextField(mapTexturesPath);
+
 			if(go && GUILayout.Button("Export STF Binary", GUILayout.ExpandWidth(true))) {
 				var path = EditorUtility.SaveFilePanel("Export STF Binary", "Assets", go.name + ".stf", "stf");
 				if(path != null && path.Length > 0) {
@@ -80,7 +85,7 @@ namespace stf
 			GUILayout.Space(10);
 		}
 
-		private static string SerializeAsExternalAsset(GameObject go)
+		private string SerializeAsExternalAsset(GameObject go)
 		{
 			var asset = new STFExternalUnityPatchAssetExporter();
 			asset.rootNode = go;
@@ -89,7 +94,7 @@ namespace stf
 			return state.GetPrettyJson();
 		}
 
-		private static string SerializeAsStandaloneAssetWithExternalResources(GameObject go)
+		private string SerializeAsStandaloneAssetWithExternalResources(GameObject go)
 		{
 			var asset = new STFExternalUnityAssetExporter();
 			asset.rootNode = go;
@@ -98,7 +103,7 @@ namespace stf
 			return state.GetPrettyJson();
 		}
 
-		private static string SerializeAsStandaloneAsset(GameObject go)
+		private string SerializeAsStandaloneAsset(GameObject go)
 		{
 			var asset = new STFAssetExporter();
 			asset.rootNode = go;
@@ -107,11 +112,18 @@ namespace stf
 			return state.GetPrettyJson();
 		}
 
-		private static byte[] SerializeAsSTFBinary(GameObject go)
+		private byte[] SerializeAsSTFBinary(GameObject go)
 		{
+			var context = STFRegistry.GetDefaultExportContext();
+			if(mapTexturesFromPath)
+			{
+				var image_bullshit = new STFEncodedImageTextureExporter();
+				image_bullshit.imageParentPath = mapTexturesPath;
+				context.ResourceExporters[typeof(Texture2D)] = image_bullshit;
+			}
 			var asset = new STFAssetExporter();
 			asset.rootNode = go;
-			var state = new STFExporter(new List<ISTFAssetExporter>() {asset});
+			var state = new STFExporter(new List<ISTFAssetExporter>() {asset}, context);
 
 			return state.GetBinary();
 		}

@@ -12,29 +12,34 @@ using UnityEngine;
 
 namespace stf
 {
+
 	[ScriptedImporter(1, "stf")]
 	public class STFScriptedImporter : ScriptedImporter
 	{
+		public bool ExtractOriginalTextures = false;
+		public string OriginalTexturesFolder = "Assets/stf-tmp";
+
+		private void ensureTexturePath()
+		{
+			if(!Directory.Exists(OriginalTexturesFolder))
+			{
+				Directory.CreateDirectory(OriginalTexturesFolder);
+				AssetDatabase.Refresh();
+			}
+		}
+		
 		public override void OnImportAsset(AssetImportContext ctx)
 		{
 			byte[] byteArray = File.ReadAllBytes(ctx.assetPath);
 
 			var context = STFRegistry.GetDefaultImportContext();
-			var image_bullshit = new STFEncodedImageTextureImporter();
-			
-			var path = Path.GetDirectoryName(ctx.assetPath);
-			path = path + "/" + Path.GetFileName(ctx.assetPath) + "_textures";
-			image_bullshit.imageParentPath = path;
-			if(!Directory.Exists(image_bullshit.imageParentPath))
+			if(ExtractOriginalTextures)
 			{
-				Directory.CreateDirectory(path);
-				AssetDatabase.Refresh();
+				var image_bullshit = new STFEncodedImageTextureImporter();
+				ensureTexturePath();
+				image_bullshit.imageParentPath = OriginalTexturesFolder;
+				context.ResourceImporters[STFEncodedImageTextureImporter._TYPE] = image_bullshit;
 			}
-
-			context.ResourceImporters[STFEncodedImageTextureImporter._TYPE] = image_bullshit;
-
-			Debug.Log("AAAAAAAAAAAA: " + ((STFEncodedImageTextureImporter)context.ResourceImporters[STFEncodedImageTextureImporter._TYPE]).imageParentPath);
-
 			var importer = new STFImporter(byteArray, context);
 			
 			foreach(var resource in importer.GetResources())

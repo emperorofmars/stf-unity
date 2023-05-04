@@ -45,7 +45,7 @@ namespace stf.serialisation
 
 		public STFImporter(byte[] byteArray, STFImportContext context)
 		{
-			this.context = STFRegistry.GetDefaultImportContext();
+			this.context = context;
 			if(this.context == null) STFRegistry.GetDefaultImportContext();
 			parse(byteArray);
 		}

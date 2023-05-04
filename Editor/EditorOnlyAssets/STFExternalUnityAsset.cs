@@ -31,6 +31,7 @@ namespace stf.serialisation
 				foreach(var component in components)
 				{
 					if(component.GetType() == typeof(Transform)) continue;
+					if(component.GetType() == typeof(STFUUID)) continue;
 					if(component.GetType() == typeof(STFUnrecognizedComponent))
 					{
 						state.RegisterComponent(nodeId, component);

@@ -11,31 +11,62 @@ namespace stf.serialisation
 {
 	public class STFEncodedImageTextureExporter : ASTFResourceExporter
 	{
+		public string imageParentPath = null;
+
 		public override JToken serializeToJson(ISTFExporter state, UnityEngine.Object resource)
 		{
+			var texture = (Texture2D)resource;
+			var ret = new JObject();
+			ret.Add("type", "STF.texture");
+			ret.Add("name", texture.name);
+			ret.Add("width", texture.width);
+			ret.Add("height", texture.height);
 			try{
-				var texture = (Texture2D)resource;
-				var ret = new JObject();
-				ret.Add("type", "STF.texture");
-
-				var path = AssetDatabase.GetAssetPath(texture);
 				
-				ret.Add("name", texture.name);
-				ret.Add("format", path.Substring(path.LastIndexOf('.') + 1, path.Length - path.LastIndexOf('.') - 1));
-				ret.Add("width", texture.width);
-				ret.Add("height", texture.height);
+				if(AssetDatabase.IsMainAsset(texture)) // If its an encoded texture
+				{
+					var path = AssetDatabase.GetAssetPath(texture);
+					byte[] bytes = File.ReadAllBytes(path);
+					var bufferId = state.RegisterBuffer(bytes);
+					ret.Add("format", path.Substring(path.LastIndexOf('.') + 1, path.Length - path.LastIndexOf('.') - 1));
+					ret.Add("buffer", bufferId);
+					return ret;
+				}
+				else if(imageParentPath != null
+					&& (File.Exists(imageParentPath + "/" + resource.name + ".png")
+						|| File.Exists(imageParentPath + "/" + resource.name + ".jpg")
+						|| File.Exists(imageParentPath + "/" + resource.name + ".jpeg"))) // If its using the external folder
+				{
+					Debug.Log("Texture Path: " + AssetDatabase.GetAssetPath(texture) + "; foreign? " + AssetDatabase.IsForeignAsset(texture) + "; sub? " + AssetDatabase.IsSubAsset(texture));
 
-				byte[] bytes = File.ReadAllBytes(path);
+					string path;
+					if(imageParentPath != null) path = imageParentPath + "/" + resource.name;
+					else throw new Exception("No parent path for encoded images found!");
 
-				var bufferId = state.RegisterBuffer(bytes);
-				ret.Add("buffer", bufferId);
+					if(File.Exists(path + ".png")) path += ".png";
+					else if(File.Exists(path + ".jpg")) path += ".jpg";
+					else if(File.Exists(path + ".jpeg")) path += ".jpeg";
+					
+					byte[] bytes = File.ReadAllBytes(path);
+					var bufferId = state.RegisterBuffer(bytes);
+					ret.Add("format", path.Substring(path.LastIndexOf('.') + 1, path.Length - path.LastIndexOf('.') - 1));
+					ret.Add("buffer", bufferId);
 
+					return ret;
+				}
+				else // As a fallback encode the decompressed texture to png. Hopefully it was losslessly encoded, otherwise the loss was just a loss.
+				{
+					Debug.LogWarning($"Encoding texture {texture.name} as png.");
 
-				return ret;
+					byte[] bytes = texture.EncodeToPNG();
+					var bufferId = state.RegisterBuffer(bytes);
+					ret.Add("buffer", bufferId);
+					return ret;
+				}
 			} catch (Exception e)
 			{
 				Debug.LogError(e);
-				throw e;
+				throw(e);
 			}
 		}
 	}
@@ -56,8 +87,6 @@ namespace stf.serialisation
 				string filename;
 				if(imageParentPath == null) filename = "Assets/" + id + "_" + name + "." + format;
 				else filename = imageParentPath + "/" + name + "." + format;
-				Debug.Log(imageParentPath);
-				Debug.Log(filename);
 				File.WriteAllBytes(filename, arrayBuffer);
 				AssetDatabase.Refresh();
 				return AssetDatabase.LoadAssetAtPath<Texture2D>(filename);
@@ -69,7 +98,7 @@ namespace stf.serialisation
 		}
 	}
 
-	[InitializeOnLoad]
+	/*[InitializeOnLoad]
 	public class Register_STFEncodedImageTextureImporterImporter
 	{
 		static Register_STFEncodedImageTextureImporterImporter()
@@ -77,7 +106,7 @@ namespace stf.serialisation
 			STFRegistry.RegisterResourceImporter(STFEncodedImageTextureImporter._TYPE, new STFEncodedImageTextureImporter());
 			STFRegistry.RegisterResourceExporter(typeof(Texture2D), new STFEncodedImageTextureExporter());
 		}
-	}
+	}*/
 }
 
 #endif
