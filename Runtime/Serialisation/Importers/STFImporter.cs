@@ -78,6 +78,7 @@ namespace stf.serialisation
 
 		public void parse(JObject jsonRoot)
 		{
+			mainAssetId = (string)jsonRoot["main"];
 			foreach(var jsonAsset in ((JObject)jsonRoot["assets"]))
 			{
 				if(!context.AssetImporters.ContainsKey((string)jsonAsset.Value["type"]))
