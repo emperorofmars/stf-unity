@@ -27,16 +27,23 @@ namespace stf.serialisation
 				{
 					if(component.GetType() == typeof(Transform)) continue;
 					if(component.GetType() == typeof(Animator)) continue;
-					if(!state.GetContext().ComponentExporters.ContainsKey(component.GetType()) && component.GetType() != typeof(STFUnrecognizedComponent))
-						throw new Exception("Unsupported Component Encountered: " + component.GetType());
-					else if(component.GetType() == typeof(STFUnrecognizedComponent))
+					if(component.GetType() == typeof(STFUnrecognizedComponent))
 					{
 						state.RegisterComponent(nodeId, component);
-						continue;
 					}
-					var componentExporter = state.GetContext().ComponentExporters[component.GetType()];
-					gatherResources(state, componentExporter.gatherResources(component));
-					state.RegisterComponent(nodeId, component, componentExporter);
+					else if(state.GetContext().ComponentExporters.ContainsKey(component.GetType()))
+					{
+						Debug.Log("Register Component: " + component.GetType() + "; " + component.gameObject.name);
+
+						var componentExporter = state.GetContext().ComponentExporters[component.GetType()];
+						gatherResources(state, componentExporter.gatherResources(component));
+						state.RegisterComponent(nodeId, component, componentExporter);
+					}
+					else
+					{
+						Debug.LogWarning("Component not recognized, skipping: " + component.GetType() + " on " + component.gameObject.name);
+					}
+					
 				}
 			}
 		}
@@ -47,7 +54,7 @@ namespace stf.serialisation
 			{
 				foreach(var resource in resources)
 				{
-					if(resource.GetType() == typeof(Texture2D)) continue;
+					//if(resource.GetType() == typeof(Texture2D)) continue;
 					if(!state.GetContext().ResourceExporters.ContainsKey(resource.GetType()))
 						throw new Exception("Unsupported Resource Encountered: " + resource.GetType());
 					gatherResources(state, state.GetContext().ResourceExporters[resource.GetType()].gatherResources(resource));

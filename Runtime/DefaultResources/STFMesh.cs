@@ -125,7 +125,6 @@ namespace stf.serialisation
 				}
 				pos += numWeights;
 			}
-			var max = 0;
 
 			var primitives = new JArray();
 			var indexBuffer = new List<int>();
@@ -137,17 +136,10 @@ namespace stf.serialisation
 				if(mesh.GetSubMesh(subMeshIdx).topology == MeshTopology.Triangles) primitive.Add("topology", "tris");
 				else if(mesh.GetSubMesh(subMeshIdx).topology == MeshTopology.Quads) primitive.Add("topology", "quads");
 
-				Debug.Log("indexbuffer.count: " + indexBuffer.Count);
-
 				primitive.Add("indices_pos", indexBuffer.Count);
 				primitive.Add("indices_len", mesh.GetIndexCount(subMeshIdx));
 
 				indexBuffer.AddRange(mesh.GetIndices(subMeshIdx));
-				/*foreach(var index in mesh.GetIndices(subMeshIdx))
-				{
-					indexBuffer.Add(index);
-					if(index > max) max = index;
-				}*/
 				
 			}
 			ret.Add("primitives", primitives);
@@ -158,8 +150,6 @@ namespace stf.serialisation
 
 
 			var byteArray = new byte[vertexBuffer.Length * sizeof(float) + indexBuffer.Count * sizeof(int)];
-
-			Debug.Log("Index Buffer: " + indexBuffer.Count + "; max: " + max);
 
 			Buffer.BlockCopy(vertexBuffer, 0, byteArray, 0, vertexBuffer.Length * sizeof(float));
 			Buffer.BlockCopy(indexBuffer.ToArray(), 0, byteArray, vertexBuffer.Length * sizeof(float), indexBuffer.Count * sizeof(int));

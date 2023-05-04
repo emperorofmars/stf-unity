@@ -1,7 +1,7 @@
 {
     "name": "stf_unity_editor",
     "references": [
-        "GUID:99388d6ed18c6894fab9dedf66de71cb"
+        "stf_unity_runtime"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

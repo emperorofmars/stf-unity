@@ -30,13 +30,15 @@ namespace stf.serialisation
 			{typeof(STFTwistConstraintForward), new STFTwistConstraintForwardExporter()}
 		};
 		public static readonly Dictionary<string, ASTFResourceImporter> DefaultResourceImporters = new Dictionary<string, ASTFResourceImporter>() {
-			{STFMeshImporter._TYPE, new STFMeshImporter()}
+			{STFMeshImporter._TYPE, new STFMeshImporter()},
+			{STFTextureImporter._TYPE, new STFTextureImporter()}
 			//Material
 			//Texture
 			//Animation
 		};
 		public static readonly Dictionary<Type, ASTFResourceExporter> DefaultResourceExporters = new Dictionary<Type, ASTFResourceExporter>() {
-			{typeof(Mesh), new STFMeshExporter()}
+			{typeof(Mesh), new STFMeshExporter()},
+			{typeof(Texture2D), new STFTextureExporter()}
 			//Material
 			//Texture
 			//Animation

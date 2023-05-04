@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using stf.Components;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -25,9 +26,22 @@ namespace stf.serialisation
 			if(rootNode == null) throw new Exception("Root node must not be null");
 
 			var components = rootNode.GetComponentsInChildren<Component>();
+			Debug.Log("root: " + rootNode.name + "; " + components.Length);
+
 			foreach(var component in components)
 			{
-				if(state.GetContext().ComponentExporters.ContainsKey(component.GetType()))
+				if(component.GetType() == typeof(Transform)) continue;
+				if(component.GetType() == typeof(Animator)) continue;
+				if(component.GetType() == typeof(SkinnedMeshRenderer)) continue;
+				if(component.GetType() == typeof(MeshRenderer)) continue;
+				if(component.GetType() == typeof(MeshFilter)) continue;
+
+				if(component.GetType() == typeof(STFUnrecognizedComponent))
+				{
+					var nodeId = state.RegisterNode(component.gameObject, _nodeExporter);
+					state.RegisterComponent(nodeId, component);
+				}
+				else if(state.GetContext().ComponentExporters.ContainsKey(component.GetType()))
 				{
 					var componentExporter = state.GetContext().ComponentExporters[component.GetType()];
 					var nodeId = state.RegisterNode(component.gameObject, _nodeExporter);
@@ -43,6 +57,10 @@ namespace stf.serialisation
 					gatherResources(state, componentExporter.gatherResources(component));
 					state.RegisterComponent(nodeId, component);
 					gatheredRootNodes.Add(nodeId);
+				}
+				else
+				{
+					Debug.LogWarning("Component not recognized, skipping: " + component.GetType() + " on " + component.gameObject.name);
 				}
 			}
 		}

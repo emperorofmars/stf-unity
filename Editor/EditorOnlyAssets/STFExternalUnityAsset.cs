@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
+using stf.Components;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -29,11 +30,20 @@ namespace stf.serialisation
 				var components = transform.GetComponents<Component>();
 				foreach(var component in components)
 				{
-					if(state.GetContext().ComponentExporters.ContainsKey(component.GetType()))
+					if(component.GetType() == typeof(Transform)) continue;
+					if(component.GetType() == typeof(STFUnrecognizedComponent))
+					{
+						state.RegisterComponent(nodeId, component);
+					}
+					else if(state.GetContext().ComponentExporters.ContainsKey(component.GetType()))
 					{
 						var componentExporter = state.GetContext().ComponentExporters[component.GetType()];
 						gatherResources(state, componentExporter.gatherResources(component));
 						state.RegisterComponent(nodeId, component, componentExporter);
+					}
+					else
+					{
+						Debug.LogWarning("Component not recognized, skipping: " + component.GetType() + " on " + component.gameObject.name);
 					}
 				}
 			}

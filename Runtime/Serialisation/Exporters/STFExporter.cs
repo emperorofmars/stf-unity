@@ -26,6 +26,7 @@ namespace stf.serialisation
 		public Dictionary<string, JObject> nodes = new Dictionary<string, JObject>();
 		public Dictionary<string, JObject> resources = new Dictionary<string, JObject>();
 		public Dictionary<string, byte[]> buffers = new Dictionary<string, byte[]>();
+		private JObject json = new JObject();
 
 		public STFExporter(List<ISTFAssetExporter> assets)
 		{
@@ -60,6 +61,7 @@ namespace stf.serialisation
 			{
 				task.RunSynchronously();
 			}
+			json = createRoot();
 		}
 
 
@@ -197,12 +199,12 @@ namespace stf.serialisation
 
 		public string GetJson()
 		{
-			return createRoot().ToString(Formatting.None);
+			return json.ToString(Formatting.None);
 		}
 
 		public string GetPrettyJson()
 		{
-			return createRoot().ToString(Formatting.Indented);
+			return json.ToString(Formatting.Indented);
 		}
 
 		public byte[] GetBinary()
