@@ -26,7 +26,7 @@ namespace stf.serialisation
 		public Dictionary<string, JObject> nodes = new Dictionary<string, JObject>();
 		public Dictionary<string, JObject> resources = new Dictionary<string, JObject>();
 		public Dictionary<string, byte[]> buffers = new Dictionary<string, byte[]>();
-		private JObject json = new JObject();
+		private JObject jsonDefinition = new JObject();
 
 		public STFExporter(List<ISTFAssetExporter> assets)
 		{
@@ -61,7 +61,7 @@ namespace stf.serialisation
 			{
 				task.RunSynchronously();
 			}
-			json = createRoot();
+			jsonDefinition = createRoot();
 		}
 
 
@@ -199,23 +199,22 @@ namespace stf.serialisation
 
 		public string GetJson()
 		{
-			return json.ToString(Formatting.None);
+			return jsonDefinition.ToString(Formatting.None);
 		}
 
 		public string GetPrettyJson()
 		{
-			return json.ToString(Formatting.Indented);
+			return jsonDefinition.ToString(Formatting.Indented);
 		}
 
 		public byte[] GetBinary()
 		{
-			byte[] magic = Encoding.UTF8.GetBytes(_MAGIC);
+			byte[] magicUtf8 = Encoding.UTF8.GetBytes(_MAGIC);
 			var headerSize = (buffers.Count + 1) * sizeof(int); // +1 for the json definition
 			var bufferInfo = buffers.Select(buffer => buffer.Value.Length).ToArray(); // lengths of all binary buffers
-			byte[] json = Encoding.UTF8.GetBytes(GetJson());
+			byte[] jsonUtf8 = Encoding.UTF8.GetBytes(GetJson());
 
-			// total length of resulting buffer | magic + version + header size + size of all buffers
-			var arrayLen = magic.Length * sizeof(byte) + sizeof(int) + headerSize + bufferInfo.Length * sizeof(int) + json.Length * sizeof(byte);
+			var arrayLen = magicUtf8.Length * sizeof(byte) + sizeof(int) + sizeof(int) + headerSize + jsonUtf8.Length * sizeof(byte);
 			foreach(var bufferLen in bufferInfo) arrayLen += bufferLen;
 
 			// handle endianness at some point maybe
@@ -225,15 +224,15 @@ namespace stf.serialisation
 
 			// Magic
 			{
-				var size = magic.Length * sizeof(byte);
-				Buffer.BlockCopy(magic, 0, byteArray, offset, size);
+				var size = magicUtf8.Length * sizeof(byte);
+				Buffer.BlockCopy(magicUtf8, 0, byteArray, offset, size);
 				offset += size;
 			}
 
 			// Version
 			{
 				var size = sizeof(int);
-				Buffer.BlockCopy(BitConverter.GetBytes((int)0), 0, byteArray, offset, size);
+				Buffer.BlockCopy(BitConverter.GetBytes(0), 0, byteArray, offset, size);
 				offset += size;
 			}
 
@@ -248,7 +247,7 @@ namespace stf.serialisation
 			// First the Json definition length
 			{
 				var size = sizeof(int);
-				Buffer.BlockCopy(BitConverter.GetBytes(json.Length), 0, byteArray, offset, size);
+				Buffer.BlockCopy(BitConverter.GetBytes(jsonUtf8.Length), 0, byteArray, offset, size);
 				offset += size;
 			}
 
@@ -261,8 +260,8 @@ namespace stf.serialisation
 
 			// Json definition
 			{
-				var size = json.Length * sizeof(byte);
-				Buffer.BlockCopy(json, 0, byteArray, offset, size);
+				var size = jsonUtf8.Length * sizeof(byte);
+				Buffer.BlockCopy(jsonUtf8, 0, byteArray, offset, size);
 				offset += size;
 			}
 

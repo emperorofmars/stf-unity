@@ -26,7 +26,6 @@ namespace stf.serialisation
 			if(rootNode == null) throw new Exception("Root node must not be null");
 
 			var components = rootNode.GetComponentsInChildren<Component>();
-			Debug.Log("root: " + rootNode.name + "; " + components.Length);
 
 			foreach(var component in components)
 			{

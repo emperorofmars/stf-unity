@@ -143,7 +143,8 @@ namespace stf.serialisation
 			var offset = 0;
 
 			// Magic
-			var magicUtf8 = new byte[4];
+			int magicLen = Encoding.UTF8.GetBytes(STFExporter._MAGIC).Length;
+			var magicUtf8 = new byte[magicLen];
 			Buffer.BlockCopy(byteArray, 0, magicUtf8, 0, magicUtf8.Length * sizeof(byte));
 			offset += magicUtf8.Length * sizeof(byte);
 
@@ -173,7 +174,7 @@ namespace stf.serialisation
 			var totalLengthCheck = offset;
 			foreach(var l in bufferLengths) totalLengthCheck += l;
 			if(totalLengthCheck != byteArray.Length)
-				throw new Exception("Invalid file: Size of buffers doesn't line up with total file size.");
+				throw new Exception("Invalid file: Size of buffers doesn't line up with total file size. ( calculated: " + totalLengthCheck + " | actual: " + byteArray.Length + " )");
 
 			// First buffer, the Json definition
 			var json = Encoding.UTF8.GetString(byteArray, offset, bufferLengths[0]);

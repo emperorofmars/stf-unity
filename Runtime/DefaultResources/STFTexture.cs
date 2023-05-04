@@ -1,7 +1,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Newtonsoft.Json.Linq;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -11,11 +13,26 @@ namespace stf.serialisation
 	{
 		public override JToken serializeToJson(ISTFExporter state, UnityEngine.Object resource)
 		{
-			var texture = (Texture2D)resource;
-			var ret = new JObject();
-			ret.Add("type", "STF.texture");
+			try{
+				var texture = (Texture2D)resource;
+				var ret = new JObject();
+				ret.Add("type", "STF.texture");
+				ret.Add("width", texture.width);
+				ret.Add("height", texture.height);
 
-			return ret;
+				var path = AssetDatabase.GetAssetPath(texture);
+				byte[] bytes = File.ReadAllBytes(path);
+
+				var bufferId = state.RegisterBuffer(bytes);
+				ret.Add("buffer", bufferId);
+
+
+				return ret;
+			} catch (Exception e)
+			{
+				Debug.LogError(e);
+				throw e;
+			}
 		}
 	}
 
