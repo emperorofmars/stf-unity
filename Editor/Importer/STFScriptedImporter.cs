@@ -18,11 +18,29 @@ namespace stf
 		public override void OnImportAsset(AssetImportContext ctx)
 		{
 			byte[] byteArray = File.ReadAllBytes(ctx.assetPath);
-			var importer = new STFImporter(byteArray);
+
+			var context = STFRegistry.GetDefaultImportContext();
+			var image_bullshit = new STFEncodedImageTextureImporter();
+			
+			var path = Path.GetDirectoryName(ctx.assetPath);
+			path = path + "/" + Path.GetFileName(ctx.assetPath) + "_textures";
+			image_bullshit.imageParentPath = path;
+			if(!Directory.Exists(image_bullshit.imageParentPath))
+			{
+				Directory.CreateDirectory(path);
+				AssetDatabase.Refresh();
+			}
+
+			context.ResourceImporters[STFEncodedImageTextureImporter._TYPE] = image_bullshit;
+
+			Debug.Log("AAAAAAAAAAAA: " + ((STFEncodedImageTextureImporter)context.ResourceImporters[STFEncodedImageTextureImporter._TYPE]).imageParentPath);
+
+			var importer = new STFImporter(byteArray, context);
 			
 			foreach(var resource in importer.GetResources())
 			{
-				ctx.AddObjectToAsset(resource.name, resource);
+				if(resource != null)
+					ctx.AddObjectToAsset(resource.name, resource);
 			}
 			foreach(var asset in importer.GetAssets())
 			{

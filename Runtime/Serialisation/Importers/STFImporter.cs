@@ -7,6 +7,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using System.Text;
+using System.IO;
+using UnityEditor;
 
 namespace stf.serialisation
 {
@@ -39,6 +41,13 @@ namespace stf.serialisation
 			this.context = context;
 			if(this.context == null) STFRegistry.GetDefaultImportContext();
 			parse(jsonRoot);
+		}
+
+		public STFImporter(byte[] byteArray, STFImportContext context)
+		{
+			this.context = STFRegistry.GetDefaultImportContext();
+			if(this.context == null) STFRegistry.GetDefaultImportContext();
+			parse(byteArray);
 		}
 
 		public void AddTask(Task task)

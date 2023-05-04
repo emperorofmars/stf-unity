@@ -77,16 +77,32 @@ namespace stf.serialisation
 		public static STFImportContext GetDefaultImportContext()
 		{
 			var assetImporters = new Dictionary<string, ISTFAssetImporter>(DefaultAssetImporters);
-			foreach(var e in RegisteredAssetImporters) assetImporters.Add(e.Key, e.Value);
+			foreach(var e in RegisteredAssetImporters)
+			{
+				if(assetImporters.ContainsKey(e.Key)) assetImporters[e.Key] = e.Value;
+				else assetImporters.Add(e.Key, e.Value);
+			}
 
 			var nodeImporters = new Dictionary<string, ASTFNodeImporter>(DefaultNodeImporters);
-			foreach(var e in RegisteredNodeImporters) nodeImporters.Add(e.Key, e.Value);
+			foreach(var e in RegisteredNodeImporters)
+			{
+				if(nodeImporters.ContainsKey(e.Key)) nodeImporters[e.Key] = e.Value;
+				else nodeImporters.Add(e.Key, e.Value);
+			}
 
 			var componentImporters = new Dictionary<string, ASTFComponentImporter>(DefaultComponentImporters);
-			foreach(var e in RegisteredComponentImporters) componentImporters.Add(e.Key, e.Value);
+			foreach(var e in RegisteredComponentImporters)
+			{
+				if(componentImporters.ContainsKey(e.Key)) componentImporters[e.Key] = e.Value;
+				else componentImporters.Add(e.Key, e.Value);
+			}
 
 			var resourceImporters = new Dictionary<string, ASTFResourceImporter>(DefaultResourceImporters);
-			foreach(var e in RegisteredResourceImporters) resourceImporters.Add(e.Key, e.Value);
+			foreach(var e in RegisteredResourceImporters)
+			{
+				if(resourceImporters.ContainsKey(e.Key)) resourceImporters[e.Key] = e.Value;
+				else resourceImporters.Add(e.Key, e.Value);
+			}
 
 			return new STFImportContext() {
 				AssetImporters = assetImporters,
@@ -99,10 +115,18 @@ namespace stf.serialisation
 		public static STFExportContext GetDefaultExportContext()
 		{
 			var componentExporters = new Dictionary<Type, ASTFComponentExporter>(DefaultComponentExporters);
-			foreach(var e in RegisteredComponentExporters) componentExporters.Add(e.Key, e.Value);
+			foreach(var e in RegisteredComponentExporters)
+			{
+				if(componentExporters.ContainsKey(e.Key)) componentExporters[e.Key] = e.Value;
+				else componentExporters.Add(e.Key, e.Value);
+			}
 
 			var resourceExporters = new Dictionary<Type, ASTFResourceExporter>(DefaultResourceExporters);
-			foreach(var e in RegisteredResourceExporters) resourceExporters.Add(e.Key, e.Value);
+			foreach(var e in RegisteredResourceExporters)
+			{
+				if(resourceExporters.ContainsKey(e.Key)) resourceExporters[e.Key] = e.Value;
+				else resourceExporters.Add(e.Key, e.Value);
+			}
 
 			return new STFExportContext() {
 				ComponentExporters = componentExporters,
