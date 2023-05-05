@@ -159,7 +159,6 @@ namespace stf.serialisation
 			Buffer.BlockCopy(indexBuffer.ToArray(), 0, byteArray, vertexBufferLength, indexBufferLength);
 			if(weightLength > 0)
 			{
-				Debug.Log($"weightLengthBufferLength: {weightLengthBufferLength}; weightBufferLength: {weightBufferLength}");
 				Buffer.BlockCopy(mesh.GetBonesPerVertex().ToArray(), 0, byteArray, vertexBufferLength + indexBufferLength, weightLengthBufferLength);
 				Buffer.BlockCopy(weightBuffer, 0, byteArray, vertexBufferLength + indexBufferLength + weightLengthBufferLength, weightBufferLength);
 			}
@@ -276,8 +275,6 @@ namespace stf.serialisation
 				foreach(var num in bonesPerVertex) weightLength += num;
 				var weightBuffer = new byte[weightLength * (sizeof(float) + sizeof(int))];
 
-				Debug.Log($"weightLength: {weightLength * sizeof(byte)}; weightLength: {weightLength * (sizeof(float) + sizeof(int))}");
-
 				Buffer.BlockCopy(arrayBuffer, bufferOffset + vertexCount * sizeof(byte), weightBuffer, 0, weightLength * (sizeof(float) + sizeof(int)));
 				var weights = new NativeArray<BoneWeight1>(weightLength, Allocator.Temp);
 				var weightBufferOffset = 0;
@@ -285,7 +282,6 @@ namespace stf.serialisation
 				{
 					for(int weightIdx = 0; weightIdx < bonesPerVertex[vertIdx]; weightIdx++)
 					{
-						Debug.Log($"Bones Per Vertex: {bonesPerVertex[vertIdx]}");
 						var boneIdx = BitConverter.ToInt32(weightBuffer, weightBufferOffset * (sizeof(float) + sizeof(int)));
 						var weight = BitConverter.ToSingle(weightBuffer, weightBufferOffset * (sizeof(float) + sizeof(int)) + sizeof(int));
 						weights[weightBufferOffset] = new BoneWeight1 {boneIndex = boneIdx, weight = weight};
