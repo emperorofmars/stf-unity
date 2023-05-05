@@ -46,7 +46,12 @@ namespace stf
 			{
 				if(resource != null)
 				{
-					ctx.AddObjectToAsset(resource.name, resource);
+					if(resource.GetType() == typeof(Mesh))
+						ctx.AddObjectToAsset("meshes/" + resource.name + ".mesh", resource);
+					else if(resource.GetType() == typeof(Texture2D))
+						ctx.AddObjectToAsset("textures/" + resource.name + ".texture2d", resource);
+					else
+						ctx.AddObjectToAsset(resource.name, resource);
 				}
 			}
 			importer.GetMeta().name = "STFMeta";

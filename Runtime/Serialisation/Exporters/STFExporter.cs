@@ -140,10 +140,10 @@ namespace stf.serialisation
 				var componentId = GetComponentId(component);
 				var jsonComponent = ((STFUnrecognizedComponent)component).serializeToJson(this);
 				AddComponentToNode(nodeId, componentId, jsonComponent);
-				return;// componentId;
+				return;
 			}
 			RegisterComponent(nodeId, component, context.ComponentExporters[component.GetType()]);
-			return;// RegisterComponent(nodeId, component, context.ComponentExporters[component.GetType()]);
+			return;
 		}
 
 		public void RegisterComponent(string nodeId, Component component, ASTFComponentExporter exporter)
@@ -153,7 +153,7 @@ namespace stf.serialisation
 				var jsonComponent = exporter.serializeToJson(this, component);
 				AddComponentToNode(nodeId, componentId, jsonComponent);
 			}));
-			return;// componentId;
+			return;
 		}
 
 		public string RegisterBuffer(byte[] buffer)
@@ -192,8 +192,7 @@ namespace stf.serialisation
 				{"assets", new JObject(assets.Select(asset => new JProperty(mainUUID, asset.SerializeToJson(this))))},
 				{"nodes", new JObject(nodes.Select(node => new JProperty(node.Key, node.Value)))},
 				{"resources", new JObject(resources.Select(resource => new JProperty(resource.Key, resource.Value)))},
-				{"buffers", new JArray(buffers.Select(buffer => buffer.Key))}//,
-				//{"buffersValues", new JArray(buffers.Select(buffer => buffer.Value))}
+				{"buffers", new JArray(buffers.Select(buffer => buffer.Key))}
 			};
 		}
 
