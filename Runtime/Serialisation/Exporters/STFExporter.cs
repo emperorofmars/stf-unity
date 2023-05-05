@@ -27,6 +27,7 @@ namespace stf.serialisation
 		public Dictionary<string, JObject> resources = new Dictionary<string, JObject>();
 		public Dictionary<string, byte[]> buffers = new Dictionary<string, byte[]>();
 		private JObject jsonDefinition = new JObject();
+		private STFMeta meta = new STFMeta();
 
 		public STFExporter(List<ISTFAssetExporter> assets)
 		{
@@ -42,26 +43,39 @@ namespace stf.serialisation
 			if(this.context == null) context = STFRegistry.GetDefaultExportContext();
 			_run();
 		}
+		public STFMeta GetMeta()
+		{
+			return meta;
+		}
 
 		private void _run()
 		{
-			foreach(var asset in assets)
+			try
 			{
-				asset.Convert(this);
-			}
-			foreach(var task in registerResourceTasks)
+				foreach(var asset in assets)
+				{
+					asset.Convert(this);
+				}
+				foreach(var task in registerResourceTasks)
+				{
+					task.RunSynchronously();
+					if(task.Exception != null) throw task.Exception;
+				}
+				foreach(var task in registerComponentTasks)
+				{
+					task.RunSynchronously();
+					if(task.Exception != null) throw task.Exception;
+				}
+				foreach(var task in tasks)
+				{
+					task.RunSynchronously();
+					if(task.Exception != null) throw task.Exception;
+				}
+				jsonDefinition = createRoot();
+			} catch(Exception e)
 			{
-				task.RunSynchronously();
+				throw e;
 			}
-			foreach(var task in registerComponentTasks)
-			{
-				task.RunSynchronously();
-			}
-			foreach(var task in tasks)
-			{
-				task.RunSynchronously();
-			}
-			jsonDefinition = createRoot();
 		}
 
 
@@ -97,7 +111,10 @@ namespace stf.serialisation
 		{
 			if(resourceIds.ContainsKey(unityResource)) return;// resourceIds[unityResource];
 			registerResourceTasks.Add(new Task(() => {
-				var id = Guid.NewGuid().ToString(); // handle id more proper
+				string id;
+				var info = meta.resourceInfo.Find(ri => ri.resource == unityResource);
+				if(info != null && info.uuid != null) id = info.uuid;
+				else id = Guid.NewGuid().ToString();
 				resourceIds.Add(unityResource, id);
 				resources.Add(id, (JObject)exporter.serializeToJson(this, unityResource));
 			}));
@@ -115,11 +132,14 @@ namespace stf.serialisation
 					id = Guid.NewGuid().ToString();
 					((ISTFComponent)component).id = id;
 				}
-				// handle id for non stf components
 			}
 			else
 			{
-				id = Guid.NewGuid().ToString();
+				var info = component.GetComponent<STFUUID>();
+				if(info != null && info.componentIds != null && info.componentIds.ContainsKey(component))
+					id = info.componentIds[component];
+				else
+					id = Guid.NewGuid().ToString();
 			}
 			return id;
 		}
@@ -180,20 +200,22 @@ namespace stf.serialisation
 
 		private JObject createRoot()
 		{
-			var mainUUID = Guid.NewGuid().ToString();
-			return new JObject() {
-				{"meta", new JObject() {
+			var ret = new JObject();
+			ret.Add("meta", new JObject() {
 					{"version", "0.0.1"},
 					{"copyright", "testcopyright"},
 					{"generator", "stf-unity"},
 					{"author", "testauthor"}
-				}},
-				{"main", mainUUID},
-				{"assets", new JObject(assets.Select(asset => new JProperty(mainUUID, asset.SerializeToJson(this))))},
-				{"nodes", new JObject(nodes.Select(node => new JProperty(node.Key, node.Value)))},
-				{"resources", new JObject(resources.Select(resource => new JProperty(resource.Key, resource.Value)))},
-				{"buffers", new JArray(buffers.Select(buffer => buffer.Key))}
-			};
+			});
+			if(assets != null && assets.Count > 0)
+			{
+				ret.Add("main", assets[0].GetId(this));
+				ret.Add("assets", new JObject(assets.Select(asset => new JProperty(asset.GetId(this), asset.SerializeToJson(this)))));
+			}
+			ret.Add("nodes", new JObject(nodes.Select(node => new JProperty(node.Key, node.Value))));
+			ret.Add("resources", new JObject(resources.Select(resource => new JProperty(resource.Key, resource.Value))));
+			ret.Add("buffers", new JArray(buffers.Select(buffer => buffer.Key)));
+			return ret;
 		}
 
 		public string GetJson()

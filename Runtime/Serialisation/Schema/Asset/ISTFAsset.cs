@@ -9,6 +9,7 @@ namespace stf.serialisation
 	public interface ISTFAssetExporter
 	{
 		void Convert(ISTFExporter state);
+		string GetId(ISTFExporter state);
 		JToken SerializeToJson(ISTFExporter state);
 	}
 

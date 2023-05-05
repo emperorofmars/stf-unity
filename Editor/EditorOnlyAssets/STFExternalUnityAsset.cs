@@ -69,6 +69,11 @@ namespace stf.serialisation
 			ret.Add("root_node", state.GetNodeId(rootNode));
 			return ret;
 		}
+
+		public string GetId(ISTFExporter state)
+		{
+			return Guid.NewGuid().ToString();
+		}
 	}
 
 	public class ExternalUnityAsset : ISTFAsset

@@ -18,5 +18,6 @@ namespace stf.serialisation
 		STFExportContext GetContext();
 		string GetJson();
 		byte[] GetBinary();
+		STFMeta GetMeta();
 	}
 }

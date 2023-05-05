@@ -12,6 +12,7 @@ namespace stf.serialisation
 	{
 		public GameObject rootNode;
 		private STFNodeExporter _nodeExporter = new STFNodeExporter();
+		public string id = Guid.NewGuid().ToString();
 
 		public void Convert(ISTFExporter state)
 		{
@@ -42,7 +43,6 @@ namespace stf.serialisation
 					{
 						Debug.LogWarning("Component not recognized, skipping: " + component.GetType() + " on " + component.gameObject.name);
 					}
-					
 				}
 			}
 		}
@@ -67,6 +67,11 @@ namespace stf.serialisation
 			ret.Add("type", "asset");
 			ret.Add("root_node", state.GetNodeId(rootNode));
 			return ret;
+		}
+
+		public string GetId(ISTFExporter state)
+		{
+			return id;
 		}
 	}
 

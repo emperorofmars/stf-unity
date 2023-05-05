@@ -93,65 +93,77 @@ namespace stf.serialisation
 
 		public void parse(JObject jsonRoot)
 		{
-			mainAssetId = (string)jsonRoot["main"];
-			meta.mainAsset = mainAssetId;
-			foreach(var jsonAsset in ((JObject)jsonRoot["assets"]))
+			try
 			{
-				if(!context.AssetImporters.ContainsKey((string)jsonAsset.Value["type"]))
-					throw new Exception("Assettype '" + (string)jsonAsset.Value["type"] + "' is not supported");
-
-				var asset = context.AssetImporters[(string)jsonAsset.Value["type"]].ParseFromJson(this, jsonAsset.Value, jsonAsset.Key, jsonRoot);
-				assets.Add(jsonAsset.Key, asset);
-			}
-			foreach(var jsonResource in ((JObject)jsonRoot["resources"]))
-			{
-				if((string)jsonResource.Value["type"] != null && context.ResourceImporters.ContainsKey((string)jsonResource.Value["type"]))
+				mainAssetId = (string)jsonRoot["main"];
+				meta.mainAsset = mainAssetId;
+				foreach(var jsonAsset in ((JObject)jsonRoot["assets"]))
 				{
-					var resourceImporter = context.ResourceImporters[(string)jsonResource.Value["type"]];
-					var resource = resourceImporter.parseFromJson(this, jsonResource.Value, jsonResource.Key);
-					resources.Add(jsonResource.Key, resource);
+					if(!context.AssetImporters.ContainsKey((string)jsonAsset.Value["type"]))
+						throw new Exception("Assettype '" + (string)jsonAsset.Value["type"] + "' is not supported");
+
+					var asset = context.AssetImporters[(string)jsonAsset.Value["type"]].ParseFromJson(this, jsonAsset.Value, jsonAsset.Key, jsonRoot);
+					assets.Add(jsonAsset.Key, asset);
 				}
-				// unrecognized resource
-			}
-			foreach(var jsonNode in ((JObject)jsonRoot["nodes"]))
-			{
-				var go = nodes[jsonNode.Key];
-
-				var uuidComponent = go.AddComponent<STFUUID>();
-				uuidComponent.id = jsonNode.Key;
-
-				if((JObject)jsonNode.Value["components"] != null)
+				foreach(var jsonResource in ((JObject)jsonRoot["resources"]))
 				{
-					componentTasks.Add(new Task(() => {
-						foreach(var jsonComponent in (JObject)jsonNode.Value["components"])
-						{
-							if((string)jsonComponent.Value["type"] != null && context.ComponentImporters.ContainsKey((string)jsonComponent.Value["type"]))
-							{
-								var componentImporter = context.ComponentImporters[(string)jsonComponent.Value["type"]];
-								componentImporter.parseFromJson(this, jsonComponent.Value, jsonComponent.Key, go);
-							}
-							else
-							{
-								var unrecognizedComponent = (STFUnrecognizedComponent)go.AddComponent<STFUnrecognizedComponent>();
-								unrecognizedComponent.id = jsonComponent.Key;
-								unrecognizedComponent.parseFromJson(this, jsonComponent.Value);
-							}
-						}
-					}));
+					if((string)jsonResource.Value["type"] != null && context.ResourceImporters.ContainsKey((string)jsonResource.Value["type"]))
+					{
+						var resourceImporter = context.ResourceImporters[(string)jsonResource.Value["type"]];
+						var resource = resourceImporter.parseFromJson(this, jsonResource.Value, jsonResource.Key);
+						resources.Add(jsonResource.Key, resource);
+					}
+					else
+					{
+						Debug.LogWarning($"Skipping Unrecognized Resource: {(string)jsonResource.Value["type"]}");
+					}
 				}
-			}
-			foreach(var task in tasks)
+				foreach(var jsonNode in ((JObject)jsonRoot["nodes"]))
+				{
+					var go = nodes[jsonNode.Key];
+
+					var uuidComponent = go.AddComponent<STFUUID>();
+					uuidComponent.id = jsonNode.Key;
+
+					if((JObject)jsonNode.Value["components"] != null)
+					{
+						componentTasks.Add(new Task(() => {
+							foreach(var jsonComponent in (JObject)jsonNode.Value["components"])
+							{
+								if((string)jsonComponent.Value["type"] != null && context.ComponentImporters.ContainsKey((string)jsonComponent.Value["type"]))
+								{
+									var componentImporter = context.ComponentImporters[(string)jsonComponent.Value["type"]];
+									componentImporter.parseFromJson(this, jsonComponent.Value, jsonComponent.Key, go);
+								}
+								else
+								{
+									var unrecognizedComponent = (STFUnrecognizedComponent)go.AddComponent<STFUnrecognizedComponent>();
+									unrecognizedComponent.id = jsonComponent.Key;
+									unrecognizedComponent.parseFromJson(this, jsonComponent.Value);
+								}
+							}
+						}));
+					}
+				}
+				foreach(var task in tasks)
+				{
+					task.RunSynchronously();
+					if(task.Exception != null) throw task.Exception;
+				}
+				tasks.Clear();
+				foreach(var task in componentTasks)
+				{
+					task.RunSynchronously();
+					if(task.Exception != null) throw task.Exception;
+				}
+				foreach(var task in tasks)
+				{
+					task.RunSynchronously();
+					if(task.Exception != null) throw task.Exception;
+				}
+			} catch(Exception e)
 			{
-				task.RunSynchronously();
-			}
-			tasks.Clear();
-			foreach(var task in componentTasks)
-			{
-				task.RunSynchronously();
-			}
-			foreach(var task in tasks)
-			{
-				task.RunSynchronously();
+				throw e;
 			}
 		}
 

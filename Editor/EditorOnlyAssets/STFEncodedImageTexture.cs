@@ -36,41 +36,15 @@ namespace stf.serialisation
 				if(meta != null) // use the stf meta object to find the original encoded image
 				{
 					var info = meta.resourceInfo.Find(ri => ri.resource == resource);
-					if(info != null && info.assetPath != null)
+					if(info != null && info.assetPath != null && File.Exists(info.assetPath))
 					{
 						byte[] bytes = File.ReadAllBytes(info.assetPath);
-						if(bytes != null && bytes.Length > 0)
-						{
-							var bufferId = state.RegisterBuffer(bytes);
-							ret.Add("format", info.originalFormat);
-							ret.Add("buffer", bufferId);
-							return ret;
-						}
+						var bufferId = state.RegisterBuffer(bytes);
+						ret.Add("format", info.originalFormat);
+						ret.Add("buffer", bufferId);
+						return ret;
 					}
 				}
-				/*if(imageParentPath != null
-					&& (File.Exists(imageParentPath + "/" + resource.name + ".png")
-						|| File.Exists(imageParentPath + "/" + resource.name + ".jpg")
-						|| File.Exists(imageParentPath + "/" + resource.name + ".jpeg"))) // If its using the external folder
-				{
-					Debug.Log("Texture Path: " + AssetDatabase.GetAssetPath(texture) + "; foreign? " + AssetDatabase.IsForeignAsset(texture) + "; sub? " + AssetDatabase.IsSubAsset(texture));
-
-					string path;
-					if(imageParentPath != null) path = imageParentPath + "/" + resource.name;
-					else throw new Exception("No parent path for encoded images found!");
-
-					if(File.Exists(path + ".png")) path += ".png";
-					else if(File.Exists(path + ".jpg")) path += ".jpg";
-					else if(File.Exists(path + ".jpeg")) path += ".jpeg";
-					
-					byte[] bytes = File.ReadAllBytes(path);
-					var bufferId = state.RegisterBuffer(bytes);
-					ret.Add("format", path.Substring(path.LastIndexOf('.') + 1, path.Length - path.LastIndexOf('.') - 1));
-					ret.Add("buffer", bufferId);
-
-					return ret;
-				}*/
-				
 				{ // As a fallback encode the decompressed texture to png. Hopefully it was losslessly encoded, otherwise the loss was just a loss.
 					Debug.LogWarning($"Encoding texture {texture.name} as png.");
 
