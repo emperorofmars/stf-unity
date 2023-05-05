@@ -38,6 +38,13 @@ namespace stf.Components
 
 			c.materials = new Material[c.sharedMesh.subMeshCount];
 			c.localBounds = c.sharedMesh.bounds;
+
+			var bindposes = new Matrix4x4[c.bones.Length];
+			for(int bindposeIdx = 0; bindposeIdx < c.bones.Length; bindposeIdx++)
+			{
+				bindposes[bindposeIdx] = c.bones[bindposeIdx].worldToLocalMatrix * go.transform.localToWorldMatrix;
+			}
+			c.sharedMesh.bindposes = bindposes;
 		}
 	}
 

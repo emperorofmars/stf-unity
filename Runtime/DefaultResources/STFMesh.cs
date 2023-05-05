@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
+using Unity.Collections;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -136,11 +137,12 @@ namespace stf.serialisation
 			{
 				ret.Add("skinned", true);
 				foreach(var num in mesh.GetBonesPerVertex()) weightLength += num;
-				weightBuffer = new byte[weightLength * sizeof(float)];
+				weightBuffer = new byte[weightLength * (sizeof(float) + sizeof(int))];
 				var unityWeights = mesh.GetAllBoneWeights();
 				for(int weightIdx = 0; weightIdx < weightLength; weightIdx++)
 				{
-					Buffer.BlockCopy(BitConverter.GetBytes(unityWeights[weightIdx].weight), 0, weightBuffer, weightIdx * sizeof(float), sizeof(float));
+					Buffer.BlockCopy(BitConverter.GetBytes(unityWeights[weightIdx].boneIndex), 0, weightBuffer, weightIdx * (sizeof(float) + sizeof(int)), sizeof(int));
+					Buffer.BlockCopy(BitConverter.GetBytes(unityWeights[weightIdx].weight), 0, weightBuffer, weightIdx * (sizeof(float) + sizeof(int)) + sizeof(int), sizeof(float));
 				}
 			}
 
@@ -149,7 +151,7 @@ namespace stf.serialisation
 			var vertexBufferLength = vertexBuffer.Length * sizeof(float);
 			var indexBufferLength = indexBuffer.Count * sizeof(int);
 			var weightLengthBufferLength = mesh.vertexCount * sizeof(byte);
-			var weightBufferLength = weightLength * sizeof(float);
+			var weightBufferLength = weightLength * (sizeof(float) + sizeof(int));
 
 			var byteArray = new byte[vertexBufferLength + indexBufferLength + weightLengthBufferLength + weightBufferLength];
 
@@ -157,6 +159,7 @@ namespace stf.serialisation
 			Buffer.BlockCopy(indexBuffer.ToArray(), 0, byteArray, vertexBufferLength, indexBufferLength);
 			if(weightLength > 0)
 			{
+				Debug.Log($"weightLengthBufferLength: {weightLengthBufferLength}; weightBufferLength: {weightBufferLength}");
 				Buffer.BlockCopy(mesh.GetBonesPerVertex().ToArray(), 0, byteArray, vertexBufferLength + indexBufferLength, weightLengthBufferLength);
 				Buffer.BlockCopy(weightBuffer, 0, byteArray, vertexBufferLength + indexBufferLength + weightLengthBufferLength, weightBufferLength);
 			}
@@ -246,8 +249,6 @@ namespace stf.serialisation
 			}
 
 			var indicesPosCounted = 0;
-			var max = 0;
-
 
 			var primitives = (JArray)json["primitives"];
 			ret.subMeshCount = primitives.Count;
@@ -260,12 +261,40 @@ namespace stf.serialisation
 				var indexBuffer = new int[indicesLen];
 				Buffer.BlockCopy(arrayBuffer, indicesPosCounted * sizeof(int) + vertexCount * bufferWidth * sizeof(float), indexBuffer, 0, indicesLen * sizeof(int));
 
-				foreach(var index in indexBuffer) if(index > max) max = index;
-
 				var topology = ((string)primitive["topology"]) == "tris" ? MeshTopology.Triangles : MeshTopology.Quads;
 				ret.SetIndices(indexBuffer, topology, subMeshIdx);
 
 				indicesPosCounted += indicesLen;
+			}
+
+			if((bool)json["skinned"])
+			{
+				var bufferOffset = indicesPosCounted * sizeof(int) + vertexCount * bufferWidth * sizeof(float);
+				var bonesPerVertex = new byte[vertexCount];
+				Buffer.BlockCopy(arrayBuffer, bufferOffset, bonesPerVertex, 0, vertexCount * sizeof(byte));
+				var weightLength = 0;
+				foreach(var num in bonesPerVertex) weightLength += num;
+				var weightBuffer = new byte[weightLength * (sizeof(float) + sizeof(int))];
+
+				Debug.Log($"weightLength: {weightLength * sizeof(byte)}; weightLength: {weightLength * (sizeof(float) + sizeof(int))}");
+
+				Buffer.BlockCopy(arrayBuffer, bufferOffset + vertexCount * sizeof(byte), weightBuffer, 0, weightLength * (sizeof(float) + sizeof(int)));
+				var weights = new NativeArray<BoneWeight1>(weightLength, Allocator.Temp);
+				var weightBufferOffset = 0;
+				for(int vertIdx = 0; vertIdx < vertexCount; vertIdx++)
+				{
+					for(int weightIdx = 0; weightIdx < bonesPerVertex[vertIdx]; weightIdx++)
+					{
+						Debug.Log($"Bones Per Vertex: {bonesPerVertex[vertIdx]}");
+						var boneIdx = BitConverter.ToInt32(weightBuffer, weightBufferOffset * (sizeof(float) + sizeof(int)));
+						var weight = BitConverter.ToSingle(weightBuffer, weightBufferOffset * (sizeof(float) + sizeof(int)) + sizeof(int));
+						weights[weightBufferOffset] = new BoneWeight1 {boneIndex = boneIdx, weight = weight};
+						weightBufferOffset++;
+					}
+				}
+				var bonesPerVertexNat = new NativeArray<byte>(bonesPerVertex, Allocator.Temp);
+
+				ret.SetBoneWeights(bonesPerVertexNat, weights);
 			}
 			ret.UploadMeshData(false);
 
