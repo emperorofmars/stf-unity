@@ -21,9 +21,9 @@ namespace stf.serialisation
 			ret.Add("name", texture.name);
 			ret.Add("width", texture.width);
 			ret.Add("height", texture.height);
+
 			try{
-				
-				if(AssetDatabase.IsMainAsset(texture)) // If its an encoded texture
+				if(AssetDatabase.IsMainAsset(texture)) // If its an encoded image outside the original import
 				{
 					var path = AssetDatabase.GetAssetPath(texture);
 					byte[] bytes = File.ReadAllBytes(path);
@@ -32,7 +32,23 @@ namespace stf.serialisation
 					ret.Add("buffer", bufferId);
 					return ret;
 				}
-				else if(imageParentPath != null
+				var meta = AssetDatabase.LoadAssetAtPath<STFMeta>(AssetDatabase.GetAssetPath(texture));
+				if(meta != null) // use the stf meta object to find the original encoded image
+				{
+					var info = meta.resourceInfo.Find(ri => ri.resource == resource);
+					if(info != null && info.assetPath != null)
+					{
+						byte[] bytes = File.ReadAllBytes(info.assetPath);
+						if(bytes != null && bytes.Length > 0)
+						{
+							var bufferId = state.RegisterBuffer(bytes);
+							ret.Add("format", info.originalFormat);
+							ret.Add("buffer", bufferId);
+							return ret;
+						}
+					}
+				}
+				/*if(imageParentPath != null
 					&& (File.Exists(imageParentPath + "/" + resource.name + ".png")
 						|| File.Exists(imageParentPath + "/" + resource.name + ".jpg")
 						|| File.Exists(imageParentPath + "/" + resource.name + ".jpeg"))) // If its using the external folder
@@ -53,9 +69,9 @@ namespace stf.serialisation
 					ret.Add("buffer", bufferId);
 
 					return ret;
-				}
-				else // As a fallback encode the decompressed texture to png. Hopefully it was losslessly encoded, otherwise the loss was just a loss.
-				{
+				}*/
+				
+				{ // As a fallback encode the decompressed texture to png. Hopefully it was losslessly encoded, otherwise the loss was just a loss.
 					Debug.LogWarning($"Encoding texture {texture.name} as png.");
 
 					byte[] bytes = texture.EncodeToPNG();
@@ -90,6 +106,7 @@ namespace stf.serialisation
 				File.WriteAllBytes(path, arrayBuffer);
 				AssetDatabase.Refresh();
 				var ret = AssetDatabase.LoadAssetAtPath<Texture2D>(path);
+				ret.name = name;
 				state.GetMeta().resourceInfo.Add(new STFMeta.ResourceInfo {name = name, assetPath = path, resource = ret, uuid = id, originalFormat = format, external = true });
 				return ret;
 			} catch(Exception e)
@@ -100,15 +117,15 @@ namespace stf.serialisation
 		}
 	}
 
-	/*[InitializeOnLoad]
+	[InitializeOnLoad]
 	public class Register_STFEncodedImageTextureImporterImporter
 	{
 		static Register_STFEncodedImageTextureImporterImporter()
 		{
-			STFRegistry.RegisterResourceImporter(STFEncodedImageTextureImporter._TYPE, new STFEncodedImageTextureImporter());
+			//STFRegistry.RegisterResourceImporter(STFEncodedImageTextureImporter._TYPE, new STFEncodedImageTextureImporter());
 			STFRegistry.RegisterResourceExporter(typeof(Texture2D), new STFEncodedImageTextureExporter());
 		}
-	}*/
+	}
 }
 
 #endif
