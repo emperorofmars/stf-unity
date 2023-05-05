@@ -112,20 +112,6 @@ namespace stf.serialisation
 				offset += 2;
 			}
 
-
-			var weightsPerVertex = mesh.GetBonesPerVertex();
-			var weights = mesh.GetAllBoneWeights();
-			int pos = 0;
-			for(int vertexIdx = 0; vertexIdx < weightsPerVertex.Length; vertexIdx++)
-			{
-				var numWeights = weightsPerVertex[vertexIdx];
-				for(int weightPos = pos; weightPos < pos + numWeights; weightPos++)
-				{
-
-				}
-				pos += numWeights;
-			}
-
 			var primitives = new JArray();
 			var indexBuffer = new List<int>();
 			for(int subMeshIdx = 0; subMeshIdx < mesh.subMeshCount; subMeshIdx++)
@@ -144,15 +130,36 @@ namespace stf.serialisation
 			}
 			ret.Add("primitives", primitives);
 
-			// weights
+			var weightLength = 0;
+			byte[] weightBuffer = null;
+			if(mesh.HasVertexAttribute(VertexAttribute.BlendWeight) && mesh.HasVertexAttribute(VertexAttribute.BlendIndices))
+			{
+				ret.Add("skinned", true);
+				foreach(var num in mesh.GetBonesPerVertex()) weightLength += num;
+				weightBuffer = new byte[weightLength * sizeof(float)];
+				var unityWeights = mesh.GetAllBoneWeights();
+				for(int weightIdx = 0; weightIdx < weightLength; weightIdx++)
+				{
+					Buffer.BlockCopy(BitConverter.GetBytes(unityWeights[weightIdx].weight), 0, weightBuffer, weightIdx * sizeof(float), sizeof(float));
+				}
+			}
 
 			// blendshapes
 
+			var vertexBufferLength = vertexBuffer.Length * sizeof(float);
+			var indexBufferLength = indexBuffer.Count * sizeof(int);
+			var weightLengthBufferLength = mesh.vertexCount * sizeof(byte);
+			var weightBufferLength = weightLength * sizeof(float);
 
-			var byteArray = new byte[vertexBuffer.Length * sizeof(float) + indexBuffer.Count * sizeof(int)];
+			var byteArray = new byte[vertexBufferLength + indexBufferLength + weightLengthBufferLength + weightBufferLength];
 
-			Buffer.BlockCopy(vertexBuffer, 0, byteArray, 0, vertexBuffer.Length * sizeof(float));
-			Buffer.BlockCopy(indexBuffer.ToArray(), 0, byteArray, vertexBuffer.Length * sizeof(float), indexBuffer.Count * sizeof(int));
+			Buffer.BlockCopy(vertexBuffer, 0, byteArray, 0, vertexBufferLength);
+			Buffer.BlockCopy(indexBuffer.ToArray(), 0, byteArray, vertexBufferLength, indexBufferLength);
+			if(weightLength > 0)
+			{
+				Buffer.BlockCopy(mesh.GetBonesPerVertex().ToArray(), 0, byteArray, vertexBufferLength + indexBufferLength, weightLengthBufferLength);
+				Buffer.BlockCopy(weightBuffer, 0, byteArray, vertexBufferLength + indexBufferLength + weightLengthBufferLength, weightBufferLength);
+			}
 
 			var bufferId = state.RegisterBuffer(byteArray);
 			ret.Add("buffer", bufferId);

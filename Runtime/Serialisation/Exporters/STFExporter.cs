@@ -27,7 +27,7 @@ namespace stf.serialisation
 		public Dictionary<string, JObject> resources = new Dictionary<string, JObject>();
 		public Dictionary<string, byte[]> buffers = new Dictionary<string, byte[]>();
 		private JObject jsonDefinition = new JObject();
-		private STFMeta meta = new STFMeta();
+		private STFMeta meta = ScriptableObject.CreateInstance<STFMeta>();
 
 		public STFExporter(List<ISTFAssetExporter> assets)
 		{

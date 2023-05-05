@@ -15,8 +15,6 @@ namespace stf
 	{
 		private Vector2 scrollPos;
 		private GameObject go;
-		private bool mapTexturesFromPath = false;
-		private string mapTexturesPath = "Assets/stf-tmp";
 
 		[MenuItem("STF Tools/Export")]
 		public static void Init()
@@ -63,9 +61,6 @@ namespace stf
 					File.WriteAllText(path, SerializeAsStandaloneAsset(go));
 				}
 			}
-
-			/*if(go) mapTexturesFromPath = GUILayout.Toggle(mapTexturesFromPath, "Map Encoded Textures from Folder");
-			if(go && mapTexturesFromPath) mapTexturesPath = GUILayout.TextField(mapTexturesPath);*/
 
 			if(go && GUILayout.Button("Export STF Binary", GUILayout.ExpandWidth(true))) {
 				var path = EditorUtility.SaveFilePanel("Export STF Binary", "Assets", go.name + ".stf", "stf");
@@ -114,16 +109,8 @@ namespace stf
 
 		private byte[] SerializeAsSTFBinary(GameObject go)
 		{
-			/*var context = STFRegistry.GetDefaultExportContext();
-			if(mapTexturesFromPath)
-			{
-				var image_bullshit = new STFEncodedImageTextureExporter();
-				image_bullshit.imageParentPath = mapTexturesPath;
-				context.ResourceExporters[typeof(Texture2D)] = image_bullshit;
-			}*/
 			var asset = new STFAssetExporter();
 			asset.rootNode = go;
-			//var state = new STFExporter(new List<ISTFAssetExporter>() {asset}, context);
 			var state = new STFExporter(new List<ISTFAssetExporter>() {asset});
 
 			return state.GetBinary();
