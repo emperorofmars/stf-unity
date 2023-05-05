@@ -5,9 +5,9 @@ using UnityEngine;
 
 namespace stf.Components
 {
-	public class STFUUID : MonoBehaviour
+	public class STFMeta : ScriptableObject
 	{
-		public string id;
+		public string mainAsset;
 		public Dictionary<Component, string> componentIds = new Dictionary<Component, string>();
 	}
 }
