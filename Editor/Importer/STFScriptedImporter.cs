@@ -16,8 +16,8 @@ namespace stf
 	[ScriptedImporter(1, "stf")]
 	public class STFScriptedImporter : ScriptedImporter
 	{
-		public bool ExtractOriginalTextures = false;
-		public string OriginalTexturesFolder = "Assets/stf-tmp";
+		public bool AuthoringMode = false;
+		public string OriginalTexturesFolder = "Assets/authoring_stf_external";
 
 		private void ensureTexturePath()
 		{
@@ -33,7 +33,7 @@ namespace stf
 			byte[] byteArray = File.ReadAllBytes(ctx.assetPath);
 
 			var context = STFRegistry.GetDefaultImportContext();
-			if(ExtractOriginalTextures)
+			if(AuthoringMode)
 			{
 				var image_bullshit = new STFEncodedImageTextureImporter();
 				ensureTexturePath();
@@ -45,8 +45,12 @@ namespace stf
 			foreach(var resource in importer.GetResources())
 			{
 				if(resource != null)
+				{
 					ctx.AddObjectToAsset(resource.name, resource);
+				}
 			}
+			importer.GetMeta().name = "STFMeta";
+			ctx.AddObjectToAsset("STFMeta", importer.GetMeta());
 			foreach(var asset in importer.GetAssets())
 			{
 				ctx.AddObjectToAsset(asset.Key, asset.Value.GetAsset());

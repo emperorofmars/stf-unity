@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using stf.serialisation;
 using UnityEngine;
 
-namespace stf.Components
+namespace stf
 {
 	public class STFUUID : MonoBehaviour
 	{

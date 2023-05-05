@@ -84,12 +84,14 @@ namespace stf.serialisation
 
 			try{
 				// I hate this, why do i have to do this @Unity ???
-				string filename;
-				if(imageParentPath == null) filename = "Assets/" + id + "_" + name + "." + format;
-				else filename = imageParentPath + "/" + name + "." + format;
-				File.WriteAllBytes(filename, arrayBuffer);
+				string path;
+				if(imageParentPath == null) path = "Assets/" + id + "_" + name + "." + format;
+				else path = imageParentPath + "/" + name + "." + format;
+				File.WriteAllBytes(path, arrayBuffer);
 				AssetDatabase.Refresh();
-				return AssetDatabase.LoadAssetAtPath<Texture2D>(filename);
+				var ret = AssetDatabase.LoadAssetAtPath<Texture2D>(path);
+				state.GetMeta().resourceInfo.Add(new STFMeta.ResourceInfo {name = name, assetPath = path, resource = ret, uuid = id, originalFormat = format, external = true });
+				return ret;
 			} catch(Exception e)
 			{
 				Debug.LogError(e);

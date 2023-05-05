@@ -14,5 +14,6 @@ namespace stf.serialisation
 		List<UnityEngine.Object> GetResources();
 		UnityEngine.Object GetResource(string id);
 		byte[] GetBuffer(string id);
+		STFMeta GetMeta();
 	}
 }

@@ -23,6 +23,7 @@ namespace stf.serialisation
 		public Dictionary<string, byte[]> buffers = new Dictionary<string, byte[]>();
 		private List<Task> tasks = new List<Task>();
 		private List<Task> componentTasks = new List<Task>();
+		public STFMeta meta = ScriptableObject.CreateInstance<STFMeta>();
 
 		public STFImporter(JObject jsonRoot)
 		{
@@ -48,6 +49,11 @@ namespace stf.serialisation
 			this.context = context;
 			if(this.context == null) STFRegistry.GetDefaultImportContext();
 			parse(byteArray);
+		}
+
+		public STFMeta GetMeta()
+		{
+			return meta;
 		}
 
 		public void AddTask(Task task)
@@ -88,6 +94,7 @@ namespace stf.serialisation
 		public void parse(JObject jsonRoot)
 		{
 			mainAssetId = (string)jsonRoot["main"];
+			meta.mainAsset = mainAssetId;
 			foreach(var jsonAsset in ((JObject)jsonRoot["assets"]))
 			{
 				if(!context.AssetImporters.ContainsKey((string)jsonAsset.Value["type"]))
