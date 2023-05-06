@@ -18,6 +18,9 @@ namespace stf.serialisation
 		{
 			if(rootNode == null) throw new Exception("Root node must not be null");
 
+			// gather meshes and skeletons
+			gatherArmatures(state, rootNode.GetComponentsInChildren<SkinnedMeshRenderer>());
+
 			var transforms = rootNode.GetComponentsInChildren<Transform>();
 			foreach(var transform in transforms)
 			{
@@ -43,6 +46,37 @@ namespace stf.serialisation
 					{
 						Debug.LogWarning("Component not recognized, skipping: " + component.GetType() + " on " + component.gameObject.name);
 					}
+				}
+			}
+		}
+
+		private void gatherArmatures(ISTFExporter state, SkinnedMeshRenderer[] skinnedMeshRenderers)
+		{
+			var smrPerMesh = new Dictionary<Mesh, SkinnedMeshRenderer>();
+			foreach(var smr in skinnedMeshRenderers)
+			{
+				var newArmature = new STFArmatureAsset();
+				newArmature.armatureRootTransform = smr.rootBone.parent;
+				newArmature.rootBone = smr.rootBone;
+				newArmature.bones = smr.bones;
+				if(!state.HasArmature(smr.sharedMesh))
+				{
+					state.SetArmature(smr.sharedMesh, newArmature);
+					foreach(var bone in smr.bones) state.RegisterArmatureNode(newArmature, bone.gameObject);
+				}
+				else if(state.GetArmature(smr.sharedMesh).calculateArmatureDeviation(smr.sharedMesh, smr.transform) > newArmature.calculateArmatureDeviation(smr.sharedMesh, smr.transform))
+				{
+					var armature = state.GetArmature(smr.sharedMesh);
+					armature.armatureRootTransform = smr.rootBone.parent;
+					armature.rootBone = smr.rootBone;
+					armature.bones = smr.bones;
+					state.SetArmature(smr.sharedMesh, armature);
+					foreach(var bone in smr.bones) state.RegisterArmatureNode(armature, bone.gameObject);
+				}
+				else
+				{
+					var armature = state.GetArmature(smr.sharedMesh);
+					foreach(var bone in smr.bones) state.RegisterArmatureNode(armature, bone.gameObject);
 				}
 			}
 		}
