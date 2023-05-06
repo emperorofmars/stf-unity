@@ -55,6 +55,7 @@ namespace stf.serialisation
 			var smrPerMesh = new Dictionary<Mesh, SkinnedMeshRenderer>();
 			foreach(var smr in skinnedMeshRenderers)
 			{
+				// handle armature id from stfmeta
 				var newArmature = new STFArmatureAsset();
 				newArmature.armatureRootTransform = smr.rootBone.parent;
 				newArmature.rootBone = smr.rootBone;

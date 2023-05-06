@@ -39,6 +39,7 @@ namespace stf.Components
 			c.materials = new Material[c.sharedMesh.subMeshCount];
 			c.localBounds = c.sharedMesh.bounds;
 
+			// do this in mesh from the armature resource
 			var bindposes = new Matrix4x4[c.bones.Length];
 			for(int bindposeIdx = 0; bindposeIdx < c.bones.Length; bindposeIdx++)
 			{
@@ -66,6 +67,7 @@ namespace stf.Components
 			ret.Add("type", "STF.mesh_instance");
 			ret.Add("mesh", state.GetResourceId(c.sharedMesh));
 
+			// use skeleton resource and skeleton instance instead
 			var skeleton = new JArray();
 			foreach(var bone in c.bones)
 			{
