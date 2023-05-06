@@ -97,6 +97,7 @@ namespace stf.serialisation
 			{
 				mainAssetId = (string)jsonRoot["main"];
 				meta.mainAsset = mainAssetId;
+				// parse resources first handle armatures
 				foreach(var jsonAsset in ((JObject)jsonRoot["assets"]))
 				{
 					if(!context.AssetImporters.ContainsKey((string)jsonAsset.Value["type"]))
