@@ -24,6 +24,7 @@ namespace stf.serialisation
 		public Dictionary<UnityEngine.Object, string> resourceIds = new Dictionary<UnityEngine.Object, string>();
 		public Dictionary<string, JObject> nodes = new Dictionary<string, JObject>();
 		public Dictionary<string, JObject> resources = new Dictionary<string, JObject>();
+		public Dictionary<UnityEngine.Object, Dictionary<string, string>> subResourceIds = new Dictionary<UnityEngine.Object, Dictionary<string, string>>();
 		public Dictionary<string, byte[]> buffers = new Dictionary<string, byte[]>();
 		private JObject jsonDefinition = new JObject();
 		private STFMeta meta = ScriptableObject.CreateInstance<STFMeta>();
@@ -134,6 +135,17 @@ namespace stf.serialisation
 				resources.Add(id, (JObject)exporter.serializeToJson(this, unityResource));
 			}));
 			return;// id;
+		}
+
+		public void RegisterSubresourceId(UnityEngine.Object unityResource, string key, string id)
+		{
+			if(!subResourceIds.ContainsKey(unityResource)) subResourceIds.Add(unityResource, new Dictionary<string, string>());
+			subResourceIds[unityResource].Add(key, id);
+		}
+
+		public string GetSubresourceId(UnityEngine.Object unityResource, string key)
+		{
+			return subResourceIds[unityResource][key];
 		}
 
 		private string GetComponentId(Component component)

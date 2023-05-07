@@ -13,6 +13,7 @@ namespace stf.serialisation
 		public string id;
 		public string rootBoneId;
 		public List<string> boneIds = new List<string>();
+		//public List<Mesh> meshes = new List<Mesh>();
 
 		public void SetupFromSkinnedMeshRenderer(ISTFExporter state, SkinnedMeshRenderer smr)
 		{

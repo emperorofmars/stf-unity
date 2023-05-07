@@ -19,10 +19,8 @@ namespace stf.serialisation
 		string RegisterBuffer(byte[] buffer);
 		string GetNodeId(GameObject go);
 		string GetResourceId(UnityEngine.Object unityResource);
-		//void SetArmature(Mesh mesh, STFArmatureAsset armature);
-		//bool HasArmature(Mesh mesh);
-		//void RegisterArmatureNode(STFArmatureAsset armature, GameObject go);
-		//STFArmatureAsset GetArmature(Mesh mesh);
+		void RegisterSubresourceId(UnityEngine.Object unityResource, string key, string id);
+		string GetSubresourceId(UnityEngine.Object unityResource, string key);
 		STFExportContext GetContext();
 		string GetJson();
 		byte[] GetBinary();

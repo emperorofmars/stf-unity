@@ -67,7 +67,7 @@ namespace stf.Components
 			ret.Add("type", "STF.mesh_instance");
 			ret.Add("mesh", state.GetResourceId(c.sharedMesh));
 
-			// use skeleton resource and skeleton instance instead
+			// optional different order of bones in skeleton
 			/*var skeleton = new JArray();
 			foreach(var bone in c.bones)
 			{

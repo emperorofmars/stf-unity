@@ -136,6 +136,8 @@ namespace stf.serialisation
 			if(mesh.HasVertexAttribute(VertexAttribute.BlendWeight) && mesh.HasVertexAttribute(VertexAttribute.BlendIndices))
 			{
 				ret.Add("skinned", true);
+				ret.Add("armature", state.GetSubresourceId(mesh, "armature"));
+
 				foreach(var num in mesh.GetBonesPerVertex()) weightLength += num;
 				weightBuffer = new byte[weightLength * (sizeof(float) + sizeof(int))];
 				var unityWeights = mesh.GetAllBoneWeights();
