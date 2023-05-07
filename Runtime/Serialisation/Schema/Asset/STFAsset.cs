@@ -14,6 +14,8 @@ namespace stf.serialisation
 		private STFNodeExporter _nodeExporter = new STFNodeExporter();
 		public string id = Guid.NewGuid().ToString();
 
+		public Dictionary<Transform, string> boneMappings = new Dictionary<Transform, string>();
+
 		private Dictionary<Mesh, STFArmatureResource> armatures = new Dictionary<Mesh, STFArmatureResource>();
 
 		public void Convert(ISTFExporter state)
@@ -27,14 +29,14 @@ namespace stf.serialisation
 			var transforms = rootNode.GetComponentsInChildren<Transform>();
 			foreach(var transform in transforms)
 			{
-				//check if node is already registered
-				var nodeId = state.RegisterNode(transform.gameObject, _nodeExporter);
+				var nodeId = RegisterNode(state, transform.gameObject);
 				var components = transform.GetComponents<Component>();
 				foreach(var component in components)
 				{
 					if(component.GetType() == typeof(Transform)) continue;
 					if(component.GetType() == typeof(STFUUID)) continue;
 					if(component.GetType() == typeof(Animator)) continue;
+
 					if(component.GetType() == typeof(STFUnrecognizedComponent))
 					{
 						state.RegisterComponent(nodeId, component);
@@ -53,6 +55,22 @@ namespace stf.serialisation
 			}
 		}
 
+		private string RegisterNode(ISTFExporter state, GameObject go)
+		{
+			string nodeId = null;
+			if(!boneMappings.ContainsKey(go.transform))
+				nodeId = state.RegisterNode(go, _nodeExporter);
+			else
+			{
+				var node = (JObject)_nodeExporter.serializeToJson(go, state);
+				node.Add("bone", boneMappings[go.transform]);
+				var nodeUuidComponent = go.GetComponent<STFUUID>();
+				nodeId = nodeUuidComponent != null && nodeUuidComponent.id != null && nodeUuidComponent.id.Length > 0 ? nodeUuidComponent.id : Guid.NewGuid().ToString();
+				state.RegisterNode(nodeId, node, go);
+			}
+			return nodeId;
+		}
+
 		private void gatherArmatures(ISTFExporter state, SkinnedMeshRenderer[] skinnedMeshRenderers)
 		{
 			foreach(var smr in skinnedMeshRenderers)
@@ -60,40 +78,14 @@ namespace stf.serialisation
 				if(!armatures.ContainsKey(smr.sharedMesh))
 				{
 					var armature = new STFArmatureResource();
-					//armature.setup(state, smr.rootBone, smr.bones, smr.sharedMesh.bindposes);
-					armature.setupFromSkinnedMeshRenderer(state, smr);
+					armature.SetupFromSkinnedMeshRenderer(state, smr);
 					armatures.Add(smr.sharedMesh, armature);
 				}
+				for(int i = 0; i < smr.bones.Length; i++)
+				{
+					boneMappings.Add(smr.bones[i], armatures[smr.sharedMesh].boneIds[i]);
+				}
 			}
-
-			/*var smrPerMesh = new Dictionary<Mesh, SkinnedMeshRenderer>();
-			foreach(var smr in skinnedMeshRenderers)
-			{
-				// handle armature id from stfmeta
-				var newArmature = new STFArmatureResource();
-				newArmature.armatureRootTransform = smr.rootBone.parent;
-				newArmature.rootBone = smr.rootBone;
-				newArmature.bones = smr.bones;
-				if(!state.HasArmature(smr.sharedMesh))
-				{
-					state.SetArmature(smr.sharedMesh, newArmature);
-					foreach(var bone in smr.bones) state.RegisterArmatureNode(newArmature, bone.gameObject);
-				}
-				else if(state.GetArmature(smr.sharedMesh).calculateArmatureDeviation(smr.sharedMesh, smr.transform) > newArmature.calculateArmatureDeviation(smr.sharedMesh, smr.transform))
-				{
-					var armature = state.GetArmature(smr.sharedMesh);
-					armature.armatureRootTransform = smr.rootBone.parent;
-					armature.rootBone = smr.rootBone;
-					armature.bones = smr.bones;
-					state.SetArmature(smr.sharedMesh, armature);
-					foreach(var bone in smr.bones) state.RegisterArmatureNode(armature, bone.gameObject);
-				}
-				else
-				{
-					var armature = state.GetArmature(smr.sharedMesh);
-					foreach(var bone in smr.bones) state.RegisterArmatureNode(armature, bone.gameObject);
-				}
-			}*/
 		}
 
 		private void gatherResources(ISTFExporter state, List<UnityEngine.Object> resources)

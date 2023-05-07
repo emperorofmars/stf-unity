@@ -20,9 +20,6 @@ namespace stf.serialisation
 		public List<Task> registerResourceTasks = new List<Task>();
 		public List<Task> registerComponentTasks = new List<Task>();
 		public List<Task> tasks = new List<Task>();
-
-		//public Dictionary<Mesh, STFArmatureResource> armatures = new Dictionary<Mesh, STFArmatureResource>();
-		//public Dictionary<GameObject, STFArmatureResource> nodeArmature = new Dictionary<GameObject, STFArmatureResource>();
 		public Dictionary<GameObject, string> nodeIds = new Dictionary<GameObject, string>();
 		public Dictionary<UnityEngine.Object, string> resourceIds = new Dictionary<UnityEngine.Object, string>();
 		public Dictionary<string, JObject> nodes = new Dictionary<string, JObject>();
@@ -76,30 +73,9 @@ namespace stf.serialisation
 				jsonDefinition = createRoot();
 			} catch(Exception e)
 			{
-				Debug.Log(e);
-				throw e;
+				throw new Exception("Error during STF export: ", e);
 			}
 		}
-
-		/*public bool HasArmature(Mesh mesh)
-		{
-			return armatures.ContainsKey(mesh);
-		}
-
-		public STFArmatureAsset GetArmature(Mesh mesh)
-		{
-			return armatures[mesh];
-		}
-
-		public void SetArmature(Mesh mesh, STFArmatureAsset armature)
-		{
-			if(armatures.ContainsKey(mesh)) armatures[mesh] = armature;
-			else armatures.Add(mesh, armature);
-		}
-		public void RegisterArmatureNode(STFArmatureAsset armature, GameObject go)
-		{
-			nodeArmature.Add(go, armature);
-		}*/
 
 		public STFExportContext GetContext()
 		{
@@ -117,13 +93,15 @@ namespace stf.serialisation
 			nodes.Add(nodeId, node);
 		}
 
+		public void RegisterNode(string nodeId, JObject node, GameObject go)
+		{
+			nodeIds.Add(go, nodeId);
+			nodes.Add(nodeId, node);
+		}
+
 		public string RegisterNode(GameObject go, ASTFNodeExporter exporter)
 		{
 			if(nodeIds.ContainsKey(go)) return nodeIds[go];
-			/*if(nodeArmature.ContainsKey(go))
-			{
-				// create armature node
-			}*/
 			var uuid = go.GetComponent<STFUUID>();
 			var id = uuid != null && uuid.id != null && uuid.id.Length > 0 ? uuid.id : Guid.NewGuid().ToString();
 			var jnode = exporter.serializeToJson(go, this);

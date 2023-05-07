@@ -164,7 +164,18 @@ namespace stf.serialisation
 				}
 			} catch(Exception e)
 			{
-				throw e;
+				foreach(var node in nodes.Values)
+				{
+					if(node != null)
+					{
+						#if UNITY_EDITOR
+							UnityEngine.Object.DestroyImmediate(node);
+						#else
+							UnityEngine.Object.Destroy(node);
+						#endif
+					}
+				}
+				throw new Exception("Error during STF import: ", e);
 			}
 		}
 

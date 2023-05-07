@@ -9,6 +9,7 @@ namespace stf.serialisation
 	{
 		void AddTask(Task task);
 		void RegisterNode(string nodeId, JObject node);
+		void RegisterNode(string nodeId, JObject node, GameObject go);
 		string RegisterNode(GameObject go, ASTFNodeExporter exporter);
 		void RegisterResource(string resourceId, JObject resource);
 		void RegisterResource(UnityEngine.Object unityResource);

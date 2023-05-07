@@ -13,20 +13,18 @@ namespace stf.serialisation
 		public string id;
 		public string rootBoneId;
 		public List<string> boneIds = new List<string>();
-		public JArray boneMappings = new JArray();
 
-		//public void setup(ISTFExporter state, Transform rootBone, Transform[] bones, Matrix4x4[] bindposes)
-		public void setupFromSkinnedMeshRenderer(ISTFExporter state, SkinnedMeshRenderer smr)
+		public void SetupFromSkinnedMeshRenderer(ISTFExporter state, SkinnedMeshRenderer smr)
 		{
 			var rootBone = smr.rootBone;
 			var bones = smr.bones;
 			var bindposes = smr.sharedMesh.bindposes;
 
 			// get id from original armature definition
+
 			this.id = Guid.NewGuid().ToString();
 
 
-			//boneMappings = new JArray();
 			var boneNodes = new List<JObject>();
 			for(int i = 0; i < bindposes.Length; i++)
 			{
@@ -34,9 +32,8 @@ namespace stf.serialisation
 				var boneId = boneIdComponent != null && boneIdComponent.boneId != null && boneIdComponent.boneId.Length > 0 ? boneIdComponent.boneId : Guid.NewGuid().ToString();
 				var bone = new JObject();
 
-				// get from original bone definition if present
-
 				bone.Add("name", bones[i].name);
+				bone.Add("type", "bone");
 				
 				Matrix4x4 parentBindposeInverse = Matrix4x4.identity;
 				if(bones[i] != rootBone)
@@ -68,21 +65,23 @@ namespace stf.serialisation
 				var children = new List<string>();
 				for(int childIdx = 0; childIdx < bones[i].childCount; childIdx++)
 				{
-					var isBone = false;
-					foreach(var bone in bones) if(bone == bones[i].GetChild(childIdx))
+					for(var boneIdx = 0; boneIdx < bones.Length; boneIdx++)
 					{
-						isBone = true;
-						break;
+						if(bones[boneIdx] == bones[i].GetChild(childIdx))
+						{
+							children.Add(boneIds[boneIdx]);
+							break;
+						}
 					}
-					if(isBone) children.Add(state.GetNodeId(bones[i].GetChild(childIdx).gameObject));
 				}
 				if(children.Count > 0) boneNodes[i].Add("children", new JArray(children));
 			}
+
 			var armatureJson = new JObject();
 			armatureJson.Add("type", "armature");
 			if(rootBone.parent != null) armatureJson.Add("name", rootBone.parent.name);
 			armatureJson.Add("root", rootBoneId);
-			armatureJson.Add("bones", boneMappings);
+			armatureJson.Add("bones", new JArray(boneIds));
 			state.RegisterResource(id, armatureJson);
 		}
 	}
