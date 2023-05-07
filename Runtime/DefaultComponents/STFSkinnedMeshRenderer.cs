@@ -68,13 +68,14 @@ namespace stf.Components
 			ret.Add("mesh", state.GetResourceId(c.sharedMesh));
 
 			// use skeleton resource and skeleton instance instead
-			var skeleton = new JArray();
+			/*var skeleton = new JArray();
 			foreach(var bone in c.bones)
 			{
 				skeleton.Add(state.GetNodeId(bone.gameObject));
 			}
 			ret.Add("skeleton", skeleton);
-			ret.Add("skeleton_root", state.GetNodeId(c.rootBone.gameObject));
+			ret.Add("skeleton_root", state.GetNodeId(c.rootBone.gameObject));*/
+			ret.Add("armature_instance", state.GetNodeId(c.rootBone.parent.gameObject));
 			return ret;
 		}
 	}
