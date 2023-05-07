@@ -113,10 +113,7 @@ namespace stf.serialisation
 						nodeId = state.RegisterNode(go, _nodeExporter);
 					else
 					{
-						var node = (JObject)_nodeExporter.serializeToJson(go, state);
-						node.Add("type", "armature_instance");
-						node.Add("armature", armatureInstances[go.transform].id);
-
+						var node = (JObject)_nodeExporter.serializeArmatureInstanceToJson(go, state, armatureInstances[go.transform].id);
 						state.AddTask(new Task(() => {
 							var boneInstanceIds = new List<string>();
 							foreach(var boneInstance in armatureInstancesBoneInstances[go.transform])
