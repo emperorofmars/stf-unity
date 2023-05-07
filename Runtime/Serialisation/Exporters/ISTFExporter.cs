@@ -1,14 +1,16 @@
 
 using UnityEngine;
 using System.Threading.Tasks;
-using System.Collections.Generic;
+using Newtonsoft.Json.Linq;
 
 namespace stf.serialisation
 {
 	public interface ISTFExporter
 	{
 		void AddTask(Task task);
+		void RegisterNode(string nodeId, JObject node);
 		string RegisterNode(GameObject go, ASTFNodeExporter exporter);
+		void RegisterResource(string resourceId, JObject resource);
 		void RegisterResource(UnityEngine.Object unityResource);
 		void RegisterResource(UnityEngine.Object unityResource, ASTFResourceExporter exporter);
 		void RegisterComponent(string nodeId, Component component);
@@ -16,10 +18,10 @@ namespace stf.serialisation
 		string RegisterBuffer(byte[] buffer);
 		string GetNodeId(GameObject go);
 		string GetResourceId(UnityEngine.Object unityResource);
-		void SetArmature(Mesh mesh, STFArmatureAsset armature);
-		bool HasArmature(Mesh mesh);
-		void RegisterArmatureNode(STFArmatureAsset armature, GameObject go);
-		STFArmatureAsset GetArmature(Mesh mesh);
+		//void SetArmature(Mesh mesh, STFArmatureAsset armature);
+		//bool HasArmature(Mesh mesh);
+		//void RegisterArmatureNode(STFArmatureAsset armature, GameObject go);
+		//STFArmatureAsset GetArmature(Mesh mesh);
 		STFExportContext GetContext();
 		string GetJson();
 		byte[] GetBinary();

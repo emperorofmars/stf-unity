@@ -8,6 +8,7 @@ namespace stf
 	public class STFUUID : MonoBehaviour
 	{
 		public string id;
+		public string boneId;
 		public Dictionary<Component, string> componentIds = new Dictionary<Component, string>();
 	}
 }

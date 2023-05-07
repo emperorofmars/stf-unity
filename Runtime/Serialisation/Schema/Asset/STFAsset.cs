@@ -14,12 +14,15 @@ namespace stf.serialisation
 		private STFNodeExporter _nodeExporter = new STFNodeExporter();
 		public string id = Guid.NewGuid().ToString();
 
+		private Dictionary<Mesh, STFArmatureResource> armatures = new Dictionary<Mesh, STFArmatureResource>();
+
 		public void Convert(ISTFExporter state)
 		{
 			if(rootNode == null) throw new Exception("Root node must not be null");
 
 			// gather meshes and skeletons
 			gatherArmatures(state, rootNode.GetComponentsInChildren<SkinnedMeshRenderer>());
+			// register armature bones
 
 			var transforms = rootNode.GetComponentsInChildren<Transform>();
 			foreach(var transform in transforms)
@@ -52,11 +55,22 @@ namespace stf.serialisation
 
 		private void gatherArmatures(ISTFExporter state, SkinnedMeshRenderer[] skinnedMeshRenderers)
 		{
-			var smrPerMesh = new Dictionary<Mesh, SkinnedMeshRenderer>();
+			foreach(var smr in skinnedMeshRenderers)
+			{
+				if(!armatures.ContainsKey(smr.sharedMesh))
+				{
+					var armature = new STFArmatureResource();
+					//armature.setup(state, smr.rootBone, smr.bones, smr.sharedMesh.bindposes);
+					armature.setupFromSkinnedMeshRenderer(state, smr);
+					armatures.Add(smr.sharedMesh, armature);
+				}
+			}
+
+			/*var smrPerMesh = new Dictionary<Mesh, SkinnedMeshRenderer>();
 			foreach(var smr in skinnedMeshRenderers)
 			{
 				// handle armature id from stfmeta
-				var newArmature = new STFArmatureAsset();
+				var newArmature = new STFArmatureResource();
 				newArmature.armatureRootTransform = smr.rootBone.parent;
 				newArmature.rootBone = smr.rootBone;
 				newArmature.bones = smr.bones;
@@ -79,7 +93,7 @@ namespace stf.serialisation
 					var armature = state.GetArmature(smr.sharedMesh);
 					foreach(var bone in smr.bones) state.RegisterArmatureNode(armature, bone.gameObject);
 				}
-			}
+			}*/
 		}
 
 		private void gatherResources(ISTFExporter state, List<UnityEngine.Object> resources)

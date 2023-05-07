@@ -21,8 +21,8 @@ namespace stf.serialisation
 		public List<Task> registerComponentTasks = new List<Task>();
 		public List<Task> tasks = new List<Task>();
 
-		public Dictionary<Mesh, STFArmatureAsset> armatures = new Dictionary<Mesh, STFArmatureAsset>();
-		public Dictionary<GameObject, STFArmatureAsset> nodeArmature = new Dictionary<GameObject, STFArmatureAsset>();
+		//public Dictionary<Mesh, STFArmatureResource> armatures = new Dictionary<Mesh, STFArmatureResource>();
+		//public Dictionary<GameObject, STFArmatureResource> nodeArmature = new Dictionary<GameObject, STFArmatureResource>();
 		public Dictionary<GameObject, string> nodeIds = new Dictionary<GameObject, string>();
 		public Dictionary<UnityEngine.Object, string> resourceIds = new Dictionary<UnityEngine.Object, string>();
 		public Dictionary<string, JObject> nodes = new Dictionary<string, JObject>();
@@ -81,7 +81,7 @@ namespace stf.serialisation
 			}
 		}
 
-		public bool HasArmature(Mesh mesh)
+		/*public bool HasArmature(Mesh mesh)
 		{
 			return armatures.ContainsKey(mesh);
 		}
@@ -99,7 +99,7 @@ namespace stf.serialisation
 		public void RegisterArmatureNode(STFArmatureAsset armature, GameObject go)
 		{
 			nodeArmature.Add(go, armature);
-		}
+		}*/
 
 		public STFExportContext GetContext()
 		{
@@ -111,19 +111,30 @@ namespace stf.serialisation
 			tasks.Add(task);
 		}
 
+		public void RegisterNode(string nodeId, JObject node)
+		{
+			//nodeIds.Add(go, nodeId);
+			nodes.Add(nodeId, node);
+		}
+
 		public string RegisterNode(GameObject go, ASTFNodeExporter exporter)
 		{
 			if(nodeIds.ContainsKey(go)) return nodeIds[go];
-			if(nodeArmature.ContainsKey(go))
+			/*if(nodeArmature.ContainsKey(go))
 			{
 				// create armature node
-			}
+			}*/
 			var uuid = go.GetComponent<STFUUID>();
 			var id = uuid != null && uuid.id != null && uuid.id.Length > 0 ? uuid.id : Guid.NewGuid().ToString();
 			var jnode = exporter.serializeToJson(go, this);
 			nodeIds.Add(go, id);
 			nodes.Add(id, (JObject)jnode);
 			return id;
+		}
+
+		public void RegisterResource(string resourceId, JObject resource)
+		{
+			resources.Add(resourceId, resource);
 		}
 
 		public void RegisterResource(UnityEngine.Object unityResource)
