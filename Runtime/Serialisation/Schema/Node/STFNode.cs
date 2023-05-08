@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace stf.serialisation
 {
-	public class STFNodeExporter// : ASTFNodeExporter
+	public class STFNodeExporter
 	{
 		public static JObject serializeToJson(GameObject go, ISTFExporter state)
 		{
@@ -44,13 +44,16 @@ namespace stf.serialisation
 		}
 	}
 
-	public class STFNodeImporter : ASTFNodeImporter
+	public class STFNodeImporter : ISTFNodeImporter
 	{
-		override public GameObject parseFromJson(ISTFImporter state, JToken json)
+		public static string _TYPE = "default";
+		
+		public GameObject parseFromJson(ISTFImporter state, JToken json, JObject jsonRoot, out List<string> nodesToParse)
 		{
 			var go = new GameObject();
 			go.name = (string)json["name"];
 			var children = json["children"].ToObject<List<string>>();
+			nodesToParse = children;
 
 			go.transform.localPosition = new Vector3((float)json["trs"][0][0], (float)json["trs"][0][1], (float)json["trs"][0][2]);
 			go.transform.localRotation = new Quaternion((float)json["trs"][1][0], (float)json["trs"][1][1], (float)json["trs"][1][2], (float)json["trs"][1][3]);

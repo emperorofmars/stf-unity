@@ -8,7 +8,7 @@ namespace stf.serialisation
 	public class STFImportContext
 	{
 		public Dictionary<string, ISTFAssetImporter> AssetImporters = new Dictionary<string, ISTFAssetImporter>();
-		public Dictionary<string, ASTFNodeImporter> NodeImporters = new Dictionary<string, ASTFNodeImporter>();
+		public Dictionary<string, ISTFNodeImporter> NodeImporters = new Dictionary<string, ISTFNodeImporter>();
 		public Dictionary<string, ASTFComponentImporter> ComponentImporters = new Dictionary<string, ASTFComponentImporter>();
 		public Dictionary<string, ASTFResourceImporter> ResourceImporters = new Dictionary<string, ASTFResourceImporter>();
 	}

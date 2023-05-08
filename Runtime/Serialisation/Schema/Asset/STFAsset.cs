@@ -192,8 +192,6 @@ namespace stf.serialisation
 
 	public class STFAssetImporter : ISTFAssetImporter
 	{
-		private STFNodeImporter _importer = new STFNodeImporter();
-
 		public ISTFAsset ParseFromJson(ISTFImporter state, JToken jsonAsset, string id, JObject jsonRoot)
 		{
 			var ret = new STFAsset(state, id);
@@ -206,19 +204,18 @@ namespace stf.serialisation
 		private void convertAssetNode(ISTFImporter state, string nodeId, JObject jsonRoot)
 		{
 			var jsonNode = (JObject)jsonRoot["nodes"][nodeId];
-			//if((string)jsonNode["type"] != null && ((string)jsonNode["type"]).Length > 0 && (string)jsonNode["type"] != "default")
-			//	throw new Exception("Nodetype '" + (string)jsonNode["type"] + "' is not supported");
 			var nodetype = (string)jsonNode["type"] == null || ((string)jsonNode["type"]).Length == 0 ? "default" : (string)jsonNode["type"];
 			if(!state.GetContext().NodeImporters.ContainsKey(nodetype))
 				throw new Exception($"Nodetype '{nodetype}' is not supported.");
 
-			state.AddNode(nodeId, state.GetContext().NodeImporters[nodetype].parseFromJson(state, jsonNode));
+			var nodesToParse = new List<string>();
+			state.AddNode(nodeId, state.GetContext().NodeImporters[nodetype].parseFromJson(state, jsonNode, jsonRoot, out nodesToParse));
 			
-			if(jsonNode["children"] != null)
+			if(nodesToParse != null)
 			{
-				foreach(var child in (JArray)jsonNode["children"])
+				foreach(var childId in nodesToParse)
 				{
-					convertAssetNode(state, (string)child, jsonRoot);
+					convertAssetNode(state, childId, jsonRoot);
 				}
 			}
 		}

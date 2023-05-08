@@ -33,14 +33,17 @@ namespace stf.serialisation
 			return ret;
 		}
 	}
-
-	public class STFBoneInstanceNodeImporter : ASTFNodeImporter
+/*
+	public class STFBoneInstanceNodeImporter : ISTFNodeImporter
 	{
-		override public GameObject parseFromJson(ISTFImporter state, JToken json)
+		public static string _TYPE = "bone_instance";
+
+		public GameObject parseFromJson(ISTFImporter state, JToken json, JObject jsonRoot, out List<string> nodesToParse)
 		{
 			var go = new GameObject();
 			go.name = (string)json["name"];
 			var children = json["children"].ToObject<List<string>>();
+			nodesToParse = children;
 
 			go.transform.localPosition = new Vector3((float)json["trs"][0][0], (float)json["trs"][0][1], (float)json["trs"][0][2]);
 			go.transform.localRotation = new Quaternion((float)json["trs"][1][0], (float)json["trs"][1][1], (float)json["trs"][1][2], (float)json["trs"][1][3]);
@@ -56,4 +59,5 @@ namespace stf.serialisation
 			return go;
 		}
 	}
+*/
 }

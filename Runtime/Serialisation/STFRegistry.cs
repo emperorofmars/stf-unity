@@ -12,8 +12,10 @@ namespace stf.serialisation
 			{"asset", new STFAssetImporter()}
 			//{"patch", null}
 		};
-		public static readonly Dictionary<string, ASTFNodeImporter> DefaultNodeImporters = new Dictionary<string, ASTFNodeImporter>() {
-			{"default", new STFNodeImporter()},
+		public static readonly Dictionary<string, ISTFNodeImporter> DefaultNodeImporters = new Dictionary<string, ISTFNodeImporter>() {
+			{STFNodeImporter._TYPE, new STFNodeImporter()},
+			{STFArmatureInstanceNodeImporter._TYPE, new STFArmatureInstanceNodeImporter()},
+			//{STFBoneInstanceNodeImporter._TYPE, new STFBoneInstanceNodeImporter()},
 			//{"patch", null},
 			//{"appendage", null}
 		};
@@ -31,22 +33,21 @@ namespace stf.serialisation
 		};
 		public static readonly Dictionary<string, ASTFResourceImporter> DefaultResourceImporters = new Dictionary<string, ASTFResourceImporter>() {
 			{STFMeshImporter._TYPE, new STFMeshImporter()},
-			{STFTextureImporter._TYPE, new STFTextureImporter()}
+			{STFTextureImporter._TYPE, new STFTextureImporter()},
+			{STFArmatureImporter._TYPE, new STFArmatureImporter()}
 			//Material
-			//Texture
 			//Animation
 		};
 		public static readonly Dictionary<Type, ASTFResourceExporter> DefaultResourceExporters = new Dictionary<Type, ASTFResourceExporter>() {
 			{typeof(Mesh), new STFMeshExporter()},
 			{typeof(Texture2D), new STFTextureExporter()}
 			//Material
-			//Texture
 			//Animation
 		};
 
 		private static Dictionary<string, ISTFAssetImporter> RegisteredAssetImporters = new Dictionary<string, ISTFAssetImporter>();
 
-		private static Dictionary<string, ASTFNodeImporter> RegisteredNodeImporters = new Dictionary<string, ASTFNodeImporter>();
+		private static Dictionary<string, ISTFNodeImporter> RegisteredNodeImporters = new Dictionary<string, ISTFNodeImporter>();
 
 		private static Dictionary<string, ASTFComponentImporter> RegisteredComponentImporters = new Dictionary<string, ASTFComponentImporter>();
 		private static Dictionary<Type, ASTFComponentExporter> RegisteredComponentExporters = new Dictionary<Type, ASTFComponentExporter>();
@@ -54,7 +55,7 @@ namespace stf.serialisation
 		private static Dictionary<Type, ASTFResourceExporter> RegisteredResourceExporters = new Dictionary<Type, ASTFResourceExporter>();
 
 		public static void RegisterAssetImporter(string type, ISTFAssetImporter importer) { RegisteredAssetImporters.Add(type, importer); }
-		public static void RegisterNodeImporter(string type, ASTFNodeImporter importer) { RegisteredNodeImporters.Add(type, importer); }
+		public static void RegisterNodeImporter(string type, ISTFNodeImporter importer) { RegisteredNodeImporters.Add(type, importer); }
 		public static void RegisterComponentImporter(string type, ASTFComponentImporter importer) { RegisteredComponentImporters.Add(type, importer); }
 		public static void RegisterComponentExporter(Type type, ASTFComponentExporter exporter) { RegisteredComponentExporters.Add(type, exporter); }
 		public static void RegisterResourceImporter(string type, ASTFResourceImporter importer) { RegisteredResourceImporters.Add(type, importer); }
@@ -68,7 +69,7 @@ namespace stf.serialisation
 		public static bool IsResourceExporterRegistered(Type type) { return RegisteredResourceExporters.ContainsKey(type); }
 
 		public static ISTFAssetImporter GetAssetImporter(string type) { return RegisteredAssetImporters[type]; }
-		public static ASTFNodeImporter GetNodeImporter(string type) { return RegisteredNodeImporters[type]; }
+		public static ISTFNodeImporter GetNodeImporter(string type) { return RegisteredNodeImporters[type]; }
 		public static ASTFComponentImporter GetComponentImporter(string type) { return RegisteredComponentImporters[type]; }
 		public static ASTFComponentExporter GetComponentExporter(Type type) { return RegisteredComponentExporters[type]; }
 		public static ASTFResourceImporter GetResourceImporter(string type) { return RegisteredResourceImporters[type]; }
@@ -83,7 +84,7 @@ namespace stf.serialisation
 				else assetImporters.Add(e.Key, e.Value);
 			}
 
-			var nodeImporters = new Dictionary<string, ASTFNodeImporter>(DefaultNodeImporters);
+			var nodeImporters = new Dictionary<string, ISTFNodeImporter>(DefaultNodeImporters);
 			foreach(var e in RegisteredNodeImporters)
 			{
 				if(nodeImporters.ContainsKey(e.Key)) nodeImporters[e.Key] = e.Value;

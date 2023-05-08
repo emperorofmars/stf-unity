@@ -3,6 +3,7 @@ using UnityEngine;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace stf.serialisation
 {
@@ -40,18 +41,41 @@ namespace stf.serialisation
 		}
 	}
 
-	public class STFArmatureInstanceNodeImporter : ASTFNodeImporter
+	public class STFArmatureInstanceNodeImporter : ISTFNodeImporter
 	{
-		override public GameObject parseFromJson(ISTFImporter state, JToken json)
+		public static string _TYPE = "armature_instance";
+
+		public GameObject parseFromJson(ISTFImporter state, JToken json, JObject jsonRoot, out List<string> nodesToParse)
 		{
 			var go = new GameObject();
 			go.name = (string)json["name"];
 			var children = json["children"].ToObject<List<string>>();
+			nodesToParse = new List<string>(children);
 
 			go.transform.localPosition = new Vector3((float)json["trs"][0][0], (float)json["trs"][0][1], (float)json["trs"][0][2]);
 			go.transform.localRotation = new Quaternion((float)json["trs"][1][0], (float)json["trs"][1][1], (float)json["trs"][1][2], (float)json["trs"][1][3]);
 			go.transform.localScale = new Vector3((float)json["trs"][2][0], (float)json["trs"][2][1], (float)json["trs"][2][2]);
 
+			var armature = (STFArmatureResource)state.GetResource((string)json["armature"]);
+			var rootInstance = Object.Instantiate(armature.root);
+			rootInstance.name = armature.root.name;
+
+			rootInstance.SetParent(go.transform, false);
+			foreach(var bone in rootInstance.GetComponentsInChildren<Transform>())
+			{
+				var uuidComponent = bone.GetComponent<STFUUID>();
+				uuidComponent.boneId = uuidComponent.id;
+				uuidComponent.id = null;
+			}
+			var boneInstanceIds = json["bone_instances"].ToObject<List<string>>();
+			for(int i = 0; i < boneInstanceIds.Count; i++)
+			{
+				var boneInstanceJson = jsonRoot["nodes"][boneInstanceIds[i]];
+				var boneInstance = rootInstance.GetComponentsInChildren<STFUUID>().First(bi => (string)boneInstanceJson["bone"] == bi.boneId);
+				boneInstance.id = boneInstanceIds[i];
+
+				nodesToParse.AddRange(boneInstanceJson["children"].ToObject<List<string>>());
+			}
 			state.AddTask(new Task(() => {
 				foreach(var childId in children)
 				{

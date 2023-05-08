@@ -65,7 +65,7 @@ namespace stf
 			if(go && GUILayout.Button("Export STF Binary", GUILayout.ExpandWidth(true))) {
 				var path = EditorUtility.SaveFilePanel("Export STF Binary", "Assets", go.name + ".stf", "stf");
 				if(path != null && path.Length > 0) {
-					File.WriteAllBytes(path, SerializeAsSTFBinary(go));
+					SerializeAsSTFBinary(go, path);
 				}
 			}
 			
@@ -107,13 +107,16 @@ namespace stf
 			return state.GetPrettyJson();
 		}
 
-		private byte[] SerializeAsSTFBinary(GameObject go)
+		private void SerializeAsSTFBinary(GameObject go, string path)
 		{
 			var asset = new STFAssetExporter();
 			asset.rootNode = go;
 			var state = new STFExporter(new List<ISTFAssetExporter>() {asset});
 
-			return state.GetBinary();
+			File.WriteAllBytes(path, state.GetBinary());
+			File.WriteAllText(path + ".json", state.GetPrettyJson());
+
+			return;
 		}
 	}
 }

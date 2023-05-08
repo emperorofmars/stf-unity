@@ -156,13 +156,14 @@ namespace stf.serialisation
 			if((string)jsonNode["type"] != null && ((string)jsonNode["type"]).Length > 0 && (string)jsonNode["type"] != "external")
 				throw new Exception("Nodetype '" + (string)jsonNode["type"] + "' is not supported");
 
-			state.AddNode(nodeId, _importer.parseFromJson(state, jsonNode));
+			var nodesToParse = new List<string>();
+			state.AddNode(nodeId, _importer.parseFromJson(state, jsonNode, jsonRoot, out nodesToParse));
 			
-			if(jsonNode["children"] != null)
+			if(nodesToParse != null)
 			{
-				foreach(var child in (JArray)jsonNode["children"])
+				foreach(var childId in nodesToParse)
 				{
-					convertAssetNode(state, (string)child, jsonRoot);
+					convertAssetNode(state, childId, jsonRoot);
 				}
 			}
 		}

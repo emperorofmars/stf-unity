@@ -1,6 +1,7 @@
 
 using UnityEngine;
 using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
 
 namespace stf.serialisation
 {
@@ -16,17 +17,18 @@ namespace stf.serialisation
 		}
 	}
 
-	public class STFExternalNodeImporter : ASTFNodeImporter
+	public class STFExternalNodeImporter : ISTFNodeImporter
 	{
 		GameObject root;
 		public STFExternalNodeImporter(GameObject root)
 		{
 			this.root = root;
 		}
-		override public GameObject parseFromJson(ISTFImporter state, JToken json)
+		public GameObject parseFromJson(ISTFImporter state, JToken json, JObject jsonRoot, out List<string> nodesToParse)
 		{
 			var go = root.transform.Find((string)json["path"]).gameObject;
 			go.name = (string)json["name"];
+			nodesToParse = null;
 			return go;
 		}
 	}

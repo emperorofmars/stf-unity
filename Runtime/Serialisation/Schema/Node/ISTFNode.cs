@@ -26,13 +26,8 @@ namespace stf.serialisation
 		}
 	}*/
 
-	public abstract class ASTFNodeImporter
+	public interface ISTFNodeImporter
 	{
-		virtual public GameObject parseFromJson(ISTFImporter state, JToken json)
-		{
-			var go = new GameObject();
-			go.name = (string)json["name"];
-			return go;
-		}
+		GameObject parseFromJson(ISTFImporter state, JToken json, JObject jsonRoot, out List<string> nodesToParse);
 	}
 }
