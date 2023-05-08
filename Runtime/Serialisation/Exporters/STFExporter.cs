@@ -262,7 +262,7 @@ namespace stf.serialisation
 			var bufferInfo = buffers.Select(buffer => buffer.Value.Length).ToArray(); // lengths of all binary buffers
 			byte[] jsonUtf8 = Encoding.UTF8.GetBytes(GetJson());
 
-			var arrayLen = magicUtf8.Length * sizeof(byte) + sizeof(int) + sizeof(int) + headerSize + jsonUtf8.Length * sizeof(byte);
+			var arrayLen = magicUtf8.Length * sizeof(byte) + sizeof(int) * 2 + sizeof(int) + headerSize + jsonUtf8.Length * sizeof(byte);
 			foreach(var bufferLen in bufferInfo) arrayLen += bufferLen;
 
 			// handle endianness at some point maybe
@@ -280,7 +280,9 @@ namespace stf.serialisation
 			// Version
 			{
 				var size = sizeof(int);
-				Buffer.BlockCopy(BitConverter.GetBytes(0), 0, byteArray, offset, size);
+				Buffer.BlockCopy(BitConverter.GetBytes(0), 0, byteArray, offset, size); // Mayor
+				offset += size;
+				Buffer.BlockCopy(BitConverter.GetBytes(0), 0, byteArray, offset, size); // Minor
 				offset += size;
 			}
 

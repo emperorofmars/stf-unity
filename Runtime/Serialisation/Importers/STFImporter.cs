@@ -225,7 +225,9 @@ namespace stf.serialisation
 				throw new Exception("Not an STF file, invalid magic number.");
 			
 			// Version
-			int version = BitConverter.ToInt32(byteArray, offset);
+			int versionMayor = BitConverter.ToInt32(byteArray, offset);
+			offset += sizeof(int);
+			int versionMinor = BitConverter.ToInt32(byteArray, offset);
 			offset += sizeof(int);
 			
 			// Header Length
