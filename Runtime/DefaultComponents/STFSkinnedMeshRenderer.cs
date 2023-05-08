@@ -33,6 +33,7 @@ namespace stf.Components
 				var armatureInstance = armatureInstanceNode.GetComponent<STFArmatureInstance>();
 				c.rootBone = armatureInstance.root.transform;
 				c.bones = armatureInstance.bones.Select(b => b.transform).ToArray();
+				c.updateWhenOffscreen = true;
 			}
 
 			var materials = new Material[c.sharedMesh.subMeshCount];

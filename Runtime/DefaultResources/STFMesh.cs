@@ -301,6 +301,7 @@ namespace stf.serialisation
 				}));
 			}
 			ret.UploadMeshData(false);
+			ret.RecalculateBounds();
 
 			state.GetMeta().resourceInfo.Add(new STFMeta.ResourceInfo {name = ret.name, resource = ret, uuid = id, external = false });
 
