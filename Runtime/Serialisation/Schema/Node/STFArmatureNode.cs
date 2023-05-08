@@ -64,9 +64,9 @@ namespace stf.serialisation
 			go.transform.localRotation = new Quaternion((float)json["trs"][1][0], (float)json["trs"][1][1], (float)json["trs"][1][2], (float)json["trs"][1][3]);
 			go.transform.localScale = new Vector3((float)json["trs"][2][0], (float)json["trs"][2][1], (float)json["trs"][2][2]);
 
-			var armature = (STFArmatureResource)state.GetResource((string)json["armature"]);
+			var armature = (STFArmature)state.GetResource((string)json["armature"]);
 			var rootInstance = Object.Instantiate(armature.root);
-			rootInstance.name = armature.root.name;
+			rootInstance.name = armature.armatureName;
 
 			armatureInstance.root = rootInstance;
 			armatureInstance.bones = new Transform[armature.bones.Length];
