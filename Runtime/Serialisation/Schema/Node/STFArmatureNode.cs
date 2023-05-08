@@ -41,11 +41,11 @@ namespace stf.serialisation
 		}
 	}
 
-	public class STFArmatureInstance : MonoBehaviour
+	/*public class STFArmatureInstance : MonoBehaviour
 	{
 		public Transform root;
 		public Transform[] bones;
-	}
+	}*/
 
 	public class STFArmatureInstanceNodeImporter : ISTFNodeImporter
 	{
@@ -64,12 +64,14 @@ namespace stf.serialisation
 			go.transform.localRotation = new Quaternion((float)json["trs"][1][0], (float)json["trs"][1][1], (float)json["trs"][1][2], (float)json["trs"][1][3]);
 			go.transform.localScale = new Vector3((float)json["trs"][2][0], (float)json["trs"][2][1], (float)json["trs"][2][2]);
 
-			var armature = (STFArmature)state.GetResource((string)json["armature"]);
-			var rootInstance = Object.Instantiate(armature.root);
-			rootInstance.name = armature.armatureName;
+			var armature = (STFArmatureResource)state.GetResource((string)json["armature"]);
+			var rootInstance = Object.Instantiate(armature.armatureTransforms.root);
+			rootInstance.name = armature.armatureTransforms.root.name;
 
-			armatureInstance.root = rootInstance;
-			armatureInstance.bones = new Transform[armature.bones.Length];
+			armatureInstance.armature = armature;
+
+			armatureInstance.root = rootInstance.gameObject;
+			armatureInstance.bones = new GameObject[armature.armatureTransforms.bones.Length];
 
 			rootInstance.SetParent(go.transform, false);
 			foreach(var bone in rootInstance.GetComponentsInChildren<Transform>())
@@ -84,7 +86,7 @@ namespace stf.serialisation
 				var boneInstanceJson = jsonRoot["nodes"][boneInstanceIds[i]];
 				var boneInstance = rootInstance.GetComponentsInChildren<STFUUID>().First(bi => (string)boneInstanceJson["bone"] == bi.boneId);
 				boneInstance.id = boneInstanceIds[i];
-				armatureInstance.bones[i] = boneInstance.transform;
+				armatureInstance.bones[i] = boneInstance.gameObject;
 
 				// use transform from instance
 

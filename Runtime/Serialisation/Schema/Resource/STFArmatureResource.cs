@@ -25,5 +25,7 @@ namespace stf.serialisation
 		public Quaternion rootRotation;
 		public Vector3 rootScale;
 		public List<Bone> bones;
+
+		public STFArmature armatureTransforms;
 	}
 }

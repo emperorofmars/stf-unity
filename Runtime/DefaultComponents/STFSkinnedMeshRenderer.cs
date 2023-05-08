@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json.Linq;
 using stf.serialisation;
 using UnityEngine;
@@ -30,8 +31,8 @@ namespace stf.Components
 				var armatureInstanceId = (string)json["armature_instance"];
 				var armatureInstanceNode = state.GetNode(armatureInstanceId);
 				var armatureInstance = armatureInstanceNode.GetComponent<STFArmatureInstance>();
-				c.rootBone = armatureInstance.root;
-				c.bones = armatureInstance.bones;
+				c.rootBone = armatureInstance.root.transform;
+				c.bones = armatureInstance.bones.Select(b => b.transform).ToArray();
 			}
 
 			c.materials = new Material[c.sharedMesh.subMeshCount];

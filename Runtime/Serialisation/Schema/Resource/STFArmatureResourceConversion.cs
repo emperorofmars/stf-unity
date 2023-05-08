@@ -122,44 +122,61 @@ namespace stf.serialisation
 		public override UnityEngine.Object parseFromJson(ISTFImporter state, JToken json, string id, JObject jsonRoot)
 		{
 			var tasks = new List<Task>();
-			var ret = new STFArmature();
-			ret.armatureName = (string)json["name"];
+			var armatureTransforms = new STFArmature();
+			armatureTransforms.armatureName = (string)json["name"];
 			var rootId = (string)json["root"];
 			var rootJson = (JObject)jsonRoot["nodes"][rootId];
 			var boneIds = json["bones"].ToObject<List<string>>();
-			ret.bones = new Transform[boneIds.Count];
-			ret.bindposes = new Matrix4x4[boneIds.Count];
+			armatureTransforms.bones = new Transform[boneIds.Count];
+			armatureTransforms.bindposes = new Matrix4x4[boneIds.Count];
+			
 			// create STFArmatureResource and save it
+			var armatureResource = ScriptableObject.CreateInstance<STFArmatureResource>();
+			armatureResource.name = armatureTransforms.armatureName;
+			armatureResource.armatureName = armatureTransforms.armatureName;
+			armatureResource.id = id;
+
 			for(int i = 0; i < boneIds.Count; i++)
 			{
 				var boneNodeJson = jsonRoot["nodes"][boneIds[i]];
-				ret.bones[i] = parseBoneFromJson(state, boneNodeJson, tasks).transform;
-				var uuidComponent = ret.bones[i].gameObject.AddComponent<STFUUID>();
+				armatureTransforms.bones[i] = parseBoneFromJson(state, boneNodeJson, tasks).transform;
+				var uuidComponent = armatureTransforms.bones[i].gameObject.AddComponent<STFUUID>();
 				uuidComponent.id = boneIds[i];
 				if(boneIds[i] == rootId)
 				{
-					ret.root = ret.bones[i];
+					armatureTransforms.root = armatureTransforms.bones[i];
 				}
-				state.AddNode(boneIds[i], ret.bones[i].gameObject);
-				state.AddTrashObject(ret.bones[i].gameObject);
+				state.AddNode(boneIds[i], armatureTransforms.bones[i].gameObject);
+				state.AddTrashObject(armatureTransforms.bones[i].gameObject);
 			}
 			foreach(var task in tasks)
 			{
 				task.RunSynchronously();
 				if(task.Exception != null) throw task.Exception;
 			}
-			var armatureGo = new GameObject();
-			state.AddTrashObject(armatureGo);
-			armatureGo.name = ret.armatureName;
-			armatureGo.transform.localPosition = new Vector3((float)json["trs"][0][0], (float)json["trs"][0][1], (float)json["trs"][0][2]);
-			armatureGo.transform.localRotation = new Quaternion((float)json["trs"][1][0], (float)json["trs"][1][1], (float)json["trs"][1][2], (float)json["trs"][1][3]);
-			armatureGo.transform.localScale = new Vector3((float)json["trs"][2][0], (float)json["trs"][2][1], (float)json["trs"][2][2]);
-			ret.root.SetParent(armatureGo.transform, false);
-			for(int i = 0; i < boneIds.Count; i++)
+			if(json["trs"] != null)
 			{
-				ret.bindposes[i] = ret.bones[i].worldToLocalMatrix * armatureGo.transform.localToWorldMatrix;
+				var armatureGo = new GameObject();
+				state.AddTrashObject(armatureGo);
+				armatureGo.name = armatureTransforms.armatureName;
+				armatureGo.transform.localPosition = new Vector3((float)json["trs"][0][0], (float)json["trs"][0][1], (float)json["trs"][0][2]);
+				armatureGo.transform.localRotation = new Quaternion((float)json["trs"][1][0], (float)json["trs"][1][1], (float)json["trs"][1][2], (float)json["trs"][1][3]);
+				armatureGo.transform.localScale = new Vector3((float)json["trs"][2][0], (float)json["trs"][2][1], (float)json["trs"][2][2]);
+				armatureTransforms.root.SetParent(armatureGo.transform, false);
+				for(int i = 0; i < boneIds.Count; i++)
+				{
+					armatureTransforms.bindposes[i] = armatureTransforms.bones[i].worldToLocalMatrix * armatureGo.transform.localToWorldMatrix;
+				}
 			}
-			return ret;
+			else
+			{
+				for(int i = 0; i < boneIds.Count; i++)
+				{
+					armatureTransforms.bindposes[i] = armatureTransforms.bones[i].worldToLocalMatrix;
+				}
+			}
+			armatureResource.armatureTransforms = armatureTransforms;
+			return armatureResource;
 		}
 
 		public GameObject parseBoneFromJson(ISTFImporter state, JToken json, List<Task> tasks)

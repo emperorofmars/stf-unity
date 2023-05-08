@@ -10,6 +10,7 @@ namespace stf.serialisation
 		STFImportContext GetContext();
 		void AddTask(Task task);
 		void AddNode(string id, GameObject go);
+		void AddResources(string id, UnityEngine.Object resource);
 		void AddTrashObject(UnityEngine.Object trash);
 		Dictionary<string, ISTFAsset> GetAssets();
 		GameObject GetNode(string id);

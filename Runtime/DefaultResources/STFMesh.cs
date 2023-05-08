@@ -296,8 +296,8 @@ namespace stf.serialisation
 				ret.SetBoneWeights(bonesPerVertexNat, weights);
 
 				state.AddTask(new Task(() => {
-					var armature = (STFArmature)state.GetResource((string)json["armature"]);
-					ret.bindposes = armature.bindposes;
+					var armature = (STFArmatureResource)state.GetResource((string)json["armature"]);
+					ret.bindposes = armature.armatureTransforms.bindposes;
 				}));
 			}
 			ret.UploadMeshData(false);

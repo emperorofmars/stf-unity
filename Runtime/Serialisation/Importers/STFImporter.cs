@@ -97,6 +97,11 @@ namespace stf.serialisation
 			this.nodes.Add(id, go);
 		}
 
+		public void AddResources(string id, UnityEngine.Object resource)
+		{
+			this.resources.Add(id, resource);
+		}
+
 		public void AddTrashObject(UnityEngine.Object trash)
 		{
 			this.trash.Add(trash);
