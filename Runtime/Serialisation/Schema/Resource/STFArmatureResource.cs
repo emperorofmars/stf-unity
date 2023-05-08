@@ -13,7 +13,7 @@ namespace stf.serialisation
 		{
 			public string id;
 			public string name;
-			public Vector3 loacalPosition;
+			public Vector3 localPosition;
 			public Quaternion localRotation;
 			public Vector3 localScale;
 			public List<string> children = new List<string>();
@@ -27,5 +27,16 @@ namespace stf.serialisation
 		public List<Bone> bones = new List<Bone>();
 
 		public STFArmature armatureTransforms;
+
+		/*public Transform ConstructTransformHirarchy()
+		{
+			var transforms = new Dictionary<string, Transform>();
+			foreach(var bone in bones)
+			{
+				var go = new GameObject();
+				
+			}
+			return transforms[rootId];
+		}*/
 	}
 }
