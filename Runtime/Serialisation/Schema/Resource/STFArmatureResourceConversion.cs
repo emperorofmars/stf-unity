@@ -129,17 +129,22 @@ namespace stf.serialisation
 			var boneIds = json["bones"].ToObject<List<string>>();
 			armatureTransforms.bones = new Transform[boneIds.Count];
 			armatureTransforms.bindposes = new Matrix4x4[boneIds.Count];
-			
+
 			// create STFArmatureResource and save it
 			var armatureResource = ScriptableObject.CreateInstance<STFArmatureResource>();
 			armatureResource.name = armatureTransforms.armatureName;
 			armatureResource.armatureName = armatureTransforms.armatureName;
+			armatureResource.rootId = rootId;
 			armatureResource.id = id;
+			//armatureResource.bones = new List<STFArmatureResource.Bone>(boneIds.Count);
+			var boneResources = new STFArmatureResource.Bone[boneIds.Count];
 
 			for(int i = 0; i < boneIds.Count; i++)
 			{
+
 				var boneNodeJson = jsonRoot["nodes"][boneIds[i]];
-				armatureTransforms.bones[i] = parseBoneFromJson(state, boneNodeJson, tasks).transform;
+				var resourceBone = new STFArmatureResource.Bone();
+				armatureTransforms.bones[i] = parseBoneFromJson(state, boneNodeJson, resourceBone, tasks).transform;
 				var uuidComponent = armatureTransforms.bones[i].gameObject.AddComponent<STFUUID>();
 				uuidComponent.id = boneIds[i];
 				if(boneIds[i] == rootId)
@@ -148,6 +153,10 @@ namespace stf.serialisation
 				}
 				state.AddNode(boneIds[i], armatureTransforms.bones[i].gameObject);
 				state.AddTrashObject(armatureTransforms.bones[i].gameObject);
+				
+				resourceBone.id = boneIds[i];
+				resourceBone.name = (string)boneNodeJson["name"];
+				boneResources[i] = resourceBone;
 			}
 			foreach(var task in tasks)
 			{
@@ -163,6 +172,11 @@ namespace stf.serialisation
 				armatureGo.transform.localRotation = new Quaternion((float)json["trs"][1][0], (float)json["trs"][1][1], (float)json["trs"][1][2], (float)json["trs"][1][3]);
 				armatureGo.transform.localScale = new Vector3((float)json["trs"][2][0], (float)json["trs"][2][1], (float)json["trs"][2][2]);
 				armatureTransforms.root.SetParent(armatureGo.transform, false);
+
+				armatureResource.armaturePosition = armatureGo.transform.localPosition;
+				armatureResource.armatureRotation = armatureGo.transform.localRotation;
+				armatureResource.armatureScale = armatureGo.transform.localScale;
+
 				for(int i = 0; i < boneIds.Count; i++)
 				{
 					armatureTransforms.bindposes[i] = armatureTransforms.bones[i].worldToLocalMatrix * armatureGo.transform.localToWorldMatrix;
@@ -175,11 +189,12 @@ namespace stf.serialisation
 					armatureTransforms.bindposes[i] = armatureTransforms.bones[i].worldToLocalMatrix;
 				}
 			}
+			armatureResource.bones = new List<STFArmatureResource.Bone>(boneResources);
 			armatureResource.armatureTransforms = armatureTransforms;
 			return armatureResource;
 		}
 
-		public GameObject parseBoneFromJson(ISTFImporter state, JToken json, List<Task> tasks)
+		public GameObject parseBoneFromJson(ISTFImporter state, JToken json, STFArmatureResource.Bone boneResource, List<Task> tasks)
 		{
 			var go = new GameObject();
 			go.name = (string)json["name"];
@@ -188,6 +203,10 @@ namespace stf.serialisation
 			go.transform.localPosition = new Vector3((float)json["trs"][0][0], (float)json["trs"][0][1], (float)json["trs"][0][2]);
 			go.transform.localRotation = new Quaternion((float)json["trs"][1][0], (float)json["trs"][1][1], (float)json["trs"][1][2], (float)json["trs"][1][3]);
 			go.transform.localScale = new Vector3((float)json["trs"][2][0], (float)json["trs"][2][1], (float)json["trs"][2][2]);
+			
+			boneResource.loacalPosition = go.transform.localPosition;
+			boneResource.localRotation = go.transform.localRotation;
+			boneResource.localScale = go.transform.localScale;
 
 			if(children != null)
 			{
@@ -196,6 +215,7 @@ namespace stf.serialisation
 					{
 						var child = state.GetNode(childId);
 						child.transform.SetParent(go.transform, false);
+						boneResource.children.Add(childId);
 					}
 				}));
 			}

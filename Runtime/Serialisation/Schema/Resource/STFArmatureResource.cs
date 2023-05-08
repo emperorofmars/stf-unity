@@ -16,15 +16,15 @@ namespace stf.serialisation
 			public Vector3 loacalPosition;
 			public Quaternion localRotation;
 			public Vector3 localScale;
-			public List<string> children;
+			public List<string> children = new List<string>();
 		}
 		public string id;
 		public string armatureName;
 		public string rootId;
-		public Vector3 rootPosition;
-		public Quaternion rootRotation;
-		public Vector3 rootScale;
-		public List<Bone> bones;
+		public Vector3 armaturePosition;
+		public Quaternion armatureRotation;
+		public Vector3 armatureScale;
+		public List<Bone> bones = new List<Bone>();
 
 		public STFArmature armatureTransforms;
 	}
