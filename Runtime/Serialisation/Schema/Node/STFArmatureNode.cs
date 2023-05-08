@@ -41,6 +41,12 @@ namespace stf.serialisation
 		}
 	}
 
+	public class STFArmatureInstance : MonoBehaviour
+	{
+		Transform root;
+		Transform[] bones;
+	}
+
 	public class STFArmatureInstanceNodeImporter : ISTFNodeImporter
 	{
 		public static string _TYPE = "armature_instance";
@@ -73,7 +79,7 @@ namespace stf.serialisation
 				var boneInstanceJson = jsonRoot["nodes"][boneInstanceIds[i]];
 				var boneInstance = rootInstance.GetComponentsInChildren<STFUUID>().First(bi => (string)boneInstanceJson["bone"] == bi.boneId);
 				boneInstance.id = boneInstanceIds[i];
-
+				state.AddNode(boneInstance.id, boneInstance.gameObject);
 				nodesToParse.AddRange(boneInstanceJson["children"].ToObject<List<string>>());
 			}
 			state.AddTask(new Task(() => {

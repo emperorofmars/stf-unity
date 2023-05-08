@@ -127,7 +127,7 @@ namespace stf.serialisation
 				{
 					var go = nodes[jsonNode.Key];
 
-					if(go.GetComponent<STFUUID>() != null)
+					if(go.GetComponent<STFUUID>() == null)
 					{
 						var uuidComponent = go.AddComponent<STFUUID>();
 						uuidComponent.id = jsonNode.Key;
