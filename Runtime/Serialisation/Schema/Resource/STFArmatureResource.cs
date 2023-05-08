@@ -181,7 +181,7 @@ namespace stf.serialisation
 			armatureGo.transform.localRotation = new Quaternion((float)json["trs"][1][0], (float)json["trs"][1][1], (float)json["trs"][1][2], (float)json["trs"][1][3]);
 			armatureGo.transform.localScale = new Vector3((float)json["trs"][2][0], (float)json["trs"][2][1], (float)json["trs"][2][2]);
 			Debug.Log($"armatureGo trs: {armatureGo.transform.eulerAngles}");
-			ret.root.SetParent(armatureGo.transform, true);
+			ret.root.SetParent(armatureGo.transform, false);
 			for(int i = 0; i < boneIds.Count; i++)
 			{
 				ret.bindposes[i] = ret.bones[i].worldToLocalMatrix * armatureGo.transform.localToWorldMatrix;
