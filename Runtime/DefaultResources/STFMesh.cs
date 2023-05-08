@@ -1,6 +1,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using Unity.Collections;
 using UnityEngine;
@@ -293,6 +294,16 @@ namespace stf.serialisation
 				var bonesPerVertexNat = new NativeArray<byte>(bonesPerVertex, Allocator.Temp);
 
 				ret.SetBoneWeights(bonesPerVertexNat, weights);
+
+				state.AddTask(new Task(() => {
+					var armature = (STFArmatureResource)state.GetResource((string)json["armature"]);
+					var bindposes = new Matrix4x4[armature.bones.Length];
+					for(int bindposeIdx = 0; bindposeIdx < armature.bones.Length; bindposeIdx++)
+					{
+						bindposes[bindposeIdx] = armature.bones[bindposeIdx].worldToLocalMatrix * armature.root.localToWorldMatrix;
+					}
+					ret.bindposes = bindposes;
+				}));
 			}
 			ret.UploadMeshData(false);
 

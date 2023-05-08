@@ -43,8 +43,8 @@ namespace stf.serialisation
 
 	public class STFArmatureInstance : MonoBehaviour
 	{
-		Transform root;
-		Transform[] bones;
+		public Transform root;
+		public Transform[] bones;
 	}
 
 	public class STFArmatureInstanceNodeImporter : ISTFNodeImporter
@@ -58,6 +58,8 @@ namespace stf.serialisation
 			var children = json["children"].ToObject<List<string>>();
 			nodesToParse = new List<string>(children);
 
+			var armatureInstance = go.AddComponent<STFArmatureInstance>();
+
 			go.transform.localPosition = new Vector3((float)json["trs"][0][0], (float)json["trs"][0][1], (float)json["trs"][0][2]);
 			go.transform.localRotation = new Quaternion((float)json["trs"][1][0], (float)json["trs"][1][1], (float)json["trs"][1][2], (float)json["trs"][1][3]);
 			go.transform.localScale = new Vector3((float)json["trs"][2][0], (float)json["trs"][2][1], (float)json["trs"][2][2]);
@@ -65,6 +67,9 @@ namespace stf.serialisation
 			var armature = (STFArmatureResource)state.GetResource((string)json["armature"]);
 			var rootInstance = Object.Instantiate(armature.root);
 			rootInstance.name = armature.root.name;
+
+			armatureInstance.root = rootInstance;
+			armatureInstance.bones = new Transform[armature.bones.Length];
 
 			rootInstance.SetParent(go.transform, false);
 			foreach(var bone in rootInstance.GetComponentsInChildren<Transform>())
@@ -79,8 +84,24 @@ namespace stf.serialisation
 				var boneInstanceJson = jsonRoot["nodes"][boneInstanceIds[i]];
 				var boneInstance = rootInstance.GetComponentsInChildren<STFUUID>().First(bi => (string)boneInstanceJson["bone"] == bi.boneId);
 				boneInstance.id = boneInstanceIds[i];
+				armatureInstance.bones[i] = boneInstance.transform;
+
+				// use transform from instance
+
 				state.AddNode(boneInstance.id, boneInstance.gameObject);
-				nodesToParse.AddRange(boneInstanceJson["children"].ToObject<List<string>>());
+
+				var instanceChildren = boneInstanceJson["children"].ToObject<List<string>>();
+				if(instanceChildren != null)
+				{
+					nodesToParse.AddRange(boneInstanceJson["children"].ToObject<List<string>>());
+					state.AddTask(new Task(() => {
+						foreach(var childId in instanceChildren)
+						{
+							var child = state.GetNode(childId);
+							child.transform.SetParent(boneInstance.transform, false);
+						}
+					}));
+				}
 			}
 			state.AddTask(new Task(() => {
 				foreach(var childId in children)

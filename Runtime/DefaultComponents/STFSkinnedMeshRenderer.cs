@@ -15,9 +15,6 @@ namespace stf.Components
 			var uuidComponent = go.GetComponent<STFUUID>();
 			uuidComponent.componentIds.Add(c, id);
 
-			var armatureInstanceId = (string)json["armature_instance"];
-			var armatureInstance = state.GetNode(armatureInstanceId);
-
 			//var skeleton = json["skeleton"].ToObject<List<string>>();
 			/*var bones = new Transform[skeleton.Count];
 			for(int i = 0; i < skeleton.Count; i++)
@@ -39,16 +36,18 @@ namespace stf.Components
 				c.sharedMesh = renderer.sharedMesh;
 			}
 
+			if((string)json["armature_instance"] != null)
+			{
+				var armatureInstanceId = (string)json["armature_instance"];
+				var armatureInstanceNode = state.GetNode(armatureInstanceId);
+				var armatureInstance = armatureInstanceNode.GetComponent<STFArmatureInstance>();
+				c.rootBone = armatureInstance.root;
+				c.bones = armatureInstance.bones;
+			}
+
 			c.materials = new Material[c.sharedMesh.subMeshCount];
 			c.localBounds = c.sharedMesh.bounds;
 
-			// do this in mesh from the armature resource
-			/*var bindposes = new Matrix4x4[c.bones.Length];
-			for(int bindposeIdx = 0; bindposeIdx < c.bones.Length; bindposeIdx++)
-			{
-				bindposes[bindposeIdx] = c.bones[bindposeIdx].worldToLocalMatrix * go.transform.localToWorldMatrix;
-			}
-			c.sharedMesh.bindposes = bindposes;*/
 		}
 	}
 
