@@ -35,7 +35,12 @@ namespace stf.Components
 				c.bones = armatureInstance.bones.Select(b => b.transform).ToArray();
 			}
 
-			c.materials = new Material[c.sharedMesh.subMeshCount];
+			var materials = new Material[c.sharedMesh.subMeshCount];
+			for(int i = 0; i < materials.Length; i++)
+			{
+				materials[i] = (Material)state.GetResource((string)json["materials"][i]);
+			}
+			c.sharedMaterials = materials;
 			c.localBounds = c.sharedMesh.bounds;
 		}
 	}
@@ -48,6 +53,7 @@ namespace stf.Components
 			SkinnedMeshRenderer c = (SkinnedMeshRenderer)component;
 			var ret = new List<UnityEngine.Object>();
 			ret.Add(c.sharedMesh);
+			foreach(var material in c.materials) ret.Add(material);
 			return ret;
 		}
 
@@ -57,16 +63,8 @@ namespace stf.Components
 			var ret = new JObject();
 			ret.Add("type", "STF.mesh_instance");
 			ret.Add("mesh", state.GetResourceId(c.sharedMesh));
-
-			// optional different order of bones in skeleton
-			/*var skeleton = new JArray();
-			foreach(var bone in c.bones)
-			{
-				skeleton.Add(state.GetNodeId(bone.gameObject));
-			}
-			ret.Add("skeleton", skeleton);
-			ret.Add("skeleton_root", state.GetNodeId(c.rootBone.gameObject));*/
 			ret.Add("armature_instance", state.GetNodeId(c.rootBone.parent.gameObject));
+			ret.Add("materials", new JArray(c.materials.Select(m => state.GetResourceId(m))));
 			return ret;
 		}
 	}

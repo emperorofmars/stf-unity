@@ -34,14 +34,14 @@ namespace stf.serialisation
 		public static readonly Dictionary<string, ASTFResourceImporter> DefaultResourceImporters = new Dictionary<string, ASTFResourceImporter>() {
 			{STFMeshImporter._TYPE, new STFMeshImporter()},
 			{STFTextureImporter._TYPE, new STFTextureImporter()},
-			{STFArmatureImporter._TYPE, new STFArmatureImporter()}
-			//Material
+			{STFArmatureImporter._TYPE, new STFArmatureImporter()},
+			{STFMaterialImporter._TYPE, new STFMaterialImporter()}
 			//Animation
 		};
 		public static readonly Dictionary<Type, ASTFResourceExporter> DefaultResourceExporters = new Dictionary<Type, ASTFResourceExporter>() {
 			{typeof(Mesh), new STFMeshExporter()},
-			{typeof(Texture2D), new STFTextureExporter()}
-			//Material
+			{typeof(Texture2D), new STFTextureExporter()},
+			{typeof(Material), new STFMaterialExporter()}
 			//Animation
 		};
 

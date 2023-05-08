@@ -25,7 +25,6 @@ namespace stf.serialisation
 			// get armature from stored resource
 			if(smr.rootBone.parent != null && smr.rootBone.parent.GetComponent<STFArmatureInstance>() != null)
 			{
-				Debug.Log("PARSING FROM RESOURCE");
 				var armatureInstance = smr.rootBone.parent.GetComponent<STFArmatureInstance>();
 				rootBoneId = armatureInstance.armature.rootId;
 				this.id = armatureInstance.armature.id;
