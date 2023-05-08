@@ -38,7 +38,7 @@ namespace stf.Components
 			var materials = new Material[c.sharedMesh.subMeshCount];
 			for(int i = 0; i < materials.Length; i++)
 			{
-				materials[i] = (Material)state.GetResource((string)json["materials"][i]);
+				if(json["materials"][i] != null) materials[i] = (Material)state.GetResource((string)json["materials"][i]);
 			}
 			c.sharedMaterials = materials;
 			c.localBounds = c.sharedMesh.bounds;
@@ -53,7 +53,7 @@ namespace stf.Components
 			SkinnedMeshRenderer c = (SkinnedMeshRenderer)component;
 			var ret = new List<UnityEngine.Object>();
 			ret.Add(c.sharedMesh);
-			foreach(var material in c.materials) ret.Add(material);
+			foreach(var material in c.sharedMaterials) if(material != null) ret.Add(material);
 			return ret;
 		}
 
@@ -64,7 +64,7 @@ namespace stf.Components
 			ret.Add("type", "STF.mesh_instance");
 			ret.Add("mesh", state.GetResourceId(c.sharedMesh));
 			ret.Add("armature_instance", state.GetNodeId(c.rootBone.parent.gameObject));
-			ret.Add("materials", new JArray(c.materials.Select(m => state.GetResourceId(m))));
+			ret.Add("materials", new JArray(c.sharedMaterials.Select(m => m != null ? state.GetResourceId(m) : null)));
 			return ret;
 		}
 	}
