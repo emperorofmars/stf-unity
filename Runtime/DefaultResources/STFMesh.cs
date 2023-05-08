@@ -297,12 +297,7 @@ namespace stf.serialisation
 
 				state.AddTask(new Task(() => {
 					var armature = (STFArmatureResource)state.GetResource((string)json["armature"]);
-					var bindposes = new Matrix4x4[armature.bones.Length];
-					for(int bindposeIdx = 0; bindposeIdx < armature.bones.Length; bindposeIdx++)
-					{
-						bindposes[bindposeIdx] = armature.bones[bindposeIdx].worldToLocalMatrix * armature.root.localToWorldMatrix;
-					}
-					ret.bindposes = bindposes;
+					ret.bindposes = armature.bindposes;
 				}));
 			}
 			ret.UploadMeshData(false);

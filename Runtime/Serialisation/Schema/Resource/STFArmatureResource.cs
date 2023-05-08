@@ -25,8 +25,6 @@ namespace stf.serialisation
 			// get id from original armature definition
 
 			this.id = Guid.NewGuid().ToString();
-
-
 			var boneNodes = new List<JObject>();
 			for(int i = 0; i < bindposes.Length; i++)
 			{
@@ -167,7 +165,6 @@ namespace stf.serialisation
 				if(boneIds[i] == rootId)
 				{
 					ret.root = ret.bones[i];
-					Debug.Log($"root pos: {ret.root.localPosition}");
 				}
 				state.AddNode(boneIds[i], ret.bones[i].gameObject);
 				state.AddTrashObject(ret.bones[i].gameObject);
@@ -177,22 +174,18 @@ namespace stf.serialisation
 				task.RunSynchronously();
 				if(task.Exception != null) throw task.Exception;
 			}
-			Debug.Log($"root name: {ret.root.name}");
-			/*var armatureGo = new GameObject();
+			var armatureGo = new GameObject();
+			state.AddTrashObject(armatureGo);
 			armatureGo.name = ret.armatureName;
 			armatureGo.transform.localPosition = new Vector3((float)json["trs"][0][0], (float)json["trs"][0][1], (float)json["trs"][0][2]);
 			armatureGo.transform.localRotation = new Quaternion((float)json["trs"][1][0], (float)json["trs"][1][1], (float)json["trs"][1][2], (float)json["trs"][1][3]);
 			armatureGo.transform.localScale = new Vector3((float)json["trs"][2][0], (float)json["trs"][2][1], (float)json["trs"][2][2]);
-			ret.root.SetParent(armatureGo.transform, false);*/
+			Debug.Log($"armatureGo trs: {armatureGo.transform.eulerAngles}");
+			ret.root.SetParent(armatureGo.transform, true);
 			for(int i = 0; i < boneIds.Count; i++)
 			{
-				//ret.bindposes[i] = ret.bones[i].worldToLocalMatrix * armatureGo.transform.localToWorldMatrix;
+				ret.bindposes[i] = ret.bones[i].worldToLocalMatrix * armatureGo.transform.localToWorldMatrix;
 			}
-			/*#if UNITY_EDITOR
-				UnityEngine.Object.DestroyImmediate(armatureGo);
-			#else
-				UnityEngine.Object.Destroy(armatureGo);
-			#endif*/
 			return ret;
 		}
 
