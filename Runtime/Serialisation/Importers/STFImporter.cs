@@ -21,6 +21,7 @@ namespace stf.serialisation
 		public Dictionary<string, GameObject> nodes = new Dictionary<string, GameObject>();
 		public Dictionary<string, UnityEngine.Object> resources = new Dictionary<string, UnityEngine.Object>();
 		public Dictionary<string, byte[]> buffers = new Dictionary<string, byte[]>();
+		private List<UnityEngine.Object> trash = new List<UnityEngine.Object>();
 		private List<Task> tasks = new List<Task>();
 		private List<Task> componentTasks = new List<Task>();
 		public STFMeta meta = ScriptableObject.CreateInstance<STFMeta>();
@@ -94,6 +95,11 @@ namespace stf.serialisation
 		public void AddNode(string id, GameObject go)
 		{
 			this.nodes.Add(id, go);
+		}
+
+		public void AddTrashObject(UnityEngine.Object trash)
+		{
+			this.trash.Add(trash);
 		}
 
 		public void parse(JObject jsonRoot)
@@ -183,6 +189,19 @@ namespace stf.serialisation
 					}
 				}
 				throw new Exception("Error during STF import: ", e);
+			} finally
+			{
+				foreach(var trashObject in trash)
+				{
+					if(trashObject != null)
+					{
+						#if UNITY_EDITOR
+							UnityEngine.Object.DestroyImmediate(trashObject);
+						#else
+							UnityEngine.Object.Destroy(trashObject);
+						#endif
+					}
+				}
 			}
 		}
 

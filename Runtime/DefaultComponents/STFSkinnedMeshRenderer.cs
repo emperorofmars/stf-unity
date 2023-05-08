@@ -43,10 +43,26 @@ namespace stf.Components
 				var armatureInstance = armatureInstanceNode.GetComponent<STFArmatureInstance>();
 				c.rootBone = armatureInstance.root;
 				c.bones = armatureInstance.bones;
+				
+				// do this in mesh from the armature resource
+				var bindposes = new Matrix4x4[armatureInstance.bones.Length];
+				for(int bindposeIdx = 0; bindposeIdx < c.bones.Length; bindposeIdx++)
+				{
+					bindposes[bindposeIdx] = armatureInstance.bones[bindposeIdx].worldToLocalMatrix * go.transform.localToWorldMatrix;
+				}
+				c.sharedMesh.bindposes = bindposes;
 			}
 
 			c.materials = new Material[c.sharedMesh.subMeshCount];
 			c.localBounds = c.sharedMesh.bounds;
+
+			// do this in mesh from the armature resource
+
+			/*for(int bindposeIdx = 0; bindposeIdx < c.bones.Length; bindposeIdx++)
+			{
+				bindposes[bindposeIdx] = c.bones[bindposeIdx].worldToLocalMatrix * go.transform.localToWorldMatrix;
+			}
+			c.sharedMesh.bindposes = bindposes;*/
 
 		}
 	}
