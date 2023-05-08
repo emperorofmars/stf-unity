@@ -35,12 +35,14 @@ namespace stf.serialisation
 				bone.Add("name", bones[i].name);
 				bone.Add("type", "bone");
 
+				// fallback
 				bone.Add("trs", new JArray() {
 					new JArray() {bones[i].localPosition.x, bones[i].localPosition.y, bones[i].localPosition.z},
 					new JArray() {bones[i].localRotation.x, bones[i].localRotation.y, bones[i].localRotation.z, bones[i].localRotation.w},
 					new JArray() {bones[i].localScale.x, bones[i].localScale.y, bones[i].localScale.z}
 				});
 				
+				//actually use bindposes
 				/*Matrix4x4 parentBindpose = Matrix4x4.identity;
 				if(bones[i] != rootBone)
 				{
@@ -54,47 +56,19 @@ namespace stf.serialisation
 						}
 
 					}
-				}*/
-				//var transformMat = bindposes[i].inverse * parentBindpose;
-				//var transformMat = bindposes[i] * parentBindpose.inverse;
-				//var transformMat = parentBindpose * bindposes[i];
-				//var transformMat = parentBindpose.inverse * bindposes[i];
-				//var transformMat = parentBindpose.inverse * bindposes[i].inverse;
-				//var transformMat = bindposes[i].inverse * parentBindpose.inverse;
+				}
+				Matrix4x4 transformMat;
+				if(bones[i] != rootBone)
+					transformMat = bindposes[i] * parentBindpose.inverse;
+				else
+					transformMat = bindposes[i];// * rootBone.parent.worldToLocalMatrix;
 
-				//Debug.Log($"Getting local bindpose transform of: {bones[i].name}");
-
-				//var transformMat = parentBindpose * bindposes[i].inverse;
-				/*var parent = new GameObject();
-				parent.transform.localPosition = new Vector3(parentBindpose.GetColumn(3).x, parentBindpose.GetColumn(3).y, parentBindpose.GetColumn(3).z);
-				parent.transform.localRotation = new Quaternion(parentBindpose.rotation.x, parentBindpose.rotation.y, parentBindpose.rotation.z, parentBindpose.rotation.w);
-				parent.transform.localScale = new Vector3(parentBindpose.lossyScale.x, parentBindpose.lossyScale.y, parentBindpose.lossyScale.z);
-				var child = new GameObject();
-				child.transform.localPosition = new Vector3(bindposes[i].GetColumn(3).x, bindposes[i].GetColumn(3).y, bindposes[i].GetColumn(3).z);
-				child.transform.localRotation = new Quaternion(bindposes[i].rotation.x, bindposes[i].rotation.y, bindposes[i].rotation.z, bindposes[i].rotation.w);
-				child.transform.localScale = new Vector3(bindposes[i].lossyScale.x, bindposes[i].lossyScale.y, bindposes[i].lossyScale.z);
-				child.transform.SetParent(parent.transform, true);*/
-				/*bone.Add("trs", new JArray() {
-					new JArray() {child.transform.localPosition.x, child.transform.localPosition.y, child.transform.localPosition.z},
-					new JArray() {child.transform.localRotation.x, child.transform.localRotation.y, child.transform.localRotation.z, child.transform.localRotation.w},
-					new JArray() {child.transform.localScale.x, child.transform.localScale.y, child.transform.localScale.z}
-				});
-				#if UNITY_EDITOR
-					UnityEngine.Object.DestroyImmediate(parent);
-					UnityEngine.Object.DestroyImmediate(child);
-				#else
-					UnityEngine.Object.Destroy(parent);
-					UnityEngine.Object.Destroy(child);
-				#endif*/
-
-				//new Vector3(transformMat[0,3], transformMat[1,3], transformMat[2,3])
-
-				/*bone.Add("trs", new JArray() {
-					//new JArray() {transformMat.GetColumn(3).x, transformMat.GetColumn(3).y, transformMat.GetColumn(3).z},
-					new JArray() {transformMat[0,3], transformMat[1,3], transformMat[2,3]},
+				bone.Add("trs", new JArray() {
+					new JArray() {transformMat.GetColumn(3).x, transformMat.GetColumn(3).y, transformMat.GetColumn(3).z},
 					new JArray() {transformMat.rotation.x, transformMat.rotation.y, transformMat.rotation.z, transformMat.rotation.w},
 					new JArray() {transformMat.lossyScale.x, transformMat.lossyScale.y, transformMat.lossyScale.z}
 				});*/
+
 				state.RegisterNode(boneId, bone);
 				boneNodes.Add(bone);
 				boneIds.Add(boneId);
@@ -180,7 +154,6 @@ namespace stf.serialisation
 			armatureGo.transform.localPosition = new Vector3((float)json["trs"][0][0], (float)json["trs"][0][1], (float)json["trs"][0][2]);
 			armatureGo.transform.localRotation = new Quaternion((float)json["trs"][1][0], (float)json["trs"][1][1], (float)json["trs"][1][2], (float)json["trs"][1][3]);
 			armatureGo.transform.localScale = new Vector3((float)json["trs"][2][0], (float)json["trs"][2][1], (float)json["trs"][2][2]);
-			Debug.Log($"armatureGo trs: {armatureGo.transform.eulerAngles}");
 			ret.root.SetParent(armatureGo.transform, false);
 			for(int i = 0; i < boneIds.Count; i++)
 			{
