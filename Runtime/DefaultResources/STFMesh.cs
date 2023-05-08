@@ -175,7 +175,7 @@ namespace stf.serialisation
 	public class STFMeshImporter : ASTFResourceImporter
 	{
 		public static string _TYPE = "STF.mesh";
-		override public UnityEngine.Object parseFromJson(ISTFImporter state, JToken json, string id)
+		override public UnityEngine.Object parseFromJson(ISTFImporter state, JToken json, string id, JObject jsonRoot)
 		{
 			var ret = new Mesh();
 			ret.name = (string)json["name"];

@@ -100,7 +100,7 @@ namespace stf.serialisation
 			nodes.Add(nodeId, node);
 		}
 
-		public string RegisterNode(GameObject go, ASTFNodeExporter exporter)
+		/*public string RegisterNode(GameObject go, ASTFNodeExporter exporter)
 		{
 			if(nodeIds.ContainsKey(go)) return nodeIds[go];
 			var uuid = go.GetComponent<STFUUID>();
@@ -109,7 +109,7 @@ namespace stf.serialisation
 			nodeIds.Add(go, id);
 			nodes.Add(id, (JObject)jnode);
 			return id;
-		}
+		}*/
 
 		public void RegisterResource(string resourceId, JObject resource)
 		{

@@ -39,7 +39,7 @@ namespace stf.serialisation
 	{
 		public static string _TYPE = "STF.texture";
 
-		public override UnityEngine.Object parseFromJson(ISTFImporter state, JToken json, string id)
+		public override UnityEngine.Object parseFromJson(ISTFImporter state, JToken json, string id, JObject jsonRoot)
 		{
 			// will load the uncompressed data into memory, use only at runtime
 			var arrayBuffer = state.GetBuffer((string)json["buffer"]);

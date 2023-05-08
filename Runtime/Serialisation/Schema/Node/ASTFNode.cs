@@ -5,7 +5,7 @@ using Newtonsoft.Json.Linq;
 
 namespace stf.serialisation
 {
-	public abstract class ASTFNodeExporter
+	/*public abstract class ASTFNodeExporter
 	{
 		virtual public JToken serializeToJson(GameObject go, ISTFExporter state)
 		{
@@ -24,7 +24,7 @@ namespace stf.serialisation
 		{
 			return null;
 		}
-	}
+	}*/
 
 	public abstract class ASTFNodeImporter
 	{

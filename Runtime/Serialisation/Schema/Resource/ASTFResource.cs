@@ -22,6 +22,6 @@ namespace stf.serialisation
 
 	public abstract class ASTFResourceImporter
 	{
-		abstract public UnityEngine.Object parseFromJson(ISTFImporter state, JToken json, string id);
+		abstract public UnityEngine.Object parseFromJson(ISTFImporter state, JToken json, string id, JObject jsonRoot);
 	}
 }

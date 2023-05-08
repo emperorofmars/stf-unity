@@ -6,13 +6,14 @@ using System.Threading.Tasks;
 
 namespace stf.serialisation
 {
-	/*public class STFBoneNodeExporter : ASTFNodeExporter
+	public class STFBoneInstanceNodeExporter// : ASTFNodeExporter
 	{
-		public Transform[] bones;
-
-		override public JToken serializeToJson(GameObject go, ISTFExporter state)
+		public static JObject serializeToJson(GameObject go, ISTFExporter state, string boneId, Transform[] boneInstances)
 		{
-			var ret = (JObject)base.serializeToJson(go, state);
+			var ret = new JObject();
+			ret.Add("name", go.name);
+			ret.Add("type", "bone_instance");
+			ret.Add("bone", boneId);
 			ret.Add("trs", new JArray() {
 				new JArray() {go.transform.localPosition.x, go.transform.localPosition.y, go.transform.localPosition.z},
 				new JArray() {go.transform.localRotation.x, go.transform.localRotation.y, go.transform.localRotation.z, go.transform.localRotation.w},
@@ -23,18 +24,18 @@ namespace stf.serialisation
 				for(int i = 0; i < go.transform.childCount; i++)
 				{
 					var child = go.transform.GetChild(i);
-					children.Add(state.GetNodeId(child.gameObject));
+					var isBoneInstance = false;
+					foreach(var boneInstance in boneInstances) if(child == boneInstance) { isBoneInstance = true; break; }
+					if(!isBoneInstance) children.Add(state.GetNodeId(child.gameObject));
 				}
 				ret.Add("children", new JArray(children));
 			}));
 			return ret;
 		}
-	}*/
+	}
 
-	public class STFBoneNodeImporter : ASTFNodeImporter
+	public class STFBoneInstanceNodeImporter : ASTFNodeImporter
 	{
-		public static string _TYPE = "bone";
-		
 		override public GameObject parseFromJson(ISTFImporter state, JToken json)
 		{
 			var go = new GameObject();

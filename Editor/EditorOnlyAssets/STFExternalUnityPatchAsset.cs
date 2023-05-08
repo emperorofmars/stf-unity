@@ -38,19 +38,26 @@ namespace stf.serialisation
 
 				if(component.GetType() == typeof(STFUnrecognizedComponent))
 				{
-					var nodeId = state.RegisterNode(component.gameObject, _nodeExporter);
+					var nodeUuidComponent = component.gameObject.GetComponent<STFUUID>();
+					var nodeId = nodeUuidComponent != null && nodeUuidComponent.id != null && nodeUuidComponent.id.Length > 0 ? nodeUuidComponent.id : Guid.NewGuid().ToString();
+					state.RegisterNode(nodeId, STFExternalNodeExporter.serializeToJson(component.gameObject, state), component.gameObject);
 					state.RegisterComponent(nodeId, component);
 				}
 				else if(state.GetContext().ComponentExporters.ContainsKey(component.GetType()))
 				{
 					var componentExporter = state.GetContext().ComponentExporters[component.GetType()];
-					var nodeId = state.RegisterNode(component.gameObject, _nodeExporter);
+					var nodeUuidComponent = component.gameObject.GetComponent<STFUUID>();
+					var nodeId = nodeUuidComponent != null && nodeUuidComponent.id != null && nodeUuidComponent.id.Length > 0 ? nodeUuidComponent.id : Guid.NewGuid().ToString();
+					state.RegisterNode(nodeId, STFExternalNodeExporter.serializeToJson(component.gameObject, state), component.gameObject);
 					var gatheredNodes = componentExporter.gatherNodes(component);
 					if(gatheredNodes != null)
 					{
 						foreach(var gatheredNode in gatheredNodes)
 						{
-							var gatheredNodeId = state.RegisterNode(gatheredNode, _nodeExporter);
+							var gatheredNodeUuidComponent = component.gameObject.GetComponent<STFUUID>();
+							var gatheredNodeId = nodeUuidComponent != null && gatheredNodeUuidComponent.id != null && gatheredNodeUuidComponent.id.Length > 0 ? gatheredNodeUuidComponent.id : Guid.NewGuid().ToString();
+							state.RegisterNode(gatheredNodeId, STFExternalNodeExporter.serializeToJson(component.gameObject, state), component.gameObject);
+
 							if(!gatheredRootNodes.Contains(gatheredNodeId)) gatheredRootNodes.Add(gatheredNodeId);
 						}
 					}

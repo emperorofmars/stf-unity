@@ -11,11 +11,10 @@ namespace stf.serialisation
 	public class STFAssetExporter : ISTFAssetExporter
 	{
 		public GameObject rootNode;
-		private STFNodeExporter _nodeExporter = new STFNodeExporter();
 		public string id = Guid.NewGuid().ToString();
 
 		public Dictionary<Transform, string> boneMappings = new Dictionary<Transform, string>();
-		private Dictionary<Transform, STFArmatureResource> armatureInstances = new Dictionary<Transform, STFArmatureResource>();
+		private Dictionary<Transform, STFArmatureResourceExporter> armatureInstances = new Dictionary<Transform, STFArmatureResourceExporter>();
 		private Dictionary<Transform, Transform[]> armatureInstancesBoneInstances = new Dictionary<Transform, Transform[]>();
 
 		public void Convert(ISTFExporter state)
@@ -58,7 +57,7 @@ namespace stf.serialisation
 		private void GatherArmatures(ISTFExporter state, SkinnedMeshRenderer[] skinnedMeshRenderers)
 		{
 			// TODO: handle already existing armatures
-			var armatures = new Dictionary<Mesh, STFArmatureResource>();
+			var armatures = new Dictionary<Mesh, STFArmatureResourceExporter>();
 			foreach(var smr in skinnedMeshRenderers)
 			{
 				// find if the same armature already exists
@@ -78,7 +77,7 @@ namespace stf.serialisation
 				}
 				if(!armatures.ContainsKey(smr.sharedMesh))
 				{
-					var armature = new STFArmatureResource();
+					var armature = new STFArmatureResourceExporter();
 					armature.SetupFromSkinnedMeshRenderer(state, smr);
 					armatures.Add(smr.sharedMesh, armature);
 					//armature.meshes.Add(smr.sharedMesh);
@@ -92,13 +91,6 @@ namespace stf.serialisation
 				}
 				armatureInstancesBoneInstances.Add(smr.rootBone.parent, smr.bones);
 			}
-			/*state.AddTask(new Task(() => {
-				foreach(var armature in armatures)
-				{
-					state.re
-					armature.Key
-				}
-			}));*/
 		}
 
 		private void RegisterNodes(ISTFExporter state, Transform[] transforms)
@@ -106,31 +98,37 @@ namespace stf.serialisation
 			foreach(var transform in transforms)
 			{
 				var go = transform.gameObject;
-				string nodeId = null;
+				var nodeUuidComponent = go.GetComponent<STFUUID>();
+				var nodeId = nodeUuidComponent != null && nodeUuidComponent.id != null && nodeUuidComponent.id.Length > 0 ? nodeUuidComponent.id : Guid.NewGuid().ToString();
+				
 				if(!boneMappings.ContainsKey(go.transform))
 				{
 					if(!armatureInstances.ContainsKey(go.transform))
-						nodeId = state.RegisterNode(go, _nodeExporter);
+					{
+						state.RegisterNode(nodeId, STFNodeExporter.serializeToJson(go, state), go);
+					}
 					else
 					{
-						var node = (JObject)_nodeExporter.serializeArmatureInstanceToJson(go, state, armatureInstances[go.transform].id);
-						state.AddTask(new Task(() => {
-							var boneInstanceIds = new List<string>();
-							foreach(var boneInstance in armatureInstancesBoneInstances[go.transform])
-								boneInstanceIds.Add(state.GetNodeId(boneInstance.gameObject));
-							node.Add("bone_instances", new JArray(boneInstanceIds));
-						}));
-
-						var nodeUuidComponent = go.GetComponent<STFUUID>();
-						nodeId = nodeUuidComponent != null && nodeUuidComponent.id != null && nodeUuidComponent.id.Length > 0 ? nodeUuidComponent.id : Guid.NewGuid().ToString();
+						var node = STFArmatureInstanceNodeExporter.serializeToJson(go, state, armatureInstances[go.transform].id, armatureInstancesBoneInstances[go.transform]);
 						state.RegisterNode(nodeId, node, go);
 					}
 				}
 				else
 				{
-					var node = (JObject)_nodeExporter.serializeBoneInstanceToJson(go, state, boneMappings[go.transform]);
-					var nodeUuidComponent = go.GetComponent<STFUUID>();
-					nodeId = nodeUuidComponent != null && nodeUuidComponent.id != null && nodeUuidComponent.id.Length > 0 ? nodeUuidComponent.id : Guid.NewGuid().ToString();
+					Transform armatureInstance = null;
+					foreach(var armatureInstanceMapping in armatureInstancesBoneInstances)
+					{
+						foreach(var t in armatureInstanceMapping.Value)
+						{
+							if(t == go.transform)
+							{
+								armatureInstance = armatureInstanceMapping.Key;
+								break;
+							}
+						}
+						if(armatureInstance != null) break;
+					}
+					var node = STFBoneInstanceNodeExporter.serializeToJson(go, state, boneMappings[go.transform], armatureInstancesBoneInstances[armatureInstance]);
 					state.RegisterNode(nodeId, node, go);
 				}
 			}
@@ -208,10 +206,13 @@ namespace stf.serialisation
 		private void convertAssetNode(ISTFImporter state, string nodeId, JObject jsonRoot)
 		{
 			var jsonNode = (JObject)jsonRoot["nodes"][nodeId];
-			if((string)jsonNode["type"] != null && ((string)jsonNode["type"]).Length > 0 && (string)jsonNode["type"] != "default")
-				throw new Exception("Nodetype '" + (string)jsonNode["type"] + "' is not supported");
+			//if((string)jsonNode["type"] != null && ((string)jsonNode["type"]).Length > 0 && (string)jsonNode["type"] != "default")
+			//	throw new Exception("Nodetype '" + (string)jsonNode["type"] + "' is not supported");
+			var nodetype = (string)jsonNode["type"] == null || ((string)jsonNode["type"]).Length == 0 ? "default" : (string)jsonNode["type"];
+			if(!state.GetContext().NodeImporters.ContainsKey(nodetype))
+				throw new Exception($"Nodetype '{nodetype}' is not supported.");
 
-			state.AddNode(nodeId, _importer.parseFromJson(state, jsonNode));
+			state.AddNode(nodeId, state.GetContext().NodeImporters[nodetype].parseFromJson(state, jsonNode));
 			
 			if(jsonNode["children"] != null)
 			{

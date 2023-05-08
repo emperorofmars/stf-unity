@@ -6,11 +6,12 @@ using System.Threading.Tasks;
 
 namespace stf.serialisation
 {
-	public class STFNodeExporter : ASTFNodeExporter
+	public class STFNodeExporter// : ASTFNodeExporter
 	{
-		override public JToken serializeToJson(GameObject go, ISTFExporter state)
+		public static JObject serializeToJson(GameObject go, ISTFExporter state)
 		{
-			var ret = (JObject)base.serializeToJson(go, state);
+			var ret = new JObject();
+			ret.Add("name", go.name);
 			ret.Add("trs", new JArray() {
 				new JArray() {go.transform.localPosition.x, go.transform.localPosition.y, go.transform.localPosition.z},
 				new JArray() {go.transform.localRotation.x, go.transform.localRotation.y, go.transform.localRotation.z, go.transform.localRotation.w},
@@ -28,22 +29,10 @@ namespace stf.serialisation
 			return ret;
 		}
 
-		public JToken serializeArmatureInstanceToJson(GameObject go, ISTFExporter state, string armatureId)
+		public static JObject serializeBoneInstanceToJson(GameObject go, ISTFExporter state, string boneId)
 		{
-			var ret = (JObject)base.serializeToJson(go, state);
-			ret.Add("type", "armature_instance");
-			ret.Add("armature", armatureId);
-			ret.Add("trs", new JArray() {
-				new JArray() {go.transform.localPosition.x, go.transform.localPosition.y, go.transform.localPosition.z},
-				new JArray() {go.transform.localRotation.x, go.transform.localRotation.y, go.transform.localRotation.z, go.transform.localRotation.w},
-				new JArray() {go.transform.localScale.x, go.transform.localScale.y, go.transform.localScale.z}
-			});
-			return ret;
-		}
-
-		public JToken serializeBoneInstanceToJson(GameObject go, ISTFExporter state, string boneId)
-		{
-			var ret = (JObject)base.serializeToJson(go, state);
+			var ret = new JObject();
+			ret.Add("name", go.name);
 			ret.Add("type", "bone_instance");
 			ret.Add("bone", boneId);
 			ret.Add("trs", new JArray() {

@@ -27,7 +27,7 @@ namespace stf.serialisation
 
 	public class STFExternalResourceImporter : ASTFResourceImporter
 	{
-		override public UnityEngine.Object parseFromJson(ISTFImporter state, JToken json, string id)
+		override public UnityEngine.Object parseFromJson(ISTFImporter state, JToken json, string id, JObject jsonRoot)
 		{
 			var assets = AssetDatabase.LoadAllAssetsAtPath((string)json["path"]);
 			if(assets.Length == 1) return assets[0];

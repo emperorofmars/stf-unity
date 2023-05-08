@@ -51,6 +51,11 @@ namespace stf.serialisation
 			parse(byteArray);
 		}
 
+		public STFImportContext GetContext()
+		{
+			return context;
+		}
+
 		public STFMeta GetMeta()
 		{
 			return meta;
@@ -97,7 +102,19 @@ namespace stf.serialisation
 			{
 				mainAssetId = (string)jsonRoot["main"];
 				meta.mainAsset = mainAssetId;
-				// parse resources first handle armatures
+				foreach(var jsonResource in ((JObject)jsonRoot["resources"]))
+				{
+					if((string)jsonResource.Value["type"] != null && context.ResourceImporters.ContainsKey((string)jsonResource.Value["type"]))
+					{
+						var resourceImporter = context.ResourceImporters[(string)jsonResource.Value["type"]];
+						var resource = resourceImporter.parseFromJson(this, jsonResource.Value, jsonResource.Key, jsonRoot);
+						resources.Add(jsonResource.Key, resource);
+					}
+					else
+					{
+						Debug.LogWarning($"Skipping Unrecognized Resource: {(string)jsonResource.Value["type"]}");
+					}
+				}
 				foreach(var jsonAsset in ((JObject)jsonRoot["assets"]))
 				{
 					if(!context.AssetImporters.ContainsKey((string)jsonAsset.Value["type"]))
@@ -106,25 +123,15 @@ namespace stf.serialisation
 					var asset = context.AssetImporters[(string)jsonAsset.Value["type"]].ParseFromJson(this, jsonAsset.Value, jsonAsset.Key, jsonRoot);
 					assets.Add(jsonAsset.Key, asset);
 				}
-				foreach(var jsonResource in ((JObject)jsonRoot["resources"]))
-				{
-					if((string)jsonResource.Value["type"] != null && context.ResourceImporters.ContainsKey((string)jsonResource.Value["type"]))
-					{
-						var resourceImporter = context.ResourceImporters[(string)jsonResource.Value["type"]];
-						var resource = resourceImporter.parseFromJson(this, jsonResource.Value, jsonResource.Key);
-						resources.Add(jsonResource.Key, resource);
-					}
-					else
-					{
-						Debug.LogWarning($"Skipping Unrecognized Resource: {(string)jsonResource.Value["type"]}");
-					}
-				}
 				foreach(var jsonNode in ((JObject)jsonRoot["nodes"]))
 				{
 					var go = nodes[jsonNode.Key];
 
-					var uuidComponent = go.AddComponent<STFUUID>();
-					uuidComponent.id = jsonNode.Key;
+					if(go.GetComponent<STFUUID>() != null)
+					{
+						var uuidComponent = go.AddComponent<STFUUID>();
+						uuidComponent.id = jsonNode.Key;
+					}
 
 					if((JObject)jsonNode.Value["components"] != null)
 					{

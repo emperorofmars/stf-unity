@@ -7,10 +7,11 @@ namespace stf.serialisation
 {
 	public interface ISTFExporter
 	{
+		STFExportContext GetContext();
 		void AddTask(Task task);
 		void RegisterNode(string nodeId, JObject node);
 		void RegisterNode(string nodeId, JObject node, GameObject go);
-		string RegisterNode(GameObject go, ASTFNodeExporter exporter);
+		//string RegisterNode(GameObject go, ASTFNodeExporter exporter);
 		void RegisterResource(string resourceId, JObject resource);
 		void RegisterResource(UnityEngine.Object unityResource);
 		void RegisterResource(UnityEngine.Object unityResource, ASTFResourceExporter exporter);
@@ -21,7 +22,6 @@ namespace stf.serialisation
 		string GetResourceId(UnityEngine.Object unityResource);
 		void RegisterSubresourceId(UnityEngine.Object unityResource, string key, string id);
 		string GetSubresourceId(UnityEngine.Object unityResource, string key);
-		STFExportContext GetContext();
 		string GetJson();
 		byte[] GetBinary();
 		STFMeta GetMeta();

@@ -7,6 +7,7 @@ namespace stf.serialisation
 {
 	public interface ISTFImporter
 	{
+		STFImportContext GetContext();
 		void AddTask(Task task);
 		void AddNode(string id, GameObject go);
 		Dictionary<string, ISTFAsset> GetAssets();

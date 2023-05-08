@@ -4,11 +4,12 @@ using Newtonsoft.Json.Linq;
 
 namespace stf.serialisation
 {
-	public class STFExternalNodeExporter : ASTFNodeExporter
+	public class STFExternalNodeExporter
 	{
-		override public JToken serializeToJson(GameObject go, ISTFExporter state)
+		public static JObject serializeToJson(GameObject go, ISTFExporter state)
 		{
-			var ret = (JObject)base.serializeToJson(go, state);
+			var ret = new JObject();
+			ret.Add("name", go.name);
 			ret.Add("type", "external");
 			ret.Add("path", Utils.getPath(go.transform));
 			return ret;

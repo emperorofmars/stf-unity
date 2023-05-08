@@ -26,7 +26,9 @@ namespace stf.serialisation
 			foreach(var transform in transforms)
 			{
 				//check if node is already registered
-				var nodeId = state.RegisterNode(transform.gameObject, _nodeExporter);
+				var nodeUuidComponent = transform.gameObject.GetComponent<STFUUID>();
+				var nodeId = nodeUuidComponent != null && nodeUuidComponent.id != null && nodeUuidComponent.id.Length > 0 ? nodeUuidComponent.id : Guid.NewGuid().ToString();
+				state.RegisterNode(nodeId, STFExternalNodeExporter.serializeToJson(transform.gameObject, state), transform.gameObject);
 				var components = transform.GetComponents<Component>();
 				foreach(var component in components)
 				{
