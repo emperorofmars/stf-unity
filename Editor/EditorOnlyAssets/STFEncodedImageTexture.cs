@@ -36,9 +36,9 @@ namespace stf.serialisation
 				if(meta != null) // use the stf meta object to find the original encoded image
 				{
 					var info = meta.resourceInfo.Find(ri => ri.resource == resource);
-					if(info != null && info.assetPath != null && File.Exists(info.assetPath))
+					if(info != null && info.originalExternalAssetPath != null && File.Exists(info.originalExternalAssetPath))
 					{
-						byte[] bytes = File.ReadAllBytes(info.assetPath);
+						byte[] bytes = File.ReadAllBytes(info.originalExternalAssetPath);
 						var bufferId = state.RegisterBuffer(bytes);
 						ret.Add("format", info.originalFormat);
 						ret.Add("buffer", bufferId);
@@ -81,7 +81,7 @@ namespace stf.serialisation
 				AssetDatabase.Refresh();
 				var ret = AssetDatabase.LoadAssetAtPath<Texture2D>(path);
 				ret.name = name;
-				state.GetMeta().resourceInfo.Add(new STFMeta.ResourceInfo {name = name, assetPath = path, resource = ret, uuid = id, originalFormat = format, external = true });
+				state.GetMeta().resourceInfo.Add(new STFMeta.ResourceInfo {name = name, originalExternalAssetPath = path, resource = ret, id = id, originalFormat = format, external = true });
 				return ret;
 			} catch(Exception e)
 			{

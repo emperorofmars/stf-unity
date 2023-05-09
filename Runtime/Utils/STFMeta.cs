@@ -11,15 +11,18 @@ namespace stf
 		[System.Serializable]
 		public class ResourceInfo
 		{
-			public bool external;
 			public UnityEngine.Object resource;
-			public string assetPath;
-			public string originalFormat;
-			public string uuid;
+			public string id;
 			public string name;
+			public bool external;
+			public UnityEngine.Object originalResource;
+			public string originalFormat;
+			public string originalExternalAssetPath;
 		}
 		
 		public string mainAsset;
 		public List<ResourceInfo> resourceInfo = new List<ResourceInfo>();
+
+
 	}
 }

@@ -7,13 +7,13 @@ using System.Linq;
 
 namespace stf.serialisation
 {
-	public class STFArmatureInstanceNodeExporter// : ASTFNodeExporter
+	public class STFArmatureInstanceNodeExporter
 	{
 		public static JObject serializeToJson(GameObject go, ISTFExporter state, string armatureId, Transform[] boneInstances)
 		{
 			var ret = new JObject();
 			ret.Add("name", go.name);
-			ret.Add("type", "armature_instance");
+			ret.Add("type", STFArmatureInstanceNodeImporter._TYPE);
 			ret.Add("armature", armatureId);
 			ret.Add("trs", new JArray() {
 				new JArray() {go.transform.localPosition.x, go.transform.localPosition.y, go.transform.localPosition.z},

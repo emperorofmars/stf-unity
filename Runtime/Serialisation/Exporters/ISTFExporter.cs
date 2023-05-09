@@ -24,6 +24,6 @@ namespace stf.serialisation
 		string GetSubresourceId(UnityEngine.Object unityResource, string key);
 		string GetJson();
 		byte[] GetBinary();
-		STFMeta GetMeta();
+		//STFMeta GetMeta();
 	}
 }

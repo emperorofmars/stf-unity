@@ -46,7 +46,7 @@ namespace stf.serialisation
 			var ret = new Texture2D((int)json["width"], (int)json["height"]);
 			ret.name = (string)json["name"];
 			ret.LoadImage(arrayBuffer);
-			state.GetMeta().resourceInfo.Add(new STFMeta.ResourceInfo {name = ret.name, resource = ret, uuid = id, originalFormat = (string)json["format"], external = false });
+			state.GetMeta().resourceInfo.Add(new STFMeta.ResourceInfo {name = ret.name, resource = ret, id = id, originalFormat = (string)json["format"], external = false });
 			return ret;
 		}
 	}

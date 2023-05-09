@@ -43,6 +43,7 @@ namespace stf.serialisation
 		{
 			var ret = new Material(Shader.Find("Standard"));
 			ret.name = (string)json["name"];
+			state.GetMeta().resourceInfo.Add(new STFMeta.ResourceInfo {name = ret.name, resource = ret, id = id });
 			return ret;
 		}
 	}

@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using System.Text;
+using UnityEditor;
 
 namespace stf.serialisation
 {
@@ -27,7 +28,7 @@ namespace stf.serialisation
 		public Dictionary<UnityEngine.Object, Dictionary<string, string>> subResourceIds = new Dictionary<UnityEngine.Object, Dictionary<string, string>>();
 		public Dictionary<string, byte[]> buffers = new Dictionary<string, byte[]>();
 		private JObject jsonDefinition = new JObject();
-		private STFMeta meta = ScriptableObject.CreateInstance<STFMeta>();
+		private STFMeta meta;
 
 		public STFExporter(List<ISTFAssetExporter> assets)
 		{
@@ -43,10 +44,10 @@ namespace stf.serialisation
 			if(this.context == null) context = STFRegistry.GetDefaultExportContext();
 			_run();
 		}
-		public STFMeta GetMeta()
+		/*public STFMeta GetMeta()
 		{
 			return meta;
-		}
+		}*/
 
 		private void _run()
 		{
@@ -100,17 +101,6 @@ namespace stf.serialisation
 			nodes.Add(nodeId, node);
 		}
 
-		/*public string RegisterNode(GameObject go, ASTFNodeExporter exporter)
-		{
-			if(nodeIds.ContainsKey(go)) return nodeIds[go];
-			var uuid = go.GetComponent<STFUUID>();
-			var id = uuid != null && uuid.id != null && uuid.id.Length > 0 ? uuid.id : Guid.NewGuid().ToString();
-			var jnode = exporter.serializeToJson(go, this);
-			nodeIds.Add(go, id);
-			nodes.Add(id, (JObject)jnode);
-			return id;
-		}*/
-
 		public void RegisterResource(string resourceId, JObject resource)
 		{
 			resources.Add(resourceId, resource);
@@ -120,21 +110,40 @@ namespace stf.serialisation
 		{
 			var exporter = context.ResourceExporters[unityResource.GetType()];
 			RegisterResource(unityResource, exporter);
-			return;// RegisterResource(unityResource, exporter);
+			return;
 		}
 
 		public void RegisterResource(UnityEngine.Object unityResource, ASTFResourceExporter exporter)
 		{
 			if(resourceIds.ContainsKey(unityResource)) return;// resourceIds[unityResource];
 			registerResourceTasks.Add(new Task(() => {
-				string id;
-				var info = meta.resourceInfo.Find(ri => ri.resource == unityResource);
-				if(info != null && info.uuid != null) id = info.uuid;
-				else id = Guid.NewGuid().ToString();
+				string id = null;
+#if UNITY_EDITOR
+				if(!AssetDatabase.IsMainAsset(unityResource))
+				{
+					var meta = AssetDatabase.LoadAssetAtPath<STFMeta>(AssetDatabase.GetAssetPath(unityResource));
+					if(meta != null)
+					{
+						var info = meta.resourceInfo.Find(ri => ri.resource == unityResource);
+						if(info != null)
+						{
+							id = info.id;
+						}
+					}
+				}
+#else
+				if(meta != null)
+				{
+					var info = meta.resourceInfo.Find(ri => ri.resource == unityResource);
+					if(info != null && info.uuid != null) id = info.uuid;
+				}
+#endif
+				if(id == null || id.Length == 0) id = Guid.NewGuid().ToString();
+
 				resourceIds.Add(unityResource, id);
 				resources.Add(id, (JObject)exporter.serializeToJson(this, unityResource));
 			}));
-			return;// id;
+			return;
 		}
 
 		public void RegisterSubresourceId(UnityEngine.Object unityResource, string key, string id)
