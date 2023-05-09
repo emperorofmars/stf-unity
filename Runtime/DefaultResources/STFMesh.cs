@@ -169,6 +169,25 @@ namespace stf.serialisation
 					var blendshapeBuffer = new List<byte>();
 
 					mesh.GetBlendShapeFrameVertices(i, 0, blendshapeVertecies, blendshapeNormals, blendshapeTangents);
+					var hasNormals = false;
+					var hasTangents = false;
+					for(int vertexIdx = 0; vertexIdx < mesh.vertexCount; vertexIdx++)
+					{
+						if(blendshapeNormals[vertexIdx].magnitude > 0)
+						{
+							hasNormals = true;
+							break;
+						}
+					}
+					for(int vertexIdx = 0; vertexIdx < mesh.vertexCount; vertexIdx++)
+					{
+						if(blendshapeTangents[vertexIdx].magnitude > 0)
+						{
+							hasTangents = true;
+							break;
+						}
+					}
+
 					for(int vertexIdx = 0; vertexIdx < mesh.vertexCount; vertexIdx++)
 					{
 						if(blendshapeVertecies[vertexIdx] != null && blendshapeVertecies[vertexIdx].magnitude > 0)
@@ -178,13 +197,13 @@ namespace stf.serialisation
 							blendshapeBuffer.AddRange(BitConverter.GetBytes(blendshapeVertecies[vertexIdx].x));
 							blendshapeBuffer.AddRange(BitConverter.GetBytes(blendshapeVertecies[vertexIdx].y));
 							blendshapeBuffer.AddRange(BitConverter.GetBytes(blendshapeVertecies[vertexIdx].z));
-							if(mesh.HasVertexAttribute(VertexAttribute.Normal))
+							if(hasNormals)
 							{
 								blendshapeBuffer.AddRange(BitConverter.GetBytes(blendshapeNormals[vertexIdx].x));
 								blendshapeBuffer.AddRange(BitConverter.GetBytes(blendshapeNormals[vertexIdx].y));
 								blendshapeBuffer.AddRange(BitConverter.GetBytes(blendshapeNormals[vertexIdx].z));
 							}
-							if(mesh.HasVertexAttribute(VertexAttribute.Tangent))
+							if(hasTangents)
 							{
 								blendshapeBuffer.AddRange(BitConverter.GetBytes(blendshapeTangents[vertexIdx].x));
 								blendshapeBuffer.AddRange(BitConverter.GetBytes(blendshapeTangents[vertexIdx].y));
@@ -194,6 +213,8 @@ namespace stf.serialisation
 					}
 					blendshapeBuffers.Add(blendshapeBuffer);
 					blendshapeJson.Add("indices_len", indicesLen);
+					blendshapeJson.Add("normal", hasNormals);
+					blendshapeJson.Add("tangent", hasTangents);
 					blendshapes.Add(blendshapeJson);
 				}
 				ret.Add("blendshapes", blendshapes);
@@ -366,13 +387,17 @@ namespace stf.serialisation
 			
 			if(json["blendshape_count"] != null && (int)json["blendshape_count"] > 0)
 			{
-				var blendshapeBufferWidth = 4;
-				if(json["normal"] != null) blendshapeBufferWidth += 3;
-				if(json["tangent"] != null) blendshapeBufferWidth += 3;
 
 				var blendshapeDefinitions = (JArray)json["blendshapes"];
 				for(int blendshapeIdx = 0; blendshapeIdx < (int)json["blendshape_count"]; blendshapeIdx++)
 				{
+					
+					var blendshapeBufferWidth = 4;
+					var hasNormals = blendshapeDefinitions[blendshapeIdx]["normal"] != null ? (bool)blendshapeDefinitions[blendshapeIdx]["normal"] : false;
+					var hasTangents = blendshapeDefinitions[blendshapeIdx]["tangent"] != null ? (bool)blendshapeDefinitions[blendshapeIdx]["tangent"] : false;
+					if(hasNormals) blendshapeBufferWidth += 3;
+					if(hasTangents) blendshapeBufferWidth += 3;
+					
 					var blendshapeLength = (int)blendshapeDefinitions[blendshapeIdx]["indices_len"];
 					var blendshapeName = (string)blendshapeDefinitions[blendshapeIdx]["name"];
 
@@ -380,19 +405,23 @@ namespace stf.serialisation
 					var blendshapeNormals = new Vector3[vertexCount];
 					var blendshapeTangents = new Vector3[vertexCount];
 
+					Array.Clear(blendshapeVertecies, 0, blendshapeVertecies.Length);
+					Array.Clear(blendshapeNormals, 0, blendshapeNormals.Length);
+					Array.Clear(blendshapeTangents, 0, blendshapeTangents.Length);
+
 					for(int vertexIdx = 0; vertexIdx < blendshapeLength; vertexIdx++)
 					{
 						var index = BitConverter.ToInt32(arrayBuffer, bufferOffset + vertexIdx * blendshapeBufferWidth * sizeof(int));
 						blendshapeVertecies[index].x = BitConverter.ToSingle(arrayBuffer, bufferOffset + vertexIdx * blendshapeBufferWidth * sizeof(int) + sizeof(int));
 						blendshapeVertecies[index].y = BitConverter.ToSingle(arrayBuffer, bufferOffset + vertexIdx * blendshapeBufferWidth * sizeof(int) + sizeof(int) + sizeof(float));
 						blendshapeVertecies[index].z = BitConverter.ToSingle(arrayBuffer, bufferOffset + vertexIdx * blendshapeBufferWidth * sizeof(int) + sizeof(int) + sizeof(float) * 2);
-						if(json["normal"] != null)
+						if(hasNormals)
 						{
 							blendshapeNormals[index].x = BitConverter.ToSingle(arrayBuffer, bufferOffset + vertexIdx * blendshapeBufferWidth * sizeof(int) + sizeof(int) + sizeof(float) * 3);
 							blendshapeNormals[index].y = BitConverter.ToSingle(arrayBuffer, bufferOffset + vertexIdx * blendshapeBufferWidth * sizeof(int) + sizeof(int) + sizeof(float) * 4);
 							blendshapeNormals[index].z = BitConverter.ToSingle(arrayBuffer, bufferOffset + vertexIdx * blendshapeBufferWidth * sizeof(int) + sizeof(int) + sizeof(float) * 5);
 						}
-						if(json["tangent"] != null)
+						if(hasTangents)
 						{
 							blendshapeTangents[index].x = BitConverter.ToSingle(arrayBuffer, bufferOffset + vertexIdx * blendshapeBufferWidth * sizeof(int) + sizeof(int) + sizeof(float) * 6);
 							blendshapeTangents[index].y = BitConverter.ToSingle(arrayBuffer, bufferOffset + vertexIdx * blendshapeBufferWidth * sizeof(int) + sizeof(int) + sizeof(float) * 7);
