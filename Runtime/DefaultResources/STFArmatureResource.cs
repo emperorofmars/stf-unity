@@ -72,17 +72,6 @@ namespace stf.serialisation
 				state.AddNode(boneIds[i], transforms[i].gameObject);
 				state.AddTrashObject(transforms[i].gameObject);
 			}
-			/*foreach(var t in transforms)
-			{
-				if(t != null)
-				{
-					#if UNITY_EDITOR
-						UnityEngine.Object.DestroyImmediate(t.gameObject);
-					#else
-						UnityEngine.Object.Destroy(t.gameObject);
-					#endif
-				}
-			}*/
 		}
 
 		public Transform[] instantiate()
@@ -123,20 +112,6 @@ namespace stf.serialisation
 				task.RunSynchronously();
 				if(task.Exception != null) throw task.Exception;
 			}
-			/*if(hasArmatureTransform)
-			{
-				var armatureGo = new GameObject();
-				armatureGo.transform.localPosition = armaturePosition;
-				armatureGo.transform.localRotation = armatureRotation;
-				armatureGo.transform.localScale = armatureScale;
-				rootInstance.SetParent(armatureGo.transform, false);
-				rootInstance.SetParent(null, true);
-				#if UNITY_EDITOR
-					UnityEngine.Object.DestroyImmediate(armatureGo);
-				#else
-					UnityEngine.Object.Destroy(armatureGo);
-				#endif
-			}*/
 			return ret;
 		}
 	}
