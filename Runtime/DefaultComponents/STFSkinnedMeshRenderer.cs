@@ -41,6 +41,14 @@ namespace stf.Components
 			{
 				if(json["materials"][i] != null) materials[i] = (Material)state.GetResource((string)json["materials"][i]);
 			}
+			if(c.sharedMesh.blendShapeCount > 0 && json["morphtarget_values"] != null)
+			{
+				for(int i = 0; i < c.sharedMesh.blendShapeCount; i++)
+				{
+					c.SetBlendShapeWeight(i, (float)json["morphtarget_values"][i]);
+				}
+
+			}
 			c.sharedMaterials = materials;
 			c.localBounds = c.sharedMesh.bounds;
 		}
@@ -66,6 +74,7 @@ namespace stf.Components
 			ret.Add("mesh", state.GetResourceId(c.sharedMesh));
 			ret.Add("armature_instance", state.GetNodeId(c.rootBone.parent.gameObject));
 			ret.Add("materials", new JArray(c.sharedMaterials.Select(m => m != null ? state.GetResourceId(m) : null)));
+			ret.Add("morphtarget_values", new JArray(Enumerable.Range(0, c.sharedMesh.blendShapeCount).Select(i => c.GetBlendShapeWeight(i))));
 			return ret;
 		}
 	}

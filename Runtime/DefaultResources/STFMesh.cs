@@ -160,7 +160,6 @@ namespace stf.serialisation
 				{
 					var blendshapeJson = new JObject();
 					blendshapeJson.Add("name",  mesh.GetBlendShapeName(i));
-					//blendshapeJson.Add("frame_count", mesh.GetBlendShapeFrameCount(i));
 					var blendshapeVertecies = new Vector3[mesh.vertexCount];
 					var blendshapeNormals = new Vector3[mesh.vertexCount];
 					var blendshapeTangents = new Vector3[mesh.vertexCount];
