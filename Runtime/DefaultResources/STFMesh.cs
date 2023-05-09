@@ -151,6 +151,7 @@ namespace stf.serialisation
 			}
 
 			// blendshapes
+			var blendshapeBuffers = new List<List<byte>>();
 			if(mesh.blendShapeCount > 0)
 			{
 				ret.Add("blendshape_count", mesh.blendShapeCount);
@@ -163,10 +164,36 @@ namespace stf.serialisation
 					var blendshapeVertecies = new Vector3[mesh.vertexCount];
 					var blendshapeNormals = new Vector3[mesh.vertexCount];
 					var blendshapeTangents = new Vector3[mesh.vertexCount];
+
+					var indicesLen = 0;
+					var blendshapeBuffer = new List<byte>();
+
 					mesh.GetBlendShapeFrameVertices(i, 0, blendshapeVertecies, blendshapeNormals, blendshapeTangents);
-
-					blendshapeJson.Add("indices_len", blendshapeVertecies.Length);
-
+					for(int vertexIdx = 0; vertexIdx < mesh.vertexCount; vertexIdx++)
+					{
+						if(blendshapeVertecies[vertexIdx] != null && blendshapeVertecies[vertexIdx].magnitude > 0)
+						{
+							indicesLen++;
+							blendshapeBuffer.AddRange(BitConverter.GetBytes(vertexIdx));
+							blendshapeBuffer.AddRange(BitConverter.GetBytes(blendshapeVertecies[vertexIdx].x));
+							blendshapeBuffer.AddRange(BitConverter.GetBytes(blendshapeVertecies[vertexIdx].y));
+							blendshapeBuffer.AddRange(BitConverter.GetBytes(blendshapeVertecies[vertexIdx].z));
+							if(mesh.HasVertexAttribute(VertexAttribute.Normal))
+							{
+								blendshapeBuffer.AddRange(BitConverter.GetBytes(blendshapeNormals[vertexIdx].x));
+								blendshapeBuffer.AddRange(BitConverter.GetBytes(blendshapeNormals[vertexIdx].y));
+								blendshapeBuffer.AddRange(BitConverter.GetBytes(blendshapeNormals[vertexIdx].z));
+							}
+							if(mesh.HasVertexAttribute(VertexAttribute.Tangent))
+							{
+								blendshapeBuffer.AddRange(BitConverter.GetBytes(blendshapeTangents[vertexIdx].x));
+								blendshapeBuffer.AddRange(BitConverter.GetBytes(blendshapeTangents[vertexIdx].y));
+								blendshapeBuffer.AddRange(BitConverter.GetBytes(blendshapeTangents[vertexIdx].z));
+							}
+						}
+					}
+					blendshapeBuffers.Add(blendshapeBuffer);
+					blendshapeJson.Add("indices_len", indicesLen);
 					blendshapes.Add(blendshapeJson);
 				}
 				ret.Add("blendshapes", blendshapes);
@@ -176,8 +203,10 @@ namespace stf.serialisation
 			var indexBufferLength = indexBuffer.Count * sizeof(int);
 			var weightLengthBufferLength = mesh.vertexCount * sizeof(byte);
 			var weightBufferLength = weightLength * (sizeof(float) + sizeof(int));
+			long blendshapeBufferLength = 0;
+			foreach(var buffer in blendshapeBuffers) blendshapeBufferLength += buffer.Count;
 
-			var byteArray = new byte[vertexBufferLength + indexBufferLength + weightLengthBufferLength + weightBufferLength];
+			var byteArray = new byte[vertexBufferLength + indexBufferLength + weightLengthBufferLength + weightBufferLength + blendshapeBufferLength];
 
 			Buffer.BlockCopy(vertexBuffer, 0, byteArray, 0, vertexBufferLength);
 			Buffer.BlockCopy(indexBuffer.ToArray(), 0, byteArray, vertexBufferLength, indexBufferLength);
@@ -185,6 +214,16 @@ namespace stf.serialisation
 			{
 				Buffer.BlockCopy(mesh.GetBonesPerVertex().ToArray(), 0, byteArray, vertexBufferLength + indexBufferLength, weightLengthBufferLength);
 				Buffer.BlockCopy(weightBuffer, 0, byteArray, vertexBufferLength + indexBufferLength + weightLengthBufferLength, weightBufferLength);
+			}
+			if(blendshapeBuffers.Count > 0)
+			{
+				var blendshapePosition = vertexBufferLength + indexBufferLength + weightLengthBufferLength + weightBufferLength;
+				var blendshapeOffset = 0;
+				foreach(var buffer in blendshapeBuffers)
+				{
+					Buffer.BlockCopy(buffer.ToArray(), 0, byteArray, blendshapePosition + blendshapeOffset, buffer.Count);
+					blendshapeOffset += buffer.Count;
+				}
 			}
 
 			var bufferId = state.RegisterBuffer(byteArray);
@@ -290,16 +329,19 @@ namespace stf.serialisation
 				indicesPosCounted += indicesLen;
 			}
 
+			var bufferOffset = indicesPosCounted * sizeof(int) + vertexCount * bufferWidth * sizeof(float);
 			if((bool)json["skinned"])
 			{
-				var bufferOffset = indicesPosCounted * sizeof(int) + vertexCount * bufferWidth * sizeof(float);
 				var bonesPerVertex = new byte[vertexCount];
 				Buffer.BlockCopy(arrayBuffer, bufferOffset, bonesPerVertex, 0, vertexCount * sizeof(byte));
+				bufferOffset += vertexCount * sizeof(byte);
 				var weightLength = 0;
 				foreach(var num in bonesPerVertex) weightLength += num;
 				var weightBuffer = new byte[weightLength * (sizeof(float) + sizeof(int))];
 
-				Buffer.BlockCopy(arrayBuffer, bufferOffset + vertexCount * sizeof(byte), weightBuffer, 0, weightLength * (sizeof(float) + sizeof(int)));
+				Buffer.BlockCopy(arrayBuffer, bufferOffset, weightBuffer, 0, weightLength * (sizeof(float) + sizeof(int)));
+				bufferOffset += weightLength * (sizeof(float) + sizeof(int));
+
 				var weights = new NativeArray<BoneWeight1>(weightLength, Allocator.Temp);
 				var weightBufferOffset = 0;
 				for(int vertIdx = 0; vertIdx < vertexCount; vertIdx++)
@@ -320,6 +362,47 @@ namespace stf.serialisation
 					var armature = (STFArmatureResource)state.GetResource((string)json["armature"]);
 					ret.bindposes = armature.bindposes;
 				}));
+			}
+			
+			if(json["blendshape_count"] != null && (int)json["blendshape_count"] > 0)
+			{
+				var blendshapeBufferWidth = 4;
+				if(json["normal"] != null) blendshapeBufferWidth += 3;
+				if(json["tangent"] != null) blendshapeBufferWidth += 3;
+
+				var blendshapeDefinitions = (JArray)json["blendshapes"];
+				for(int blendshapeIdx = 0; blendshapeIdx < (int)json["blendshape_count"]; blendshapeIdx++)
+				{
+					var blendshapeLength = (int)blendshapeDefinitions[blendshapeIdx]["indices_len"];
+					var blendshapeName = (string)blendshapeDefinitions[blendshapeIdx]["name"];
+
+					var blendshapeVertecies = new Vector3[vertexCount];
+					var blendshapeNormals = new Vector3[vertexCount];
+					var blendshapeTangents = new Vector3[vertexCount];
+
+					for(int vertexIdx = 0; vertexIdx < blendshapeLength; vertexIdx++)
+					{
+						var index = BitConverter.ToInt32(arrayBuffer, bufferOffset + vertexIdx * blendshapeBufferWidth * sizeof(int));
+						blendshapeVertecies[index].x = BitConverter.ToSingle(arrayBuffer, bufferOffset + vertexIdx * blendshapeBufferWidth * sizeof(int) + sizeof(int));
+						blendshapeVertecies[index].y = BitConverter.ToSingle(arrayBuffer, bufferOffset + vertexIdx * blendshapeBufferWidth * sizeof(int) + sizeof(int) + sizeof(float));
+						blendshapeVertecies[index].z = BitConverter.ToSingle(arrayBuffer, bufferOffset + vertexIdx * blendshapeBufferWidth * sizeof(int) + sizeof(int) + sizeof(float) * 2);
+						if(json["normal"] != null)
+						{
+							blendshapeNormals[index].x = BitConverter.ToSingle(arrayBuffer, bufferOffset + vertexIdx * blendshapeBufferWidth * sizeof(int) + sizeof(int) + sizeof(float) * 3);
+							blendshapeNormals[index].y = BitConverter.ToSingle(arrayBuffer, bufferOffset + vertexIdx * blendshapeBufferWidth * sizeof(int) + sizeof(int) + sizeof(float) * 4);
+							blendshapeNormals[index].z = BitConverter.ToSingle(arrayBuffer, bufferOffset + vertexIdx * blendshapeBufferWidth * sizeof(int) + sizeof(int) + sizeof(float) * 5);
+						}
+						if(json["tangent"] != null)
+						{
+							blendshapeTangents[index].x = BitConverter.ToSingle(arrayBuffer, bufferOffset + vertexIdx * blendshapeBufferWidth * sizeof(int) + sizeof(int) + sizeof(float) * 6);
+							blendshapeTangents[index].y = BitConverter.ToSingle(arrayBuffer, bufferOffset + vertexIdx * blendshapeBufferWidth * sizeof(int) + sizeof(int) + sizeof(float) * 7);
+							blendshapeTangents[index].z = BitConverter.ToSingle(arrayBuffer, bufferOffset + vertexIdx * blendshapeBufferWidth * sizeof(int) + sizeof(int) + sizeof(float) * 8);
+						}
+					}
+
+					ret.AddBlendShapeFrame(blendshapeName, 100, blendshapeVertecies, blendshapeNormals, blendshapeTangents);
+					bufferOffset += blendshapeLength * blendshapeBufferWidth * sizeof(float);
+				}
 			}
 
 			ret.UploadMeshData(false);
