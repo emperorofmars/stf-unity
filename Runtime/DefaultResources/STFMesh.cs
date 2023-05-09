@@ -132,6 +132,7 @@ namespace stf.serialisation
 			}
 			ret.Add("primitives", primitives);
 
+			// weights
 			var weightLength = 0;
 			byte[] weightBuffer = null;
 			if(mesh.HasVertexAttribute(VertexAttribute.BlendWeight) && mesh.HasVertexAttribute(VertexAttribute.BlendIndices))
@@ -150,6 +151,26 @@ namespace stf.serialisation
 			}
 
 			// blendshapes
+			if(mesh.blendShapeCount > 0)
+			{
+				ret.Add("blendshape_count", mesh.blendShapeCount);
+				var blendshapes = new JArray();
+				for(int i = 0; i < mesh.blendShapeCount; i++)
+				{
+					var blendshapeJson = new JObject();
+					blendshapeJson.Add("name",  mesh.GetBlendShapeName(i));
+					//blendshapeJson.Add("frame_count", mesh.GetBlendShapeFrameCount(i));
+					var blendshapeVertecies = new Vector3[mesh.vertexCount];
+					var blendshapeNormals = new Vector3[mesh.vertexCount];
+					var blendshapeTangents = new Vector3[mesh.vertexCount];
+					mesh.GetBlendShapeFrameVertices(i, 0, blendshapeVertecies, blendshapeNormals, blendshapeTangents);
+
+					blendshapeJson.Add("indices_len", blendshapeVertecies.Length);
+
+					blendshapes.Add(blendshapeJson);
+				}
+				ret.Add("blendshapes", blendshapes);
+			}
 
 			var vertexBufferLength = vertexBuffer.Length * sizeof(float);
 			var indexBufferLength = indexBuffer.Count * sizeof(int);
@@ -297,10 +318,10 @@ namespace stf.serialisation
 
 				state.AddTask(new Task(() => {
 					var armature = (STFArmatureResource)state.GetResource((string)json["armature"]);
-					//ret.bindposes = armature.armatureTransforms.bindposes;
 					ret.bindposes = armature.bindposes;
 				}));
 			}
+
 			ret.UploadMeshData(false);
 			ret.RecalculateBounds();
 
