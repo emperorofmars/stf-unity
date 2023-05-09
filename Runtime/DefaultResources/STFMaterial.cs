@@ -14,18 +14,6 @@ namespace stf.serialisation
 				var ret = new JObject();
 				ret.Add("type", STFMaterialImporter._TYPE);
 				ret.Add("name", material.name);
-				
-				/*ret.Add("format", "png");
-				ret.Add("width", texture.width);
-				ret.Add("height", texture.height);
-
-				// will hard encode as png since the original format is unknown
-				byte[] bytes = texture.EncodeToPNG();
-
-				var bufferId = state.RegisterBuffer(bytes);
-				ret.Add("buffer", bufferId);*/
-
-
 				return ret;
 			} catch (Exception e)
 			{
