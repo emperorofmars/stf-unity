@@ -20,8 +20,18 @@ namespace stf
 			public string originalExternalAssetPath;
 		}
 		
+		
+		[System.Serializable]
+		public class Relationship
+		{
+			public string sourceId;
+			public string type;
+			public List<string> targetIds = new List<string>();
+		}
+		
 		public string mainAsset;
 		public List<ResourceInfo> resourceInfo = new List<ResourceInfo>();
+		public List<ResourceInfo> relationships = new List<ResourceInfo>();
 
 
 	}

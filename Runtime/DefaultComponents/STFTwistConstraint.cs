@@ -8,10 +8,15 @@ namespace stf.Components
 {
 	public class STFTwistConstraint : MonoBehaviour, ISTFComponent
 	{
-		public string id {get; set;}
-		public List<string> extends {get; set;}
-		public List<string> overrides {get; set;}
-		public List<string> targets {get; set;}
+		public string _id;
+		public string id {get => _id; set => _id = value;}
+		public List<string> _extends;
+		public List<string> extends {get => _extends; set => _extends = value;}
+		public List<string> _overrides;
+		public List<string> overrides {get => _overrides; set => _overrides = value;}
+		public List<string> _targets;
+		public List<string> targets {get => _targets; set => _targets = value;}
+		
 		public static string _TYPE = "STF.constraint.twist";
 		public GameObject source;
 		public float weight;
