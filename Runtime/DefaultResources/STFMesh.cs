@@ -297,7 +297,8 @@ namespace stf.serialisation
 
 				state.AddTask(new Task(() => {
 					var armature = (STFArmatureResource)state.GetResource((string)json["armature"]);
-					ret.bindposes = armature.armatureTransforms.bindposes;
+					//ret.bindposes = armature.armatureTransforms.bindposes;
+					ret.bindposes = armature.bindposes;
 				}));
 			}
 			ret.UploadMeshData(false);

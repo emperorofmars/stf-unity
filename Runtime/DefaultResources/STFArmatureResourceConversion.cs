@@ -137,7 +137,10 @@ namespace stf.serialisation
 
 		public override UnityEngine.Object parseFromJson(ISTFImporter state, JToken json, string id, JObject jsonRoot)
 		{
-			var tasks = new List<Task>();
+			var armatureResource = ScriptableObject.CreateInstance<STFArmatureResource>();
+			armatureResource.parseFromJson(state, json, id, jsonRoot);
+
+			/*var tasks = new List<Task>();
 			var armatureTransforms = new STFArmature();
 			armatureTransforms.armatureName = (string)json["name"];
 			var rootId = (string)json["root"];
@@ -205,11 +208,11 @@ namespace stf.serialisation
 				}
 			}
 			armatureResource.bones = new List<STFArmatureResource.Bone>(boneResources);
-			armatureResource.armatureTransforms = armatureTransforms;
+			armatureResource.armatureTransforms = armatureTransforms;*/
 			return armatureResource;
 		}
 
-		public GameObject parseBoneFromJson(ISTFImporter state, JToken json, STFArmatureResource.Bone boneResource, List<Task> tasks)
+		/*public GameObject parseBoneFromJson(ISTFImporter state, JToken json, STFArmatureResource.Bone boneResource, List<Task> tasks)
 		{
 			var go = new GameObject();
 			go.name = (string)json["name"];
@@ -235,6 +238,6 @@ namespace stf.serialisation
 				}));
 			}
 			return go;
-		}
+		}*/
 	}
 }

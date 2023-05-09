@@ -65,21 +65,24 @@ namespace stf.serialisation
 			go.transform.localScale = new Vector3((float)json["trs"][2][0], (float)json["trs"][2][1], (float)json["trs"][2][2]);
 
 			var armature = (STFArmatureResource)state.GetResource((string)json["armature"]);
-			var rootInstance = Object.Instantiate(armature.armatureTransforms.root);
-			rootInstance.name = armature.armatureTransforms.root.name;
+			//var rootInstance = Object.Instantiate(armature.armatureTransforms.root);
+			var transforms = armature.instantiate();
+			var rootInstance = transforms.First(t => t.GetComponent<STFUUID>().boneId == armature.rootId);
+			//rootInstance.name = armature.armatureTransforms.root.name;
 
 			armatureInstance.armature = armature;
 
 			armatureInstance.root = rootInstance.gameObject;
-			armatureInstance.bones = new GameObject[armature.armatureTransforms.bones.Length];
+			//armatureInstance.bones = new GameObject[armature.armatureTransforms.bones.Length];
+			armatureInstance.bones = new GameObject[transforms.Length];
 
 			rootInstance.SetParent(go.transform, false);
-			foreach(var bone in rootInstance.GetComponentsInChildren<Transform>())
+			/*foreach(var bone in rootInstance.GetComponentsInChildren<Transform>())
 			{
 				var uuidComponent = bone.GetComponent<STFUUID>();
 				uuidComponent.boneId = uuidComponent.id;
 				uuidComponent.id = null;
-			}
+			}*/
 			var boneInstanceIds = json["bone_instances"].ToObject<List<string>>();
 			for(int i = 0; i < boneInstanceIds.Count; i++)
 			{
@@ -88,7 +91,7 @@ namespace stf.serialisation
 				boneInstance.id = boneInstanceIds[i];
 				armatureInstance.bones[i] = boneInstance.gameObject;
 
-				// use transform from instance
+				// use transform from instance to override the bones default transform
 
 				state.AddNode(boneInstance.id, boneInstance.gameObject);
 
