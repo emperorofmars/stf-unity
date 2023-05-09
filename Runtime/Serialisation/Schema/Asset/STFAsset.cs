@@ -56,7 +56,6 @@ namespace stf.serialisation
 
 		private void GatherArmatures(ISTFExporter state, SkinnedMeshRenderer[] skinnedMeshRenderers)
 		{
-			// TODO: handle already existing armatures
 			var armatures = new Dictionary<Mesh, STFArmatureResourceExporter>();
 			foreach(var smr in skinnedMeshRenderers)
 			{

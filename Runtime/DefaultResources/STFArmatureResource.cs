@@ -114,5 +114,45 @@ namespace stf.serialisation
 			}
 			return ret;
 		}
+
+		public void serializeToJson(ISTFExporter state)
+		{
+			var ret = new JObject();
+			
+			var armatureJson = new JObject();
+			armatureJson.Add("type", STFArmatureImporter._TYPE);
+			armatureJson.Add("name", armatureName);
+			armatureJson.Add("root", rootId);
+
+			if(hasArmatureTransform)
+			{
+				armatureJson.Add("trs", new JArray() {
+					new JArray() {armaturePosition.x, armaturePosition.y, armaturePosition.z},
+					new JArray() {armatureRotation.x, armatureRotation.y, armatureRotation.z, armatureRotation.w},
+					new JArray() {armatureScale.x, armatureScale.y, armatureScale.z}
+				});
+			}
+			var boneIds = new List<string>();
+			foreach(var bone in bones)
+			{
+				var boneJson = new JObject();
+				boneJson.Add("name", bone.name);
+				boneJson.Add("type", "bone");
+
+				boneJson.Add("trs", new JArray() {
+					new JArray() {bone.localPosition.x, bone.localPosition.y, bone.localPosition.z},
+					new JArray() {bone.localRotation.x, bone.localRotation.y, bone.localRotation.z, bone.localRotation.w},
+					new JArray() {bone.localScale.x, bone.localScale.y, bone.localScale.z}
+				});
+				boneJson.Add("children", new JArray(bone.children));
+
+				boneIds.Add(bone.id);
+				state.RegisterNode(bone.id, boneJson);
+			}
+			armatureJson.Add("bones", new JArray(boneIds));
+			state.RegisterResource(id, armatureJson);
+
+			return;
+		}
 	}
 }

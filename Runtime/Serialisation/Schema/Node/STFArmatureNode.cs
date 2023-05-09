@@ -41,12 +41,6 @@ namespace stf.serialisation
 		}
 	}
 
-	/*public class STFArmatureInstance : MonoBehaviour
-	{
-		public Transform root;
-		public Transform[] bones;
-	}*/
-
 	public class STFArmatureInstanceNodeImporter : ISTFNodeImporter
 	{
 		public static string _TYPE = "armature_instance";

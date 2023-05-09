@@ -14,7 +14,6 @@ namespace stf.serialisation
 		public string id;
 		public string rootBoneId;
 		public List<string> boneIds = new List<string>();
-		//public List<Mesh> meshes = new List<Mesh>();
 
 		public void SetupFromSkinnedMeshRenderer(ISTFExporter state, SkinnedMeshRenderer smr)
 		{
@@ -26,44 +25,13 @@ namespace stf.serialisation
 			if(smr.rootBone.parent != null && smr.rootBone.parent.GetComponent<STFArmatureInstance>() != null)
 			{
 				var armatureInstance = smr.rootBone.parent.GetComponent<STFArmatureInstance>();
-				rootBoneId = armatureInstance.armature.rootId;
 				this.id = armatureInstance.armature.id;
+				rootBoneId = armatureInstance.armature.rootId;
+				foreach(var bone in armatureInstance.armature.bones) boneIds.Add(bone.id);
 				
-				var armatureJson = new JObject();
-				armatureJson.Add("type", STFArmatureImporter._TYPE);
-				if(rootBone.parent != null)
-				{
-					armatureJson.Add("name", rootBone.parent.name);
-					if(armatureInstance.armature.armaturePosition != null && armatureInstance.armature.armatureRotation != null && armatureInstance.armature.armatureScale != null)
-					{
-						armatureJson.Add("trs", new JArray() {
-							new JArray() {armatureInstance.armature.armaturePosition.x, armatureInstance.armature.armaturePosition.y, armatureInstance.armature.armaturePosition.z},
-							new JArray() {armatureInstance.armature.armatureRotation.x, armatureInstance.armature.armatureRotation.y, armatureInstance.armature.armatureRotation.z, armatureInstance.armature.armatureRotation.w},
-							new JArray() {armatureInstance.armature.armatureScale.x, armatureInstance.armature.armatureScale.y, armatureInstance.armature.armatureScale.z}
-						});
-					}
-				}
-				foreach(var bone in armatureInstance.armature.bones)
-				{
-					var boneJson = new JObject();
-					boneJson.Add("name", bone.name);
-					boneJson.Add("type", "bone");
-
-					boneJson.Add("trs", new JArray() {
-						new JArray() {bone.localPosition.x, bone.localPosition.y, bone.localPosition.z},
-						new JArray() {bone.localRotation.x, bone.localRotation.y, bone.localRotation.z, bone.localRotation.w},
-						new JArray() {bone.localScale.x, bone.localScale.y, bone.localScale.z}
-					});
-					boneJson.Add("children", new JArray(bone.children));
-
-					boneIds.Add(bone.id);
-					state.RegisterNode(bone.id, boneJson);
-				}
-				armatureJson.Add("root", rootBoneId);
-				armatureJson.Add("bones", new JArray(boneIds));
-				state.RegisterResource(id, armatureJson);
+				armatureInstance.armature.serializeToJson(state);
 			}
-			else // get armature from skinned mesh renderer and bindposes
+			else // determine armature from skinned mesh renderer and bindposes
 			{
 				this.id = Guid.NewGuid().ToString();
 				var boneNodes = new List<JObject>();
@@ -121,14 +89,6 @@ namespace stf.serialisation
 				state.RegisterResource(id, armatureJson);
 			}
 		}
-	}
-
-	public class STFArmature : UnityEngine.Object
-	{
-		public string armatureName;
-		public Transform root;
-		public Transform[] bones;
-		public Matrix4x4[] bindposes;
 	}
 
 	public class STFArmatureImporter : ASTFResourceImporter
