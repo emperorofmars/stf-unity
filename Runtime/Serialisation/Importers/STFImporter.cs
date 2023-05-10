@@ -7,8 +7,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using System.Text;
-using System.IO;
-using UnityEditor;
 
 namespace stf.serialisation
 {
@@ -25,6 +23,7 @@ namespace stf.serialisation
 		private List<Task> tasks = new List<Task>();
 		private List<Task> componentTasks = new List<Task>();
 		public STFMeta meta = ScriptableObject.CreateInstance<STFMeta>();
+		public ISTFSecondStage nextStage;
 
 		public STFImporter(JObject jsonRoot)
 		{
@@ -70,6 +69,11 @@ namespace stf.serialisation
 		public GameObject GetNode(string id)
 		{
 			return nodes[id];
+		}
+		
+		public string GetMainAssetId()
+		{
+			return this.mainAssetId;
 		}
 
 		public Dictionary<string, ISTFAsset> GetAssets()
@@ -208,6 +212,7 @@ namespace stf.serialisation
 					}
 				}
 			}
+			//second stage
 		}
 
 		public void parse(byte[] byteArray)

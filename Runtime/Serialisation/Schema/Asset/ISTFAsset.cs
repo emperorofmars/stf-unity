@@ -16,7 +16,8 @@ namespace stf.serialisation
 	public interface ISTFAsset
 	{
 		string getId();
-		Type GetAssetType();
+		string GetSTFAssetType();
+		Type GetUnityAssetType();
         UnityEngine.Object GetAsset();
 	}
 	

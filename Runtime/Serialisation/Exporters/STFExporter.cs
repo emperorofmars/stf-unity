@@ -8,7 +8,10 @@ using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using System.Text;
+
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 
 namespace stf.serialisation
 {

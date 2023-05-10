@@ -117,7 +117,12 @@ namespace stf.serialisation
 			return unityRoot;
 		}
 
-		public Type GetAssetType()
+		public string GetSTFAssetType()
+		{
+			return "unity_asset_path";
+		}
+
+		public Type GetUnityAssetType()
 		{
 			return typeof(GameObject);
 		}

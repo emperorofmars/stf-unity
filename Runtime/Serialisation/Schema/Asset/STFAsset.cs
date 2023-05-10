@@ -11,7 +11,8 @@ namespace stf.serialisation
 	public class STFAssetExporter : ISTFAssetExporter
 	{
 		public GameObject rootNode;
-		public string id = Guid.NewGuid().ToString();
+		public string id;
+		public string name;
 
 		public Dictionary<Transform, string> boneMappings = new Dictionary<Transform, string>();
 		private Dictionary<Transform, STFArmatureResourceExporter> armatureInstances = new Dictionary<Transform, STFArmatureResourceExporter>();
@@ -20,6 +21,17 @@ namespace stf.serialisation
 		public void Convert(ISTFExporter state)
 		{
 			if(rootNode == null) throw new Exception("Root node must not be null");
+
+			var assetInfo = rootNode.GetComponent<STFAssetInfo>();
+			if(assetInfo != null)
+			{
+				id = assetInfo.assetId != null && assetInfo.assetId.Length > 0 ? assetInfo.assetId : Guid.NewGuid().ToString();
+				name = assetInfo.assetName;
+			} else
+			{
+				id = Guid.NewGuid().ToString();
+				name = rootNode.name;
+			}
 
 			GatherArmatures(state, rootNode.GetComponentsInChildren<SkinnedMeshRenderer>());
 
@@ -151,6 +163,7 @@ namespace stf.serialisation
 		{
 			var ret = new JObject();
 			ret.Add("type", "asset");
+			if(name != null && name.Length > 0) ret.Add("name", name);
 			ret.Add("root_node", state.GetNodeId(rootNode));
 			return ret;
 		}
@@ -178,7 +191,12 @@ namespace stf.serialisation
 			return state.GetNode(rootNodeId);
 		}
 
-		public Type GetAssetType()
+		public string GetSTFAssetType()
+		{
+			return "asset";
+		}
+
+		public Type GetUnityAssetType()
 		{
 			return typeof(GameObject);
 		}
@@ -197,6 +215,12 @@ namespace stf.serialisation
 			var rootNodeId = (string)jsonAsset["root_node"];
 			ret.rootNodeId = rootNodeId;
 			convertAssetNode(state, rootNodeId, jsonRoot);
+			state.AddTask(new Task(() => {
+				var assetInfo = state.GetNode(rootNodeId).AddComponent<STFAssetInfo>();
+				assetInfo.assetId = id;
+				assetInfo.assetType = "asset";
+				assetInfo.name = (string)jsonAsset["name"];
+			}));
 			return ret;
 		}
 

@@ -95,7 +95,12 @@ namespace stf.serialisation
 			return state.GetNode(rootNodeId);
 		}
 
-		public Type GetAssetType()
+		public string GetSTFAssetType()
+		{
+			return "external";
+		}
+
+		public Type GetUnityAssetType()
 		{
 			return typeof(GameObject);
 		}

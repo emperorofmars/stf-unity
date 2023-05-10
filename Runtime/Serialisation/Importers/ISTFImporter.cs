@@ -12,6 +12,7 @@ namespace stf.serialisation
 		void AddNode(string id, GameObject go);
 		void AddResources(string id, UnityEngine.Object resource);
 		void AddTrashObject(UnityEngine.Object trash);
+		string GetMainAssetId();
 		Dictionary<string, ISTFAsset> GetAssets();
 		GameObject GetNode(string id);
 		List<UnityEngine.Object> GetResources();
