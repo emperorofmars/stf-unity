@@ -212,6 +212,10 @@ namespace stf.serialisation
 					}
 				}
 			}
+			foreach(var asset in assets)
+			{
+				meta.importedRawAssets.Add(new STFMeta.AssetInfo {assetId = asset.Key, assetType = asset.Value.GetSTFAssetType(), assetName = asset.Value.GetSTFAssetName(), assetRoot = asset.Value.GetAsset()});
+			}
 			//second stage
 		}
 

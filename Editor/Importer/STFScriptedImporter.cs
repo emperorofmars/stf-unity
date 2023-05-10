@@ -18,6 +18,8 @@ namespace stf
 	public class STFScriptedImporter : ScriptedImporter
 	{
 		[HideInInspector]
+		public bool AuthoringMode = false;
+		[HideInInspector]
 		public bool SafeImagesExternal = false;
 		[HideInInspector]
 		public string OriginalTexturesFolder = "Assets/authoring_stf_external";
@@ -74,9 +76,14 @@ namespace stf
 		{
 			var importer = (STFScriptedImporter)target;
 			base.DrawDefaultInspector();
+
+			GUILayout.Label("STF Import Settings", EditorStyles.boldLabel);
+
+			drawHLine();
 			
-			GUILayout.Space(10f);
-			 importer.SafeImagesExternal = GUILayout.Toggle(importer.SafeImagesExternal, "Save images to external folder");
+			GUILayout.Label("Images", EditorStyles.boldLabel);
+			GUILayout.Space(5);
+			importer.SafeImagesExternal = GUILayout.Toggle(importer.SafeImagesExternal, "Save images to external folder");
 			if(importer.SafeImagesExternal) GUILayout.Label($"External image location: {importer.OriginalTexturesFolder}");
 			if(importer.SafeImagesExternal && GUILayout.Button("Choose external image location", GUILayout.ExpandWidth(true))) {
 				importer.OriginalTexturesFolder = EditorUtility.OpenFolderPanel("Export Standalone", "Assets", "authoring_stf_external");
@@ -88,28 +95,68 @@ namespace stf
 				}
 			}
 
-			GUILayout.Space(10f);
-			GUILayout.Label("Detected Main Assets", EditorStyles.boldLabel);
+			drawHLine();
 
-			var assets = AssetDatabase.LoadAllAssetsAtPath(importer.assetPath);
-			foreach(var asset in assets.Where(a => a.GetType() == typeof(STFAssetInfo) && ((STFAssetInfo)a).assetType == "asset"))
+			GUILayout.Label("Imported Assets", EditorStyles.boldLabel);
+			GUILayout.Space(5);
+
+			// Second Stage Assets
+
+			drawHLine();
+
+			GUILayout.Label("Authoring", EditorStyles.boldLabel);
+			GUILayout.Space(5);
+			importer.AuthoringMode = GUILayout.Toggle(importer.AuthoringMode, "Authoring Mode");
+			if(importer.AuthoringMode)
 			{
-				GUILayout.Space(5f);
-				var a = (STFAssetInfo)asset;
-				GUILayout.Label($"Name: {a.assetName}, Type: {a.assetType}, ID: {a.assetId}");
-				if(GUILayout.Button("Instantiate into current scene"))
+				GUILayout.Space(10f);
+				GUILayout.Label("Imported Raw Assets", EditorStyles.boldLabel);
+				
+				//var assets = AssetDatabase.LoadAllAssetsAtPath(importer.assetPath);
+				var meta = AssetDatabase.LoadAssetAtPath<STFMeta>(importer.assetPath);
+				if(meta != null && meta.importedRawAssets != null)
 				{
-					var instantiated = Object.Instantiate(a);
-					instantiated.name = a.name;
+					var mainAsset = meta.importedRawAssets.Find(a => a.assetId == meta.mainAsset);
+					GUILayout.Space(5f);
+					GUILayout.Label("Main Asset", EditorStyles.boldLabel);
+					GUILayout.Label($"Name: {mainAsset.assetName}, Type: {mainAsset.assetType}, ID: {mainAsset.assetId}");
+					if(GUILayout.Button("Instantiate into current scene"))
+					{
+						var instantiated = Object.Instantiate(mainAsset.assetRoot);
+						instantiated.name = mainAsset.assetRoot.name;
+					}
+					if(meta.importedRawAssets.Count > 1)
+					{
+						GUILayout.Space(5f);
+						GUILayout.Label("Secondary Assets", EditorStyles.boldLabel);
+						foreach(var asset in meta.importedRawAssets.FindAll(a => a.assetId != meta.mainAsset))
+						{
+							GUILayout.Space(5f);
+							GUILayout.Label($"Name: {asset.assetName}, Type: {asset.assetType}, ID: {asset.assetId}");
+							if(GUILayout.Button("Instantiate into current scene"))
+							{
+								var instantiated = Object.Instantiate(asset.assetRoot);
+								instantiated.name = asset.assetRoot.name;
+							}
+						}
+					}
 				}
 			}
 			
+			drawHLine();
+
 			GUILayout.Space(20f);
 			if(GUILayout.Button("Save and reimport"))
 			{
 				EditorUtility.SetDirty(importer);
 				importer.SaveAndReimport();
 			}
+		}
+
+		private void drawHLine() {
+			GUILayout.Space(10);
+			EditorGUI.DrawRect(EditorGUILayout.GetControlRect(false, 2), Color.gray);
+			GUILayout.Space(10);
 		}
 	}
 }

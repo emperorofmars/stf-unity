@@ -185,6 +185,7 @@ namespace stf.serialisation
 		{
 			this.state = state;
 			this.id = id;
+			this.assetName = name;
 		}
 
 		public UnityEngine.Object GetAsset()

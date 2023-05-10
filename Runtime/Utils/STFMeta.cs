@@ -1,6 +1,5 @@
-using System;
+
 using System.Collections.Generic;
-using stf.serialisation;
 using UnityEngine;
 
 namespace stf
@@ -20,18 +19,18 @@ namespace stf
 			public string originalExternalAssetPath;
 		}
 		
-		
 		[System.Serializable]
-		public class Relationship
+		public class AssetInfo
 		{
-			public string sourceId;
-			public string type;
-			public List<string> targetIds = new List<string>();
+			public string assetId;
+			public string assetType;
+			public string assetName;
+			public UnityEngine.Object assetRoot;
 		}
 		
 		public string mainAsset;
 		public List<ResourceInfo> resourceInfo = new List<ResourceInfo>();
-		public List<ResourceInfo> relationships = new List<ResourceInfo>();
+		public List<AssetInfo> importedRawAssets = new List<AssetInfo>();
 
 
 	}
