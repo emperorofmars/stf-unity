@@ -116,7 +116,13 @@ namespace stf.serialisation
 			try
 			{
 				mainAssetId = (string)jsonRoot["main"];
-				meta.mainAsset = mainAssetId;
+				meta.mainAssetId = mainAssetId;
+				meta.versionDefinition = (string)jsonRoot["meta"]["version"];
+				meta.copyright = (string)jsonRoot["meta"]["copyright"];
+				meta.generator = (string)jsonRoot["meta"]["generator"];
+				meta.author = (string)jsonRoot["meta"]["author"];
+
+
 				foreach(var jsonResource in ((JObject)jsonRoot["resources"]))
 				{
 					if((string)jsonResource.Value["type"] != null && context.ResourceImporters.ContainsKey((string)jsonResource.Value["type"]))
@@ -238,6 +244,7 @@ namespace stf.serialisation
 			offset += sizeof(int);
 			int versionMinor = BitConverter.ToInt32(byteArray, offset);
 			offset += sizeof(int);
+			meta.versionBinary = versionMayor + "." + versionMinor;
 			
 			// Header Length
 			int headerLen = BitConverter.ToInt32(byteArray, offset);

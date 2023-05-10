@@ -28,7 +28,14 @@ namespace stf
 			public UnityEngine.Object assetRoot;
 		}
 		
-		public string mainAsset;
+		public string versionBinary;
+		public string versionDefinition;
+		public string copyright;
+		public string generator;
+		public string author;
+
+
+		public string mainAssetId;
 		public List<ResourceInfo> resourceInfo = new List<ResourceInfo>();
 		public List<AssetInfo> importedRawAssets = new List<AssetInfo>();
 

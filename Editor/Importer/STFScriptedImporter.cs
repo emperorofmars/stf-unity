@@ -59,13 +59,19 @@ namespace stf
 						ctx.AddObjectToAsset(resource.name, resource);
 				}
 			}
+
 			importer.GetMeta().name = "STFMeta";
-			ctx.AddObjectToAsset("STFMeta", importer.GetMeta());
+			var icon = new Texture2D(256, 256);
+			icon.LoadImage(STFIcon.icon_png_array.ToArray());
+
+			ctx.AddObjectToAsset("STFMeta", importer.GetMeta(), icon);
+			ctx.SetMainObject(importer.GetMeta());
+
 			foreach(var asset in importer.GetAssets())
 			{
 				ctx.AddObjectToAsset(asset.Key, asset.Value.GetAsset());
 			}
-			ctx.SetMainObject(importer.GetAssets()[importer.mainAssetId].GetAsset());
+			//ctx.SetMainObject(importer.GetAssets()[importer.mainAssetId].GetAsset());
 		}
 	}
 
@@ -74,15 +80,39 @@ namespace stf
 	{
 		public override void OnInspectorGUI()
 		{
-			var importer = (STFScriptedImporter)target;
 			base.DrawDefaultInspector();
 
-			GUILayout.Label("STF Import Settings", EditorStyles.boldLabel);
+			var importer = (STFScriptedImporter)target;
+			var meta = (STFMeta)AssetDatabase.LoadMainAssetAtPath(importer.assetPath);
+			
+			GUILayout.Label("File Info", EditorStyles.boldLabel);
+			GUILayout.Space(5);
+
+			if(meta)
+			{
+				GUILayout.BeginHorizontal();
+				GUILayout.BeginVertical();
+					GUILayout.Label("Binary Version");
+					GUILayout.Label("Definition Version");
+					GUILayout.Label("Author");
+					GUILayout.Label("Copyright");
+					GUILayout.Label("Generator");
+				GUILayout.EndVertical();
+				GUILayout.BeginVertical();
+					GUILayout.Label(meta.versionBinary);
+					GUILayout.Label(meta.versionDefinition);
+					GUILayout.Label(meta.author);
+					GUILayout.Label(meta.copyright);
+					GUILayout.Label(meta.generator);
+				GUILayout.EndVertical();
+				GUILayout.EndHorizontal();
+			}
 
 			drawHLine();
 			
-			GUILayout.Label("Images", EditorStyles.boldLabel);
+			GUILayout.Label("STF Import Settings", EditorStyles.boldLabel);
 			GUILayout.Space(5);
+
 			importer.SafeImagesExternal = GUILayout.Toggle(importer.SafeImagesExternal, "Save images to external folder");
 			if(importer.SafeImagesExternal) GUILayout.Label($"External image location: {importer.OriginalTexturesFolder}");
 			if(importer.SafeImagesExternal && GUILayout.Button("Choose external image location", GUILayout.ExpandWidth(true))) {
@@ -112,11 +142,9 @@ namespace stf
 				GUILayout.Space(10f);
 				GUILayout.Label("Imported Raw Assets", EditorStyles.boldLabel);
 				
-				//var assets = AssetDatabase.LoadAllAssetsAtPath(importer.assetPath);
-				var meta = AssetDatabase.LoadAssetAtPath<STFMeta>(importer.assetPath);
 				if(meta != null && meta.importedRawAssets != null)
 				{
-					var mainAsset = meta.importedRawAssets.Find(a => a.assetId == meta.mainAsset);
+					var mainAsset = meta.importedRawAssets.Find(a => a.assetId == meta.mainAssetId);
 					GUILayout.Space(5f);
 					GUILayout.Label("Main Asset", EditorStyles.boldLabel);
 					GUILayout.Label($"Name: {mainAsset.assetName}, Type: {mainAsset.assetType}, ID: {mainAsset.assetId}");
@@ -129,7 +157,7 @@ namespace stf
 					{
 						GUILayout.Space(5f);
 						GUILayout.Label("Secondary Assets", EditorStyles.boldLabel);
-						foreach(var asset in meta.importedRawAssets.FindAll(a => a.assetId != meta.mainAsset))
+						foreach(var asset in meta.importedRawAssets.FindAll(a => a.assetId != meta.mainAssetId))
 						{
 							GUILayout.Space(5f);
 							GUILayout.Label($"Name: {asset.assetName}, Type: {asset.assetType}, ID: {asset.assetId}");
