@@ -26,7 +26,7 @@ namespace stf.serialisation
 			if(assetInfo != null)
 			{
 				id = assetInfo.assetId != null && assetInfo.assetId.Length > 0 ? assetInfo.assetId : Guid.NewGuid().ToString();
-				name = assetInfo.assetName;
+				name = assetInfo.assetName != null && assetInfo.assetName.Length > 0 ? assetInfo.assetName : rootNode.name;
 			} else
 			{
 				id = Guid.NewGuid().ToString();
@@ -179,8 +179,9 @@ namespace stf.serialisation
 		ISTFImporter state;
 		public string id;
 		public string rootNodeId;
+		public string assetName;
 
-		public STFAsset(ISTFImporter state, string id)
+		public STFAsset(ISTFImporter state, string id, string name)
 		{
 			this.state = state;
 			this.id = id;
@@ -189,6 +190,11 @@ namespace stf.serialisation
 		public UnityEngine.Object GetAsset()
 		{
 			return state.GetNode(rootNodeId);
+		}
+
+		public string GetSTFAssetName()
+		{
+			return assetName;
 		}
 
 		public string GetSTFAssetType()
@@ -211,7 +217,8 @@ namespace stf.serialisation
 	{
 		public ISTFAsset ParseFromJson(ISTFImporter state, JToken jsonAsset, string id, JObject jsonRoot)
 		{
-			var ret = new STFAsset(state, id);
+			var ret = new STFAsset(state, id, (string)jsonAsset["name"]);
+
 			var rootNodeId = (string)jsonAsset["root_node"];
 			ret.rootNodeId = rootNodeId;
 			convertAssetNode(state, rootNodeId, jsonRoot);
@@ -219,7 +226,7 @@ namespace stf.serialisation
 				var assetInfo = state.GetNode(rootNodeId).AddComponent<STFAssetInfo>();
 				assetInfo.assetId = id;
 				assetInfo.assetType = "asset";
-				assetInfo.name = (string)jsonAsset["name"];
+				assetInfo.assetName = (string)jsonAsset["name"];
 			}));
 			return ret;
 		}

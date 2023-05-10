@@ -54,7 +54,13 @@ namespace stf.serialisation
 		{
 			if(asset.GetSTFAssetType() == "asset")
 			{
-				var root = (GameObject)asset.GetAsset();
+				var originalRoot = (GameObject)asset.GetAsset();
+
+				// actually convert this
+				GameObject convertedRoot = null;
+
+				var secondStageAsset = new STFSecondStageAsset(convertedRoot, asset.getId(), asset.GetSTFAssetName());
+				assets.Add(asset.getId(), secondStageAsset);
 			}
 		}
 	}

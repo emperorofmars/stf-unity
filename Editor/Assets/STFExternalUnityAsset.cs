@@ -83,8 +83,9 @@ namespace stf.serialisation
 		ISTFImporter state;
 		public string id;
 		public string rootNodeId;
+		public string assetName;
 
-		public ExternalUnityAsset(ISTFImporter state, string id)
+		public ExternalUnityAsset(ISTFImporter state, string id, string name)
 		{
 			this.state = state;
 			this.id = id;
@@ -93,6 +94,11 @@ namespace stf.serialisation
 		public UnityEngine.Object GetAsset()
 		{
 			return state.GetNode(rootNodeId);
+		}
+
+		public string GetSTFAssetName()
+		{
+			return assetName;
 		}
 
 		public string GetSTFAssetType()
@@ -117,7 +123,7 @@ namespace stf.serialisation
 
 		public ISTFAsset ParseFromJson(ISTFImporter state, JToken jsonAsset, string id, JObject jsonRoot)
 		{
-			var ret = new ExternalUnityAsset(state, id);
+			var ret = new ExternalUnityAsset(state, id, (string)jsonAsset["name"]);
 			var rootNodeId = (string)jsonAsset["root_node"];
 			ret.rootNodeId = rootNodeId;
 			convertAssetNode(state, rootNodeId, jsonRoot);

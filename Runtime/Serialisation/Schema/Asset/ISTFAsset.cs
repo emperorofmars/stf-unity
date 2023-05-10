@@ -18,6 +18,7 @@ namespace stf.serialisation
 		string getId();
 		string GetSTFAssetType();
 		Type GetUnityAssetType();
+		string GetSTFAssetName();
         UnityEngine.Object GetAsset();
 	}
 	

@@ -105,8 +105,9 @@ namespace stf.serialisation
 		ISTFImporter state;
 		public string id;
 		public GameObject unityRoot;
+		public string assetName;
 
-		public ExternalUnityPatchAsset(ISTFImporter state, string id)
+		public ExternalUnityPatchAsset(ISTFImporter state, string id, string name)
 		{
 			this.state = state;
 			this.id = id;
@@ -115,6 +116,11 @@ namespace stf.serialisation
 		public UnityEngine.Object GetAsset()
 		{
 			return unityRoot;
+		}
+
+		public string GetSTFAssetName()
+		{
+			return assetName;
 		}
 
 		public string GetSTFAssetType()
@@ -139,7 +145,7 @@ namespace stf.serialisation
 
 		public ISTFAsset ParseFromJson(ISTFImporter state, JToken jsonAsset, string id, JObject jsonRoot)
 		{
-			var ret = new ExternalUnityPatchAsset(state, id);
+			var ret = new ExternalUnityPatchAsset(state, id, (string)jsonAsset["name"]);
 			var rootNodeIds = jsonAsset["root_nodes"].ToObject<List<string>>();
 			var unityRootAssetPath = (string)jsonAsset["unity_asset_path"];
 			var mainAsset = AssetDatabase.LoadMainAssetAtPath(unityRootAssetPath);

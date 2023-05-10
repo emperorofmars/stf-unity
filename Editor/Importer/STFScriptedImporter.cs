@@ -4,6 +4,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using stf.serialisation;
 using UnityEditor;
 using UnityEditor.Experimental.AssetImporters;
@@ -16,7 +17,11 @@ namespace stf
 	[ScriptedImporter(1, "stf")]
 	public class STFScriptedImporter : ScriptedImporter
 	{
+		[HideInInspector]
 		public bool AuthoringMode = false;
+		[HideInInspector]
+		public bool SafeImagesExternal = false;
+		[HideInInspector]
 		public string OriginalTexturesFolder = "Assets/authoring_stf_external";
 
 		private void ensureTexturePath()
@@ -61,6 +66,35 @@ namespace stf
 				ctx.AddObjectToAsset(asset.Key, asset.Value.GetAsset());
 			}
 			ctx.SetMainObject(importer.GetAssets()[importer.mainAssetId].GetAsset());
+		}
+	}
+
+	[CustomEditor(typeof(STFScriptedImporter))]
+	public class Car_Inspector : Editor
+	{
+		public override void OnInspectorGUI()
+		{
+			var importer = (STFScriptedImporter)target;
+			base.DrawDefaultInspector();
+			
+			GUILayout.Space(10f);
+			importer.AuthoringMode = GUILayout.Toggle(importer.AuthoringMode, "Authoring Mode");
+			if(importer.AuthoringMode) importer.SafeImagesExternal = GUILayout.Toggle(importer.SafeImagesExternal, "Save Images To External Folder");
+			if(importer.AuthoringMode && importer.SafeImagesExternal) GUILayout.Label($"External Image Location: {importer.OriginalTexturesFolder}");
+			if(importer.AuthoringMode && importer.SafeImagesExternal && GUILayout.Button("Choose External Image Location", GUILayout.ExpandWidth(true))) {
+				importer.OriginalTexturesFolder = EditorUtility.OpenFolderPanel("Export Standalone", "Assets", "authoring_stf_external");
+			}
+
+			GUILayout.Space(10f);
+			GUILayout.Label("Detected Main Assets", EditorStyles.boldLabel);
+
+			var assets = AssetDatabase.LoadAllAssetsAtPath(importer.assetPath);
+			foreach(var asset in assets.Where(a => a.GetType() == typeof(STFAssetInfo) && ((STFAssetInfo)a).assetType == "asset"))
+			{
+				var a = (STFAssetInfo)asset;
+				GUILayout.Label($"Name: {a.assetName}, Type: {a.assetType}, ID: {a.assetId}");
+
+			}
 		}
 	}
 }
