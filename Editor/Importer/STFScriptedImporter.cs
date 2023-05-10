@@ -65,13 +65,13 @@ namespace stf
 			icon.LoadImage(STFIcon.icon_png_array.ToArray());
 
 			ctx.AddObjectToAsset("STFMeta", importer.GetMeta(), icon);
-			ctx.SetMainObject(importer.GetMeta());
+			//ctx.SetMainObject(importer.GetMeta());
 
 			foreach(var asset in importer.GetAssets())
 			{
 				ctx.AddObjectToAsset(asset.Key, asset.Value.GetAsset());
 			}
-			//ctx.SetMainObject(importer.GetAssets()[importer.mainAssetId].GetAsset());
+			ctx.SetMainObject(importer.GetAssets()[importer.mainAssetId].GetAsset());
 		}
 	}
 
@@ -83,7 +83,8 @@ namespace stf
 			base.DrawDefaultInspector();
 
 			var importer = (STFScriptedImporter)target;
-			var meta = (STFMeta)AssetDatabase.LoadMainAssetAtPath(importer.assetPath);
+			var meta = AssetDatabase.LoadAssetAtPath<STFMeta>(importer.assetPath);
+			//var meta = (STFMeta)AssetDatabase.LoadMainAssetAtPath(importer.assetPath);
 			
 			GUILayout.Label("File Info", EditorStyles.boldLabel);
 			GUILayout.Space(5);
