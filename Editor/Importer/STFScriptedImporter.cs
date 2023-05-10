@@ -1,8 +1,6 @@
 
 #if UNITY_EDITOR
 
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using stf.serialisation;
@@ -13,8 +11,7 @@ using UnityEngine;
 
 namespace stf
 {
-
-	[ScriptedImporter(1, "stf")]
+	[ScriptedImporter(1, new string[] {"stf"})]
 	public class STFScriptedImporter : ScriptedImporter
 	{
 		[HideInInspector]
@@ -147,8 +144,8 @@ namespace stf
 				{
 					var mainAsset = meta.importedRawAssets.Find(a => a.assetId == meta.mainAssetId);
 					GUILayout.Space(5f);
-					GUILayout.Label("Main Asset", EditorStyles.boldLabel);
-					GUILayout.Label($"Name: {mainAsset.assetName}, Type: {mainAsset.assetType}, ID: {mainAsset.assetId}");
+					GUILayout.Label("Main", EditorStyles.boldLabel);
+					GUILayout.Label($"Name: {mainAsset.assetName} | Type: {mainAsset.assetType} | Id: {mainAsset.assetId}");
 					if(GUILayout.Button("Instantiate into current scene"))
 					{
 						var instantiated = Object.Instantiate(mainAsset.assetRoot);
@@ -157,7 +154,7 @@ namespace stf
 					if(meta.importedRawAssets.Count > 1)
 					{
 						GUILayout.Space(5f);
-						GUILayout.Label("Secondary Assets", EditorStyles.boldLabel);
+						GUILayout.Label("Secondary", EditorStyles.boldLabel);
 						foreach(var asset in meta.importedRawAssets.FindAll(a => a.assetId != meta.mainAssetId))
 						{
 							GUILayout.Space(5f);

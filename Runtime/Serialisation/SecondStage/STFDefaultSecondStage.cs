@@ -57,7 +57,8 @@ namespace stf.serialisation
 				var originalRoot = (GameObject)asset.GetAsset();
 
 				// actually convert this
-				GameObject convertedRoot = null;
+				GameObject convertedRoot = UnityEngine.Object.Instantiate(originalRoot);
+				convertedRoot.name = originalRoot.name;
 
 				var secondStageAsset = new STFSecondStageAsset(convertedRoot, asset.getId(), asset.GetSTFAssetName());
 				assets.Add(asset.getId(), secondStageAsset);
