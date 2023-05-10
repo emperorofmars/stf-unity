@@ -18,8 +18,6 @@ namespace stf
 	public class STFScriptedImporter : ScriptedImporter
 	{
 		[HideInInspector]
-		public bool AuthoringMode = false;
-		[HideInInspector]
 		public bool SafeImagesExternal = false;
 		[HideInInspector]
 		public string OriginalTexturesFolder = "Assets/authoring_stf_external";
@@ -38,7 +36,7 @@ namespace stf
 			byte[] byteArray = File.ReadAllBytes(ctx.assetPath);
 
 			var context = STFRegistry.GetDefaultImportContext();
-			if(AuthoringMode)
+			if(SafeImagesExternal)
 			{
 				var image_bullshit = new STFEncodedImageTextureImporter();
 				ensureTexturePath();
@@ -78,11 +76,16 @@ namespace stf
 			base.DrawDefaultInspector();
 			
 			GUILayout.Space(10f);
-			importer.AuthoringMode = GUILayout.Toggle(importer.AuthoringMode, "Authoring Mode");
-			if(importer.AuthoringMode) importer.SafeImagesExternal = GUILayout.Toggle(importer.SafeImagesExternal, "Save Images To External Folder");
-			if(importer.AuthoringMode && importer.SafeImagesExternal) GUILayout.Label($"External Image Location: {importer.OriginalTexturesFolder}");
-			if(importer.AuthoringMode && importer.SafeImagesExternal && GUILayout.Button("Choose External Image Location", GUILayout.ExpandWidth(true))) {
+			 importer.SafeImagesExternal = GUILayout.Toggle(importer.SafeImagesExternal, "Save images to external folder");
+			if(importer.SafeImagesExternal) GUILayout.Label($"External image location: {importer.OriginalTexturesFolder}");
+			if(importer.SafeImagesExternal && GUILayout.Button("Choose external image location", GUILayout.ExpandWidth(true))) {
 				importer.OriginalTexturesFolder = EditorUtility.OpenFolderPanel("Export Standalone", "Assets", "authoring_stf_external");
+				if(importer.OriginalTexturesFolder != null && importer.OriginalTexturesFolder.Length > 0)
+				{
+					if (importer.OriginalTexturesFolder.StartsWith(Application.dataPath)) {
+						importer.OriginalTexturesFolder = "Assets" + importer.OriginalTexturesFolder.Substring(Application.dataPath.Length);
+					}
+				}
 			}
 
 			GUILayout.Space(10f);
@@ -91,9 +94,21 @@ namespace stf
 			var assets = AssetDatabase.LoadAllAssetsAtPath(importer.assetPath);
 			foreach(var asset in assets.Where(a => a.GetType() == typeof(STFAssetInfo) && ((STFAssetInfo)a).assetType == "asset"))
 			{
+				GUILayout.Space(5f);
 				var a = (STFAssetInfo)asset;
 				GUILayout.Label($"Name: {a.assetName}, Type: {a.assetType}, ID: {a.assetId}");
-
+				if(GUILayout.Button("Instantiate into current scene"))
+				{
+					var instantiated = Object.Instantiate(a);
+					instantiated.name = a.name;
+				}
+			}
+			
+			GUILayout.Space(20f);
+			if(GUILayout.Button("Save and reimport"))
+			{
+				EditorUtility.SetDirty(importer);
+				importer.SaveAndReimport();
 			}
 		}
 	}
