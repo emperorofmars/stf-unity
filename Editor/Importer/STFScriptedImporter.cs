@@ -106,29 +106,32 @@ namespace stf
 
 			var importer = (STFScriptedImporter)target;
 			var meta = AssetDatabase.LoadAssetAtPath<STFMeta>(importer.assetPath);
-			//var meta = (STFMeta)AssetDatabase.LoadMainAssetAtPath(importer.assetPath);
 			
 			GUILayout.Label("File Info", EditorStyles.boldLabel);
 			GUILayout.Space(5);
 
 			if(meta)
 			{
-				GUILayout.BeginHorizontal();
-				GUILayout.BeginVertical();
-					GUILayout.Label("Binary Version");
-					GUILayout.Label("Definition Version");
-					GUILayout.Label("Author");
-					GUILayout.Label("Copyright");
-					GUILayout.Label("Generator");
-				GUILayout.EndVertical();
-				GUILayout.BeginVertical();
-					GUILayout.Label(meta.versionBinary);
-					GUILayout.Label(meta.versionDefinition);
-					GUILayout.Label(meta.author);
-					GUILayout.Label(meta.copyright);
-					GUILayout.Label(meta.generator);
-				GUILayout.EndVertical();
-				GUILayout.EndHorizontal();
+				EditorGUI.indentLevel++;
+
+				EditorGUILayout.BeginHorizontal();
+				EditorGUILayout.BeginVertical();
+					EditorGUILayout.LabelField("Binary Version");
+					EditorGUILayout.LabelField("Definition Version");
+					EditorGUILayout.LabelField("Author");
+					EditorGUILayout.LabelField("Copyright");
+					EditorGUILayout.LabelField("Generator");
+				EditorGUILayout.EndVertical();
+				EditorGUILayout.BeginVertical();
+					EditorGUILayout.LabelField(meta.versionBinary);
+					EditorGUILayout.LabelField(meta.versionDefinition);
+					EditorGUILayout.LabelField(meta.author);
+					EditorGUILayout.LabelField(meta.copyright);
+					EditorGUILayout.LabelField(meta.generator);
+				EditorGUILayout.EndVertical();
+				EditorGUILayout.EndHorizontal();
+
+				EditorGUI.indentLevel--;
 			}
 
 			drawHLine();

@@ -86,7 +86,7 @@ namespace stf.serialisation
 				else assets[asset.getId()].Add(secondStageAsset);
 
 				var parent = meta.importedRawAssets.First(a => a.assetId == asset.getId());
-				parent.secondStageAssets.Add(new STFMeta.AssetInfo { assetId = asset.getId() + "_sub", assetName = asset.GetSTFAssetName() + "_resolved", assetRoot = convertedRoot, assetType = "unity", visible = true});
+				parent.secondStageAssets.Add(new STFMeta.AssetInfo { assetId = asset.getId() + "_sub", assetName = asset.GetSTFAssetName(), assetRoot = convertedRoot, assetType = "unity", visible = true});
 			}
 			else
 			{
