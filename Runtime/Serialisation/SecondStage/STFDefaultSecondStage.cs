@@ -10,43 +10,20 @@ namespace stf.serialisation
 {
 	public class STFDefaultSecondStage : ISTFSecondStage
 	{
-		STFMeta meta;
 		private List<Task> tasks = new List<Task>();
 		string mainAssetId;
-		Dictionary<string, ISTFAsset> originalAssets;
 		List<UnityEngine.Object> originalResources;
-		Dictionary<string, List<ISTFAsset>> assets = new Dictionary<string, List<ISTFAsset>>();
+		List<ISTFAsset> assets = new List<ISTFAsset>();
 		List<UnityEngine.Object> resources = new List<UnityEngine.Object>();
 		Dictionary<Type, ISTFSecondStageConverter> converters = new Dictionary<Type, ISTFSecondStageConverter>() {{typeof(STFTwistConstraintBack), new STFTwistConstraintBackConverter()}};
 
-		public void init(ISTFImporter state, STFMeta meta)
+		public void convert(ISTFAsset asset)
 		{
-			this.meta = meta;
 			this.tasks = new List<Task>();
-			this.assets = new Dictionary<string, List<ISTFAsset>>();
-			this.mainAssetId = state.GetMainAssetId();
-			this.originalAssets = state.GetAssets();
-			this.originalResources = state.GetResources();
-			this.resources = new List<UnityEngine.Object>();
-			foreach(var asset in originalAssets)
-			{
-				run(asset.Value);
-			}
-		}
-
-		public void init(string mainAssetId, Dictionary<string, ISTFAsset> assets, List<UnityEngine.Object> resources, STFMeta meta)
-		{
-			this.meta = meta;
-			this.tasks = new List<Task>();
-			this.assets = new Dictionary<string, List<ISTFAsset>>();
-			this.mainAssetId = mainAssetId;
-			this.originalAssets = assets;
+			this.assets =  new List<ISTFAsset>();
 			this.originalResources = resources;
 			this.resources = new List<UnityEngine.Object>();
-			foreach(var asset in originalAssets)
-			{
-				run(asset.Value);
-			}
+			run(asset);
 		}
 		
 		public void AddTask(Task task)
@@ -59,7 +36,7 @@ namespace stf.serialisation
 			return mainAssetId;
 		}
 
-		public Dictionary<string, List<ISTFAsset>> GetAssets()
+		public List<ISTFAsset> GetAssets()
 		{
 			return assets;
 		}
@@ -81,12 +58,8 @@ namespace stf.serialisation
 
 				convertTree(convertedRoot);
 
-				var secondStageAsset = new STFSecondStageAsset(convertedRoot, asset.getId(), asset.GetSTFAssetName());
-				if(!assets.ContainsKey(asset.getId())) assets.Add(asset.getId(), new List<ISTFAsset>() { secondStageAsset });
-				else assets[asset.getId()].Add(secondStageAsset);
-
-				var parent = meta.importedRawAssets.First(a => a.assetId == asset.getId());
-				parent.secondStageAssets.Add(new STFMeta.AssetInfo { assetId = asset.getId() + "_sub", assetName = asset.GetSTFAssetName(), assetRoot = convertedRoot, assetType = "unity", visible = true});
+				var secondStageAsset = new STFSecondStageAsset(convertedRoot, asset.getId() + "_sub", asset.GetSTFAssetName());
+				this.assets.Add(secondStageAsset);
 			}
 			else
 			{

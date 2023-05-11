@@ -21,13 +21,11 @@ namespace stf.serialisation
 		};
 		public static readonly Dictionary<string, ASTFComponentImporter> DefaultComponentImporters = new Dictionary<string, ASTFComponentImporter>() {
 			{STFMeshInstanceImporter._TYPE, new STFMeshInstanceImporter()},
-			{STFTwistConstraint._TYPE, new STFTwistConstraintImporter()},
 			{STFTwistConstraintBack._TYPE, new STFTwistConstraintBackImporter()},
 			{STFTwistConstraintForward._TYPE, new STFTwistConstraintForwardImporter()}
 		};
 		public static readonly Dictionary<Type, ASTFComponentExporter> DefaultComponentExporters = new Dictionary<Type, ASTFComponentExporter>() {
 			{typeof(SkinnedMeshRenderer), new STFMeshInstanceExporter()},
-			{typeof(STFTwistConstraint), new STFTwistConstraintExporter()},
 			{typeof(STFTwistConstraintBack), new STFTwistConstraintBackExporter()},
 			{typeof(STFTwistConstraintForward), new STFTwistConstraintForwardExporter()}
 		};

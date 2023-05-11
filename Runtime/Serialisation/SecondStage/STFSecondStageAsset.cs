@@ -13,6 +13,7 @@ namespace stf.serialisation
 
 		public STFSecondStageAsset(GameObject rootNode, string id, string name)
 		{
+			this.name = name;
 			this.rootNode = rootNode;
 			this.id = id;
 		}
@@ -29,7 +30,7 @@ namespace stf.serialisation
 
 		public string GetSTFAssetType()
 		{
-			return "asset";
+			return "unity";
 		}
 
 		public Type GetUnityAssetType()

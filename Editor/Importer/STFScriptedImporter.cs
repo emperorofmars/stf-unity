@@ -62,32 +62,31 @@ namespace stf
 			foreach(var asset in importer.GetAssets())
 			{
 				ctx.AddObjectToAsset(asset.Key, asset.Value.GetAsset());
+				
+				if(SecondStage != null)
+				{
+					SecondStage.convert(asset.Value);
+					foreach(var resource in SecondStage.GetResources())
+					{
+						if(resource != null)
+						{
+							if(resource.GetType() == typeof(Mesh))
+								ctx.AddObjectToAsset("meshes/" + resource.name + ".mesh", resource);
+							else if(resource.GetType() == typeof(Texture2D))
+								ctx.AddObjectToAsset("textures/" + resource.name + ".texture2d", resource);
+							else
+								ctx.AddObjectToAsset(resource.name, resource);
+						}
+					}
+					foreach(var subAsset in SecondStage.GetAssets())
+					{
+						ctx.AddObjectToAsset(subAsset.GetSTFAssetName(), subAsset.GetAsset());
+						var metaInfo = importer.GetMeta().importedRawAssets.Find(a => a.assetId == asset.Key);
+						metaInfo.secondStageAssets.Add(new STFMeta.AssetInfo {assetId = subAsset.getId(), assetName = subAsset.GetSTFAssetName(), assetType = subAsset.GetSTFAssetType(), assetRoot = subAsset.GetAsset(), visible = true});
+					}
+				}
 			}
 			ctx.SetMainObject(importer.GetAssets()[importer.mainAssetId].GetAsset());
-			
-			if(SecondStage != null)
-			{
-				SecondStage.init(importer, importer.GetMeta());
-				foreach(var resource in SecondStage.GetResources())
-				{
-					if(resource != null)
-					{
-						if(resource.GetType() == typeof(Mesh))
-							ctx.AddObjectToAsset("meshes/" + resource.name + ".mesh", resource);
-						else if(resource.GetType() == typeof(Texture2D))
-							ctx.AddObjectToAsset("textures/" + resource.name + ".texture2d", resource);
-						else
-							ctx.AddObjectToAsset(resource.name, resource);
-					}
-				}
-				foreach(var asset in SecondStage.GetAssets())
-				{
-					foreach(var subasset in asset.Value)
-					{
-						ctx.AddObjectToAsset(subasset.GetSTFAssetName(), subasset.GetAsset());
-					}
-				}
-			}
 
 			importer.GetMeta().name = "STFMeta";
 			var icon = new Texture2D(256, 256);
@@ -198,7 +197,7 @@ namespace stf
 		{
 			GUILayout.Space(5f);
 			GUILayout.BeginHorizontal();
-			EditorGUILayout.LabelField($"Name: '{assetInfo.assetName}' Type: '{assetInfo.assetType}'");
+			EditorGUILayout.LabelField($"Name: {assetInfo.assetName} | Type: {assetInfo.assetType}");
 			if(GUILayout.Button("Instantiate authoring scene", GUILayout.Width(200)))
 			{
 				var instantiated = Object.Instantiate(assetInfo.assetRoot, new Vector3(0, 0, 0), Quaternion.identity);
@@ -212,7 +211,7 @@ namespace stf
 				foreach(var asset in assetInfo.secondStageAssets)
 				{
 					GUILayout.BeginHorizontal();
-					EditorGUILayout.LabelField($"Name: {asset.assetName}");
+					EditorGUILayout.LabelField($"Name: {asset.assetName} | Type: {asset.assetType}");
 					if(GUILayout.Button("Instantiate into current scene"))
 					{
 						var instantiated = Object.Instantiate(asset.assetRoot, new Vector3(0, 0, 0), Quaternion.identity);
