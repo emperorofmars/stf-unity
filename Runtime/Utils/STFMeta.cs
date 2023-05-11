@@ -26,6 +26,8 @@ namespace stf
 			public string assetType;
 			public string assetName;
 			public UnityEngine.Object assetRoot;
+			public bool visible;
+			public List<AssetInfo> secondStageAssets = new List<AssetInfo>();
 		}
 		
 		public string versionBinary;

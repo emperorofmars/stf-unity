@@ -59,18 +59,15 @@ namespace stf
 						ctx.AddObjectToAsset(resource.name, resource);
 				}
 			}
-			
-			if(AuthoringMode)
+			foreach(var asset in importer.GetAssets())
 			{
-				foreach(var asset in importer.GetAssets())
-				{
-					ctx.AddObjectToAsset(asset.Key, asset.Value.GetAsset());
-				}
-				ctx.SetMainObject(importer.GetAssets()[importer.mainAssetId].GetAsset());
+				ctx.AddObjectToAsset(asset.Key, asset.Value.GetAsset());
 			}
+			ctx.SetMainObject(importer.GetAssets()[importer.mainAssetId].GetAsset());
+			
 			if(SecondStage != null)
 			{
-				SecondStage.init(importer);
+				SecondStage.init(importer, importer.GetMeta());
 				foreach(var resource in SecondStage.GetResources())
 				{
 					if(resource != null)
@@ -85,9 +82,11 @@ namespace stf
 				}
 				foreach(var asset in SecondStage.GetAssets())
 				{
-					ctx.AddObjectToAsset(asset.Key, asset.Value.GetAsset());
+					foreach(var subasset in asset.Value)
+					{
+						ctx.AddObjectToAsset(subasset.GetSTFAssetName(), subasset.GetAsset());
+					}
 				}
-				ctx.SetMainObject(SecondStage.GetAssets()[SecondStage.GetMainAssetId()].GetAsset());
 			}
 
 			importer.GetMeta().name = "STFMeta";
@@ -151,102 +150,31 @@ namespace stf
 
 			drawHLine();
 
-			GUILayout.Label("Imported Assets FOOOOOOOOOOO", EditorStyles.boldLabel);
-			GUILayout.Space(5);
-
-			// Second Stage Assets
-			/*if(importer.SecondStage != null && importer.SecondStage.GetAssets() != null && importer.SecondStage.GetMainAssetId() != null)
-			{
-				var mainAsset = importer.SecondStage.GetAssets()[importer.SecondStage.GetMainAssetId()];
-				GUILayout.Space(5f);
-				GUILayout.Label("Main", EditorStyles.boldLabel);
-				GUILayout.Label($"Name: {mainAsset.GetSTFAssetName()} | Type: {mainAsset.GetSTFAssetType()} | Id: {mainAsset.getId()}");
-				if(GUILayout.Button("Instantiate into current scene"))
-				{
-					var instantiated = Object.Instantiate(mainAsset.GetAsset());
-					instantiated.name = mainAsset.GetAsset().name;
-				}
-			}*/
-
 			GUILayout.Space(10f);
 			GUILayout.Label("Imported Assets", EditorStyles.boldLabel);
 			
-			/*if(meta != null && meta.importedRawAssets != null)
+			if(meta != null && meta.importedRawAssets != null)
 			{
 				var mainAsset = meta.importedRawAssets.Find(a => a.assetId == meta.mainAssetId);
 				GUILayout.Space(5f);
-				GUILayout.Label("Main", EditorStyles.boldLabel);
-				GUILayout.Label($"Name: {mainAsset.assetName} | Type: {mainAsset.assetType} | Id: {mainAsset.assetId}");
-				
-				GUILayout.Label(mainAsset.assetId);
-				GUILayout.Label($"{importer.SecondStage.GetAssets().Count}");
-				if(importer.SecondStage != null && importer.SecondStage.GetAssets().ContainsKey(mainAsset.assetId))
-				{
-					if(GUILayout.Button("Instantiate into current scene"))
-					{
-						var instantiated = Object.Instantiate(importer.SecondStage.GetAssets()[mainAsset.assetId].GetAsset());
-						instantiated.name = importer.SecondStage.GetAssets()[mainAsset.assetId].GetAsset().name;
-					}
-				}
+				EditorGUILayout.LabelField("Main", EditorStyles.boldLabel);
+				EditorGUI.indentLevel++;
+				renderAsset(mainAsset);
+				EditorGUI.indentLevel--;
+
 				if(meta.importedRawAssets.Count > 1)
 				{
-					GUILayout.Space(5f);
-					GUILayout.Label("Secondary", EditorStyles.boldLabel);
 					foreach(var asset in meta.importedRawAssets.FindAll(a => a.assetId != meta.mainAssetId))
 					{
-						GUILayout.Space(5f);
-						GUILayout.Label($"Name: {asset.assetName}, Type: {asset.assetType}, ID: {asset.assetId}");
-						if(importer.SecondStage != null && importer.SecondStage.GetAssets().ContainsKey(asset.assetId))
-						{
-							if(GUILayout.Button("Instantiate into current scene"))
-							{
-								var instantiated = Object.Instantiate(importer.SecondStage.GetAssets()[mainAsset.assetId].GetAsset());
-								instantiated.name = importer.SecondStage.GetAssets()[mainAsset.assetId].GetAsset().name;
-							}
-						}
-					}
-				}
-			}*/
-
-			drawHLine();
-
-			GUILayout.Label("Authoring", EditorStyles.boldLabel);
-			GUILayout.Space(5);
-			importer.AuthoringMode = GUILayout.Toggle(importer.AuthoringMode, "Authoring Mode");
-			if(importer.AuthoringMode)
-			{
-				GUILayout.Space(10f);
-				GUILayout.Label("Imported Raw Assets", EditorStyles.boldLabel);
-				
-				if(meta != null && meta.importedRawAssets != null)
-				{
-					var mainAsset = meta.importedRawAssets.Find(a => a.assetId == meta.mainAssetId);
-					GUILayout.Space(5f);
-					GUILayout.Label("Main", EditorStyles.boldLabel);
-					GUILayout.Label($"Name: {mainAsset.assetName} | Type: {mainAsset.assetType} | Id: {mainAsset.assetId}");
-					if(GUILayout.Button("Instantiate into current scene"))
-					{
-						var instantiated = Object.Instantiate(mainAsset.assetRoot, new Vector3(0, 0, 0), Quaternion.identity);
-						instantiated.name = mainAsset.assetRoot.name;
-					}
-					if(meta.importedRawAssets.Count > 1)
-					{
-						GUILayout.Space(5f);
-						GUILayout.Label("Secondary", EditorStyles.boldLabel);
-						foreach(var asset in meta.importedRawAssets.FindAll(a => a.assetId != meta.mainAssetId))
-						{
-							GUILayout.Space(5f);
-							GUILayout.Label($"Name: {asset.assetName}, Type: {asset.assetType}, ID: {asset.assetId}");
-							if(GUILayout.Button("Instantiate into current scene"))
-							{
-								var instantiated = Object.Instantiate(asset.assetRoot);
-								instantiated.name = asset.assetRoot.name;
-							}
-						}
+						EditorGUI.indentLevel++;
+						renderAsset(asset);
+						EditorGUI.indentLevel--;
 					}
 				}
 			}
-			
+
+			// handle unparented patch assets
+
 			drawHLine();
 
 			GUILayout.Space(20f);
@@ -261,6 +189,36 @@ namespace stf
 			GUILayout.Space(10);
 			EditorGUI.DrawRect(EditorGUILayout.GetControlRect(false, 2), Color.gray);
 			GUILayout.Space(10);
+		}
+
+		private void renderAsset(STFMeta.AssetInfo assetInfo)
+		{
+			GUILayout.Space(5f);
+			GUILayout.BeginHorizontal();
+			EditorGUILayout.LabelField($"Name: '{assetInfo.assetName}' Type: '{assetInfo.assetType}'");
+			if(GUILayout.Button("Instantiate authoring scene", GUILayout.Width(200)))
+			{
+				var instantiated = Object.Instantiate(assetInfo.assetRoot, new Vector3(0, 0, 0), Quaternion.identity);
+				instantiated.name = assetInfo.assetRoot.name;
+			}
+			GUILayout.EndHorizontal();
+			if(assetInfo.secondStageAssets != null && assetInfo.secondStageAssets.Count > 0)
+			{
+				EditorGUILayout.LabelField("Processed Assets", EditorStyles.boldLabel);
+				EditorGUI.indentLevel++;
+				foreach(var asset in assetInfo.secondStageAssets)
+				{
+					GUILayout.BeginHorizontal();
+					EditorGUILayout.LabelField($"Name: {asset.assetName}");
+					if(GUILayout.Button("Instantiate into current scene"))
+					{
+						var instantiated = Object.Instantiate(asset.assetRoot, new Vector3(0, 0, 0), Quaternion.identity);
+						instantiated.name = asset.assetRoot.name;
+					}
+					GUILayout.EndHorizontal();
+				}
+				EditorGUI.indentLevel--;
+			}
 		}
 	}
 }
