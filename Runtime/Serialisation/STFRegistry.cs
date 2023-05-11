@@ -51,6 +51,7 @@ namespace stf.serialisation
 
 		private static Dictionary<string, ASTFComponentImporter> RegisteredComponentImporters = new Dictionary<string, ASTFComponentImporter>();
 		private static Dictionary<Type, ASTFComponentExporter> RegisteredComponentExporters = new Dictionary<Type, ASTFComponentExporter>();
+
 		private static Dictionary<string, ASTFResourceImporter> RegisteredResourceImporters = new Dictionary<string, ASTFResourceImporter>();
 		private static Dictionary<Type, ASTFResourceExporter> RegisteredResourceExporters = new Dictionary<Type, ASTFResourceExporter>();
 

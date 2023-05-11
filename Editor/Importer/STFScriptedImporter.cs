@@ -20,6 +20,8 @@ namespace stf
 		public bool SafeImagesExternal = false;
 		[HideInInspector]
 		public string OriginalTexturesFolder = "Assets/authoring_stf_external";
+		[HideInInspector]
+		public ISTFSecondStage SecondStage = new STFDefaultSecondStage();
 
 		private void ensureTexturePath()
 		{
@@ -44,6 +46,7 @@ namespace stf
 			}
 			var importer = new STFImporter(byteArray, context);
 			
+			// Add All Resources
 			foreach(var resource in importer.GetResources())
 			{
 				if(resource != null)
@@ -56,19 +59,42 @@ namespace stf
 						ctx.AddObjectToAsset(resource.name, resource);
 				}
 			}
+			
+			if(AuthoringMode)
+			{
+				foreach(var asset in importer.GetAssets())
+				{
+					ctx.AddObjectToAsset(asset.Key, asset.Value.GetAsset());
+				}
+				ctx.SetMainObject(importer.GetAssets()[importer.mainAssetId].GetAsset());
+			}
+			if(SecondStage != null)
+			{
+				SecondStage.init(importer);
+				foreach(var resource in SecondStage.GetResources())
+				{
+					if(resource != null)
+					{
+						if(resource.GetType() == typeof(Mesh))
+							ctx.AddObjectToAsset("meshes/" + resource.name + ".mesh", resource);
+						else if(resource.GetType() == typeof(Texture2D))
+							ctx.AddObjectToAsset("textures/" + resource.name + ".texture2d", resource);
+						else
+							ctx.AddObjectToAsset(resource.name, resource);
+					}
+				}
+				foreach(var asset in SecondStage.GetAssets())
+				{
+					ctx.AddObjectToAsset(asset.Key, asset.Value.GetAsset());
+				}
+				ctx.SetMainObject(SecondStage.GetAssets()[SecondStage.GetMainAssetId()].GetAsset());
+			}
 
 			importer.GetMeta().name = "STFMeta";
 			var icon = new Texture2D(256, 256);
 			icon.LoadImage(STFIcon.icon_png_array.ToArray());
 
 			ctx.AddObjectToAsset("STFMeta", importer.GetMeta(), icon);
-			//ctx.SetMainObject(importer.GetMeta());
-
-			foreach(var asset in importer.GetAssets())
-			{
-				ctx.AddObjectToAsset(asset.Key, asset.Value.GetAsset());
-			}
-			ctx.SetMainObject(importer.GetAssets()[importer.mainAssetId].GetAsset());
 		}
 	}
 
@@ -125,10 +151,62 @@ namespace stf
 
 			drawHLine();
 
-			GUILayout.Label("Imported Assets", EditorStyles.boldLabel);
+			GUILayout.Label("Imported Assets FOOOOOOOOOOO", EditorStyles.boldLabel);
 			GUILayout.Space(5);
 
 			// Second Stage Assets
+			/*if(importer.SecondStage != null && importer.SecondStage.GetAssets() != null && importer.SecondStage.GetMainAssetId() != null)
+			{
+				var mainAsset = importer.SecondStage.GetAssets()[importer.SecondStage.GetMainAssetId()];
+				GUILayout.Space(5f);
+				GUILayout.Label("Main", EditorStyles.boldLabel);
+				GUILayout.Label($"Name: {mainAsset.GetSTFAssetName()} | Type: {mainAsset.GetSTFAssetType()} | Id: {mainAsset.getId()}");
+				if(GUILayout.Button("Instantiate into current scene"))
+				{
+					var instantiated = Object.Instantiate(mainAsset.GetAsset());
+					instantiated.name = mainAsset.GetAsset().name;
+				}
+			}*/
+
+			GUILayout.Space(10f);
+			GUILayout.Label("Imported Assets", EditorStyles.boldLabel);
+			
+			/*if(meta != null && meta.importedRawAssets != null)
+			{
+				var mainAsset = meta.importedRawAssets.Find(a => a.assetId == meta.mainAssetId);
+				GUILayout.Space(5f);
+				GUILayout.Label("Main", EditorStyles.boldLabel);
+				GUILayout.Label($"Name: {mainAsset.assetName} | Type: {mainAsset.assetType} | Id: {mainAsset.assetId}");
+				
+				GUILayout.Label(mainAsset.assetId);
+				GUILayout.Label($"{importer.SecondStage.GetAssets().Count}");
+				if(importer.SecondStage != null && importer.SecondStage.GetAssets().ContainsKey(mainAsset.assetId))
+				{
+					if(GUILayout.Button("Instantiate into current scene"))
+					{
+						var instantiated = Object.Instantiate(importer.SecondStage.GetAssets()[mainAsset.assetId].GetAsset());
+						instantiated.name = importer.SecondStage.GetAssets()[mainAsset.assetId].GetAsset().name;
+					}
+				}
+				if(meta.importedRawAssets.Count > 1)
+				{
+					GUILayout.Space(5f);
+					GUILayout.Label("Secondary", EditorStyles.boldLabel);
+					foreach(var asset in meta.importedRawAssets.FindAll(a => a.assetId != meta.mainAssetId))
+					{
+						GUILayout.Space(5f);
+						GUILayout.Label($"Name: {asset.assetName}, Type: {asset.assetType}, ID: {asset.assetId}");
+						if(importer.SecondStage != null && importer.SecondStage.GetAssets().ContainsKey(asset.assetId))
+						{
+							if(GUILayout.Button("Instantiate into current scene"))
+							{
+								var instantiated = Object.Instantiate(importer.SecondStage.GetAssets()[mainAsset.assetId].GetAsset());
+								instantiated.name = importer.SecondStage.GetAssets()[mainAsset.assetId].GetAsset().name;
+							}
+						}
+					}
+				}
+			}*/
 
 			drawHLine();
 
@@ -148,7 +226,7 @@ namespace stf
 					GUILayout.Label($"Name: {mainAsset.assetName} | Type: {mainAsset.assetType} | Id: {mainAsset.assetId}");
 					if(GUILayout.Button("Instantiate into current scene"))
 					{
-						var instantiated = Object.Instantiate(mainAsset.assetRoot);
+						var instantiated = Object.Instantiate(mainAsset.assetRoot, new Vector3(0, 0, 0), Quaternion.identity);
 						instantiated.name = mainAsset.assetRoot.name;
 					}
 					if(meta.importedRawAssets.Count > 1)

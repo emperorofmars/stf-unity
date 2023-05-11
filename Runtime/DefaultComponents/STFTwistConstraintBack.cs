@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using stf.serialisation;
 using UnityEngine;
+using UnityEngine.Animations;
 
 namespace stf.Components
 {
@@ -44,6 +45,35 @@ namespace stf.Components
 			ret.Add("type", STFTwistConstraintBack._TYPE);
 			ret.Add("weight", c.weight);
 			return ret;
+		}
+	}
+
+	public class STFTwistConstraintBackConverter : ISTFSecondStageConverter
+	{
+		public void convert(Component component, GameObject root)
+		{
+			var stfComponent = (STFTwistConstraintBack)component;
+			var converted = component.gameObject.AddComponent<RotationConstraint>();
+
+			converted.weight = stfComponent.weight;
+			converted.rotationAxis = UnityEngine.Animations.Axis.Y;
+
+			var source = new UnityEngine.Animations.ConstraintSource();
+			source.weight = 1;
+			//GameObject sourceTransformGO = s.source;// TreeUtils.findByUUID(root, s.source_uuid);
+			//if(sourceTransformGO != null) source.sourceTransform = sourceTransformGO.transform;
+			source.sourceTransform = component.transform.parent.parent;
+
+			converted.AddSource(source);
+			converted.locked = true;
+			converted.constraintActive = true;
+
+
+			#if UNITY_EDITOR
+            UnityEngine.Object.DestroyImmediate(component);
+			#else
+            UnityEngine.Object.Destroy(component);
+			#endif
 		}
 	}
 }
