@@ -17,6 +17,7 @@ namespace stf
 		bool _foldoutFileInfo = true;
 		bool _foldoutImportSettings = true;
 		bool _foldoutImportedAssets = true;
+		int _numRegisteredStages = STFImporterStageRegistry.GetStages().Count;
 
 		public override void OnInspectorGUI()
 		{
@@ -106,8 +107,14 @@ namespace stf
 			drawHLine();
 
 			GUILayout.Space(20f);
+			if(_numRegisteredStages != STFImporterStageRegistry.GetStages().Count)
+			{
+				EditorGUILayout.LabelField("New Stage Registered, press 'Safe and Reimport' to show effect!", EditorStyles.boldLabel);
+				GUILayout.Space(5f);
+			}
 			if(GUILayout.Button("Save and reimport"))
 			{
+				_numRegisteredStages = STFImporterStageRegistry.GetStages().Count;
 				EditorUtility.SetDirty(importer);
 				importer.SaveAndReimport();
 			}

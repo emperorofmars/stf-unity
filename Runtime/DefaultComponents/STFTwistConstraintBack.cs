@@ -31,7 +31,6 @@ namespace stf.Components
 		override public void parseFromJson(ISTFImporter state, JToken json, string id, GameObject go)
 		{
 			var component = go.AddComponent<STFTwistConstraintBack>();
-			component.name = id + (string)json["name"];
 			component.id = id;
 			component.weight = (float)json["weight"];
 		}

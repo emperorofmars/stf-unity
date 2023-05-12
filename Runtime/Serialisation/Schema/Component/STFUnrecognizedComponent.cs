@@ -24,7 +24,6 @@ namespace stf.Components
 
 		public void parseFromJson(ISTFImporter state, JToken json)
 		{
-			this.name = id + (string)json["name"];
 			this.type = (string)json["type"];
 			this.json = ((JObject)json).ToString();
 		}
