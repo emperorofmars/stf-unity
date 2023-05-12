@@ -4,10 +4,15 @@ using System.Threading.Tasks;
 
 namespace stf.serialisation
 {
+	public class SecondStageResult
+	{
+		public List<ISTFAsset> assets;
+		public List<UnityEngine.Object> resources;
+	}
+
 	public interface ISTFSecondStage
 	{
-		void convert(ISTFAsset asset);
-		List<ISTFAsset> GetAssets();
-		List<UnityEngine.Object> GetResources();
+		bool CanHandle(ISTFAsset asset);
+		SecondStageResult Convert(ISTFAsset asset);
 	}
 }
