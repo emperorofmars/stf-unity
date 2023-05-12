@@ -13,6 +13,7 @@ namespace stf.Components
 		override public void parseFromJson(ISTFImporter state, JToken json, string id, GameObject go)
 		{
 			var c = go.AddComponent<SkinnedMeshRenderer>();
+			c.name = id + (string)json["name"];
 			var uuidComponent = go.GetComponent<STFUUID>();
 			uuidComponent.componentIds.Add(c, id);
 			var resource = state.GetResource((string)json["mesh"]);
