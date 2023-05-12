@@ -18,12 +18,12 @@ namespace stf
 			new STFDefaultSecondStage()
 		};
 
-		public static void Register(ISTFSecondStage stage)
+		public static void RegisterStage(ISTFSecondStage stage)
 		{
 			RegisteredSecondStages.Add(stage);
 		}
 
-		public static List<ISTFSecondStage> Get()
+		public static List<ISTFSecondStage> GetStages()
 		{
 			return RegisteredSecondStages;
 		}

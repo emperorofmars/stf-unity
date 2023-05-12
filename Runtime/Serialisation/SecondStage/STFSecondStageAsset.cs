@@ -10,12 +10,22 @@ namespace stf.serialisation
 		public string id;
 		public string name;
 		public GameObject rootNode;
+		public string type;
 
 		public STFSecondStageAsset(GameObject rootNode, string id, string name)
 		{
 			this.name = name;
 			this.rootNode = rootNode;
 			this.id = id;
+			this.type = "unity";
+		}
+
+		public STFSecondStageAsset(GameObject rootNode, string id, string name, string type)
+		{
+			this.name = name;
+			this.rootNode = rootNode;
+			this.id = id;
+			this.type = type;
 		}
 
 		public UnityEngine.Object GetAsset()
@@ -30,7 +40,7 @@ namespace stf.serialisation
 
 		public string GetSTFAssetType()
 		{
-			return "unity";
+			return type;
 		}
 
 		public Type GetUnityAssetType()

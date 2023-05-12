@@ -58,10 +58,13 @@ namespace stf
 			{
 				ctx.AddObjectToAsset(asset.Key, asset.Value.GetAsset());
 				
-				foreach(var stage in STFImporterStageRegistry.Get())
+				foreach(var stage in STFImporterStageRegistry.GetStages())
 				{
+					Debug.Log($"Checking Stage: {stage.GetType()}");
 					if(stage.CanHandle(asset.Value))
 					{
+						Debug.Log($"Stage: {stage.GetType()} can handle: {asset.Value.GetSTFAssetName()}");
+
 						var converted = stage.Convert(asset.Value);
 						foreach(var resource in converted.resources)
 						{
