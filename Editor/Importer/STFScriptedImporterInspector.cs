@@ -14,6 +14,10 @@ namespace stf
 	[CustomEditor(typeof(STFScriptedImporter))]
 	public class STFScriptedImporterInspector : Editor
 	{
+		bool _foldoutFileInfo = true;
+		bool _foldoutImportSettings = true;
+		bool _foldoutImportedAssets = true;
+
 		public override void OnInspectorGUI()
 		{
 			base.DrawDefaultInspector();
@@ -21,13 +25,9 @@ namespace stf
 			var importer = (STFScriptedImporter)target;
 			var meta = AssetDatabase.LoadAssetAtPath<STFMeta>(importer.assetPath);
 			
-			GUILayout.Label("File Info", EditorStyles.boldLabel);
-			GUILayout.Space(5);
-
-			if(meta)
+			_foldoutFileInfo = EditorGUILayout.Foldout(_foldoutFileInfo, "File Info", true, EditorStyles.foldoutHeader);
+			if(_foldoutFileInfo)
 			{
-				EditorGUI.indentLevel++;
-
 				EditorGUILayout.BeginHorizontal();
 				EditorGUILayout.BeginVertical();
 					EditorGUILayout.LabelField("Binary Version");
@@ -36,41 +36,50 @@ namespace stf
 					EditorGUILayout.LabelField("Copyright");
 					EditorGUILayout.LabelField("Generator");
 				EditorGUILayout.EndVertical();
-				EditorGUILayout.BeginVertical();
-					EditorGUILayout.LabelField(meta.versionBinary);
-					EditorGUILayout.LabelField(meta.versionDefinition);
-					EditorGUILayout.LabelField(meta.author);
-					EditorGUILayout.LabelField(meta.copyright);
-					EditorGUILayout.LabelField(meta.generator);
-				EditorGUILayout.EndVertical();
+					EditorGUILayout.BeginVertical();
+					if(meta)
+					{
+						EditorGUILayout.LabelField(meta.versionBinary);
+						EditorGUILayout.LabelField(meta.versionDefinition);
+						EditorGUILayout.LabelField(meta.author);
+						EditorGUILayout.LabelField(meta.copyright);
+						EditorGUILayout.LabelField(meta.generator);
+					}
+					else
+					{
+						EditorGUILayout.LabelField("-");
+						EditorGUILayout.LabelField("-");
+						EditorGUILayout.LabelField("-");
+						EditorGUILayout.LabelField("-");
+						EditorGUILayout.LabelField("-");
+					}
+					EditorGUILayout.EndVertical();
 				EditorGUILayout.EndHorizontal();
-
-				EditorGUI.indentLevel--;
 			}
 
 			drawHLine();
 			
-			GUILayout.Label("STF Import Settings", EditorStyles.boldLabel);
-			GUILayout.Space(5);
-
-			importer.SafeImagesExternal = GUILayout.Toggle(importer.SafeImagesExternal, "Save images to external folder");
-			if(importer.SafeImagesExternal) GUILayout.Label($"External image location: {importer.OriginalTexturesFolder}");
-			if(importer.SafeImagesExternal && GUILayout.Button("Choose external image location", GUILayout.ExpandWidth(true))) {
-				importer.OriginalTexturesFolder = EditorUtility.OpenFolderPanel("Export Standalone", "Assets", "authoring_stf_external");
-				if(importer.OriginalTexturesFolder != null && importer.OriginalTexturesFolder.Length > 0)
-				{
-					if (importer.OriginalTexturesFolder.StartsWith(Application.dataPath)) {
-						importer.OriginalTexturesFolder = "Assets" + importer.OriginalTexturesFolder.Substring(Application.dataPath.Length);
+			_foldoutImportSettings = EditorGUILayout.Foldout(_foldoutImportSettings, "STF Import Settings", true, EditorStyles.foldoutHeader);
+			if(_foldoutImportSettings)
+			{
+				importer.SafeImagesExternal = GUILayout.Toggle(importer.SafeImagesExternal, "Save images to external folder");
+				if(importer.SafeImagesExternal) GUILayout.Label($"External image location: {importer.OriginalTexturesFolder}");
+				if(importer.SafeImagesExternal && GUILayout.Button("Choose external image location", GUILayout.ExpandWidth(true))) {
+					importer.OriginalTexturesFolder = EditorUtility.OpenFolderPanel("Export Standalone", "Assets", "authoring_stf_external");
+					if(importer.OriginalTexturesFolder != null && importer.OriginalTexturesFolder.Length > 0)
+					{
+						if (importer.OriginalTexturesFolder.StartsWith(Application.dataPath)) {
+							importer.OriginalTexturesFolder = "Assets" + importer.OriginalTexturesFolder.Substring(Application.dataPath.Length);
+						}
 					}
 				}
 			}
 
 			drawHLine();
 
-			GUILayout.Space(10f);
-			GUILayout.Label("Imported Assets", EditorStyles.boldLabel);
+			_foldoutImportedAssets = EditorGUILayout.Foldout(_foldoutImportedAssets, "Imported Assets", true, EditorStyles.foldoutHeader);
 			
-			if(meta != null && meta.importedRawAssets != null)
+			if(_foldoutImportedAssets && meta != null && meta.importedRawAssets != null)
 			{
 				var mainAsset = meta.importedRawAssets.Find(a => a.assetId == meta.mainAssetId);
 				GUILayout.Space(5f);
@@ -117,12 +126,9 @@ namespace stf
 			EditorGUILayout.LabelField($"Name: {assetInfo.assetName} | Type: {assetInfo.assetType}");
 			if(GUILayout.Button("Instantiate authoring scene", GUILayout.Width(200)))
 			{
-				var instantiated = Object.Instantiate(assetInfo.assetRoot, new Vector3(0, 0, 0), Quaternion.identity);
-				instantiated.name = assetInfo.assetRoot.name;
+				var instantiated = PrefabUtility.InstantiatePrefab(assetInfo.assetRoot as GameObject);
 			}
 			GUILayout.EndHorizontal();
-
-			// handle patch assets to apply before passing to the second stage loader
 
 			if(assetInfo.secondStageAssets != null && assetInfo.secondStageAssets.Count > 0)
 			{
@@ -134,8 +140,7 @@ namespace stf
 					EditorGUILayout.LabelField($"Name: {asset.assetName} | Type: {asset.assetType}");
 					if(GUILayout.Button("Instantiate into current scene"))
 					{
-						var instantiated = Object.Instantiate(asset.assetRoot, new Vector3(0, 0, 0), Quaternion.identity);
-						instantiated.name = asset.assetRoot.name;
+						var instantiated = PrefabUtility.InstantiatePrefab(asset.assetRoot as GameObject);
 					}
 					GUILayout.EndHorizontal();
 				}
