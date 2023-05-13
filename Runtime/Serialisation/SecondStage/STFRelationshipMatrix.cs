@@ -2,6 +2,7 @@ using System.Collections.Generic;
 
 namespace stf.serialisation
 {
+	// Technically this is not a matrix. I dont care.
 	public class STFRelationshipMatrix
 	{
 		Dictionary<string, List<string>> Extends = new Dictionary<string, List<string>>();

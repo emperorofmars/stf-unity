@@ -7,6 +7,6 @@ namespace stf.serialisation
 {
 	public interface ISTFSecondStageConverter
 	{
-		void convert(Component component, GameObject root);
+		void convert(Component component, GameObject root, List<UnityEngine.Object> resources);
 	}
 }

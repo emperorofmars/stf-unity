@@ -1,8 +1,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using stf.Components;
 using UnityEngine;
 
@@ -20,24 +18,25 @@ namespace stf.serialisation
 		public SecondStageResult Convert(ISTFAsset asset)
 		{
 			var originalRoot = (GameObject)asset.GetAsset();
+			var resources = new List<UnityEngine.Object>();
 
 			GameObject convertedRoot = UnityEngine.Object.Instantiate(originalRoot);
 			convertedRoot.name = originalRoot.name;
 
-			convertTree(convertedRoot);
+			convertTree(convertedRoot, resources);
 
 			var secondStageAsset = new STFSecondStageAsset(convertedRoot, asset.getId() + "_sub", asset.GetSTFAssetName());
 			return new SecondStageResult {assets = new List<ISTFAsset>{secondStageAsset}, resources = new List<UnityEngine.Object>{}};
 		}
 
-		private void convertTree(GameObject root)
+		private void convertTree(GameObject root, List<UnityEngine.Object> resources)
 		{
 			foreach(var converter in converters)
 			{
 				var components = root.GetComponentsInChildren(converter.Key);
 				foreach(var component in components)
 				{
-					converter.Value.convert(component, root);
+					converter.Value.convert(component, root, resources);
 				}
 			}
 		}

@@ -50,7 +50,7 @@ namespace stf.Components
 
 	public class STFTwistConstraintBackConverter : ISTFSecondStageConverter
 	{
-		public void convert(Component component, GameObject root)
+		public void convert(Component component, GameObject root, List<UnityEngine.Object> resources)
 		{
 			var stfComponent = (STFTwistConstraintBack)component;
 			var converted = component.gameObject.AddComponent<RotationConstraint>();
@@ -60,8 +60,6 @@ namespace stf.Components
 
 			var source = new UnityEngine.Animations.ConstraintSource();
 			source.weight = 1;
-			//GameObject sourceTransformGO = s.source;// TreeUtils.findByUUID(root, s.source_uuid);
-			//if(sourceTransformGO != null) source.sourceTransform = sourceTransformGO.transform;
 			source.sourceTransform = component.transform.parent.parent;
 
 			converted.AddSource(source);
