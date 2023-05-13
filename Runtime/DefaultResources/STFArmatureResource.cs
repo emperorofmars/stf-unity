@@ -70,7 +70,7 @@ namespace stf.serialisation
 			{
 				bindposes[i] = transforms[i].worldToLocalMatrix;
 				state.AddNode(boneIds[i], transforms[i].gameObject);
-				//state.AddTrashObject(transforms[i].gameObject);
+				state.AddTrashObject(transforms[i].gameObject);
 			}
 		}
 
