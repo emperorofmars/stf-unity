@@ -1,4 +1,6 @@
 
+#if UNITY_EDITOR
+
 using UnityEngine;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
@@ -33,3 +35,5 @@ namespace stf.serialisation
 		}
 	}
 }
+
+#endif

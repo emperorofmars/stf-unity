@@ -1,4 +1,6 @@
 
+#if UNITY_EDITOR
+
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -6,10 +8,7 @@ using Newtonsoft.Json.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using stf.Components;
-
-#if UNITY_EDITOR
 using UnityEditor;
-#endif
 
 namespace stf.serialisation
 {
@@ -180,7 +179,6 @@ namespace stf.serialisation
 		}
 	}
 
-#if UNITY_EDITOR
 	[InitializeOnLoad]
 	public class Register_STFExternalUnityPatchAssetImporter
 	{
@@ -189,5 +187,6 @@ namespace stf.serialisation
 			STFRegistry.RegisterAssetImporter("external_unity_patch", new STFExternalUnityPatchAssetImporter());
 		}
 	}
-#endif
 }
+
+#endif

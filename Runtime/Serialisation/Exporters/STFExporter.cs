@@ -138,7 +138,7 @@ namespace stf.serialisation
 				if(meta != null)
 				{
 					var info = meta.resourceInfo.Find(ri => ri.resource == unityResource);
-					if(info != null && info.uuid != null) id = info.uuid;
+					if(info != null && info.id != null) id = info.id;
 				}
 #endif
 				if(id == null || id.Length == 0) id = Guid.NewGuid().ToString();
