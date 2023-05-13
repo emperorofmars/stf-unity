@@ -76,9 +76,9 @@ namespace stf.serialisation
 				boneInstance.id = boneInstanceIds[i];
 				armatureInstance.bones[i] = boneInstance.gameObject;
 
-				armatureInstance.bones[i].transform.localPosition = new Vector3((float)boneInstanceJson["trs"][0][0], (float)boneInstanceJson["trs"][0][1], (float)boneInstanceJson["trs"][0][2]);
+				/*armatureInstance.bones[i].transform.localPosition = new Vector3((float)boneInstanceJson["trs"][0][0], (float)boneInstanceJson["trs"][0][1], (float)boneInstanceJson["trs"][0][2]);
 				armatureInstance.bones[i].transform.localRotation = new Quaternion((float)boneInstanceJson["trs"][1][0], (float)boneInstanceJson["trs"][1][1], (float)boneInstanceJson["trs"][1][2], (float)boneInstanceJson["trs"][1][3]);
-				armatureInstance.bones[i].transform.localScale = new Vector3((float)boneInstanceJson["trs"][2][0], (float)boneInstanceJson["trs"][2][1], (float)boneInstanceJson["trs"][2][2]);
+				armatureInstance.bones[i].transform.localScale = new Vector3((float)boneInstanceJson["trs"][2][0], (float)boneInstanceJson["trs"][2][1], (float)boneInstanceJson["trs"][2][2]);*/
 
 				state.AddNode(boneInstance.id, boneInstance.gameObject);
 
