@@ -68,9 +68,9 @@ namespace stf.serialisation
 			var transforms = instantiate();
 			for(int i = 0; i < boneIds.Count; i++)
 			{
-				bindposes[i] =  transforms[i].worldToLocalMatrix;
+				bindposes[i] = transforms[i].worldToLocalMatrix;
 				state.AddNode(boneIds[i], transforms[i].gameObject);
-				state.AddTrashObject(transforms[i].gameObject);
+				//state.AddTrashObject(transforms[i].gameObject);
 			}
 		}
 

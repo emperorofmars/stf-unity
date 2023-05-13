@@ -37,6 +37,7 @@ namespace stf.serialisation
 			{
 				this.id = Guid.NewGuid().ToString();
 				var boneNodes = new List<JObject>();
+
 				for(int i = 0; i < bindposes.Length; i++)
 				{
 					var boneIdComponent = bones[i].GetComponent<STFUUID>();
@@ -46,13 +47,6 @@ namespace stf.serialisation
 					bone.Add("name", bones[i].name);
 					bone.Add("type", "bone");
 
-					// get this from the bindposes instead at some point
-					/*bone.Add("trs", new JArray() {
-						new JArray() {bones[i].localPosition.x, bones[i].localPosition.y, bones[i].localPosition.z},
-						new JArray() {bones[i].localRotation.x, bones[i].localRotation.y, bones[i].localRotation.z, bones[i].localRotation.w},
-						new JArray() {bones[i].localScale.x, bones[i].localScale.y, bones[i].localScale.z}
-					});*/
-
 					if(bones[i].parent != null)
 					{
 						Matrix4x4 tmpMat = Matrix4x4.identity;
@@ -61,26 +55,15 @@ namespace stf.serialisation
 						{
 							if(bones[i].parent == bones[boneIdx])
 							{
-								tmpMat = bindposes[i] * bindposes[boneIdx].inverse;
+								tmpMat = (bindposes[i] * bindposes[boneIdx].inverse).inverse;
 								parentMatched = true;
 								break;
 							}
 						}
 						if(!parentMatched)
 						{
-							tmpMat = (bindposes[i] * bones[i].parent.worldToLocalMatrix).inverse;
+							tmpMat = bindposes[i].inverse;
 						}
-
-						//var tmpMat = bindposes[i] * parentBindpose;
-
-						/*var localPosition = bones[i].parent.position - (Vector3)tmpMat.GetColumn(3);
-						var localRotation = tmpMat.rotation * Quaternion.Inverse(bones[i].parent.rotation);
-						var localScale = new Vector3(tmpMat.lossyScale.x / bones[i].parent.lossyScale.x, tmpMat.lossyScale.y / bones[i].parent.lossyScale.y, tmpMat.lossyScale.z / bones[i].parent.lossyScale.z);
-						bone.Add("trs", new JArray() {
-							new JArray() {localPosition.x, localPosition.y, localPosition.z},
-							new JArray() {localRotation.x, localRotation.y, localRotation.z, localRotation.w},
-							new JArray() {localScale.x, localScale.y, localScale.z}
-						});*/
 						bone.Add("trs", new JArray() {
 							new JArray() {tmpMat.GetColumn(3).x, tmpMat.GetColumn(3).y, tmpMat.GetColumn(3).z},
 							new JArray() {tmpMat.rotation.x, tmpMat.rotation.y, tmpMat.rotation.z, tmpMat.rotation.w},
@@ -89,11 +72,7 @@ namespace stf.serialisation
 					}
 					else
 					{
-						bone.Add("trs", new JArray() {
-							new JArray() {bindposes[i].GetColumn(3).x, bindposes[i].GetColumn(3).y, bindposes[i].GetColumn(3).z},
-							new JArray() {bindposes[i].rotation.x, bindposes[i].rotation.y, bindposes[i].rotation.z, bindposes[i].rotation.w},
-							new JArray() {bindposes[i].lossyScale.x, bindposes[i].lossyScale.y, bindposes[i].lossyScale.z}
-						});
+						throw new Exception($"Bone has no parent: {bones[i].name}");
 					}
 
 					state.RegisterNode(boneId, bone);
