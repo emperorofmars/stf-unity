@@ -61,8 +61,11 @@ namespace stf.Components
 			var source = new UnityEngine.Animations.ConstraintSource();
 			source.weight = 1;
 			source.sourceTransform = component.transform.parent.parent;
-
 			converted.AddSource(source);
+
+			Quaternion rotationOffset = Quaternion.Inverse(source.sourceTransform.rotation) * converted.transform.rotation;
+			converted.rotationOffset = rotationOffset.eulerAngles;
+
 			converted.locked = true;
 			converted.constraintActive = true;
 

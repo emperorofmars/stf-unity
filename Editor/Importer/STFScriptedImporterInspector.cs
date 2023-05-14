@@ -87,6 +87,8 @@ namespace stf
 			drawHLine();
 			
 			_foldoutImportSettings = EditorGUILayout.Foldout(_foldoutImportSettings, "STF Import Settings", true, EditorStyles.foldoutHeader);
+
+			EditorGUI.BeginChangeCheck();
 			if(_foldoutImportSettings)
 			{
 				GUILayout.Space(5f);
@@ -103,6 +105,7 @@ namespace stf
 					}
 				}
 			}
+			var changesDetected = EditorGUI.EndChangeCheck();
 
 			drawHLine();
 
@@ -137,7 +140,12 @@ namespace stf
 			GUILayout.Space(20f);
 			if(_numRegisteredStages != STFImporterStageRegistry.GetStages().Count)
 			{
-				EditorGUILayout.LabelField("New Stage Registered, press 'Safe and Reimport' to show effect!", EditorStyles.boldLabel);
+				EditorGUILayout.LabelField("New Stage registered, press 'Safe and Reimport' to show effect!", EditorStyles.boldLabel);
+				GUILayout.Space(5f);
+			}
+			if(changesDetected)
+			{
+				EditorGUILayout.LabelField("Settings changed, press 'Safe and Reimport' to show effect!", EditorStyles.boldLabel);
 				GUILayout.Space(5f);
 			}
 			if(GUILayout.Button("Save and reimport"))

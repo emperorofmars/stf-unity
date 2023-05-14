@@ -18,6 +18,7 @@ namespace stf.Components
 		public List<string> targets {get => _targets; set => _targets = value;}
 		
 		public static string _TYPE = "STF.constraint.twist_forward";
+		public GameObject target;
 		public float weight = 0.5f;
 	}
 
