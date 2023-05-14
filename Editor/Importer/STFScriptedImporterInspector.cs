@@ -19,6 +19,26 @@ namespace stf
 		bool _foldoutImportedAssets = true;
 		int _numRegisteredStages = STFImporterStageRegistry.GetStages().Count;
 
+		/*protected override void OnHeaderGUI()
+		{
+			//base.DrawHeader();
+			var importer = (STFScriptedImporter)target;
+
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.LabelField("STF Import Settings", EditorStyles.whiteLargeLabel);
+			EditorGUILayout.EndHorizontal();
+
+			var rect = EditorGUILayout.GetControlRect(false, 0f);
+			rect.height = EditorGUIUtility.singleLineHeight;
+			rect.y -= rect.height;
+			rect.x = 48;
+			rect.xMax -= rect.x * 2f;
+	
+			EditorGUI.DrawRect(rect, new Color32 (56, 56, 56, 255));
+	
+			EditorGUI.LabelField(rect, "STF Import Settings", EditorStyles.boldLabel);
+		}*/
+
 		public override void OnInspectorGUI()
 		{
 			//base.DrawDefaultInspector();
