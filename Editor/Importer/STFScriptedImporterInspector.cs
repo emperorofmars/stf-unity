@@ -21,7 +21,9 @@ namespace stf
 
 		public override void OnInspectorGUI()
 		{
-			base.DrawDefaultInspector();
+			//base.DrawDefaultInspector();
+			EditorGUILayout.LabelField("STF Import Settings", EditorStyles.whiteLargeLabel);
+			GUILayout.Space(10f);
 
 			var importer = (STFScriptedImporter)target;
 			var meta = AssetDatabase.LoadAssetAtPath<STFMeta>(importer.assetPath);
@@ -29,32 +31,36 @@ namespace stf
 			_foldoutFileInfo = EditorGUILayout.Foldout(_foldoutFileInfo, "File Info", true, EditorStyles.foldoutHeader);
 			if(_foldoutFileInfo)
 			{
+				GUILayout.Space(5f);
+
 				EditorGUILayout.BeginHorizontal();
-				EditorGUILayout.BeginVertical();
-					EditorGUILayout.LabelField("Binary Version");
-					EditorGUILayout.LabelField("Definition Version");
-					EditorGUILayout.LabelField("Author");
-					EditorGUILayout.LabelField("Copyright");
-					EditorGUILayout.LabelField("Generator");
-				EditorGUILayout.EndVertical();
-					EditorGUILayout.BeginVertical();
-					if(meta)
-					{
-						EditorGUILayout.LabelField(meta.versionBinary);
-						EditorGUILayout.LabelField(meta.versionDefinition);
-						EditorGUILayout.LabelField(meta.author);
-						EditorGUILayout.LabelField(meta.copyright);
-						EditorGUILayout.LabelField(meta.generator);
-					}
-					else
-					{
-						EditorGUILayout.LabelField("-");
-						EditorGUILayout.LabelField("-");
-						EditorGUILayout.LabelField("-");
-						EditorGUILayout.LabelField("-");
-						EditorGUILayout.LabelField("-");
-					}
-					EditorGUILayout.EndVertical();
+				EditorGUILayout.PrefixLabel("Binary Version");
+				if(meta) EditorGUILayout.LabelField(meta.versionBinary);
+				else EditorGUILayout.LabelField("-");
+				EditorGUILayout.EndHorizontal();
+
+				EditorGUILayout.BeginHorizontal();
+				EditorGUILayout.PrefixLabel("Definition Version");
+				if(meta) EditorGUILayout.LabelField(meta.versionDefinition);
+				else EditorGUILayout.LabelField("-");
+				EditorGUILayout.EndHorizontal();
+
+				EditorGUILayout.BeginHorizontal();
+				EditorGUILayout.PrefixLabel("Author");
+				if(meta) EditorGUILayout.LabelField(meta.author);
+				else EditorGUILayout.LabelField("-");
+				EditorGUILayout.EndHorizontal();
+
+				EditorGUILayout.BeginHorizontal();
+				EditorGUILayout.PrefixLabel("Copyright");
+				if(meta) EditorGUILayout.LabelField(meta.copyright);
+				else EditorGUILayout.LabelField("-");
+				EditorGUILayout.EndHorizontal();
+
+				EditorGUILayout.BeginHorizontal();
+				EditorGUILayout.PrefixLabel("Generator");
+				if(meta) EditorGUILayout.LabelField(meta.generator);
+				else EditorGUILayout.LabelField("-");
 				EditorGUILayout.EndHorizontal();
 			}
 
@@ -63,7 +69,9 @@ namespace stf
 			_foldoutImportSettings = EditorGUILayout.Foldout(_foldoutImportSettings, "STF Import Settings", true, EditorStyles.foldoutHeader);
 			if(_foldoutImportSettings)
 			{
+				GUILayout.Space(5f);
 				importer.SafeImagesExternal = GUILayout.Toggle(importer.SafeImagesExternal, "Save images to external folder");
+				GUILayout.Space(5f);
 				if(importer.SafeImagesExternal) GUILayout.Label($"External image location: {importer.OriginalTexturesFolder}");
 				if(importer.SafeImagesExternal && GUILayout.Button("Choose external image location", GUILayout.ExpandWidth(true))) {
 					importer.OriginalTexturesFolder = EditorUtility.OpenFolderPanel("Export Standalone", "Assets", "authoring_stf_external");
