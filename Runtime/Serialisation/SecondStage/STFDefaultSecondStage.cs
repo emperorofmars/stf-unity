@@ -21,11 +21,11 @@ namespace stf.serialisation
 			var resources = new List<UnityEngine.Object>();
 
 			GameObject convertedRoot = UnityEngine.Object.Instantiate(originalRoot);
-			convertedRoot.name = originalRoot.name;
+			convertedRoot.name = originalRoot.name + "_Default";
 
 			convertTree(convertedRoot, resources);
 
-			var secondStageAsset = new STFSecondStageAsset(convertedRoot, asset.getId() + "_sub", asset.GetSTFAssetName());
+			var secondStageAsset = new STFSecondStageAsset(convertedRoot, asset.getId() + "_Default", asset.GetSTFAssetName());
 			return new SecondStageResult {assets = new List<ISTFAsset>{secondStageAsset}, resources = new List<UnityEngine.Object>{}};
 		}
 
