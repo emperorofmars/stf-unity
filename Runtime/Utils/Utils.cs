@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace stf
 {
-	public class Utils
+	public static class Utils
 	{
 		public static string getPath(Transform transform)
 		{
@@ -18,6 +18,17 @@ namespace stf
 				path = "/" + transform.name + path;
 			}
 			return path;
+		}
+
+		public static Transform getRoot(Transform transform)
+		{
+			Transform parent = transform.parent;
+			while (parent != null)
+			{
+				transform = parent;
+				parent = transform.parent;
+			}
+			return transform;
 		}
 	}
 }
