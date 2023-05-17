@@ -119,33 +119,33 @@ namespace stf.serialisation
 		public void RegisterResource(UnityEngine.Object unityResource, ASTFResourceExporter exporter)
 		{
 			if(resourceIds.ContainsKey(unityResource)) return;// resourceIds[unityResource];
-			registerResourceTasks.Add(new Task(() => {
-				string id = null;
+			//registerResourceTasks.Add(new Task(() => {
+			string id = null;
 #if UNITY_EDITOR
-				if(!AssetDatabase.IsMainAsset(unityResource))
-				{
-					var meta = AssetDatabase.LoadAssetAtPath<STFMeta>(AssetDatabase.GetAssetPath(unityResource));
-					if(meta != null)
-					{
-						var info = meta.resourceInfo.Find(ri => ri.resource == unityResource);
-						if(info != null)
-						{
-							id = info.id;
-						}
-					}
-				}
-#else
+			if(!AssetDatabase.IsMainAsset(unityResource))
+			{
+				var meta = AssetDatabase.LoadAssetAtPath<STFMeta>(AssetDatabase.GetAssetPath(unityResource));
 				if(meta != null)
 				{
 					var info = meta.resourceInfo.Find(ri => ri.resource == unityResource);
-					if(info != null && info.id != null) id = info.id;
+					if(info != null)
+					{
+						id = info.id;
+					}
 				}
+			}
+#else
+			if(meta != null)
+			{
+				var info = meta.resourceInfo.Find(ri => ri.resource == unityResource);
+				if(info != null && info.id != null) id = info.id;
+			}
 #endif
-				if(id == null || id.Length == 0) id = Guid.NewGuid().ToString();
+			if(id == null || id.Length == 0) id = Guid.NewGuid().ToString();
 
-				resourceIds.Add(unityResource, id);
-				resources.Add(id, (JObject)exporter.serializeToJson(this, unityResource));
-			}));
+			resourceIds.Add(unityResource, id);
+			resources.Add(id, (JObject)exporter.serializeToJson(this, unityResource));
+			//}));
 			return;
 		}
 
