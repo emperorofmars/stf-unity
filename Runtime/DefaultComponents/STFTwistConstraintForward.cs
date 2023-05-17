@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using stf.serialisation;
 using UnityEngine;
+using UnityEngine.Animations;
 
 namespace stf.Components
 {
@@ -28,19 +29,58 @@ namespace stf.Components
 		{
 			var component = go.AddComponent<STFTwistConstraintForward>();
 			component.id = id;
+			component.target = state.GetNode((string)json["target"]);
 			component.weight = (float)json["weight"];
 		}
 	}
 
 	public class STFTwistConstraintForwardExporter : ASTFComponentExporter
 	{
+		override public List<GameObject> gatherNodes(Component component)
+		{
+			var c = (STFTwistConstraintForward)component;
+			var ret = new List<GameObject>();
+			if(c.target) ret.Add(c.target);
+			return ret;
+		}
 		override public JToken serializeToJson(ISTFExporter state, Component component)
 		{
 			var ret = new JObject();
 			STFTwistConstraintForward c = (STFTwistConstraintForward)component;
 			ret.Add("type", STFTwistConstraintForward._TYPE);
+			ret.Add("target", state.GetNodeId(c.target));
 			ret.Add("weight", c.weight);
 			return ret;
+		}
+	}
+
+	public class STFTwistConstraintForwardConverter : ISTFSecondStageConverter
+	{
+		public void convert(Component component, GameObject root, List<UnityEngine.Object> resources)
+		{
+			var stfComponent = (STFTwistConstraintForward)component;
+			var converted = component.gameObject.AddComponent<RotationConstraint>();
+
+			converted.weight = stfComponent.weight;
+			converted.rotationAxis = UnityEngine.Animations.Axis.Y;
+
+			var source = new UnityEngine.Animations.ConstraintSource();
+			source.weight = 1;
+			source.sourceTransform = stfComponent.target.transform;
+			converted.AddSource(source);
+
+			Quaternion rotationOffset = Quaternion.Inverse(source.sourceTransform.rotation) * converted.transform.rotation;
+			converted.rotationOffset = rotationOffset.eulerAngles;
+
+			converted.locked = true;
+			converted.constraintActive = true;
+
+
+			#if UNITY_EDITOR
+            UnityEngine.Object.DestroyImmediate(component);
+			#else
+            UnityEngine.Object.Destroy(component);
+			#endif
 		}
 	}
 }

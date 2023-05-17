@@ -8,7 +8,10 @@ namespace stf.serialisation
 {
 	public class STFDefaultSecondStage : ISTFSecondStage
 	{
-		private Dictionary<Type, ISTFSecondStageConverter> converters = new Dictionary<Type, ISTFSecondStageConverter>() {{typeof(STFTwistConstraintBack), new STFTwistConstraintBackConverter()}};
+		private Dictionary<Type, ISTFSecondStageConverter> converters = new Dictionary<Type, ISTFSecondStageConverter>() {
+			{typeof(STFTwistConstraintBack), new STFTwistConstraintBackConverter()},
+			{typeof(STFTwistConstraintForward), new STFTwistConstraintForwardConverter()}
+		};
 		
 		public bool CanHandle(ISTFAsset asset)
 		{
