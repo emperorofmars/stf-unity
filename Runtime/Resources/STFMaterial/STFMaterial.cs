@@ -51,7 +51,7 @@ namespace stf.serialisation
 				var property = new STFMaterial.ShaderProperty();
 				property.Name = jsonProperty.Name;
 				property.Type = (string)jsonProperty.Value["type"];
-				property.Targets = jsonProperty.Value["targets"]?.ToObject<List<string>>();
+				property.Targets = jsonProperty.Value["targets"]?.ToObject<List<STFMaterial.ShaderTarget>>();
 				property.ParseJsonValue(jsonProperty.Value["value"]);
 				stfMaterial.Properties.Add(property);
 			}

@@ -15,12 +15,20 @@ namespace stf.serialisation
 
 	public class STFMaterial : ScriptableObject
 	{
+		
+		[Serializable]
+		public class ShaderTarget
+		{
+			public string target;
+			public List<string> shaders;
+		}
+
 		[Serializable]
 		public class ShaderProperty
 		{
 			public string Name;
 			public string Type;
-			public List<string> Targets;
+			public List<ShaderTarget> Targets;
 			public dynamic Value;
 
 			public string SerializeValue()
@@ -40,7 +48,7 @@ namespace stf.serialisation
 				}
 			}
 		}
-		public List<string> ShaderTargets = new List<string>();
+		public List<ShaderTarget> ShaderTargets = new List<ShaderTarget>();
 		public List<ShaderProperty> Properties = new List<ShaderProperty>();
 	}
 

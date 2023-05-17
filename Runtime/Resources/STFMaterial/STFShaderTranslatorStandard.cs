@@ -33,7 +33,7 @@ namespace stf.serialisation
 		{
 			var ret = ScriptableObject.CreateInstance<STFMaterial>();
 			ret.name = material.name;
-			ret.ShaderTargets.Add("Standard");
+			ret.ShaderTargets.Add(new STFMaterial.ShaderTarget {target = "Unity", shaders = new List<string> {"Standard"}});
 			for(int i = 0; i < material.shader.GetPropertyCount(); i++)
 			{
 				foreach(var attribute in material.shader.GetPropertyAttributes(i))
