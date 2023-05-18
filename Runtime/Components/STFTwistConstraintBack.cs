@@ -50,7 +50,7 @@ namespace stf.Components
 
 	public class STFTwistConstraintBackConverter : ISTFSecondStageConverter
 	{
-		public void convert(Component component, GameObject root, List<UnityEngine.Object> resources)
+		public void convert(Component component, GameObject root, List<UnityEngine.Object> resources, STFSecondStageContext context)
 		{
 			var stfComponent = (STFTwistConstraintBack)component;
 			var converted = component.gameObject.AddComponent<RotationConstraint>();
@@ -69,12 +69,11 @@ namespace stf.Components
 			converted.locked = true;
 			converted.constraintActive = true;
 
-
-			#if UNITY_EDITOR
+			/*#if UNITY_EDITOR
             UnityEngine.Object.DestroyImmediate(component);
 			#else
             UnityEngine.Object.Destroy(component);
-			#endif
+			#endif*/
 		}
 	}
 }
