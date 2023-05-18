@@ -22,6 +22,11 @@ namespace stf.serialisation
 			ret.Add("width", texture.width);
 			ret.Add("height", texture.height);
 
+			if(texture.graphicsFormat.ToString().ToLower().EndsWith("unorm")) ret.Add("pixel_format", "unorm");
+			else ret.Add("pixel_format", "srgb");
+
+			Debug.Log($"texture: {texture.name}, graphicsFormat; {texture.graphicsFormat}");
+
 			try{
 				if(AssetDatabase.IsMainAsset(texture)) // If its an encoded image outside the original import
 				{
@@ -70,18 +75,18 @@ namespace stf.serialisation
 		{
 			var arrayBuffer = state.GetBuffer((string)json["buffer"]);
 			var name = (string)json["name"];
-			var format = (string)json["format"];
+			var encoding = (string)json["encoding"];
 
 			try{
 				// I hate this, why do i have to do this @Unity ???
 				string path;
-				if(imageParentPath == null) path = "Assets/" + id + "_" + name + "." + format;
-				else path = imageParentPath + "/" + name + "." + format;
+				if(imageParentPath == null) path = "Assets/" + id + "_" + name + "." + encoding;
+				else path = imageParentPath + "/" + name + "." + encoding;
 				File.WriteAllBytes(path, arrayBuffer);
 				AssetDatabase.Refresh();
 				var ret = AssetDatabase.LoadAssetAtPath<Texture2D>(path);
 				ret.name = name;
-				state.GetMeta().resourceInfo.Add(new STFMeta.ResourceInfo {name = name, originalExternalAssetPath = path, resource = ret, id = id, originalFormat = format, external = true });
+				state.GetMeta().resourceInfo.Add(new STFMeta.ResourceInfo {name = name, originalExternalAssetPath = path, resource = ret, id = id, originalFormat = encoding, external = true });
 				return ret;
 			} catch(Exception e)
 			{

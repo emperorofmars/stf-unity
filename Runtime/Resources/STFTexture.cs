@@ -18,6 +18,9 @@ namespace stf.serialisation
 			ret.Add("width", texture.width);
 			ret.Add("height", texture.height);
 
+			if(texture.graphicsFormat.ToString().ToLower().EndsWith("unorm")) ret.Add("pixel_format", "unorm");
+			else ret.Add("pixel_format", "srgb");
+
 			// will hard encode as png since the original format is unknown
 			byte[] bytes = texture.EncodeToPNG();
 
@@ -35,7 +38,9 @@ namespace stf.serialisation
 		{
 			// will load the uncompressed data into memory, use only at runtime
 			var arrayBuffer = state.GetBuffer((string)json["buffer"]);
-			var ret = new Texture2D((int)json["width"], (int)json["height"]);
+			var ret = new Texture2D((int)json["width"], (int)json["height"],
+					(string)json["pixel_format"] == "srgb" ? UnityEngine.Experimental.Rendering.GraphicsFormat.RGBA_BC7_SRGB : UnityEngine.Experimental.Rendering.GraphicsFormat.RGBA_DXT5_UNorm,
+					UnityEngine.Experimental.Rendering.TextureCreationFlags.MipChain);
 			ret.name = (string)json["name"];
 			ret.LoadImage(arrayBuffer);
 			state.GetMeta().resourceInfo.Add(new STFMeta.ResourceInfo {name = ret.name, resource = ret, id = id, originalFormat = (string)json["format"], external = false });

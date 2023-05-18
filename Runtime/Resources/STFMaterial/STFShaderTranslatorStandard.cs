@@ -17,7 +17,7 @@ namespace stf.serialisation
 			var ret = new Material(Shader.Find(_SHADER_NAME));
 			foreach(var property in stfMaterial.Properties)
 			{
-				if(property.Name == "Albedo")
+				/*if(property.Name == "Albedo")
 				{
 					if(property.Type == "Texture")
 					{
@@ -25,8 +25,10 @@ namespace stf.serialisation
 							ret.SetTexture("_MainTex", state.GetResource(property.Value));
 						}));
 					}
-				}
+				}*/
 			}
+			STFShaderTranslatorHelpers.ImportTexture(state, ret, stfMaterial, "_MainTex", "albedo");
+			STFShaderTranslatorHelpers.ImportTexture(state, ret, stfMaterial, "_BumpMap", "normal");
 			return ret;
 		}
 
@@ -49,19 +51,15 @@ namespace stf.serialisation
 				Debug.Log($"GetTexturePropertyNames: {name}");
 			}*/
 
+			STFShaderTranslatorHelpers.ExportTexture(state, material, ret, "_MainTex", "albedo");
+			STFShaderTranslatorHelpers.ExportTexture(state, material, ret, "_BumpMap", "normal");
+			
+			ret.Properties.Add(new STFMaterial.ShaderProperty {
+				Name = "lighting_hint",
+				Type = "String",
+				Value = "realistic"
+			});
 
-
-			if(material.GetTexture("_MainTex") != null)
-			{
-				Texture mainTex = material.GetTexture("_MainTex");
-				Debug.Log($"Main Tex Type: {mainTex.GetType()}");
-				state.RegisterResource(mainTex);
-				ret.Properties.Add(new STFMaterial.ShaderProperty {
-					Name = "Albedo",
-					Type = "Texture",
-					Value = state.GetResourceId(mainTex)
-				});
-			}
 			return ret;
 		}
 	}

@@ -42,9 +42,10 @@ namespace stf.serialisation
 
 			public void ParseJsonValue(JToken json)
 			{
-				if(Type == "Texture")
+				switch(Type)
 				{
-					Value = json.ToString();
+					case "texture": Value = json.ToString(); break;
+					case "string": Value = json.ToString(); break;
 				}
 			}
 		}
