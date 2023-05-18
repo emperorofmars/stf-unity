@@ -47,6 +47,8 @@ namespace stf.serialisation
 					if(component.GetType() == typeof(Transform)) continue;
 					if(component.GetType() == typeof(STFUUID)) continue;
 					if(component.GetType() == typeof(Animator)) continue;
+					if(component.GetType() == typeof(STFAssetInfo)) continue;
+					if(component.GetType() == typeof(STFArmatureInstance)) continue;
 
 					if(component.GetType() == typeof(STFUnrecognizedComponent))
 					{

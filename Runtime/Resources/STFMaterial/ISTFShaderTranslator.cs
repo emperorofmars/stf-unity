@@ -9,7 +9,7 @@ namespace stf.serialisation
 	public static class STFShaderRegistry
 	{
 		public static Dictionary<string, ISTFShaderTranslator> Converters = new Dictionary<string, ISTFShaderTranslator> {
-			{"Standard", new STFShaderTranslatorStandard()}
+			{STFShaderTranslatorStandard._SHADER_NAME, new STFShaderTranslatorStandard()}
 		};
 	}
 

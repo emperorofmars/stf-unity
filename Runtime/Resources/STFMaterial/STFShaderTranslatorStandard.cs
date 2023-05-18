@@ -10,9 +10,11 @@ namespace stf.serialisation
 
 	public class STFShaderTranslatorStandard : ISTFShaderTranslator
 	{
+		public static readonly string _SHADER_NAME = "Standard";
+
 		public Material TranslateSTFToUnity(ISTFImporter state, STFMaterial stfMaterial)
 		{
-			var ret = new Material(Shader.Find("Standard"));
+			var ret = new Material(Shader.Find(_SHADER_NAME));
 			foreach(var property in stfMaterial.Properties)
 			{
 				if(property.Name == "Albedo")
@@ -20,7 +22,6 @@ namespace stf.serialisation
 					if(property.Type == "Texture")
 					{
 						state.AddTask(new Task(() => {
-							Debug.Log($"state.GetResource {property.Value}");
 							ret.SetTexture("_MainTex", state.GetResource(property.Value));
 						}));
 					}
@@ -31,10 +32,12 @@ namespace stf.serialisation
 
 		public STFMaterial TranslateUnityToSTF(ISTFExporter state, Material material)
 		{
+			// handle existing stf material
 			var ret = ScriptableObject.CreateInstance<STFMaterial>();
 			ret.name = material.name;
-			ret.ShaderTargets.Add(new STFMaterial.ShaderTarget {target = "Unity", shaders = new List<string> {"Standard"}});
-			for(int i = 0; i < material.shader.GetPropertyCount(); i++)
+			ret.ShaderTargets.Add(new STFMaterial.ShaderTarget {target = "Unity", shaders = new List<string> {_SHADER_NAME}});
+
+			/*for(int i = 0; i < material.shader.GetPropertyCount(); i++)
 			{
 				foreach(var attribute in material.shader.GetPropertyAttributes(i))
 				{
@@ -44,7 +47,7 @@ namespace stf.serialisation
 			foreach(var name in material.GetTexturePropertyNames())
 			{
 				Debug.Log($"GetTexturePropertyNames: {name}");
-			}
+			}*/
 
 
 

@@ -3,6 +3,7 @@ using System;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace stf.serialisation
 {
@@ -17,9 +18,20 @@ namespace stf.serialisation
 
 			// Handle Existing STF Materials in STFMeta
 
-			if(STFShaderRegistry.Converters.ContainsKey(material.shader.name))
+			ISTFShaderTranslator converter = null;
+			string shaderName = "";
+			foreach(var c in STFShaderRegistry.Converters)
 			{
-				var stfMaterial = STFShaderRegistry.Converters[material.shader.name].TranslateUnityToSTF(state, material);
+				if(material.shader.name.Contains(c.Key))
+				{
+					converter = c.Value;
+					shaderName = c.Key;
+				}
+			}
+			if(converter != null)
+			{
+				ret.Add("targets", new JArray() {new JObject() {{"target", "Unity"}, {"shaders", new JArray() {shaderName}}}});
+				var stfMaterial = converter.TranslateUnityToSTF(state, material);
 				foreach(var property in stfMaterial.Properties)
 				{
 					var jsonProperty = new JObject();
@@ -57,15 +69,33 @@ namespace stf.serialisation
 			}
 
 			Material ret = null;
-			if((string)json["target"] != null && STFShaderRegistry.Converters.ContainsKey((string)json["target"]))
+			List<string> unityTargets = null;
+			foreach(var app in json["targets"])
 			{
-				ret = STFShaderRegistry.Converters[(string)json["target"]].TranslateSTFToUnity(state, stfMaterial);
+				if((string)app["target"] == "Unity")
+				{
+					unityTargets = app["shaders"].ToObject<List<string>>();
+					break;
+				}
 			}
-			else
+			bool shaderConverted = false;
+			if(unityTargets != null) {
+				foreach(var t in unityTargets)
+				{
+					if(STFShaderRegistry.Converters.ContainsKey(t))
+					{
+						ret = STFShaderRegistry.Converters[t].TranslateSTFToUnity(state, stfMaterial);
+						shaderConverted = true;
+						break;
+					}
+				}
+			}
+			// handle shader hints before full fallback
+			if(!shaderConverted)
 			{
 				Debug.LogWarning("Unrecognized shader target, falling back to Standard");
 
-				ret = STFShaderRegistry.Converters["Standard"].TranslateSTFToUnity(state, stfMaterial);
+				ret = STFShaderRegistry.Converters[STFShaderTranslatorStandard._SHADER_NAME].TranslateSTFToUnity(state, stfMaterial);
 			}
 
 			ret.name = (string)json["name"];
