@@ -38,11 +38,12 @@ namespace stf.serialisation
 		{
 			// will load the uncompressed data into memory, use only at runtime
 			var arrayBuffer = state.GetBuffer((string)json["buffer"]);
-			var ret = new Texture2D((int)json["width"], (int)json["height"],
-					(string)json["pixel_format"] == "srgb" ? UnityEngine.Experimental.Rendering.GraphicsFormat.RGBA_BC7_SRGB : UnityEngine.Experimental.Rendering.GraphicsFormat.RGBA_DXT5_UNorm,
-					UnityEngine.Experimental.Rendering.TextureCreationFlags.MipChain);
+			var textureFormat = (string)json["pixel_format"];
+			var ret = new Texture2D((int)json["width"], (int)json["height"], textureFormat == "srgb" ? TextureFormat.BC7 : TextureFormat.DXT5, true, textureFormat == "unorm");
 			ret.name = (string)json["name"];
+			//ret.format = (string)json["pixel_format"] == "srgb" ? TextureFormat.BC7 : TextureFormat.DXT5;
 			ret.LoadImage(arrayBuffer);
+			ret.Compress(true);
 			state.GetMeta().resourceInfo.Add(new STFMeta.ResourceInfo {name = ret.name, resource = ret, id = id, originalFormat = (string)json["format"], external = false });
 			return ret;
 		}

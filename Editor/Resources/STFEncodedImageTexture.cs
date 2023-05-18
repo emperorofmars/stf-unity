@@ -75,18 +75,18 @@ namespace stf.serialisation
 		{
 			var arrayBuffer = state.GetBuffer((string)json["buffer"]);
 			var name = (string)json["name"];
-			var encoding = (string)json["encoding"];
+			var format = (string)json["format"];
 
 			try{
 				// I hate this, why do i have to do this @Unity ???
 				string path;
-				if(imageParentPath == null) path = "Assets/" + id + "_" + name + "." + encoding;
-				else path = imageParentPath + "/" + name + "." + encoding;
+				if(imageParentPath == null) path = "Assets/" + id + "_" + name + "." + format;
+				else path = imageParentPath + "/" + name + "." + format;
 				File.WriteAllBytes(path, arrayBuffer);
 				AssetDatabase.Refresh();
 				var ret = AssetDatabase.LoadAssetAtPath<Texture2D>(path);
 				ret.name = name;
-				state.GetMeta().resourceInfo.Add(new STFMeta.ResourceInfo {name = name, originalExternalAssetPath = path, resource = ret, id = id, originalFormat = encoding, external = true });
+				state.GetMeta().resourceInfo.Add(new STFMeta.ResourceInfo {name = name, originalExternalAssetPath = path, resource = ret, id = id, originalFormat = format, external = true });
 				return ret;
 			} catch(Exception e)
 			{
