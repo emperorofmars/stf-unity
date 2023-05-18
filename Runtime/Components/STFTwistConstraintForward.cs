@@ -74,12 +74,8 @@ namespace stf.Components
 
 			converted.locked = true;
 			converted.constraintActive = true;
-
-			/*#if UNITY_EDITOR
-            UnityEngine.Object.DestroyImmediate(component);
-			#else
-            UnityEngine.Object.Destroy(component);
-			#endif*/
+			
+			context.RelMat.STFToConverted.Add(component, converted);
 		}
 	}
 }

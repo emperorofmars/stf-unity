@@ -141,10 +141,14 @@ namespace stf.serialisation
 				}
 			}
 #else
-			if(meta != null)
+			foreach(var meta in originalMetas)
 			{
 				var info = meta.resourceInfo.Find(ri => ri.resource == unityResource);
-				if(info != null && info.id != null) id = info.id;
+				if(info != null && info.id != null)
+				{
+					id = info.id;
+					break;
+				}
 			}
 #endif
 			if(id == null || id.Length == 0) id = Guid.NewGuid().ToString();
