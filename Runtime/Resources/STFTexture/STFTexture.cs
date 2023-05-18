@@ -42,14 +42,16 @@ namespace stf.serialisation
 			else if(AssetDatabase.IsMainAsset(texture)) // If its an encoded image outside the original import
 			{
 				var path = AssetDatabase.GetAssetPath(texture);
+				var tmpTex = AssetDatabase.LoadAssetAtPath<Texture2D>(path);
 				byte[] bytes = File.ReadAllBytes(path);
+
 				var bufferId = state.RegisterBuffer(bytes);
 				
-				ret.Add("name", texture.name);
+				ret.Add("name", tmpTex.name);
 				ret.Add("format", path.Substring(path.LastIndexOf('.') + 1, path.Length - path.LastIndexOf('.') - 1));
-				ret.Add("width", texture.width);
-				ret.Add("height", texture.height);
-				if(texture.graphicsFormat.ToString().ToLower().EndsWith("unorm")) ret.Add("linear", true);
+				ret.Add("width", tmpTex.width);
+				ret.Add("height", tmpTex.height);
+				if(tmpTex.graphicsFormat.ToString().ToLower().EndsWith("unorm")) ret.Add("linear", true);
 				else ret.Add("linear", false);
 
 				ret.Add("buffer", bufferId);

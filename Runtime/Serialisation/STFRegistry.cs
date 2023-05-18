@@ -15,7 +15,6 @@ namespace stf.serialisation
 		public static readonly Dictionary<string, ISTFNodeImporter> DefaultNodeImporters = new Dictionary<string, ISTFNodeImporter>() {
 			{STFNodeImporter._TYPE, new STFNodeImporter()},
 			{STFArmatureInstanceNodeImporter._TYPE, new STFArmatureInstanceNodeImporter()},
-			//{STFBoneInstanceNodeImporter._TYPE, new STFBoneInstanceNodeImporter()},
 			//{"patch", null},
 			//{"appendage", null}
 		};
@@ -33,7 +32,8 @@ namespace stf.serialisation
 			{STFMeshImporter._TYPE, new STFMeshImporter()},
 			{STFTextureImporter._TYPE, new STFTextureImporter()},
 			{STFArmatureImporter._TYPE, new STFArmatureImporter()},
-			{STFMaterialImporter._TYPE, new STFMaterialImporter()}
+			{STFMaterialImporter._TYPE, new STFMaterialImporter()},
+			{STFTextureViewImporter._TYPE, new STFTextureViewImporter()}
 			//Animation
 		};
 		public static readonly Dictionary<Type, ASTFResourceExporter> DefaultResourceExporters = new Dictionary<Type, ASTFResourceExporter>() {

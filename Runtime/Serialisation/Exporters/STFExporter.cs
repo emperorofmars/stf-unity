@@ -50,7 +50,7 @@ namespace stf.serialisation
 
 		public void AddMeta(STFMeta meta)
 		{
-			this.originalMetas.Add(meta);
+			if(!originalMetas.Contains(meta)) originalMetas.Add(meta);
 		}
 
 		public List<STFMeta> GetMetas()

@@ -17,18 +17,20 @@ namespace stf.serialisation
 			var ret = new Material(Shader.Find(_SHADER_NAME));
 			foreach(var property in stfMaterial.Properties)
 			{
-				/*if(property.Name == "Albedo")
+				if(property.Name == "transparency_mode")
 				{
-					if(property.Type == "Texture")
-					{
-						state.AddTask(new Task(() => {
-							ret.SetTexture("_MainTex", state.GetResource(property.Value));
-						}));
+					int mode = 0;
+					switch(property.Value) {
+						case "opaque": mode = 0; break;
+						case "cutout": mode = 1; break;
+						case "transparent": mode = 3; break;
 					}
-				}*/
+					ret.SetFloat("_Mode", mode);
+				}
 			}
 			STFShaderTranslatorHelpers.ImportTexture(state, ret, stfMaterial, "_MainTex", "albedo");
 			STFShaderTranslatorHelpers.ImportTexture(state, ret, stfMaterial, "_BumpMap", "normal");
+			STFShaderTranslatorHelpers.ImportTexture(state, ret, stfMaterial, "_MetallicGlossMap", "MetallicSmoothness");
 			return ret;
 		}
 
@@ -39,20 +41,27 @@ namespace stf.serialisation
 			ret.name = material.name;
 			ret.ShaderTargets.Add(new STFMaterial.ShaderTarget {target = "Unity", shaders = new List<string> {_SHADER_NAME}});
 
-			/*for(int i = 0; i < material.shader.GetPropertyCount(); i++)
-			{
-				foreach(var attribute in material.shader.GetPropertyAttributes(i))
-				{
-					Debug.Log($"Property Index: {i}, Attribute: {attribute}");
-				}
-			}
-			foreach(var name in material.GetTexturePropertyNames())
+			/*foreach(var name in material.GetTexturePropertyNames())
 			{
 				Debug.Log($"GetTexturePropertyNames: {name}");
 			}*/
 
+			string mode = "";
+			switch(material.GetFloat("_Mode")) {
+				case 0: mode = "opaque"; break;
+				case 1: mode = "cutout"; break;
+				case 3: mode = "transparent"; break;
+			}
+			ret.Properties.Add(new STFMaterial.ShaderProperty {
+				Name = "transparency_mode",
+				Type = "string",
+				Value = mode
+			});
+
 			STFShaderTranslatorHelpers.ExportTexture(state, material, ret, "_MainTex", "albedo");
 			STFShaderTranslatorHelpers.ExportTexture(state, material, ret, "_BumpMap", "normal");
+			STFShaderTranslatorHelpers.ExportTextureChannel(state, material, ret, "_MetallicGlossMap", 0, "metallic");
+			STFShaderTranslatorHelpers.ExportTextureChannel(state, material, ret, "_MetallicGlossMap", 3, "roughness", true);
 			
 			ret.Properties.Add(new STFMaterial.ShaderProperty {
 				Name = "lighting_hint",
