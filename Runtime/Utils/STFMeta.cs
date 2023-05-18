@@ -10,6 +10,7 @@ namespace stf
 		[System.Serializable]
 		public class ResourceInfo
 		{
+			public string type;
 			public UnityEngine.Object resource;
 			public string id;
 			public string name;

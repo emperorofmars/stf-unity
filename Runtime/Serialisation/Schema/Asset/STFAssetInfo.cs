@@ -8,5 +8,6 @@ namespace stf
 		public string assetId;
 		public string assetType;
 		public string assetName;
+		public STFMeta originalMetaInformation;
 	}
 }

@@ -7,6 +7,46 @@ using System.Linq;
 
 namespace stf.serialisation
 {
+	public class STFMaterial : ScriptableObject
+	{
+		
+		[Serializable]
+		public class ShaderTarget
+		{
+			public string target;
+			public List<string> shaders;
+		}
+
+		[Serializable]
+		public class ShaderProperty
+		{
+			public string Name;
+			public string Type;
+			public List<ShaderTarget> Targets;
+			public dynamic Value;
+
+			public string SerializeValue()
+			{
+				if(Value.GetType() == typeof(String))
+				{
+					return Value;
+				}
+				throw new Exception($"Unknown ShaderProperty Value: {Value.GetType()}");
+			}
+
+			public void ParseJsonValue(JToken json)
+			{
+				switch(Type)
+				{
+					case "texture": Value = json.ToString(); break;
+					case "string": Value = json.ToString(); break;
+				}
+			}
+		}
+		public List<ShaderTarget> ShaderTargets = new List<ShaderTarget>();
+		public List<ShaderProperty> Properties = new List<ShaderProperty>();
+	}
+
 	public class STFMaterialExporter : ASTFResourceExporter
 	{
 		public override JToken serializeToJson(ISTFExporter state, UnityEngine.Object resource)
@@ -99,7 +139,8 @@ namespace stf.serialisation
 			}
 
 			ret.name = (string)json["name"];
-			state.GetMeta().resourceInfo.Add(new STFMeta.ResourceInfo {name = ret.name, resource = ret, id = id });
+			state.AddResources(id + "_original", stfMaterial);
+			state.GetMeta().resourceInfo.Add(new STFMeta.ResourceInfo {type = "material", name = ret.name, resource = ret, originalResource = stfMaterial, id = id });
 			return ret;
 		}
 	}

@@ -31,7 +31,7 @@ namespace stf.serialisation
 		public Dictionary<UnityEngine.Object, Dictionary<string, string>> subResourceIds = new Dictionary<UnityEngine.Object, Dictionary<string, string>>();
 		public Dictionary<string, byte[]> buffers = new Dictionary<string, byte[]>();
 		private JObject jsonDefinition = new JObject();
-		private STFMeta meta;
+		private List<STFMeta> originalMetas = new List<STFMeta>();
 
 		public STFExporter(List<ISTFAssetExporter> assets)
 		{
@@ -47,10 +47,16 @@ namespace stf.serialisation
 			if(this.context == null) context = STFRegistry.GetDefaultExportContext();
 			_run();
 		}
-		/*public STFMeta GetMeta()
+
+		public void AddMeta(STFMeta meta)
 		{
-			return meta;
-		}*/
+			this.originalMetas.Add(meta);
+		}
+
+		public List<STFMeta> GetMetas()
+		{
+			return originalMetas;
+		}
 
 		private void _run()
 		{

@@ -2,6 +2,7 @@
 using UnityEngine;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
 
 namespace stf.serialisation
 {
@@ -23,6 +24,8 @@ namespace stf.serialisation
 		string GetSubresourceId(UnityEngine.Object unityResource, string key);
 		string GetJson();
 		byte[] GetBinary();
-		//STFMeta GetMeta();
+
+		void AddMeta(STFMeta meta);
+		List<STFMeta> GetMetas();
 	}
 }

@@ -27,6 +27,7 @@ namespace stf.serialisation
 			{
 				id = assetInfo.assetId != null && assetInfo.assetId.Length > 0 ? assetInfo.assetId : Guid.NewGuid().ToString();
 				name = assetInfo.assetName != null && assetInfo.assetName.Length > 0 ? assetInfo.assetName : rootNode.name;
+				if(assetInfo.originalMetaInformation != null) state.AddMeta(assetInfo.originalMetaInformation);
 			} else
 			{
 				id = Guid.NewGuid().ToString();
@@ -230,6 +231,7 @@ namespace stf.serialisation
 				assetInfo.assetId = id;
 				assetInfo.assetType = "asset";
 				assetInfo.assetName = (string)jsonAsset["name"];
+				assetInfo.originalMetaInformation = state.GetMeta();
 			}));
 			return ret;
 		}
