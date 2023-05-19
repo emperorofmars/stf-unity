@@ -9,7 +9,7 @@ namespace stf.Components
 {
 	public class STFTwistConstraintBack : MonoBehaviour, ISTFComponent
 	{
-		public string _id;
+		public string _id = Guid.NewGuid().ToString();
 		public string id {get => _id; set => _id = value;}
 		public List<string> _extends;
 		public List<string> extends {get => _extends; set => _extends = value;}
