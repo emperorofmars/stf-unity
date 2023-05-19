@@ -111,6 +111,21 @@ namespace stf.serialisation
 			this.trash.Add(trash);
 		}
 
+		private void _runTasks()
+		{
+			do
+			{
+				var currentTasks = tasks;
+				tasks = new List<Task>();
+				foreach(var task in currentTasks)
+				{
+					task.RunSynchronously();
+					if(task.Exception != null) throw task.Exception;
+				}
+			}
+			while(tasks.Count > 0);
+		}
+
 		public void parse(JObject jsonRoot)
 		{
 			try
@@ -174,22 +189,13 @@ namespace stf.serialisation
 						}));
 					}
 				}
-				foreach(var task in tasks)
-				{
-					task.RunSynchronously();
-					if(task.Exception != null) throw task.Exception;
-				}
-				tasks.Clear();
+				_runTasks();
 				foreach(var task in componentTasks)
 				{
 					task.RunSynchronously();
 					if(task.Exception != null) throw task.Exception;
 				}
-				foreach(var task in tasks)
-				{
-					task.RunSynchronously();
-					if(task.Exception != null) throw task.Exception;
-				}
+				_runTasks();
 			} catch(Exception e)
 			{
 				foreach(var node in nodes.Values)
@@ -222,7 +228,6 @@ namespace stf.serialisation
 			{
 				meta.importedRawAssets.Add(new STFMeta.AssetInfo {assetId = asset.Key, assetType = asset.Value.GetSTFAssetType(), assetName = asset.Value.GetSTFAssetName(), assetRoot = asset.Value.GetAsset()});
 			}
-			//second stage
 		}
 
 		public void parse(byte[] byteArray)

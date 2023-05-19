@@ -58,6 +58,21 @@ namespace stf.serialisation
 			return originalMetas;
 		}
 
+		private void _runTasks()
+		{
+			do
+			{
+				var currentTasks = tasks;
+				tasks = new List<Task>();
+				foreach(var task in currentTasks)
+				{
+					task.RunSynchronously();
+					if(task.Exception != null) throw task.Exception;
+				}
+			}
+			while(tasks.Count > 0);
+		}
+
 		private void _run()
 		{
 			try
@@ -71,16 +86,13 @@ namespace stf.serialisation
 					task.RunSynchronously();
 					if(task.Exception != null) throw task.Exception;
 				}
+				_runTasks();
 				foreach(var task in registerComponentTasks)
 				{
 					task.RunSynchronously();
 					if(task.Exception != null) throw task.Exception;
 				}
-				foreach(var task in tasks)
-				{
-					task.RunSynchronously();
-					if(task.Exception != null) throw task.Exception;
-				}
+				_runTasks();
 				jsonDefinition = createRoot();
 			} catch(Exception e)
 			{
