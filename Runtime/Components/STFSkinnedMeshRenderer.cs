@@ -14,7 +14,7 @@ namespace stf.Components
 		{
 			var c = go.AddComponent<SkinnedMeshRenderer>();
 			var uuidComponent = go.GetComponent<STFUUID>();
-			uuidComponent.componentIds.Add(c, id);
+			uuidComponent.componentIds.Add(new STFUUID.ComponentIdMapping{component = c, id = id});
 			var resource = state.GetResource((string)json["mesh"]);
 			if(resource.GetType() == typeof(Mesh))
 			{

@@ -136,8 +136,7 @@ namespace stf.serialisation
 
 		public void RegisterResource(UnityEngine.Object unityResource, ASTFResourceExporter exporter)
 		{
-			if(resourceIds.ContainsKey(unityResource)) return;// resourceIds[unityResource];
-			//registerResourceTasks.Add(new Task(() => {
+			if(resourceIds.ContainsKey(unityResource)) return;
 			string id = null;
 #if UNITY_EDITOR
 			if(!AssetDatabase.IsMainAsset(unityResource))
@@ -167,7 +166,6 @@ namespace stf.serialisation
 
 			resourceIds.Add(unityResource, id);
 			resources.Add(id, (JObject)exporter.serializeToJson(this, unityResource));
-			//}));
 			return;
 		}
 
@@ -197,8 +195,8 @@ namespace stf.serialisation
 			else
 			{
 				var info = component.GetComponent<STFUUID>();
-				if(info != null && info.componentIds != null && info.componentIds.ContainsKey(component))
-					id = info.componentIds[component];
+				if(info != null && info.componentIds != null && info.GetIdByComponent(component) != null)
+					id = info.GetIdByComponent(component);
 				else
 					id = Guid.NewGuid().ToString();
 			}
