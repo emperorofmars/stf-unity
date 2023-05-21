@@ -18,6 +18,7 @@ namespace stf.serialisation
 		public Dictionary<string, string> assetNodes = new Dictionary<string, string>();
 		public Dictionary<string, GameObject> nodes = new Dictionary<string, GameObject>();
 		public Dictionary<string, UnityEngine.Object> resources = new Dictionary<string, UnityEngine.Object>();
+		public Dictionary<string, Component> components = new Dictionary<string, Component>();
 		public Dictionary<string, byte[]> buffers = new Dictionary<string, byte[]>();
 		private List<UnityEngine.Object> trash = new List<UnityEngine.Object>();
 		private List<Task> tasks = new List<Task>();
@@ -91,6 +92,11 @@ namespace stf.serialisation
 			return resources.Values.ToList();
 		}
 
+		public Component GetComponent(string id)
+		{
+			return components[id];
+		}
+
 		public byte[] GetBuffer(string id)
 		{
 			return buffers[id];
@@ -104,6 +110,11 @@ namespace stf.serialisation
 		public void AddResources(string id, UnityEngine.Object resource)
 		{
 			this.resources.Add(id, resource);
+		}
+		
+		public void AddComponent(string id, Component component)
+		{
+			this.components.Add(id, component);
 		}
 
 		public void AddTrashObject(UnityEngine.Object trash)
