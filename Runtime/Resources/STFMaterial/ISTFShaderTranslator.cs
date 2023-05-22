@@ -15,6 +15,7 @@ namespace stf.serialisation
 
 	public interface ISTFShaderTranslator
 	{
+		bool IsShaderPresent();
 		Material TranslateSTFToUnity(ISTFImporter state, STFMaterial stfMaterial);
 		STFMaterial TranslateUnityToSTF(ISTFExporter state, Material material);
 	}

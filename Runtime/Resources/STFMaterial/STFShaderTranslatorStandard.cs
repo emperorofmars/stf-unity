@@ -12,6 +12,11 @@ namespace stf.serialisation
 	{
 		public static readonly string _SHADER_NAME = "Standard";
 
+		public bool IsShaderPresent()
+		{
+			return Shader.Find(_SHADER_NAME) != null;
+		}
+
 		public Material TranslateSTFToUnity(ISTFImporter state, STFMaterial stfMaterial)
 		{
 			var ret = new Material(Shader.Find(_SHADER_NAME));

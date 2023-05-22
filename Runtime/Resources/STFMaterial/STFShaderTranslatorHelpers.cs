@@ -51,7 +51,7 @@ namespace stf.serialisation
 			if(property != null && material.GetTexturePropertyNames().Contains(unityName))
 			{
 				state.AddTask(new Task(() => {
-					material.SetTexture(unityName, state.GetResource(property.Value));
+					material.SetTexture(unityName, (Texture)state.GetResource((string)property.Value));
 				}));
 			}
 		}

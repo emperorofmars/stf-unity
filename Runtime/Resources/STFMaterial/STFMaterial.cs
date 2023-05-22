@@ -23,13 +23,13 @@ namespace stf.serialisation
 			public string Name;
 			public string Type;
 			public List<ShaderTarget> Targets;
-			public dynamic Value;
+			public object Value;
 
 			public string SerializeValue()
 			{
 				if(Value.GetType() == typeof(String))
 				{
-					return Value;
+					return (string)Value;
 				}
 				throw new Exception($"Unknown ShaderProperty Value: {Value.GetType()}");
 			}
@@ -122,7 +122,7 @@ namespace stf.serialisation
 			if(unityTargets != null) {
 				foreach(var t in unityTargets)
 				{
-					if(STFShaderRegistry.Converters.ContainsKey(t))
+					if(STFShaderRegistry.Converters.ContainsKey(t) && STFShaderRegistry.Converters[t].IsShaderPresent())
 					{
 						ret = STFShaderRegistry.Converters[t].TranslateSTFToUnity(state, stfMaterial);
 						shaderConverted = true;
