@@ -14,7 +14,9 @@ namespace stf
 	public class STFUIExport : EditorWindow
 	{
 		private Vector2 scrollPos;
-		private GameObject go;
+		public GameObject mainExport;
+		private List<GameObject> exports = new List<GameObject>() {};
+
 
 		[MenuItem("STF Tools/Export")]
 		public static void Init()
@@ -32,40 +34,49 @@ namespace stf
 
 			
 			GUILayout.BeginHorizontal();
-			GUILayout.Label("Select GameObject", EditorStyles.whiteLargeLabel, GUILayout.ExpandWidth(false));
-			go = ((GameObject)EditorGUILayout.ObjectField(
-				go,
+			GUILayout.Label("Select Main Asset", EditorStyles.whiteLargeLabel, GUILayout.ExpandWidth(false));
+			mainExport = ((GameObject)EditorGUILayout.ObjectField(
+				mainExport,
 				typeof(GameObject),
 				true,
 				GUILayout.ExpandWidth(true)
 			));
 			GUILayout.EndHorizontal();
+			drawHLine();
 
-			if(go && GUILayout.Button("Export as External Patch", GUILayout.ExpandWidth(true))) {
-				var path = EditorUtility.SaveFilePanel("Export as External Patch", "Assets", go.name + ".json", "json");
-				if(path != null && path.Length > 0) {
-					File.WriteAllText(path, SerializeAsExternalAsset(go));
+			for(int i = 0; i < exports.Count; i++)
+			{
+				GUILayout.BeginHorizontal();
+				GUILayout.Label("Select Secondary Asset", GUILayout.ExpandWidth(false));
+				exports[i] = ((GameObject)EditorGUILayout.ObjectField(
+					exports[i],
+					typeof(GameObject),
+					true,
+					GUILayout.ExpandWidth(true)
+				));
+				
+				if(GUILayout.Button("Remove", GUILayout.ExpandWidth(false)))
+				{
+					exports.RemoveAt(i);
+					i--;
 				}
+				GUILayout.EndHorizontal();
 			}
 
-			if(go && GUILayout.Button("Export Standalone with External Resources", GUILayout.ExpandWidth(true))) {
-				var path = EditorUtility.SaveFilePanel("Export Standalone with External Resources", "Assets", go.name + ".json", "json");
-				if(path != null && path.Length > 0) {
-					File.WriteAllText(path, SerializeAsStandaloneAssetWithExternalResources(go));
-				}
+			GUILayout.Space(10);
+			GUILayout.BeginHorizontal();
+			if(GUILayout.Button("Add Secondary Asset", GUILayout.ExpandWidth(false)))
+			{
+				exports.Add(null);
 			}
+			GUILayout.EndHorizontal();
 
-			if(go && GUILayout.Button("Export Standalone", GUILayout.ExpandWidth(true))) {
-				var path = EditorUtility.SaveFilePanel("Export Standalone", "Assets", go.name + ".json", "json");
+			GUILayout.Space(10);
+			drawHLine();
+			if(mainExport && GUILayout.Button("Export", GUILayout.ExpandWidth(true))) {
+				var path = EditorUtility.SaveFilePanel("STF Export", "Assets", mainExport.name + ".stf", "stf");
 				if(path != null && path.Length > 0) {
-					File.WriteAllText(path, SerializeAsStandaloneAsset(go));
-				}
-			}
-
-			if(go && GUILayout.Button("Export STF Binary", GUILayout.ExpandWidth(true))) {
-				var path = EditorUtility.SaveFilePanel("Export STF Binary", "Assets", go.name + ".stf", "stf");
-				if(path != null && path.Length > 0) {
-					SerializeAsSTFBinary(go, path);
+					SerializeAsSTFBinary(mainExport, exports, path);
 				}
 			}
 			
@@ -80,38 +91,19 @@ namespace stf
 			GUILayout.Space(10);
 		}
 
-		private string SerializeAsExternalAsset(GameObject go)
+		private void SerializeAsSTFBinary(GameObject mainExport, List<GameObject> secondaryExports, string path)
 		{
-			var asset = new STFExternalUnityPatchAssetExporter();
-			asset.rootNode = go;
-			var state = new STFExporter(new List<ISTFAssetExporter>() {asset});
+			var mainAsset = new STFAssetExporter();
+			mainAsset.rootNode = mainExport;
 
-			return state.GetPrettyJson();
-		}
+			var assets = new List<ISTFAssetExporter>() {mainAsset};
 
-		private string SerializeAsStandaloneAssetWithExternalResources(GameObject go)
-		{
-			var asset = new STFExternalUnityAssetExporter();
-			asset.rootNode = go;
-			var state = new STFExporter(new List<ISTFAssetExporter>() {asset});
+			foreach(var export in secondaryExports)
+			{
 
-			return state.GetPrettyJson();
-		}
+			}
 
-		private string SerializeAsStandaloneAsset(GameObject go)
-		{
-			var asset = new STFAssetExporter();
-			asset.rootNode = go;
-			var state = new STFExporter(new List<ISTFAssetExporter>() {asset});
-
-			return state.GetPrettyJson();
-		}
-
-		private void SerializeAsSTFBinary(GameObject go, string path)
-		{
-			var asset = new STFAssetExporter();
-			asset.rootNode = go;
-			var state = new STFExporter(new List<ISTFAssetExporter>() {asset});
+			var state = new STFExporter(assets);
 
 			File.WriteAllBytes(path, state.GetBinary());
 			File.WriteAllText(path + ".json", state.GetPrettyJson());
