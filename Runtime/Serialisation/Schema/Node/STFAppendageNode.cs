@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace stf.serialisation
 {
-	public class STFAddonNode : MonoBehaviour
+	public class STFAppendageNode : MonoBehaviour
 	{
 		public string targetId;
 	}
 
-	public class STFAddonNodeExporter
+	public class STFAppendageNodeExporter
 	{
 		public static JObject serializeToJson(GameObject go, ISTFExporter state)
 		{
@@ -23,7 +23,7 @@ namespace stf.serialisation
 				new JArray() {go.transform.localRotation.x, go.transform.localRotation.y, go.transform.localRotation.z, go.transform.localRotation.w},
 				new JArray() {go.transform.localScale.x, go.transform.localScale.y, go.transform.localScale.z}
 			});
-			ret.Add("target", go.GetComponent<STFAddonNode>()?.targetId);
+			ret.Add("target", go.GetComponent<STFAppendageNode>()?.targetId);
 			state.AddTask(new Task(() => {
 				var children = new List<string>();
 				for(int i = 0; i < go.transform.childCount; i++)
@@ -37,9 +37,9 @@ namespace stf.serialisation
 		}
 	}
 
-	public class STFAddonNodeImporter : ISTFNodeImporter
+	public class STFAppendageNodeImporter : ISTFNodeImporter
 	{
-		public static string _TYPE = "addon";
+		public static string _TYPE = "appendage";
 		
 		public GameObject parseFromJson(ISTFImporter state, JToken json, JObject jsonRoot, out List<string> nodesToParse)
 		{
@@ -48,7 +48,7 @@ namespace stf.serialisation
 			var children = json["children"].ToObject<List<string>>();
 			nodesToParse = children;
 
-			var addonDefinition = go.AddComponent<STFAddonNode>();
+			var addonDefinition = go.AddComponent<STFAppendageNode>();
 			addonDefinition.targetId = (string)json["target"];
 
 			go.transform.localPosition = new Vector3((float)json["trs"][0][0], (float)json["trs"][0][1], (float)json["trs"][0][2]);

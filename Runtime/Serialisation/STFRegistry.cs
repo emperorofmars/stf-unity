@@ -9,14 +9,14 @@ namespace stf.serialisation
 	public static class STFRegistry
 	{
 		public static readonly Dictionary<string, ISTFAssetImporter> DefaultAssetImporters = new Dictionary<string, ISTFAssetImporter>() {
-			{"asset", new STFAssetImporter()}
-			//{"patch", null}
+			{"asset", new STFAssetImporter()},
+			{"addon", new STFAddonAssetImporter()}
 		};
 		public static readonly Dictionary<string, ISTFNodeImporter> DefaultNodeImporters = new Dictionary<string, ISTFNodeImporter>() {
 			{STFNodeImporter._TYPE, new STFNodeImporter()},
 			{STFArmatureInstanceNodeImporter._TYPE, new STFArmatureInstanceNodeImporter()},
+			{STFAppendageNodeImporter._TYPE, new STFAppendageNodeImporter()}
 			//{"patch", null},
-			//{"appendage", null}
 		};
 		public static readonly Dictionary<string, ASTFComponentImporter> DefaultComponentImporters = new Dictionary<string, ASTFComponentImporter>() {
 			{STFMeshInstanceImporter._TYPE, new STFMeshInstanceImporter()},

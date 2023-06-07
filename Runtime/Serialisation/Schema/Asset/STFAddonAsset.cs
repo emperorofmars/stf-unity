@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace stf.serialisation
 {
-	public class STFAssetExporter : ISTFAssetExporter
+	public class STFAddonAssetExporter : ISTFAssetExporter
 	{
 		public GameObject rootNode;
 		public string id;
@@ -36,6 +36,8 @@ namespace stf.serialisation
 			var transforms = rootNode.GetComponentsInChildren<Transform>();
 			foreach(var transform in transforms)
 			{
+				if(transform == rootNode.transform) continue;
+
 				if(armatureState.HandleBoneInstance(state, transform) == false)
 				{
 					var go = transform.gameObject;
@@ -47,6 +49,8 @@ namespace stf.serialisation
 
 			foreach(var transform in transforms)
 			{
+				if(transform == rootNode.transform) continue;
+
 				var nodeId = state.GetNodeId(transform.gameObject);
 				var components = transform.GetComponents<Component>();
 				foreach(var component in components)
@@ -56,6 +60,7 @@ namespace stf.serialisation
 					if(component.GetType() == typeof(Animator)) continue;
 					if(component.GetType() == typeof(STFAssetInfo)) continue;
 					if(component.GetType() == typeof(STFArmatureInstance)) continue;
+					if(component.GetType() == typeof(STFAppendageNode)) continue;
 
 					if(component.GetType() == typeof(STFUnrecognizedComponent))
 					{
@@ -92,9 +97,15 @@ namespace stf.serialisation
 		public JToken SerializeToJson(ISTFExporter state)
 		{
 			var ret = new JObject();
-			ret.Add("type", "asset");
+			ret.Add("type", "addon");
 			if(name != null && name.Length > 0) ret.Add("name", name);
-			ret.Add("root_node", state.GetNodeId(rootNode));
+
+			var roots = new List<string>();
+			for(int i = 0; i < rootNode.transform.childCount; i++)
+			{
+				roots.Add(state.GetNodeId(rootNode.transform.GetChild(i).gameObject));
+			}
+			ret.Add("root_nodes", new JArray(roots));
 			return ret;
 		}
 
@@ -104,14 +115,14 @@ namespace stf.serialisation
 		}
 	}
 
-	public class STFAsset : ISTFAsset
+	public class STFAddonAsset : ISTFAsset
 	{
 		ISTFImporter state;
 		public string id;
-		public string rootNodeId;
+		public GameObject holder;
 		public string assetName;
 
-		public STFAsset(ISTFImporter state, string id, string name)
+		public STFAddonAsset(ISTFImporter state, string id, string name)
 		{
 			this.state = state;
 			this.id = id;
@@ -120,7 +131,7 @@ namespace stf.serialisation
 
 		public UnityEngine.Object GetAsset()
 		{
-			return state.GetNode(rootNodeId);
+			return holder;
 		}
 
 		public string GetSTFAssetName()
@@ -130,7 +141,7 @@ namespace stf.serialisation
 
 		public string GetSTFAssetType()
 		{
-			return "asset";
+			return "addon";
 		}
 
 		public Type GetUnityAssetType()
@@ -144,22 +155,29 @@ namespace stf.serialisation
 		}
 	}
 
-	public class STFAssetImporter : ISTFAssetImporter
+	public class STFAddonAssetImporter : ISTFAssetImporter
 	{
 		public ISTFAsset ParseFromJson(ISTFImporter state, JToken jsonAsset, string id, JObject jsonRoot)
 		{
-			var ret = new STFAsset(state, id, (string)jsonAsset["name"]);
+			var ret = new STFAddonAsset(state, id, (string)jsonAsset["name"]);
 
-			var rootNodeId = (string)jsonAsset["root_node"];
-			ret.rootNodeId = rootNodeId;
-			convertAssetNode(state, rootNodeId, jsonRoot);
-			state.AddTask(new Task(() => {
-				var assetInfo = state.GetNode(rootNodeId).AddComponent<STFAssetInfo>();
-				assetInfo.assetId = id;
-				assetInfo.assetType = "asset";
-				assetInfo.assetName = (string)jsonAsset["name"];
-				assetInfo.originalMetaInformation = state.GetMeta();
-			}));
+			var rootNodeIds = jsonAsset["root_nodes"].ToObject<List<string>>();
+			ret.holder = new GameObject();
+			ret.holder.name = (string)jsonAsset["name"];
+			var assetInfo = ret.holder.AddComponent<STFAssetInfo>();
+			assetInfo.assetType = "addon";
+			assetInfo.assetName = (string)jsonAsset["name"];
+			assetInfo.originalMetaInformation = state.GetMeta();
+
+			foreach(var rootNodeId in rootNodeIds)
+			{
+				convertAssetNode(state, rootNodeId, jsonRoot);
+				state.AddTask(new Task(() => {
+					var node = state.GetNode(rootNodeId);
+					node.transform.parent = ret.holder.transform;
+				}));
+			}
+
 			return ret;
 		}
 

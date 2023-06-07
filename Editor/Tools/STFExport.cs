@@ -93,22 +93,36 @@ namespace stf
 
 		private void SerializeAsSTFBinary(GameObject mainExport, List<GameObject> secondaryExports, string path)
 		{
-			var mainAsset = new STFAssetExporter();
-			mainAsset.rootNode = mainExport;
-
-			var assets = new List<ISTFAssetExporter>() {mainAsset};
-
+			var assets = new List<ISTFAssetExporter>() {CreateAssetExporter(mainExport)};
 			foreach(var export in secondaryExports)
 			{
-
+				assets.Add(CreateAssetExporter(export));
 			}
-
+			
 			var state = new STFExporter(assets);
 
 			File.WriteAllBytes(path, state.GetBinary());
 			File.WriteAllText(path + ".json", state.GetPrettyJson());
 
 			return;
+		}
+
+		private ISTFAssetExporter CreateAssetExporter(GameObject go)
+		{
+			if(go.GetComponent<STFAssetInfo>()?.assetType == null || go.GetComponent<STFAssetInfo>()?.assetType == "default" || go.GetComponent<STFAssetInfo>()?.assetType == "asset")
+			{
+				var exporter = new STFAssetExporter();
+				exporter.rootNode = go;
+				return exporter;
+			}
+			else if(go.GetComponent<STFAssetInfo>()?.assetType == "addon")
+			{
+				var exporter = new STFAddonAssetExporter();
+				exporter.rootNode = go;
+				return exporter;
+			}
+
+			throw new System.Exception("No Assetexporter available");
 		}
 	}
 }
