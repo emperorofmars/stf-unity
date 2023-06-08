@@ -15,8 +15,8 @@ namespace stf.serialisation
 		public static readonly Dictionary<string, ISTFNodeImporter> DefaultNodeImporters = new Dictionary<string, ISTFNodeImporter>() {
 			{STFNodeImporter._TYPE, new STFNodeImporter()},
 			{STFArmatureInstanceNodeImporter._TYPE, new STFArmatureInstanceNodeImporter()},
-			{STFAppendageNodeImporter._TYPE, new STFAppendageNodeImporter()}
-			//{"patch", null},
+			{STFAppendageNodeImporter._TYPE, new STFAppendageNodeImporter()},
+			{STFPatchNodeImporter._TYPE, new STFPatchNodeImporter()}
 		};
 		public static readonly Dictionary<string, ASTFComponentImporter> DefaultComponentImporters = new Dictionary<string, ASTFComponentImporter>() {
 			{STFMeshInstanceImporter._TYPE, new STFMeshInstanceImporter()},
