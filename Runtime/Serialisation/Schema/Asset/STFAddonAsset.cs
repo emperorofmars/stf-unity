@@ -37,13 +37,32 @@ namespace stf.serialisation
 			foreach(var transform in transforms)
 			{
 				if(transform == rootNode.transform) continue;
-
-				if(armatureState.HandleBoneInstance(state, transform) == false)
+				var go = transform.gameObject;
+				var nodeUuidComponent = go.GetComponent<STFUUID>();
+				var nodeId = nodeUuidComponent != null && nodeUuidComponent.id != null && nodeUuidComponent.id.Length > 0 ? nodeUuidComponent.id : Guid.NewGuid().ToString();
+				if(transform.parent == rootNode.transform)
 				{
-					var go = transform.gameObject;
-					var nodeUuidComponent = go.GetComponent<STFUUID>();
-					var nodeId = nodeUuidComponent != null && nodeUuidComponent.id != null && nodeUuidComponent.id.Length > 0 ? nodeUuidComponent.id : Guid.NewGuid().ToString();
-					state.RegisterNode(nodeId, STFNodeExporter.serializeToJson(go, state), go);
+					var appendageComponent = go.GetComponent<STFAppendageNode>();
+					var patchComponent = go.GetComponent<STFPatchNode>();
+					if(appendageComponent)
+					{
+						state.RegisterNode(nodeId, STFAppendageNodeExporter.serializeToJson(go, state), go);
+					}
+					else if(patchComponent)
+					{
+						state.RegisterNode(nodeId, STFPatchNodeExporter.serializeToJson(go, state), go);
+					}
+					else
+					{
+						throw new Exception("Addon Assets must have patch or appendage root nodes");
+					}
+				}
+				else
+				{
+					if(armatureState.HandleBoneInstance(state, transform) == false)
+					{
+						state.RegisterNode(nodeId, STFNodeExporter.serializeToJson(go, state), go);
+					}
 				}
 			}
 
@@ -61,6 +80,7 @@ namespace stf.serialisation
 					if(component.GetType() == typeof(STFAssetInfo)) continue;
 					if(component.GetType() == typeof(STFArmatureInstance)) continue;
 					if(component.GetType() == typeof(STFAppendageNode)) continue;
+					if(component.GetType() == typeof(STFPatchNode)) continue;
 
 					if(component.GetType() == typeof(STFUnrecognizedComponent))
 					{
@@ -165,6 +185,7 @@ namespace stf.serialisation
 			ret.holder = new GameObject();
 			ret.holder.name = (string)jsonAsset["name"];
 			var assetInfo = ret.holder.AddComponent<STFAssetInfo>();
+			assetInfo.assetId = id;
 			assetInfo.assetType = "addon";
 			assetInfo.assetName = (string)jsonAsset["name"];
 			assetInfo.originalMetaInformation = state.GetMeta();

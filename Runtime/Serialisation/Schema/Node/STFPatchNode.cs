@@ -23,7 +23,7 @@ namespace stf.serialisation
 				new JArray() {go.transform.localRotation.x, go.transform.localRotation.y, go.transform.localRotation.z, go.transform.localRotation.w},
 				new JArray() {go.transform.localScale.x, go.transform.localScale.y, go.transform.localScale.z}
 			});
-			ret.Add("target", go.GetComponent<STFPatchNode>()?.targetId);
+			ret.Add("target", go.GetComponent<STFPatchNode>().targetId);
 			state.AddTask(new Task(() => {
 				var children = new List<string>();
 				for(int i = 0; i < go.transform.childCount; i++)
