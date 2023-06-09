@@ -74,6 +74,7 @@ namespace stf.serialisation
 				var components = transform.GetComponents<Component>();
 				foreach(var component in components)
 				{
+					// Do this type of shit more legit, with hot pluggable types to skip
 					if(component.GetType() == typeof(Transform)) continue;
 					if(component.GetType() == typeof(STFUUID)) continue;
 					if(component.GetType() == typeof(Animator)) continue;
