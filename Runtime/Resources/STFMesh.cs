@@ -135,7 +135,7 @@ namespace stf.serialisation
 			// weights
 			var weightLength = 0;
 			byte[] weightBuffer = null;
-			if(mesh.HasVertexAttribute(VertexAttribute.BlendWeight) && mesh.HasVertexAttribute(VertexAttribute.BlendIndices))
+			if(mesh.HasVertexAttribute(VertexAttribute.BlendIndices))
 			{
 				ret.Add("skinned", true);
 				ret.Add("armature", state.GetSubresourceId(mesh, "armature"));
@@ -148,6 +148,10 @@ namespace stf.serialisation
 					Buffer.BlockCopy(BitConverter.GetBytes(unityWeights[weightIdx].boneIndex), 0, weightBuffer, weightIdx * (sizeof(float) + sizeof(int)), sizeof(int));
 					Buffer.BlockCopy(BitConverter.GetBytes(unityWeights[weightIdx].weight), 0, weightBuffer, weightIdx * (sizeof(float) + sizeof(int)) + sizeof(int), sizeof(float));
 				}
+			}
+			else
+			{
+				ret.Add("skinned", false);
 			}
 
 			// blendshapes
@@ -350,7 +354,8 @@ namespace stf.serialisation
 			}
 
 			var bufferOffset = indicesPosCounted * sizeof(int) + vertexCount * bufferWidth * sizeof(float);
-			if((bool)json["skinned"])
+
+			if(json["skinned"] != null && (bool)json["skinned"])
 			{
 				var bonesPerVertex = new byte[vertexCount];
 				Buffer.BlockCopy(arrayBuffer, bufferOffset, bonesPerVertex, 0, vertexCount * sizeof(byte));

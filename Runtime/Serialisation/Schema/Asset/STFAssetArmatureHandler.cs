@@ -45,12 +45,12 @@ namespace stf.serialisation
 					state.RegisterSubresourceId(smr.sharedMesh, "armature", armature.id);
 
 					armatureInstances.Add(smr.rootBone.parent, armature);
+					for(int i = 0; i < smr.bones.Length; i++)
+					{
+						boneMappings.Add(smr.bones[i], armatures[smr.sharedMesh].boneIds[i]);
+					}
+					armatureInstancesBoneInstances.Add(smr.rootBone.parent, smr.bones);
 				}
-				for(int i = 0; i < smr.bones.Length; i++)
-				{
-					boneMappings.Add(smr.bones[i], armatures[smr.sharedMesh].boneIds[i]);
-				}
-				armatureInstancesBoneInstances.Add(smr.rootBone.parent, smr.bones);
 			}
 		}
 
