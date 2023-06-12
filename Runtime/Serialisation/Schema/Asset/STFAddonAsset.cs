@@ -13,6 +13,7 @@ namespace stf.serialisation
 		public GameObject rootNode;
 		public string id;
 		public string name;
+		public string targetId;
 
 		public void Convert(ISTFExporter state)
 		{
@@ -29,6 +30,8 @@ namespace stf.serialisation
 				id = Guid.NewGuid().ToString();
 				name = rootNode.name;
 			}
+
+			targetId = rootNode.GetComponent<STFAddonAssetInfo>()?.targetAssetId;
 
 			var armatureState = new STFAssetArmatureHandler();
 			armatureState.GatherArmatures(state, rootNode.GetComponentsInChildren<SkinnedMeshRenderer>(), rootNode);
@@ -119,6 +122,7 @@ namespace stf.serialisation
 		{
 			var ret = new JObject();
 			ret.Add("type", "addon");
+			ret.Add("target_asset", targetId);
 			if(name != null && name.Length > 0) ret.Add("name", name);
 
 			var roots = new List<string>();
@@ -190,6 +194,8 @@ namespace stf.serialisation
 			assetInfo.assetType = "addon";
 			assetInfo.assetName = (string)jsonAsset["name"];
 			assetInfo.originalMetaInformation = state.GetMeta();
+			var addonAssetInfo = ret.holder.AddComponent<STFAddonAssetInfo>();
+			addonAssetInfo.targetAssetId = (string)jsonAsset["target_asset"];
 
 			foreach(var rootNodeId in rootNodeIds)
 			{
