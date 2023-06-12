@@ -1,6 +1,7 @@
 
 #if UNITY_EDITOR
 
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using stf.serialisation;
@@ -14,9 +15,11 @@ namespace stf
 	[ScriptedImporter(1, new string[] {"stf"})]
 	public class STFScriptedImporter : ScriptedImporter
 	{
-		[HideInInspector] public bool AuthoringMode = false;
+		//[HideInInspector] public bool AuthoringMode = false;
 		[HideInInspector] public bool SafeImagesExternal = false;
 		[HideInInspector] public string OriginalTexturesFolder = "Assets/authoring_stf_external";
+
+		public Dictionary<string, List<STFAddonAsset>> Addons = new Dictionary<string, List<STFAddonAsset>>();
 
 		private void ensureTexturePath()
 		{
@@ -57,6 +60,20 @@ namespace stf
 			foreach(var asset in importer.GetAssets())
 			{
 				ctx.AddObjectToAsset(asset.Key, asset.Value.GetAsset());
+
+				// Handle Addons
+				if(asset.Value.GetType() == typeof(STFAddonAsset))
+				{
+					var addonInfo = (asset.Value.GetAsset() as GameObject).GetComponent<STFAddonAssetInfo>();
+					if(!Addons.ContainsKey(addonInfo.targetAssetId))
+					{
+						Addons.Add(addonInfo.targetAssetId, new List<STFAddonAsset> {(STFAddonAsset)asset.Value});
+					}
+					else
+					{
+						Addons[addonInfo.targetAssetId].Add((STFAddonAsset)asset.Value);
+					}
+				}
 				
 				foreach(var stage in STFImporterStageRegistry.GetStages())
 				{

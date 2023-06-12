@@ -105,7 +105,6 @@ namespace stf
 					}
 				}
 			}
-			var changesDetected = EditorGUI.EndChangeCheck();
 
 			drawHLine();
 
@@ -118,7 +117,7 @@ namespace stf
 				EditorGUILayout.LabelField("Main", EditorStyles.boldLabel);
 
 				EditorGUI.indentLevel++;
-				renderAsset(mainAsset);
+				renderAsset(mainAsset, importer);
 				EditorGUI.indentLevel--;
 
 				if(meta.importedRawAssets.Count > 1)
@@ -127,7 +126,7 @@ namespace stf
 					foreach(var asset in meta.importedRawAssets.FindAll(a => a.assetId != meta.mainAssetId))
 					{
 						EditorGUI.indentLevel++;
-						renderAsset(asset);
+						renderAsset(asset, importer);
 						EditorGUI.indentLevel--;
 					}
 				}
@@ -135,6 +134,7 @@ namespace stf
 
 			// handle unparented patch assets
 
+			var changesDetected = EditorGUI.EndChangeCheck();
 			drawHLine();
 
 			GUILayout.Space(20f);
@@ -162,7 +162,7 @@ namespace stf
 			GUILayout.Space(10);
 		}
 
-		private void renderAsset(STFMeta.AssetInfo assetInfo)
+		private void renderAsset(STFMeta.AssetInfo assetInfo, STFScriptedImporter importer)
 		{
 			GUILayout.Space(5f);
 			GUILayout.BeginHorizontal();
@@ -172,6 +172,19 @@ namespace stf
 				var instantiated = PrefabUtility.InstantiatePrefab(assetInfo.assetRoot as GameObject);
 			}
 			GUILayout.EndHorizontal();
+
+			if(importer.Addons.ContainsKey(assetInfo.assetId))
+			{
+				EditorGUILayout.LabelField("Addons");
+				foreach(var addon in importer.Addons[assetInfo.assetId])
+				{
+					EditorGUILayout.LabelField($"Addon: {addon.assetName}");
+				}
+			}
+			else
+			{
+				EditorGUILayout.LabelField("No addons registered.");
+			}
 
 			if(assetInfo.secondStageAssets != null && assetInfo.secondStageAssets.Count > 0)
 			{

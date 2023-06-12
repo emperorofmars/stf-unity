@@ -33,11 +33,16 @@ namespace stf.serialisation
 				if(component is ISTFComponent)
 				{
 					var c = (ISTFComponent)component;
-					if(c.overrides != null) foreach(var _override in c.overrides)
+					if(c.overrides != null)
 					{
-						if(Overrides.ContainsKey(component)) Overrides[component].Add(IdToComponent[_override]);
-						else Overrides.Add(component, new List<Component> {IdToComponent[_override]});
-						if(!IsOverridden.Contains(IdToComponent[_override])) IsOverridden.Add(IdToComponent[_override]);
+						foreach(var _override in c.overrides)
+						{
+							if(_override == null || _override.Length == 0) continue;
+
+							if(Overrides.ContainsKey(component)) Overrides[component].Add(IdToComponent[_override]);
+							else Overrides.Add(component, new List<Component> {IdToComponent[_override]});
+							if(!IsOverridden.Contains(IdToComponent[_override])) IsOverridden.Add(IdToComponent[_override]);
+						}
 					}
 				}
 			}
