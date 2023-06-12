@@ -1,6 +1,7 @@
 
 #if UNITY_EDITOR
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -15,11 +16,18 @@ namespace stf
 	[ScriptedImporter(1, new string[] {"stf"})]
 	public class STFScriptedImporter : ScriptedImporter
 	{
+		[Serializable]
+		public class IdToAddon
+		{
+			public string TargetId;
+			public List<STFAddonAssetInfo> Addons = new List<STFAddonAssetInfo>();
+		}
+
 		//[HideInInspector] public bool AuthoringMode = false;
 		[HideInInspector] public bool SafeImagesExternal = false;
 		[HideInInspector] public string OriginalTexturesFolder = "Assets/authoring_stf_external";
 
-		public Dictionary<string, List<STFAddonAsset>> Addons = new Dictionary<string, List<STFAddonAsset>>();
+		public List<IdToAddon> Addons = new List<IdToAddon>();
 
 		private void ensureTexturePath()
 		{
@@ -65,14 +73,12 @@ namespace stf
 				if(asset.Value.GetType() == typeof(STFAddonAsset))
 				{
 					var addonInfo = (asset.Value.GetAsset() as GameObject).GetComponent<STFAddonAssetInfo>();
-					if(!Addons.ContainsKey(addonInfo.targetAssetId))
-					{
-						Addons.Add(addonInfo.targetAssetId, new List<STFAddonAsset> {(STFAddonAsset)asset.Value});
-					}
-					else
-					{
-						Addons[addonInfo.targetAssetId].Add((STFAddonAsset)asset.Value);
-					}
+
+					Debug.Log($"Addon: {addonInfo.targetAssetId}");
+
+					var addonList = Addons.Find(k => k.TargetId == addonInfo.targetAssetId);
+					if(addonList != null) addonList.Addons.Add(addonInfo);
+					else Addons.Add(new IdToAddon {TargetId = addonInfo.targetAssetId, Addons = new List<STFAddonAssetInfo> {addonInfo}});
 				}
 				
 				foreach(var stage in STFImporterStageRegistry.GetStages())

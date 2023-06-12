@@ -173,12 +173,17 @@ namespace stf
 			}
 			GUILayout.EndHorizontal();
 
-			if(importer.Addons.ContainsKey(assetInfo.assetId))
+			Debug.Log(importer.Addons);
+			Debug.Log(importer.Addons?.Count);
+			var addonList = importer.Addons.Find(k => k.TargetId == assetInfo.assetId);
+			if(addonList != null)
 			{
 				EditorGUILayout.LabelField("Addons");
-				foreach(var addon in importer.Addons[assetInfo.assetId])
+				EditorGUILayout.LabelField($"{addonList.Addons.Count}");
+
+				foreach(var addon in addonList.Addons)
 				{
-					EditorGUILayout.LabelField($"Addon: {addon.assetName}");
+					EditorGUILayout.LabelField($"Addon: {addon.name}");
 				}
 			}
 			else
