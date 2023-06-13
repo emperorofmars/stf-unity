@@ -95,10 +95,12 @@ namespace stf
 				}
 			}
 			
+			var objectsToDestroy = new List<UnityEngine.Object>();
 			foreach(var asset in importer.GetAssets())
 			{
 				var addonList = Addons.Find(a => a.TargetId == asset.Key);
 				var unityAsset = asset.Value.GetAsset();
+
 
 				// apply addons
 				if(addonList != null && addonList.Addons.Count > 0)
@@ -109,6 +111,7 @@ namespace stf
 						if(enabled == true)
 						{
 							unityAsset = AddonApplier.ApplyAddon((GameObject)unityAsset, addonList.Addons[addonIdx]);
+							objectsToDestroy.Add(unityAsset);
 						}
 					}
 				}
@@ -146,6 +149,8 @@ namespace stf
 			icon.LoadImage(STFIcon.icon_png_array.ToArray());
 
 			ctx.AddObjectToAsset("STFMeta", importer.GetMeta(), icon);
+
+			foreach(var o in objectsToDestroy) UnityEngine.Object.DestroyImmediate(o);
 		}
 	}
 }
