@@ -13,14 +13,14 @@ namespace stf.serialisation
 			{typeof(STFTwistConstraintForward), new STFTwistConstraintForwardConverter()}
 		};
 		
-		public bool CanHandle(ISTFAsset asset)
+		public bool CanHandle(ISTFAsset asset, UnityEngine.Object adaptedUnityAsset)
 		{
 			return asset.GetSTFAssetType() == "asset";
 		}
 
-		public SecondStageResult Convert(ISTFAsset asset)
+		public SecondStageResult Convert(ISTFAsset asset, UnityEngine.Object adaptedUnityAsset)
 		{
-			var originalRoot = (GameObject)asset.GetAsset();
+			var originalRoot = (GameObject)adaptedUnityAsset;
 			var resources = new List<UnityEngine.Object>();
 
 			GameObject convertedRoot = UnityEngine.Object.Instantiate(originalRoot);

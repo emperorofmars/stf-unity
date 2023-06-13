@@ -12,7 +12,7 @@ namespace stf.serialisation
 
 	public interface ISTFSecondStage
 	{
-		bool CanHandle(ISTFAsset asset);
-		SecondStageResult Convert(ISTFAsset asset);
+		bool CanHandle(ISTFAsset asset, UnityEngine.Object adaptedUnityAsset);
+		SecondStageResult Convert(ISTFAsset asset, UnityEngine.Object adaptedUnityAsset);
 	}
 }

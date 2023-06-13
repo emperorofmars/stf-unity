@@ -173,18 +173,28 @@ namespace stf
 			}
 			GUILayout.EndHorizontal();
 
-			Debug.Log(importer.Addons);
-			Debug.Log(importer.Addons?.Count);
 			var addonList = importer.Addons.Find(k => k.TargetId == assetInfo.assetId);
 			if(addonList != null)
 			{
-				EditorGUILayout.LabelField("Addons");
-				EditorGUILayout.LabelField($"{addonList.Addons.Count}");
+				EditorGUILayout.LabelField("Addons", EditorStyles.boldLabel);
+				EditorGUI.indentLevel++;
 
-				foreach(var addon in addonList.Addons)
+				for(int addonIdx = 0; addonIdx < addonList.Addons.Count; addonIdx++)
 				{
-					EditorGUILayout.LabelField($"Addon: {addon.name}");
+					var enabled = importer.AddonsEnabled.Find(a => a.AddonId == addonList.AddonId);
+					if(enabled != null && addonList.Addons[addonIdx] != null)
+					{
+						EditorGUILayout.BeginHorizontal();
+						EditorGUILayout.LabelField(addonList.Addons[addonIdx].name);
+						enabled.AddonEnabled = EditorGUILayout.Toggle(enabled.AddonEnabled);
+						EditorGUILayout.EndHorizontal();
+					}
+					else
+					{
+						EditorGUILayout.LabelField("Addon Broken");
+					}
 				}
+				EditorGUI.indentLevel--;
 			}
 			else
 			{
@@ -198,7 +208,7 @@ namespace stf
 				foreach(var asset in assetInfo.secondStageAssets)
 				{
 					GUILayout.BeginHorizontal();
-					EditorGUILayout.LabelField($"Name: {asset.assetName} | Type: {asset.assetType}");
+					EditorGUILayout.LabelField(asset.assetType);
 					if(GUILayout.Button("Instantiate into current scene"))
 					{
 						var instantiated = PrefabUtility.InstantiatePrefab(asset.assetRoot as GameObject);
