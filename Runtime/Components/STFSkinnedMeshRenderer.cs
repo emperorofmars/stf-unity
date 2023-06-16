@@ -30,9 +30,11 @@ namespace stf.Components
 
 			if((string)json["armature_instance"] != null)
 			{
-				var armatureInstanceId = (string)json["armature_instance"];
-				var armatureInstanceNode = state.GetNode(armatureInstanceId);
+				var armatureInstanceNode = state.GetNode((string)json["armature_instance"]);
 				var armatureInstance = armatureInstanceNode.GetComponent<STFArmatureInstance>();
+				
+				Debug.Log("AAAAAAAAAAAAAAAAAAA " + resource.name + " : " + armatureInstance);
+
 				c.rootBone = armatureInstance.root.transform;
 				c.bones = armatureInstance.bones.Select(b => b.transform).ToArray();
 				c.updateWhenOffscreen = true;

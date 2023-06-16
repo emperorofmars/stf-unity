@@ -84,7 +84,8 @@ namespace stf.serialisation
 
 		public UnityEngine.Object GetResource(string id)
 		{
-			return resources[id];
+			if(resources.ContainsKey(id)) return resources[id];
+			else return null;
 		}
 
 		public List<UnityEngine.Object> GetResources()

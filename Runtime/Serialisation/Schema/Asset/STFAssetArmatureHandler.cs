@@ -23,7 +23,19 @@ namespace stf.serialisation
 			foreach(var smr in skinnedMeshRenderers)
 			{
 				// Not in tree
-				if(tree.First(t => t == smr.rootBone.parent) == null) continue;
+				if(tree.FirstOrDefault(t => t == smr.rootBone.parent) == null)
+				{
+					var externalArmatureInstance = smr.rootBone.parent.GetComponent<STFArmatureInstance>();
+					if(externalArmatureInstance)
+					{
+						state.RegisterSubresourceId(smr.sharedMesh, "armature", externalArmatureInstance.GetComponent<STFUUID>().id);
+					}
+					else
+					{
+						throw new Exception("External Armature not present!");
+					}
+					continue;
+				}
 				
 				// find if the same armature already exists
 				foreach(var smr2 in skinnedMeshRenderers)
