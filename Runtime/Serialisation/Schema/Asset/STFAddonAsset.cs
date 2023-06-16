@@ -1,6 +1,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using stf.Components;
@@ -178,6 +179,11 @@ namespace stf.serialisation
 		{
 			return id;
 		}
+		
+		public bool isNodeInAsset(string id)
+		{
+			return holder.GetComponentsInChildren<STFUUID>().FirstOrDefault(n => n.id == id) != null;
+		}
 	}
 
 	public class STFAddonAssetImporter : ISTFAssetImporter
@@ -199,7 +205,7 @@ namespace stf.serialisation
 
 			foreach(var rootNodeId in rootNodeIds)
 			{
-				convertAssetNode(state, rootNodeId, jsonRoot);
+				convertAssetNode(state, rootNodeId, jsonRoot, ret);
 				state.AddTask(new Task(() => {
 					var node = state.GetNode(rootNodeId);
 					node.transform.parent = ret.holder.transform;
@@ -209,7 +215,7 @@ namespace stf.serialisation
 			return ret;
 		}
 
-		private void convertAssetNode(ISTFImporter state, string nodeId, JObject jsonRoot)
+		private void convertAssetNode(ISTFImporter state, string nodeId, JObject jsonRoot, ISTFAsset asset)
 		{
 			var jsonNode = (JObject)jsonRoot["nodes"][nodeId];
 			var nodetype = (string)jsonNode["type"] == null || ((string)jsonNode["type"]).Length == 0 ? "default" : (string)jsonNode["type"];
@@ -223,8 +229,29 @@ namespace stf.serialisation
 			{
 				foreach(var childId in nodesToParse)
 				{
-					convertAssetNode(state, childId, jsonRoot);
+					convertAssetNode(state, childId, jsonRoot, asset);
 				}
+			}
+			
+			var go = state.GetNode(nodeId);
+			if((JObject)jsonNode["components"] != null)
+			{
+				state.AddTask(new Task(() => {
+					foreach(var jsonComponent in (JObject)jsonNode["components"])
+					{
+						if((string)jsonComponent.Value["type"] != null && state.GetContext().ComponentImporters.ContainsKey((string)jsonComponent.Value["type"]))
+						{
+							var componentImporter = state.GetContext().ComponentImporters[(string)jsonComponent.Value["type"]];
+							componentImporter.parseFromJson(state, asset, jsonComponent.Value, jsonComponent.Key, go);
+						}
+						else
+						{
+							var unrecognizedComponent = (STFUnrecognizedComponent)go.AddComponent<STFUnrecognizedComponent>();
+							unrecognizedComponent.id = jsonComponent.Key;
+							unrecognizedComponent.parseFromJson(state, jsonComponent.Value);
+						}
+					}
+				}));
 			}
 		}
 	}

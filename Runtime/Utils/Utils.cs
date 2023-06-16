@@ -31,5 +31,10 @@ namespace stf
 			}
 			return transform;
 		}
+
+		public static bool isNodeInAsset(string id, GameObject root)
+		{
+			return false;
+		}
 	}
 }

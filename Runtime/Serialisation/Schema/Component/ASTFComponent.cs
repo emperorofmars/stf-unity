@@ -22,6 +22,6 @@ namespace stf.serialisation
 	
 	public abstract class ASTFComponentImporter
 	{
-		abstract public void parseFromJson(ISTFImporter state, JToken json, string id, GameObject go);
+		abstract public void parseFromJson(ISTFImporter state, ISTFAsset asset, JToken json, string id, GameObject go);
 	}
 }

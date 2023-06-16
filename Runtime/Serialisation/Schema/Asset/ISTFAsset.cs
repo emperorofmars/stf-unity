@@ -6,13 +6,6 @@ using UnityEngine;
 
 namespace stf.serialisation
 {
-	public interface ISTFAssetExporter
-	{
-		void Convert(ISTFExporter state);
-		string GetId(ISTFExporter state);
-		JToken SerializeToJson(ISTFExporter state);
-	}
-
 	public interface ISTFAsset
 	{
 		string getId();
@@ -20,6 +13,14 @@ namespace stf.serialisation
 		Type GetUnityAssetType();
 		string GetSTFAssetName();
         UnityEngine.Object GetAsset();
+		bool isNodeInAsset(string id);
+	}
+
+	public interface ISTFAssetExporter
+	{
+		void Convert(ISTFExporter state);
+		string GetId(ISTFExporter state);
+		JToken SerializeToJson(ISTFExporter state);
 	}
 	
 	public interface ISTFAssetImporter

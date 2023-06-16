@@ -1,5 +1,6 @@
 
 using System;
+using System.Linq;
 using UnityEngine;
 
 namespace stf.serialisation
@@ -51,6 +52,11 @@ namespace stf.serialisation
 		public string getId()
 		{
 			return id;
+		}
+
+		public bool isNodeInAsset(string id)
+		{
+			return rootNode.GetComponentsInChildren<STFUUID>().FirstOrDefault(n => n.id == id) != null;
 		}
 	}
 }

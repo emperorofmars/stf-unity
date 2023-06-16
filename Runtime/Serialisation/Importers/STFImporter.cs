@@ -181,7 +181,7 @@ namespace stf.serialisation
 						uuidComponent.id = jsonNode.Key;
 					}
 
-					if((JObject)jsonNode.Value["components"] != null)
+					/*if((JObject)jsonNode.Value["components"] != null)
 					{
 						componentTasks.Add(new Task(() => {
 							foreach(var jsonComponent in (JObject)jsonNode.Value["components"])
@@ -199,15 +199,15 @@ namespace stf.serialisation
 								}
 							}
 						}));
-					}
+					}*/
 				}
 				_runTasks();
-				foreach(var task in componentTasks)
+				/*foreach(var task in componentTasks)
 				{
 					task.RunSynchronously();
 					if(task.Exception != null) throw task.Exception;
-				}
-				_runTasks();
+				}*/
+				//_runTasks();
 			} catch(Exception e)
 			{
 				foreach(var node in nodes.Values)

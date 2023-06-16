@@ -10,7 +10,7 @@ namespace stf.Components
 	public class STFMeshInstanceImporter : ASTFComponentImporter
 	{
 		public static string _TYPE = "STF.mesh_instance";
-		override public void parseFromJson(ISTFImporter state, JToken json, string id, GameObject go)
+		override public void parseFromJson(ISTFImporter state, ISTFAsset asset, JToken json, string id, GameObject go)
 		{
 			var c = go.AddComponent<SkinnedMeshRenderer>();
 			var uuidComponent = go.GetComponent<STFUUID>();
@@ -28,16 +28,20 @@ namespace stf.Components
 				c.sharedMesh = renderer.sharedMesh;
 			}
 
+			Debug.Log("REEEEEEEEEEEEEEEEEEEEEEEEEEE");
 			if((string)json["armature_instance"] != null)
 			{
 				var armatureInstanceNode = state.GetNode((string)json["armature_instance"]);
-				var armatureInstance = armatureInstanceNode.GetComponent<STFArmatureInstance>();
-				
-				Debug.Log("AAAAAAAAAAAAAAAAAAA " + resource.name + " : " + armatureInstance);
 
-				c.rootBone = armatureInstance.root.transform;
-				c.bones = armatureInstance.bones.Select(b => b.transform).ToArray();
-				c.updateWhenOffscreen = true;
+				Debug.Log($"aaaaaaaaaa: {(string)json["armature_instance"]} : {asset} : {go.name}");
+
+				if(armatureInstanceNode != null && asset.isNodeInAsset((string)json["armature_instance"]))
+				{
+					var armatureInstance = armatureInstanceNode.GetComponent<STFArmatureInstance>();
+					c.rootBone = armatureInstance.root.transform;
+					c.bones = armatureInstance.bones.Select(b => b.transform).ToArray();
+					c.updateWhenOffscreen = true;
+				}
 			}
 
 			var materials = new Material[c.sharedMesh.subMeshCount];
