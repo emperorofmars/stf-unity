@@ -149,7 +149,6 @@ namespace stf.serialisation
 				meta.generator = (string)jsonRoot["meta"]["generator"];
 				meta.author = (string)jsonRoot["meta"]["author"];
 
-
 				foreach(var jsonResource in ((JObject)jsonRoot["resources"]))
 				{
 					if((string)jsonResource.Value["type"] != null && context.ResourceImporters.ContainsKey((string)jsonResource.Value["type"]))
@@ -180,34 +179,8 @@ namespace stf.serialisation
 						var uuidComponent = go.AddComponent<STFUUID>();
 						uuidComponent.id = jsonNode.Key;
 					}
-
-					/*if((JObject)jsonNode.Value["components"] != null)
-					{
-						componentTasks.Add(new Task(() => {
-							foreach(var jsonComponent in (JObject)jsonNode.Value["components"])
-							{
-								if((string)jsonComponent.Value["type"] != null && context.ComponentImporters.ContainsKey((string)jsonComponent.Value["type"]))
-								{
-									var componentImporter = context.ComponentImporters[(string)jsonComponent.Value["type"]];
-									componentImporter.parseFromJson(this, jsonComponent.Value, jsonComponent.Key, go);
-								}
-								else
-								{
-									var unrecognizedComponent = (STFUnrecognizedComponent)go.AddComponent<STFUnrecognizedComponent>();
-									unrecognizedComponent.id = jsonComponent.Key;
-									unrecognizedComponent.parseFromJson(this, jsonComponent.Value);
-								}
-							}
-						}));
-					}*/
 				}
 				_runTasks();
-				/*foreach(var task in componentTasks)
-				{
-					task.RunSynchronously();
-					if(task.Exception != null) throw task.Exception;
-				}*/
-				//_runTasks();
 			} catch(Exception e)
 			{
 				foreach(var node in nodes.Values)

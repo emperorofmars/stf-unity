@@ -28,12 +28,9 @@ namespace stf.Components
 				c.sharedMesh = renderer.sharedMesh;
 			}
 
-			Debug.Log("REEEEEEEEEEEEEEEEEEEEEEEEEEE");
 			if((string)json["armature_instance"] != null)
 			{
 				var armatureInstanceNode = state.GetNode((string)json["armature_instance"]);
-
-				Debug.Log($"aaaaaaaaaa: {(string)json["armature_instance"]} : {asset} : {go.name}");
 
 				if(armatureInstanceNode != null && asset.isNodeInAsset((string)json["armature_instance"]))
 				{
@@ -41,6 +38,11 @@ namespace stf.Components
 					c.rootBone = armatureInstance.root.transform;
 					c.bones = armatureInstance.bones.Select(b => b.transform).ToArray();
 					c.updateWhenOffscreen = true;
+				}
+				else
+				{
+					var addonDef = go.AddComponent<STFSkinnedMeshRendererAddon>();
+					addonDef.ArmatureInstanceId = (string)json["armature_instance"];
 				}
 			}
 
@@ -84,6 +86,31 @@ namespace stf.Components
 			ret.Add("materials", new JArray(c.sharedMaterials.Select(m => m != null ? state.GetResourceId(m) : null)));
 			ret.Add("morphtarget_values", new JArray(Enumerable.Range(0, c.sharedMesh.blendShapeCount).Select(i => c.GetBlendShapeWeight(i))));
 			return ret;
+		}
+	}
+
+	public class STFMeshInstanceAddonApplier : ISTFAddonTrigger
+	{
+		public void apply(Component triggerComponent, GameObject root)
+		{
+			GameObject go = triggerComponent.gameObject;
+			var smr = go.GetComponent<SkinnedMeshRenderer>();
+			var addonDef = (STFSkinnedMeshRendererAddon)triggerComponent;
+			
+			var armatureInstanceNode = root.GetComponentsInChildren<STFUUID>().FirstOrDefault(c => c.id == addonDef.ArmatureInstanceId);
+			if(armatureInstanceNode != null)
+			{
+				var armatureInstance = armatureInstanceNode.GetComponent<STFArmatureInstance>();
+				smr.rootBone = armatureInstance.root.transform;
+				smr.bones = armatureInstance.bones.Select(b => b.transform).ToArray();
+				smr.updateWhenOffscreen = true;
+
+				//smr.sharedMesh.bindposes = armatureInstanceNode.
+			}
+			else
+			{
+				throw new Exception("Invalid armature instance");
+			}
 		}
 	}
 }

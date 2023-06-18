@@ -30,13 +30,6 @@ namespace stf
 			public bool visible;
 			public List<AssetInfo> secondStageAssets = new List<AssetInfo>();
 		}
-
-		[System.Serializable]
-		public class AddonTrigger
-		{
-			public string id;
-			public string targetId;
-		}
 		
 		public string versionBinary;
 		public string versionDefinition;
@@ -48,7 +41,5 @@ namespace stf
 		public string mainAssetId;
 		public List<ResourceInfo> resourceInfo = new List<ResourceInfo>();
 		public List<AssetInfo> importedRawAssets = new List<AssetInfo>();
-
-		public List<AddonTrigger> addonTriggers = new List<AddonTrigger>();
 	}
 }

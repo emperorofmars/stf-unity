@@ -386,7 +386,7 @@ namespace stf.serialisation
 				state.AddTask(new Task(() => {
 					var armature = (STFArmatureResource)state.GetResource((string)json["armature"]);
 					if(armature != null) ret.bindposes = armature.bindposes;
-					else state.GetMeta().addonTriggers.Add(new STFMeta.AddonTrigger{id = id, targetId = (string)json["armature"]}); // store armature id for later, when the addon gets applied to the object actually containing the armature
+					//else state.GetMeta().addonTriggers.Add(new STFMeta.AddonTrigger{id = id, targetId = (string)json["armature"]}); // store armature id for later, when the addon gets applied to the object actually containing the armature
 				}));
 			}
 			
