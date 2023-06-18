@@ -101,11 +101,11 @@ namespace stf.Components
 			if(armatureInstanceNode != null)
 			{
 				var armatureInstance = armatureInstanceNode.GetComponent<STFArmatureInstance>();
+				smr.sharedMesh.bindposes = armatureInstance.armature.bindposes;
+
 				smr.rootBone = armatureInstance.root.transform;
 				smr.bones = armatureInstance.bones.Select(b => b.transform).ToArray();
 				smr.updateWhenOffscreen = true;
-
-				//smr.sharedMesh.bindposes = armatureInstanceNode.
 			}
 			else
 			{
