@@ -173,13 +173,30 @@ namespace stf
 			}
 			GUILayout.EndHorizontal();
 
-			var addonList = importer.Addons.Find(k => k.TargetId == assetInfo.assetId);
+			//var addonList = importer.Addons.Find(k => k.TargetId == assetInfo.assetId);
+			var addonList = STFAddonRegistry.GetAddons(assetInfo.assetId);
 			if(addonList != null)
 			{
 				EditorGUILayout.LabelField("Addons", EditorStyles.boldLabel);
 				EditorGUI.indentLevel++;
 
-				for(int addonIdx = 0; addonIdx < addonList.Addons.Count; addonIdx++)
+				foreach(var addon in addonList)
+				{
+					var enabled = importer.AddonsEnabled.Find(a => a.AddonId == addon.id);
+					if(enabled != null)
+					{
+						EditorGUILayout.BeginHorizontal();
+						EditorGUILayout.LabelField(addon.assetName);
+						enabled.AddonEnabled = EditorGUILayout.Toggle(enabled.AddonEnabled);
+						EditorGUILayout.EndHorizontal();
+					}
+					else
+					{
+						EditorGUILayout.LabelField("Addon Broken");
+					}
+				}
+
+				/*for(int addonIdx = 0; addonIdx < addonList.Addons.Count; addonIdx++)
 				{
 					var enabled = importer.AddonsEnabled.Find(a => a.AddonId == addonList.AddonId);
 					if(enabled != null && addonList.Addons[addonIdx] != null)
@@ -193,7 +210,7 @@ namespace stf
 					{
 						EditorGUILayout.LabelField("Addon Broken");
 					}
-				}
+				}*/
 				EditorGUI.indentLevel--;
 			}
 			else

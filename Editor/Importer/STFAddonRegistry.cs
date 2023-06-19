@@ -1,6 +1,7 @@
 
 #if UNITY_EDITOR
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -14,7 +15,36 @@ namespace stf
 {
 	public static class STFAddonRegistry
 	{
-		public static Dictionary<string, List<STFAddonAsset>> addons = new Dictionary<string, List<STFAddonAsset>>();
+		[Serializable]
+		private class RegisteredAddon
+		{
+			public string TargetId;
+			public STFAddonAsset AddonAsset;
+		}
+
+		private static List<RegisteredAddon> Addons = new List<RegisteredAddon>();
+
+		public static void RegisterAddon(string targetId, STFAddonAsset asset)
+		{
+			Addons.RemoveAll(a => a.AddonAsset == null);
+
+			var existing = Addons.Find(a => a.AddonAsset.id == asset.id);
+			if(existing != null)
+			{
+				existing.AddonAsset = asset;
+			}
+			else
+			{
+				Addons.Add(new RegisteredAddon{TargetId = targetId, AddonAsset = asset});
+			}
+		}
+
+		public static List<STFAddonAsset> GetAddons(string targetId)
+		{
+			Addons.RemoveAll(a => a.AddonAsset == null);
+
+			return Addons.FindAll(a => a.TargetId == targetId).Select(a => a.AddonAsset).ToList();
+		}
 	}
 }
 

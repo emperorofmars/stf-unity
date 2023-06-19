@@ -26,18 +26,19 @@ namespace stf.serialisation
 
 	public static class AddonApplier
 	{
-		public static GameObject ApplyAddon(GameObject originalRoot, STFAddonAssetInfo addon)
+		public static GameObject ApplyAddon(GameObject originalRoot, STFAddonAsset addon)
 		{
 			return ApplyAddon(originalRoot, addon, STFAddonTriggerRegistry.GetDefaultAddonContext());
 		}
 
-		public static GameObject ApplyAddon(GameObject originalRoot, STFAddonAssetInfo addon, STFAddonContext context)
+		public static GameObject ApplyAddon(GameObject originalRoot, STFAddonAsset addon, STFAddonContext context)
 		{
 			var root = UnityEngine.Object.Instantiate(originalRoot);
+			var addonRoot = (GameObject)addon.GetAsset();
 			root.name = originalRoot.name;
-			for(int i = 0; i < addon.transform.childCount; i++)
+			for(int i = 0; i < addonRoot.transform.childCount; i++)
 			{
-				var a = addon.transform.GetChild(i);
+				var a = addonRoot.transform.GetChild(i);
 				var appendage = a.GetComponent<STFAppendageNode>();
 				var patch = a.GetComponent<STFPatchNode>();
 				if(appendage != null)
