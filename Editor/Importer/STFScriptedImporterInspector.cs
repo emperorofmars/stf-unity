@@ -19,26 +19,6 @@ namespace stf
 		bool _foldoutImportedAssets = true;
 		int _numRegisteredStages = STFImporterStageRegistry.GetStages().Count;
 
-		/*protected override void OnHeaderGUI()
-		{
-			//base.DrawHeader();
-			var importer = (STFScriptedImporter)target;
-
-			EditorGUILayout.BeginHorizontal();
-			EditorGUILayout.LabelField("STF Import Settings", EditorStyles.whiteLargeLabel);
-			EditorGUILayout.EndHorizontal();
-
-			var rect = EditorGUILayout.GetControlRect(false, 0f);
-			rect.height = EditorGUIUtility.singleLineHeight;
-			rect.y -= rect.height;
-			rect.x = 48;
-			rect.xMax -= rect.x * 2f;
-	
-			EditorGUI.DrawRect(rect, new Color32 (56, 56, 56, 255));
-	
-			EditorGUI.LabelField(rect, "STF Import Settings", EditorStyles.boldLabel);
-		}*/
-
 		public override void OnInspectorGUI()
 		{
 			//base.DrawDefaultInspector();
@@ -173,7 +153,6 @@ namespace stf
 			}
 			GUILayout.EndHorizontal();
 
-			//var addonList = importer.Addons.Find(k => k.TargetId == assetInfo.assetId);
 			var addonList = STFAddonRegistry.GetAddons(assetInfo.assetId);
 			if(addonList != null)
 			{
@@ -195,22 +174,6 @@ namespace stf
 						EditorGUILayout.LabelField("Addon Broken");
 					}
 				}
-
-				/*for(int addonIdx = 0; addonIdx < addonList.Addons.Count; addonIdx++)
-				{
-					var enabled = importer.AddonsEnabled.Find(a => a.AddonId == addonList.AddonId);
-					if(enabled != null && addonList.Addons[addonIdx] != null)
-					{
-						EditorGUILayout.BeginHorizontal();
-						EditorGUILayout.LabelField(addonList.Addons[addonIdx].name);
-						enabled.AddonEnabled = EditorGUILayout.Toggle(enabled.AddonEnabled);
-						EditorGUILayout.EndHorizontal();
-					}
-					else
-					{
-						EditorGUILayout.LabelField("Addon Broken");
-					}
-				}*/
 				EditorGUI.indentLevel--;
 			}
 			else
