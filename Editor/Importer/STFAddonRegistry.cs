@@ -19,16 +19,16 @@ namespace stf
 		private class RegisteredAddon
 		{
 			public string TargetId;
-			public STFAddonAsset AddonAsset;
+			public STFAssetInfo AddonAsset;
 		}
 
 		private static List<RegisteredAddon> Addons = new List<RegisteredAddon>();
 
-		public static void RegisterAddon(string targetId, STFAddonAsset asset)
+		public static void RegisterAddon(string targetId, STFAssetInfo asset)
 		{
 			Addons.RemoveAll(a => a.AddonAsset == null);
 
-			var existing = Addons.Find(a => a.AddonAsset.id == asset.id);
+			var existing = Addons.Find(a => a.AddonAsset.assetId == asset.assetId);
 			if(existing != null)
 			{
 				existing.AddonAsset = asset;
@@ -39,7 +39,7 @@ namespace stf
 			}
 		}
 
-		public static List<STFAddonAsset> GetAddons(string targetId)
+		public static List<STFAssetInfo> GetAddons(string targetId)
 		{
 			Addons.RemoveAll(a => a.AddonAsset == null);
 

@@ -70,10 +70,14 @@ namespace stf
 				if(asset.Value.GetType() == typeof(STFAddonAsset))
 				{
 					var addonInfo = (asset.Value.GetAsset() as GameObject).GetComponent<STFAddonAssetInfo>();
-					STFAddonRegistry.RegisterAddon(addonInfo.targetAssetId, asset.Value as STFAddonAsset);
-					if(AddonsEnabled.Find(a => a.AddonId == asset.Value.getId()) == null)
+					STFAddonRegistry.RegisterAddon(addonInfo.targetAssetId, addonInfo.GetComponent<STFAssetInfo>());
+
+					foreach(var addon in STFAddonRegistry.GetAddons(asset.Key))
 					{
-						AddonsEnabled.Add(new AddonIdEnabled {AddonId = asset.Value.getId(), AddonEnabled = true});
+						if(AddonsEnabled.Find(a => a.AddonId == addon.assetId) == null)
+						{
+							AddonsEnabled.Add(new AddonIdEnabled {AddonId = addon.assetId, AddonEnabled = true});
+						}
 					}
 				}
 			}
@@ -86,7 +90,7 @@ namespace stf
 				var addonList = STFAddonRegistry.GetAddons(asset.Key);
 				foreach(var addon in addonList)
 				{
-					if(AddonsEnabled.Find(a => a.AddonId == addon.id)?.AddonEnabled == false) continue;
+					if(AddonsEnabled.Find(a => a.AddonId == addon.assetId)?.AddonEnabled == false) continue;
 					unityAsset = AddonApplier.ApplyAddon((GameObject)unityAsset, addon);
 					objectsToDestroy.Add(unityAsset);
 				}

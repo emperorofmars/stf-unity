@@ -161,7 +161,7 @@ namespace stf
 
 				foreach(var addon in addonList)
 				{
-					var enabled = importer.AddonsEnabled.Find(a => a.AddonId == addon.id);
+					var enabled = importer.AddonsEnabled.Find(a => a.AddonId == addon.assetId);
 					if(enabled != null)
 					{
 						EditorGUILayout.BeginHorizontal();
