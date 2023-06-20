@@ -26,12 +26,12 @@ namespace stf.serialisation
 
 	public static class AddonApplier
 	{
-		public static GameObject ApplyAddon(GameObject originalRoot, STFAssetInfo addon)
+		public static GameObject ApplyAddon(GameObject originalRoot, STFAddonAssetInfo addon)
 		{
 			return ApplyAddon(originalRoot, addon, STFAddonTriggerRegistry.GetDefaultAddonContext());
 		}
 
-		public static GameObject ApplyAddon(GameObject originalRoot, STFAssetInfo addon, STFAddonContext context)
+		public static GameObject ApplyAddon(GameObject originalRoot, STFAddonAssetInfo addon, STFAddonContext context)
 		{
 			var root = UnityEngine.Object.Instantiate(originalRoot);
 			var addonRoot = addon.gameObject;

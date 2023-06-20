@@ -23,8 +23,8 @@ namespace stf
 			public bool AddonEnabled = true;
 		}
 
-		[HideInInspector] public bool SafeImagesExternal = false;
-		[HideInInspector] public string OriginalTexturesFolder = "Assets/authoring_stf_external";
+		public bool SafeImagesExternal = false;
+		public string OriginalTexturesFolder = "Assets/authoring_stf_external";
 		public List<AddonIdEnabled> AddonsEnabled = new List<AddonIdEnabled>();
 
 		private void ensureTexturePath()
@@ -63,22 +63,20 @@ namespace stf
 						ctx.AddObjectToAsset(resource.name, resource);
 				}
 			}
+			
 			foreach(var asset in importer.GetAssets())
 			{
 				ctx.AddObjectToAsset(asset.Key, asset.Value.GetAsset());
-				// Handle Addons
-				if(asset.Value.GetType() == typeof(STFAddonAsset))
-				{
-					var addonInfo = (asset.Value.GetAsset() as GameObject).GetComponent<STFAddonAssetInfo>();
-					STFAddonRegistry.RegisterAddon(addonInfo.targetAssetId, addonInfo.GetComponent<STFAssetInfo>());
+			}
 
-					foreach(var addon in STFAddonRegistry.GetAddons(asset.Key))
-					{
-						if(AddonsEnabled.Find(a => a.AddonId == addon.assetId) == null)
-						{
-							AddonsEnabled.Add(new AddonIdEnabled {AddonId = addon.assetId, AddonEnabled = true});
-						}
-					}
+			// Handle Addons
+			var addons = importer.GetMeta().importedRawAssets.FindAll(a => a.assetType == "addon");
+			if(addons != null)
+			{
+				foreach(var addon in addons)
+				{
+					if(AddonsEnabled.Find(a => a.AddonId == addon.assetId) == null)
+						AddonsEnabled.Add(new AddonIdEnabled {AddonId = addon.assetId, AddonEnabled = true});
 				}
 			}
 			
@@ -86,13 +84,20 @@ namespace stf
 			foreach(var asset in importer.GetAssets())
 			{
 				var unityAsset = asset.Value.GetAsset();
+
 				// apply addons
-				var addonList = STFAddonRegistry.GetAddons(asset.Key);
-				foreach(var addon in addonList)
+				if(addons != null)
 				{
-					if(AddonsEnabled.Find(a => a.AddonId == addon.assetId)?.AddonEnabled == false) continue;
-					unityAsset = AddonApplier.ApplyAddon((GameObject)unityAsset, addon);
-					objectsToDestroy.Add(unityAsset);
+					foreach(var addon in addons)
+					{
+						var addonInfo = ((GameObject)addon.assetRoot).GetComponent<STFAddonAssetInfo>();
+						var enabled = AddonsEnabled.Find(a => a.AddonId == addon.assetId);
+						if(addonInfo != null && addonInfo.targetAssetId == asset.Key && enabled != null && enabled.AddonEnabled == true)
+						{
+							unityAsset = AddonApplier.ApplyAddon((GameObject)unityAsset, ((GameObject)addon.assetRoot).GetComponent<STFAddonAssetInfo>());
+							objectsToDestroy.Add(unityAsset);
+						}
+					}
 				}
 
 				foreach(var stage in STFImporterStageRegistry.GetStages())

@@ -69,7 +69,8 @@ namespace stf.serialisation
 
 		public GameObject GetNode(string id)
 		{
-			return nodes[id];
+			if(nodes.ContainsKey(id)) return nodes[id];
+			else return null;
 		}
 		
 		public string GetMainAssetId()

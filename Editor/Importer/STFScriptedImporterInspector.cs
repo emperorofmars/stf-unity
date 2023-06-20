@@ -97,7 +97,7 @@ namespace stf
 				EditorGUILayout.LabelField("Main", EditorStyles.boldLabel);
 
 				EditorGUI.indentLevel++;
-				renderAsset(mainAsset, importer);
+				renderAsset(mainAsset, importer, meta);
 				EditorGUI.indentLevel--;
 
 				if(meta.importedRawAssets.Count > 1)
@@ -106,7 +106,7 @@ namespace stf
 					foreach(var asset in meta.importedRawAssets.FindAll(a => a.assetId != meta.mainAssetId))
 					{
 						EditorGUI.indentLevel++;
-						renderAsset(asset, importer);
+						renderAsset(asset, importer, meta);
 						EditorGUI.indentLevel--;
 					}
 				}
@@ -142,7 +142,7 @@ namespace stf
 			GUILayout.Space(10);
 		}
 
-		private void renderAsset(STFMeta.AssetInfo assetInfo, STFScriptedImporter importer)
+		private void renderAsset(STFMeta.AssetInfo assetInfo, STFScriptedImporter importer, STFMeta meta)
 		{
 			GUILayout.Space(5f);
 			GUILayout.BeginHorizontal();
@@ -153,27 +153,25 @@ namespace stf
 			}
 			GUILayout.EndHorizontal();
 
-			var addonList = STFAddonRegistry.GetAddons(assetInfo.assetId);
-			if(addonList != null)
+			var addons = meta.importedRawAssets.FindAll(a => a.assetType == "addon");
+			if(addons != null)
 			{
 				EditorGUILayout.LabelField("Addons", EditorStyles.boldLabel);
 				EditorGUI.indentLevel++;
 
-				foreach(var addon in addonList)
+				foreach(var addon in addons)
 				{
-					var enabled = importer.AddonsEnabled.Find(a => a.AddonId == addon.assetId);
-					if(enabled != null)
+					var targetId = ((GameObject)addon.assetRoot).GetComponent<STFAddonAssetInfo>()?.targetAssetId;
+					if(targetId != null && targetId == assetInfo.assetId)
 					{
+						var enabled = importer.AddonsEnabled.Find(a => a.AddonId == addon.assetId);
 						EditorGUILayout.BeginHorizontal();
 						EditorGUILayout.LabelField(addon.assetName);
 						enabled.AddonEnabled = EditorGUILayout.Toggle(enabled.AddonEnabled);
 						EditorGUILayout.EndHorizontal();
 					}
-					else
-					{
-						EditorGUILayout.LabelField("Addon Broken");
-					}
 				}
+				
 				EditorGUI.indentLevel--;
 			}
 			else

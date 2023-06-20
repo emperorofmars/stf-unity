@@ -82,7 +82,11 @@ namespace stf.Components
 			var ret = new JObject();
 			ret.Add("type", "STF.mesh_instance");
 			ret.Add("mesh", state.GetResourceId(c.sharedMesh));
-			ret.Add("armature_instance", state.GetNodeId(c.rootBone.parent.gameObject));
+
+			var smrAddon = c.gameObject.GetComponent<STFSkinnedMeshRendererAddon>();
+			if(smrAddon) ret.Add("armature_instance", smrAddon.ArmatureInstanceId);
+			else ret.Add("armature_instance", state.GetNodeId(c.rootBone.parent.gameObject));
+
 			ret.Add("materials", new JArray(c.sharedMaterials.Select(m => m != null ? state.GetResourceId(m) : null)));
 			ret.Add("morphtarget_values", new JArray(Enumerable.Range(0, c.sharedMesh.blendShapeCount).Select(i => c.GetBlendShapeWeight(i))));
 			return ret;

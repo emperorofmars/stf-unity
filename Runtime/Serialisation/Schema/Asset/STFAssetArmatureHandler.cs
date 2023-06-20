@@ -25,10 +25,15 @@ namespace stf.serialisation
 				// Not in tree
 				if(tree.FirstOrDefault(t => t == smr.rootBone.parent) == null)
 				{
-					var externalArmatureInstance = smr.rootBone.parent.GetComponent<STFArmatureInstance>();
+					var externalArmatureInstance = smr.rootBone?.parent?.GetComponent<STFArmatureInstance>();
 					if(externalArmatureInstance)
 					{
 						state.RegisterSubresourceId(smr.sharedMesh, "armature", externalArmatureInstance.GetComponent<STFUUID>().id);
+					}
+					else if(smr.gameObject.GetComponent<STFSkinnedMeshRendererAddon>() != null)
+					{
+						var smrAddon = smr.gameObject.GetComponent<STFSkinnedMeshRendererAddon>();
+						state.RegisterSubresourceId(smr.sharedMesh, "armature", smrAddon.ArmatureInstanceId);
 					}
 					else
 					{
