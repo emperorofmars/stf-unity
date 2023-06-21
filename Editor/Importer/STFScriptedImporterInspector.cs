@@ -7,7 +7,7 @@ using stf.serialisation;
 using UnityEditor;
 using UnityEditor.Experimental.AssetImporters;
 using UnityEngine;
-
+using static stf.STFScriptedImporter;
 
 namespace stf
 {
@@ -154,9 +154,9 @@ namespace stf
 			GUILayout.EndHorizontal();
 
 			var addons = meta.importedRawAssets.FindAll(a => a.assetType == "addon");
-			if(addons != null)
+			if(addons != null && addons.Count > 0)
 			{
-				EditorGUILayout.LabelField("Addons", EditorStyles.boldLabel);
+				EditorGUILayout.LabelField("Addons in File", EditorStyles.boldLabel);
 				EditorGUI.indentLevel++;
 
 				foreach(var addon in addons)
@@ -174,9 +174,27 @@ namespace stf
 				
 				EditorGUI.indentLevel--;
 			}
-			else
+			if(importer.ExternalAddonsEnabled.Count > 0)
 			{
-				EditorGUILayout.LabelField("No addons registered.");
+				EditorGUILayout.LabelField("Addons in Project", EditorStyles.boldLabel);
+				EditorGUI.indentLevel++;
+
+				var externalAddons = STFAddonUtil.GatherAddons(meta);
+				foreach(var externalAddon in externalAddons.FindAll(a => a.TargetId == assetInfo.assetId))
+				{
+					var enabled = importer.ExternalAddonsEnabled.Find(a => a.AddonId == externalAddon.Addon.assetId && a.Origin == externalAddon.Origin);
+					if(enabled == null)
+					{
+						enabled = new AddonExternalEnabled {AddonId = externalAddon.Addon.assetId, Origin = externalAddon.Origin, AddonEnabled = false};
+						importer.ExternalAddonsEnabled.Add(enabled);
+					}
+					EditorGUILayout.BeginHorizontal();
+					EditorGUILayout.LabelField(externalAddon.Addon.assetName + " | " + AssetDatabase.GetAssetPath(externalAddon.Origin));
+					enabled.AddonEnabled = EditorGUILayout.Toggle(enabled.AddonEnabled);
+					EditorGUILayout.EndHorizontal(); 
+				}
+				
+				EditorGUI.indentLevel--;
 			}
 
 			if(assetInfo.secondStageAssets != null && assetInfo.secondStageAssets.Count > 0)

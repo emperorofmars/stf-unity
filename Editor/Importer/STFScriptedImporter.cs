@@ -29,6 +29,12 @@ namespace stf
 			public string AddonId;
 			public bool AddonEnabled = true;
 		}
+		/*[Serializable]
+		public class AddonExternal
+		{
+			public STFMeta Origin;
+			public STFMeta.AssetInfo Addon;
+		}*/
 
 		public bool SafeImagesExternal = false;
 		public string OriginalTexturesFolder = "Assets/authoring_stf_external";
@@ -77,7 +83,7 @@ namespace stf
 				ctx.AddObjectToAsset(asset.Key, asset.Value.GetAsset());
 			}
 
-			// Handle Addons
+			// Handle internal addons
 			var addons = importer.GetMeta().importedRawAssets.FindAll(a => a.assetType == "addon");
 			if(addons != null)
 			{
@@ -88,7 +94,8 @@ namespace stf
 				}
 			}
 
-			// Find Addons from other files
+			// Find addons from other files
+			/*var externalAddons = new List<AddonExternal>();
 			string[] externalGuids = AssetDatabase.FindAssets(string.Format("t:{0}", typeof(STFMeta)));
 			foreach(var guid in externalGuids)
 			{
@@ -103,11 +110,21 @@ namespace stf
 							var addonInfo = ((GameObject)externalAsset.assetRoot)?.GetComponent<STFAddonAssetInfo>();
 							if(addonInfo != null && importer.GetMeta().importedRawAssets.Find(a => a.assetId == addonInfo.targetAssetId) != null)
 							{
-								Debug.Log($"External Asset: {externalAsset.assetName} | Origin: {path}");
+								//Debug.Log($"External Asset: {externalAsset.assetName} | Origin: {path}");
+								externalAddons.Add(new AddonExternal{Origin = meta, Addon = externalAsset});
+								if(ExternalAddonsEnabled.Find(a => a.AddonId == externalAsset.assetId && a.Origin == meta) == null)
+									ExternalAddonsEnabled.Add(new AddonExternalEnabled {AddonId = externalAsset.assetId, AddonEnabled = false, Origin = meta});
 							}
 						}
 					}
 				}
+			}*/
+			var externalAddons = STFAddonUtil.GatherAddons(importer.GetMeta());
+			foreach(var externalAddon in externalAddons)
+			{
+				//Debug.Log($"External Asset: {externalAddon.Addon.assetName} | Origin: {AssetDatabase.GetAssetPath(externalAddon.Origin)}");
+				if(ExternalAddonsEnabled.Find(a => a.AddonId == externalAddon.Addon.assetId && a.Origin == externalAddon.Origin) == null)
+					ExternalAddonsEnabled.Add(new AddonExternalEnabled {AddonId = externalAddon.Addon.assetId, Origin = externalAddon.Origin, AddonEnabled = false});
 			}
 			
 			var objectsToDestroy = new List<UnityEngine.Object>();
@@ -115,7 +132,7 @@ namespace stf
 			{
 				var unityAsset = asset.Value.GetAsset();
 
-				// apply addons
+				// apply internal addons
 				if(addons != null)
 				{
 					foreach(var addon in addons)
@@ -127,6 +144,17 @@ namespace stf
 							unityAsset = AddonApplier.ApplyAddon((GameObject)unityAsset, ((GameObject)addon.assetRoot).GetComponent<STFAddonAssetInfo>());
 							objectsToDestroy.Add(unityAsset);
 						}
+					}
+				}
+				// apply external addons
+				foreach(var addon in externalAddons)
+				{
+					var addonInfo = ((GameObject)addon.Addon.assetRoot).GetComponent<STFAddonAssetInfo>();
+					var enabled = ExternalAddonsEnabled.Find(a => a.AddonId == addon.Addon.assetId && a.Origin == addon.Origin);
+					if(addonInfo != null && addonInfo.targetAssetId == asset.Key && enabled != null && enabled.AddonEnabled == true)
+					{
+						unityAsset = AddonApplier.ApplyAddon((GameObject)unityAsset, ((GameObject)addon.Addon.assetRoot).GetComponent<STFAddonAssetInfo>());
+						objectsToDestroy.Add(unityAsset);
 					}
 				}
 
