@@ -22,10 +22,18 @@ namespace stf
 			public string AddonId;
 			public bool AddonEnabled = true;
 		}
+		[Serializable]
+		public class AddonExternalEnabled
+		{
+			public STFMeta Origin;
+			public string AddonId;
+			public bool AddonEnabled = true;
+		}
 
 		public bool SafeImagesExternal = false;
 		public string OriginalTexturesFolder = "Assets/authoring_stf_external";
 		public List<AddonIdEnabled> AddonsEnabled = new List<AddonIdEnabled>();
+		public List<AddonExternalEnabled> ExternalAddonsEnabled = new List<AddonExternalEnabled>();
 
 		private void ensureTexturePath()
 		{
@@ -80,6 +88,7 @@ namespace stf
 				}
 			}
 
+			// Find Addons from other files
 			string[] externalGuids = AssetDatabase.FindAssets(string.Format("t:{0}", typeof(STFMeta)));
 			foreach(var guid in externalGuids)
 			{
@@ -91,7 +100,11 @@ namespace stf
 					{
 						if(externalAsset.assetType == "addon" && importer.GetMeta().importedRawAssets.Find(a => a.assetId == externalAsset.assetId) == null)
 						{
-							Debug.Log($"External Asset: {externalAsset.assetName}");
+							var addonInfo = ((GameObject)externalAsset.assetRoot)?.GetComponent<STFAddonAssetInfo>();
+							if(addonInfo != null && importer.GetMeta().importedRawAssets.Find(a => a.assetId == addonInfo.targetAssetId) != null)
+							{
+								Debug.Log($"External Asset: {externalAsset.assetName} | Origin: {path}");
+							}
 						}
 					}
 				}
