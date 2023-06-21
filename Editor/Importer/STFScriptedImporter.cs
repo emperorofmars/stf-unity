@@ -79,6 +79,23 @@ namespace stf
 						AddonsEnabled.Add(new AddonIdEnabled {AddonId = addon.assetId, AddonEnabled = true});
 				}
 			}
+
+			string[] externalGuids = AssetDatabase.FindAssets(string.Format("t:{0}", typeof(STFMeta)));
+			foreach(var guid in externalGuids)
+			{
+				var path = AssetDatabase.GUIDToAssetPath(guid);
+				var meta = AssetDatabase.LoadAssetAtPath<STFMeta>(path);
+				if(meta != null)
+				{
+					foreach(var externalAsset in meta.importedRawAssets)
+					{
+						if(externalAsset.assetType == "addon" && importer.GetMeta().importedRawAssets.Find(a => a.assetId == externalAsset.assetId) == null)
+						{
+							Debug.Log($"External Asset: {externalAsset.assetName}");
+						}
+					}
+				}
+			}
 			
 			var objectsToDestroy = new List<UnityEngine.Object>();
 			foreach(var asset in importer.GetAssets())
