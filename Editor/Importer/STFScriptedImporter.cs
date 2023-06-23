@@ -23,18 +23,10 @@ namespace stf
 			public bool AddonEnabled = true;
 		}
 		[Serializable]
-		public class AddonExternalEnabled
+		public class AddonExternalEnabled : AddonIdEnabled
 		{
 			public STFMeta Origin;
-			public string AddonId;
-			public bool AddonEnabled = true;
 		}
-		/*[Serializable]
-		public class AddonExternal
-		{
-			public STFMeta Origin;
-			public STFMeta.AssetInfo Addon;
-		}*/
 
 		public bool SafeImagesExternal = false;
 		public string OriginalTexturesFolder = "Assets/authoring_stf_external";
@@ -90,39 +82,13 @@ namespace stf
 				foreach(var addon in addons)
 				{
 					if(AddonsEnabled.Find(a => a.AddonId == addon.assetId) == null)
-						AddonsEnabled.Add(new AddonIdEnabled {AddonId = addon.assetId, AddonEnabled = true});
+						AddonsEnabled.Add(new AddonIdEnabled {AddonId = addon.assetId, AddonEnabled = false});
 				}
 			}
 
-			// Find addons from other files
-			/*var externalAddons = new List<AddonExternal>();
-			string[] externalGuids = AssetDatabase.FindAssets(string.Format("t:{0}", typeof(STFMeta)));
-			foreach(var guid in externalGuids)
-			{
-				var path = AssetDatabase.GUIDToAssetPath(guid);
-				var meta = AssetDatabase.LoadAssetAtPath<STFMeta>(path);
-				if(meta != null)
-				{
-					foreach(var externalAsset in meta.importedRawAssets)
-					{
-						if(externalAsset.assetType == "addon" && importer.GetMeta().importedRawAssets.Find(a => a.assetId == externalAsset.assetId) == null)
-						{
-							var addonInfo = ((GameObject)externalAsset.assetRoot)?.GetComponent<STFAddonAssetInfo>();
-							if(addonInfo != null && importer.GetMeta().importedRawAssets.Find(a => a.assetId == addonInfo.targetAssetId) != null)
-							{
-								//Debug.Log($"External Asset: {externalAsset.assetName} | Origin: {path}");
-								externalAddons.Add(new AddonExternal{Origin = meta, Addon = externalAsset});
-								if(ExternalAddonsEnabled.Find(a => a.AddonId == externalAsset.assetId && a.Origin == meta) == null)
-									ExternalAddonsEnabled.Add(new AddonExternalEnabled {AddonId = externalAsset.assetId, AddonEnabled = false, Origin = meta});
-							}
-						}
-					}
-				}
-			}*/
 			var externalAddons = STFAddonUtil.GatherAddons(importer.GetMeta());
 			foreach(var externalAddon in externalAddons)
 			{
-				//Debug.Log($"External Asset: {externalAddon.Addon.assetName} | Origin: {AssetDatabase.GetAssetPath(externalAddon.Origin)}");
 				if(ExternalAddonsEnabled.Find(a => a.AddonId == externalAddon.Addon.assetId && a.Origin == externalAddon.Origin) == null)
 					ExternalAddonsEnabled.Add(new AddonExternalEnabled {AddonId = externalAddon.Addon.assetId, Origin = externalAddon.Origin, AddonEnabled = false});
 			}
