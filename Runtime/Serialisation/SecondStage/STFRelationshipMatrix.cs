@@ -17,7 +17,7 @@ namespace stf.serialisation
 
 		public Dictionary<Component, Component> STFToConverted = new Dictionary<Component, Component>();
 
-		public STFRelationshipMatrix(GameObject root, string target)
+		public STFRelationshipMatrix(GameObject root, List<string> targets)
 		{
 			foreach(var component in root.GetComponentsInChildren<Component>())
 			{

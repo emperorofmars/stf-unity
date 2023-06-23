@@ -3,58 +3,34 @@ using System;
 using System.Collections.Generic;
 using stf.Components;
 using UnityEngine;
+using UnityEngine.Animations;
 
 namespace stf.serialisation
 {
-	public class STFDefaultSecondStage : ISTFSecondStage
+	public class STFDefaultSecondStage : ASTFSecondStageDefault
 	{
-		private Dictionary<Type, ISTFSecondStageConverter> converters = new Dictionary<Type, ISTFSecondStageConverter>() {
+		private Dictionary<Type, ISTFSecondStageConverter> _converters = new Dictionary<Type, ISTFSecondStageConverter>() {
 			{typeof(STFTwistConstraintBack), new STFTwistConstraintBackConverter()},
 			{typeof(STFTwistConstraintForward), new STFTwistConstraintForwardConverter()}
 		};
-		
-		public bool CanHandle(ISTFAsset asset, UnityEngine.Object adaptedUnityAsset)
+
+		protected override Dictionary<Type, ISTFSecondStageConverter> Converters => _converters;
+
+		protected override List<Type> WhitelistedComponents => new List<Type> {
+			typeof(Transform), typeof(RotationConstraint)
+		};
+
+		protected override string GameObjectSuffix => "Unity";
+
+		protected override string StageName => "Unity";
+
+		protected override string AssetTypeName => "Unity";
+
+		protected override List<string> Targets => new List<string> {"unity"};
+
+		public override bool CanHandle(ISTFAsset asset, UnityEngine.Object adaptedUnityAsset)
 		{
 			return asset.GetSTFAssetType() == "asset";
-		}
-
-		public SecondStageResult Convert(ISTFAsset asset, UnityEngine.Object adaptedUnityAsset)
-		{
-			var originalRoot = (GameObject)adaptedUnityAsset;
-			var resources = new List<UnityEngine.Object>();
-
-			GameObject convertedRoot = UnityEngine.Object.Instantiate(originalRoot);
-			convertedRoot.name = originalRoot.name + "_Default";
-
-			try
-			{
-				var context = new STFSecondStageContext {RelMat = new STFRelationshipMatrix(convertedRoot, "")};
-				convertTree(convertedRoot, resources, context);
-			}
-			catch(Exception e)
-			{
-				#if UNITY_EDITOR
-					UnityEngine.Object.DestroyImmediate(convertedRoot);
-				#else
-					UnityEngine.Object.Destroy(convertedRoot);
-				#endif
-				throw new Exception("Error during STF Default Loader import: ", e);
-			}
-
-			var secondStageAsset = new STFSecondStageAsset(convertedRoot, asset.getId() + "_Default", asset.GetSTFAssetName());
-			return new SecondStageResult {assets = new List<ISTFAsset>{secondStageAsset}, resources = new List<UnityEngine.Object>{}};
-		}
-
-		private void convertTree(GameObject root, List<UnityEngine.Object> resources, STFSecondStageContext context)
-		{
-			foreach(var converter in converters)
-			{
-				var components = root.GetComponentsInChildren(converter.Key);
-				foreach(var component in components)
-				{
-					converter.Value.convert(component, root, resources, context);
-				}
-			}
 		}
 	}
 }
