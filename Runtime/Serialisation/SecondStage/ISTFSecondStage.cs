@@ -76,7 +76,7 @@ namespace stf.serialisation
 				var components = root.GetComponentsInChildren(converter.Key);
 				foreach(var component in components)
 				{
-					if(!context.RelMat.IsOverridden.Contains(component))
+					if(context.RelMat.IsMatched(component))
 						converter.Value.convert(component, root, resources, context);
 				}
 			}

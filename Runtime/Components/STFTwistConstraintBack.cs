@@ -70,7 +70,7 @@ namespace stf.Components
 			converted.locked = true;
 			converted.constraintActive = true;
 			
-			context.RelMat.STFToConverted.Add(component, converted);
+			context.RelMat.AddConverted(component, converted);
 		}
 	}
 }

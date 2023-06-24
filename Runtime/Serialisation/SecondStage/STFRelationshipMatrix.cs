@@ -6,16 +6,14 @@ namespace stf.serialisation
 	// Technically this is not a matrix. I dont care.
 	public class STFRelationshipMatrix
 	{
-		public Dictionary<Component, string> ComponentToId = new Dictionary<Component, string>();
-		public Dictionary<string, Component> IdToComponent = new Dictionary<string,Component>();
-
-		public Dictionary<Component, List<Component>> Extends = new Dictionary<Component, List<Component>>();
-		public Dictionary<Component, List<Component>> ExtendedBys = new Dictionary<Component, List<Component>>();
-		public List<Component> IsOverridden = new List<Component>();
-		public Dictionary<Component, List<Component>> Overrides = new Dictionary<Component, List<Component>>();
-		//public List<Component> ParseMatch = new List<Component>();
-
-		public Dictionary<Component, Component> STFToConverted = new Dictionary<Component, Component>();
+		private Dictionary<Component, string> ComponentToId = new Dictionary<Component, string>();
+		private Dictionary<string, Component> IdToComponent = new Dictionary<string,Component>();
+		private Dictionary<Component, List<Component>> Extends = new Dictionary<Component, List<Component>>();
+		private Dictionary<Component, List<Component>> ExtendedBys = new Dictionary<Component, List<Component>>();
+		private List<Component> IsOverridden = new List<Component>();
+		private Dictionary<Component, List<Component>> Overrides = new Dictionary<Component, List<Component>>();		
+		private Dictionary<Component, bool> TargetMatch = new Dictionary<Component, bool>();
+		private Dictionary<Component, Component> STFToConverted = new Dictionary<Component, Component>();
 
 		public STFRelationshipMatrix(GameObject root, List<string> targets)
 		{
@@ -27,7 +25,19 @@ namespace stf.serialisation
 					IdToComponent.Add(((ISTFComponent)component).id, component);
 				}
 			}
-			// target matches
+			foreach(var component in root.GetComponentsInChildren<ISTFComponent>())
+			{
+				bool match = false;
+				foreach(var componentTarget in component.targets)
+				{
+					if(targets.Find(t => t == componentTarget) != null)
+					{
+						match = true;
+						break;
+					}
+				}
+				TargetMatch.Add((Component) component, match);
+			}
 			foreach(var component in root.GetComponentsInChildren<Component>())
 			{
 				if(component is ISTFComponent)
@@ -61,6 +71,38 @@ namespace stf.serialisation
 					}
 				}
 			}
+		}
+
+		public bool IsMatched(Component c)
+		{
+			return (TargetMatch.ContainsKey(c) ? TargetMatch[c] : true) && IsOverridden.Contains(c);
+		}
+
+		public List<Component> GetExtended(Component component)
+		{
+			if(Extends.ContainsKey(component)) return Extends[component];
+			else return new List<Component>();
+		}
+
+		public List<Component> GetOverridden(Component component)
+		{
+			if(Overrides.ContainsKey(component)) return Overrides[component];
+			else return new List<Component>();
+		}
+
+		public void AddConverted(Component component, Component converted)
+		{
+			STFToConverted.Add(component, converted);
+		}
+
+		public Component GetConverted(Component component)
+		{
+			return STFToConverted[component];
+		}
+
+		public Component GetById(string id)
+		{
+			return IdToComponent.ContainsKey(id) ? IdToComponent[id] : null;
 		}
 	}
 }
