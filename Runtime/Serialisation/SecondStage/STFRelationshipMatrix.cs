@@ -28,13 +28,20 @@ namespace stf.serialisation
 			foreach(var component in root.GetComponentsInChildren<ISTFComponent>())
 			{
 				bool match = false;
-				foreach(var componentTarget in component.targets)
+				if(component.targets != null && component.targets.Count > 0)
 				{
-					if(targets.Find(t => t == componentTarget) != null)
+					foreach(var componentTarget in component.targets)
 					{
-						match = true;
-						break;
+						if(targets.Find(t => t == componentTarget) != null)
+						{
+							match = true;
+							break;
+						}
 					}
+				}
+				else
+				{
+					match = true;
 				}
 				TargetMatch.Add((Component) component, match);
 			}
@@ -75,7 +82,7 @@ namespace stf.serialisation
 
 		public bool IsMatched(Component c)
 		{
-			return (TargetMatch.ContainsKey(c) ? TargetMatch[c] : true) && IsOverridden.Contains(c);
+			return (TargetMatch.ContainsKey(c) ? TargetMatch[c] : true) && !IsOverridden.Contains(c);
 		}
 
 		public List<Component> GetExtended(Component component)
