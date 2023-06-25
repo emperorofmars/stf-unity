@@ -91,6 +91,18 @@ namespace stf.serialisation
 			else return new List<Component>();
 		}
 
+		public T GetExtended<T>(Component component) where T: Component
+		{
+			if(Extends.ContainsKey(component))
+			{
+				foreach(var extend in Extends[component])
+				{
+					if(extend is T) return (T)extend;
+				}
+			}
+			return default(T);
+		}
+
 		public List<Component> GetOverridden(Component component)
 		{
 			if(Overrides.ContainsKey(component)) return Overrides[component];
