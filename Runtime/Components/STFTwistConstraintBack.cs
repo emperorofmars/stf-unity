@@ -32,6 +32,7 @@ namespace stf.Components
 		{
 			var c = go.AddComponent<STFTwistConstraintBack>();
 			state.AddComponent(id, c);
+			this.ParseRelationships(json, c);
 			c.id = id;
 			c.weight = (float)json["weight"];
 		}
@@ -44,6 +45,7 @@ namespace stf.Components
 			var ret = new JObject();
 			STFTwistConstraintBack c = (STFTwistConstraintBack)component;
 			ret.Add("type", STFTwistConstraintBack._TYPE);
+			this.SerializeRelationships(c, ret);
 			ret.Add("weight", c.weight);
 			return ret;
 		}
