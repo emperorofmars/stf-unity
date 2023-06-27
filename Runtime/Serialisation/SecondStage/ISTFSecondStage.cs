@@ -38,7 +38,7 @@ namespace stf.serialisation
 			convertedRoot.name = originalRoot.name + "_" + GameObjectSuffix;
 			try
 			{
-				var context = new STFSecondStageContext {RelMat = new STFRelationshipMatrix(convertedRoot, Targets)};
+				var context = new STFSecondStageContext {RelMat = new STFRelationshipMatrix(convertedRoot, Targets, new List<Type>(Converters.Keys))};
 				convertTree(convertedRoot, convertedResources, context);
 				int iteration = 0;
 				do

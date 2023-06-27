@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -15,7 +16,7 @@ namespace stf.serialisation
 		private Dictionary<Component, bool> TargetMatch = new Dictionary<Component, bool>();
 		private Dictionary<Component, Component> STFToConverted = new Dictionary<Component, Component>();
 
-		public STFRelationshipMatrix(GameObject root, List<string> targets)
+		public STFRelationshipMatrix(GameObject root, List<string> targets, List<Type> conversibleTypes)
 		{
 			foreach(var component in root.GetComponentsInChildren<Component>())
 			{
@@ -47,7 +48,7 @@ namespace stf.serialisation
 			}
 			foreach(var component in root.GetComponentsInChildren<Component>())
 			{
-				if(component is ISTFComponent)
+				if(component is ISTFComponent && conversibleTypes.Contains(component.GetType()))
 				{
 					var c = (ISTFComponent)component;
 					if(c.overrides != null)
