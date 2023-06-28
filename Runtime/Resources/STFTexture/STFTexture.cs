@@ -16,7 +16,7 @@ namespace stf.serialisation
 		{
 			var texture = (Texture2D)resource;
 			var ret = new JObject();
-			ret.Add("type", "STF.texture");
+			ret.Add("type", STFTextureImporter._TYPE);
 
 			STFTextureResource originalTexture = null;
 			foreach(var meta in state.GetMetas())

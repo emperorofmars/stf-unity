@@ -29,6 +29,7 @@ namespace stf.serialisation
 			ret.invert = (bool)json["invert"];
 			state.AddTask(new Task(() => {
 				ret.texture = (Texture2D)state.GetResource((string)json["texture"]);
+				ret.name = ret.texture.name + "_view_" + ret.channel;
 			}));
 			return ret;
 		}

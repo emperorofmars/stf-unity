@@ -1,3 +1,3 @@
 # STF - Scene Transfer Format
-## The worlds most extensible 3d model and scene file format
+## The worlds most extensible file format for 3d models and scenes
 

@@ -20,10 +20,6 @@ namespace stf.Components
 		
 		public static string _TYPE = "STF.constraint.twist_back";
 		public float weight = 0.5f;
-
-		public string GetId() { return id; }
-		public List<string> GetExtends() { return null; }
-		public List<string> GetOverrides() { return null; }
 	}
 
 	public class STFTwistConstraintBackImporter : ASTFComponentImporter
