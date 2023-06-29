@@ -28,12 +28,12 @@ namespace stf.serialisation
 					var externalArmatureInstance = smr.rootBone?.parent?.GetComponent<STFArmatureInstance>();
 					if(externalArmatureInstance)
 					{
-						state.RegisterSubresourceId(smr.sharedMesh, "armature", externalArmatureInstance.GetComponent<STFUUID>().id);
+						state.AddResourceContext(smr.sharedMesh, "armature", externalArmatureInstance.GetComponent<STFUUID>().id);
 					}
 					else if(smr.gameObject.GetComponent<STFSkinnedMeshRendererAddon>() != null)
 					{
 						var smrAddon = smr.gameObject.GetComponent<STFSkinnedMeshRendererAddon>();
-						state.RegisterSubresourceId(smr.sharedMesh, "armature", smrAddon.ArmatureInstanceId);
+						state.AddResourceContext(smr.sharedMesh, "armature", smrAddon.ArmatureInstanceId);
 					}
 					else
 					{
@@ -50,7 +50,7 @@ namespace stf.serialisation
 						if(!armatures.ContainsKey(smr.sharedMesh))
 						{
 							armatures.Add(smr.sharedMesh, armatures[smr2.sharedMesh]);
-							state.RegisterSubresourceId(smr.sharedMesh, "armature", armatures[smr2.sharedMesh].id);
+							state.AddResourceContext(smr.sharedMesh, "armature", armatures[smr2.sharedMesh].id);
 						}
 					}
 				}
@@ -59,7 +59,7 @@ namespace stf.serialisation
 					var armature = new STFArmatureResourceExporter();
 					armature.SetupFromSkinnedMeshRenderer(state, smr);
 					armatures.Add(smr.sharedMesh, armature);
-					state.RegisterSubresourceId(smr.sharedMesh, "armature", armature.id);
+					state.AddResourceContext(smr.sharedMesh, "armature", armature.id);
 
 					armatureInstances.Add(smr.rootBone.parent, armature);
 					for(int i = 0; i < smr.bones.Length; i++)

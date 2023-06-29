@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json.Linq;
 using stf.serialisation;
 using UnityEngine;
@@ -40,9 +41,9 @@ namespace stf.Components
 
 	public class STFAnimationHolderExporter : ASTFComponentExporter
 	{
-		public override List<UnityEngine.Object> gatherResources(Component component)
+		public override List<KeyValuePair<UnityEngine.Object, Dictionary<string, System.Object>>> gatherResources(Component component)
 		{
-			return new List<UnityEngine.Object>(((STFAnimationHolder)component).animations);
+			return ((STFAnimationHolder)component).animations.Select(a => new KeyValuePair<UnityEngine.Object, Dictionary<string, System.Object>>(a, new Dictionary<string, System.Object> {{"root", component.gameObject}})).ToList();
 		}
 
 		override public JToken serializeToJson(ISTFExporter state, Component component)

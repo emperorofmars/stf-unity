@@ -21,26 +21,28 @@ namespace stf.serialisation
 		public static readonly Dictionary<string, ASTFComponentImporter> DefaultComponentImporters = new Dictionary<string, ASTFComponentImporter>() {
 			{STFMeshInstanceImporter._TYPE, new STFMeshInstanceImporter()},
 			{STFTwistConstraintBack._TYPE, new STFTwistConstraintBackImporter()},
-			{STFTwistConstraintForward._TYPE, new STFTwistConstraintForwardImporter()}
+			{STFTwistConstraintForward._TYPE, new STFTwistConstraintForwardImporter()},
+			{STFAnimationHolder._TYPE, new STFAnimationHolderImporter()}
 		};
 		public static readonly Dictionary<Type, ASTFComponentExporter> DefaultComponentExporters = new Dictionary<Type, ASTFComponentExporter>() {
 			{typeof(SkinnedMeshRenderer), new STFMeshInstanceExporter()},
 			{typeof(STFTwistConstraintBack), new STFTwistConstraintBackExporter()},
-			{typeof(STFTwistConstraintForward), new STFTwistConstraintForwardExporter()}
+			{typeof(STFTwistConstraintForward), new STFTwistConstraintForwardExporter()},
+			{typeof(STFAnimationHolder), new STFAnimationHolderExporter()}
 		};
 		public static readonly Dictionary<string, ASTFResourceImporter> DefaultResourceImporters = new Dictionary<string, ASTFResourceImporter>() {
 			{STFMeshImporter._TYPE, new STFMeshImporter()},
 			{STFTextureImporter._TYPE, new STFTextureImporter()},
 			{STFArmatureImporter._TYPE, new STFArmatureImporter()},
 			{STFMaterialImporter._TYPE, new STFMaterialImporter()},
-			{STFTextureViewImporter._TYPE, new STFTextureViewImporter()}
-			//Animation
+			{STFTextureViewImporter._TYPE, new STFTextureViewImporter()},
+			{STFAnimationImporter._TYPE, new STFAnimationImporter()}
 		};
 		public static readonly Dictionary<Type, ASTFResourceExporter> DefaultResourceExporters = new Dictionary<Type, ASTFResourceExporter>() {
 			{typeof(Mesh), new STFMeshExporter()},
 			{typeof(Texture2D), new STFTextureExporter()},
-			{typeof(Material), new STFMaterialExporter()}
-			//Animation
+			{typeof(Material), new STFMaterialExporter()},
+			{typeof(AnimationClip), new STFAnimationExporter()}
 		};
 
 		private static Dictionary<string, ISTFAssetImporter> RegisteredAssetImporters = new Dictionary<string, ISTFAssetImporter>();

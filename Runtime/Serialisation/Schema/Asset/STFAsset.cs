@@ -76,16 +76,17 @@ namespace stf.serialisation
 			}
 		}
 
-		private void gatherResources(ISTFExporter state, List<UnityEngine.Object> resources)
+		private void gatherResources(ISTFExporter state, List<KeyValuePair<UnityEngine.Object, Dictionary<string, System.Object>>> resources)
 		{
 			if(resources != null)
 			{
 				foreach(var resource in resources)
 				{
-					if(!state.GetContext().ResourceExporters.ContainsKey(resource.GetType()))
-						throw new Exception("Unsupported Resource Encountered: " + resource.GetType());
-					gatherResources(state, state.GetContext().ResourceExporters[resource.GetType()].gatherResources(resource));
-					state.RegisterResource(resource);
+					if(!state.GetContext().ResourceExporters.ContainsKey(resource.Key.GetType()))
+						throw new Exception("Unsupported Resource Encountered: " + resource.Key.GetType());
+					gatherResources(state, state.GetContext().ResourceExporters[resource.Key.GetType()].gatherResources(resource.Key));
+					state.RegisterResource(resource.Key);
+					if(resource.Value != null && resource.Value.Count > 0) foreach(var ctx in resource.Value) state.AddResourceContext(resource.Key, ctx.Key, ctx.Value);
 				}
 			}
 		}

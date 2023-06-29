@@ -12,7 +12,7 @@ namespace stf.serialisation
 			return null;
 		}
 
-		virtual public List<UnityEngine.Object> gatherResources(Component component)
+		virtual public List<KeyValuePair<UnityEngine.Object, Dictionary<string, System.Object>>> gatherResources(Component component)
 		{
 			return null;
 		}

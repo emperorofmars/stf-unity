@@ -16,7 +16,7 @@ namespace stf.serialisation
 			return null;
 		}
 
-		override public List<UnityEngine.Object> gatherResources(UnityEngine.Object resource)
+		override public List<KeyValuePair<UnityEngine.Object, Dictionary<string, System.Object>>> gatherResources(UnityEngine.Object resource)
 		{
 			return null;
 		}
@@ -138,7 +138,9 @@ namespace stf.serialisation
 			if(mesh.HasVertexAttribute(VertexAttribute.BlendIndices))
 			{
 				ret.Add("skinned", true);
-				ret.Add("armature", state.GetSubresourceId(mesh, "armature"));
+				var resourceContext = state.GetResourceContext(mesh);
+				if(resourceContext != null || resourceContext.ContainsKey("armature"))
+					ret.Add("armature", (string)state.GetResourceContext(mesh)["armature"]);
 
 				foreach(var num in mesh.GetBonesPerVertex()) weightLength += num;
 				weightBuffer = new byte[weightLength * (sizeof(float) + sizeof(int))];

@@ -20,8 +20,8 @@ namespace stf.serialisation
 		string RegisterBuffer(byte[] buffer);
 		string GetNodeId(GameObject go);
 		string GetResourceId(UnityEngine.Object unityResource);
-		void RegisterSubresourceId(UnityEngine.Object unityResource, string key, string id);
-		string GetSubresourceId(UnityEngine.Object unityResource, string key);
+		void AddResourceContext(UnityEngine.Object unityResource, string key, System.Object data);
+		Dictionary<string, System.Object> GetResourceContext(UnityEngine.Object unityResource);
 		string GetJson();
 		byte[] GetBinary();
 

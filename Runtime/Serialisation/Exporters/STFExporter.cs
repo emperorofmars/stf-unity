@@ -28,7 +28,7 @@ namespace stf.serialisation
 		public Dictionary<UnityEngine.Object, string> resourceIds = new Dictionary<UnityEngine.Object, string>();
 		public Dictionary<string, JObject> nodes = new Dictionary<string, JObject>();
 		public Dictionary<string, JObject> resources = new Dictionary<string, JObject>();
-		public Dictionary<UnityEngine.Object, Dictionary<string, string>> subResourceIds = new Dictionary<UnityEngine.Object, Dictionary<string, string>>();
+		public Dictionary<UnityEngine.Object, Dictionary<string, System.Object>> resourceContext = new Dictionary<UnityEngine.Object, Dictionary<string, System.Object>>();
 		public Dictionary<string, byte[]> buffers = new Dictionary<string, byte[]>();
 		private JObject jsonDefinition = new JObject();
 		private List<STFMeta> originalMetas = new List<STFMeta>();
@@ -169,15 +169,16 @@ namespace stf.serialisation
 			return;
 		}
 
-		public void RegisterSubresourceId(UnityEngine.Object unityResource, string key, string id)
+		
+		public void AddResourceContext(UnityEngine.Object unityResource, string key, System.Object data)
 		{
-			if(!subResourceIds.ContainsKey(unityResource)) subResourceIds.Add(unityResource, new Dictionary<string, string>());
-			subResourceIds[unityResource].Add(key, id);
+			if(!resourceContext.ContainsKey(unityResource)) resourceContext.Add(unityResource, new Dictionary<string, System.Object>());
+			resourceContext[unityResource].Add(key, data);
 		}
 
-		public string GetSubresourceId(UnityEngine.Object unityResource, string key)
+		public Dictionary<string, System.Object> GetResourceContext(UnityEngine.Object unityResource)
 		{
-			return subResourceIds[unityResource][key];
+			return resourceContext.ContainsKey(unityResource) ? resourceContext[unityResource] : null;
 		}
 
 		private string GetComponentId(Component component)

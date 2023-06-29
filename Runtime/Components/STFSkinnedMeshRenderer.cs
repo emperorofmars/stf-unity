@@ -67,12 +67,12 @@ namespace stf.Components
 	public class STFMeshInstanceExporter : ASTFComponentExporter
 	{
 
-		override public List<UnityEngine.Object> gatherResources(Component component)
+		override public List<KeyValuePair<UnityEngine.Object, Dictionary<string, System.Object>>> gatherResources(Component component)
 		{
 			SkinnedMeshRenderer c = (SkinnedMeshRenderer)component;
-			var ret = new List<UnityEngine.Object>();
-			ret.Add(c.sharedMesh);
-			foreach(var material in c.sharedMaterials) if(material != null) ret.Add(material);
+			var ret = new List<KeyValuePair<UnityEngine.Object, Dictionary<string, System.Object>>>();
+			ret.Add(new KeyValuePair<UnityEngine.Object, Dictionary<string, System.Object>> (c.sharedMesh, null));
+			foreach(var material in c.sharedMaterials) if(material != null) ret.Add(new KeyValuePair<UnityEngine.Object, Dictionary<string, System.Object>> (material, null));
 			return ret;
 		}
 
