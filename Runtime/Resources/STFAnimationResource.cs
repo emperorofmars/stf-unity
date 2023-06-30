@@ -42,8 +42,12 @@ namespace stf.serialisation
 					curve.Add("unity-property", c.propertyName);
 
 					var ctx = state.GetResourceContext(resource);
-					if(ctx != null && ctx.ContainsKey("root")) Debug.Log(ctx["root"]);
-					else Debug.Log("key not found!");
+					if(ctx.ContainsKey("root"))
+					{
+						var curveTarget = AnimationUtility.GetAnimatedObject((GameObject)ctx["root"], c);
+						Debug.Log($"Curve Target: {curveTarget}");
+					}
+					else throw new Exception($"Animation Clip {clip} error: no resourse context provided");
 
 					//AnimationUtility.GetAnimatedObject(new GameObject(), c);
 				}

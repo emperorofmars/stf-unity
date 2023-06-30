@@ -178,7 +178,7 @@ namespace stf.serialisation
 
 		public Dictionary<string, System.Object> GetResourceContext(UnityEngine.Object unityResource)
 		{
-			return resourceContext.ContainsKey(unityResource) ? resourceContext[unityResource] : null;
+			return resourceContext.ContainsKey(unityResource) ? resourceContext[unityResource] : new Dictionary<string, object>();
 		}
 
 		private string GetComponentId(Component component)
