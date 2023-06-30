@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using stf.serialisation;
 using UnityEngine;
 
 namespace stf
@@ -35,6 +36,27 @@ namespace stf
 		public static bool isNodeInAsset(string id, GameObject root)
 		{
 			return false;
+		}
+
+		public static string getIdFromUnityObject(UnityEngine.Object o)
+		{
+			if(o is GameObject)
+			{
+				return ((GameObject)o).GetComponent<STFUUID>()?.id;
+			}
+			else if(o is Transform)
+			{
+				return ((Transform)o).GetComponent<STFUUID>()?.id;
+			}
+			else if(o is ISTFComponent)
+			{
+				return ((ISTFComponent)o).id;
+			}
+			else if(o is Component)
+			{
+				return ((Component)o).gameObject.GetComponent<STFUUID>()?.componentIds.Find(c => c.component == o)?.id;
+			}
+			return null;
 		}
 	}
 }

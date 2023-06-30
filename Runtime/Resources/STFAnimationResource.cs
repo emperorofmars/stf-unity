@@ -30,26 +30,35 @@ namespace stf.serialisation
 			var floatCurves = AnimationUtility.GetCurveBindings(clip);
 			var BindingCurves = AnimationUtility.GetObjectReferenceCurveBindings(clip);
 
-			var curves = new JArray();
-			ret.Add("curves", curves);
+			var curvesJson = new JArray();
+			ret.Add("curves", curvesJson);
 
 			state.AddTask(new Task(() => {
 				foreach(var c in floatCurves)
 				{
-					var curve = new JObject();
-					curves.Add(curve);
-					curve.Add("unity-path", c.path);
-					curve.Add("unity-property", c.propertyName);
+					var curveJson = new JObject();
+					curvesJson.Add(curveJson);
+
+					var keysJson = new JArray();
+					curveJson.Add("keys", keysJson);
 
 					var ctx = state.GetResourceContext(resource);
-					if(ctx.ContainsKey("root"))
-					{
-						var curveTarget = AnimationUtility.GetAnimatedObject((GameObject)ctx["root"], c);
-						Debug.Log($"Curve Target: {curveTarget}");
-					}
-					else throw new Exception($"Animation Clip {clip} error: no resourse context provided");
+					if(!ctx.ContainsKey("root")) throw new Exception($"Animation Clip {clip} error: no resourse context provided");
+					var curveTarget = AnimationUtility.GetAnimatedObject((GameObject)ctx["root"], c);
 
-					//AnimationUtility.GetAnimatedObject(new GameObject(), c);
+					var targetId = Utils.getIdFromUnityObject(curveTarget);
+					if(targetId == null) throw new Exception($"Animation Clip {clip} error: invalid target");
+					curveJson.Add("target_id", targetId);
+
+					// TODO: convert property path dependent on target component translator
+					curveJson.Add("property", c.propertyName);
+
+					// TODO: move curve data into a binary buffer
+					var curve = AnimationUtility.GetEditorCurve(clip, c);
+					foreach(var keyframe in curve.keys)
+					{
+						keysJson.Add(new JObject() {{"time", keyframe.time}, {"value", keyframe.value}});
+					}
 				}
 			}));
 			
