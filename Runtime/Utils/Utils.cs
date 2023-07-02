@@ -56,6 +56,7 @@ namespace stf
 			{
 				return ((Component)o).gameObject.GetComponent<STFUUID>()?.componentIds.Find(c => c.component == o)?.id;
 			}
+			// also handle resources
 			return null;
 		}
 	}
