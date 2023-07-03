@@ -100,15 +100,17 @@ namespace stf.serialisation
 					var curve = new AnimationCurve();
 					var target_id = (string)track["target_id"];
 					var property = (string)track["property"];
-
-					Debug.Log($"AAAAAAAAA: {property}");
-
 					if(target_id == null || String.IsNullOrWhiteSpace(target_id)) throw new Exception("Target id for animation is null!");
+
+					// add keys depending on curve type
+					if(track["keys"] != null) foreach(JObject key in track["keys"])
+					{
+						curve.AddKey((float)key["time"], (float)key["value"]);
+					}
 
 					var targetNode = state.GetNode(target_id);
 					var targetComponent = state.GetComponent(target_id);
 					var targetResource = state.GetResource(target_id);
-					
 					if(targetNode != null)
 					{
 						ret.SetCurve("STF_NODE:" + target_id, typeof(Transform), property, curve);
