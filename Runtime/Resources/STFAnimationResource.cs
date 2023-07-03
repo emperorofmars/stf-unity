@@ -11,11 +11,6 @@ using UnityEditor;
 
 namespace stf.serialisation
 {
-	public class STFAnimation : ScriptableObject
-	{
-
-	}
-
 #if UNITY_EDITOR
 	public class STFAnimationExporter : ASTFResourceExporter
 	{
