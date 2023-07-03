@@ -11,6 +11,7 @@ namespace stf.serialisation
 		public Dictionary<string, ISTFNodeImporter> NodeImporters = new Dictionary<string, ISTFNodeImporter>();
 		public Dictionary<string, ASTFComponentImporter> ComponentImporters = new Dictionary<string, ASTFComponentImporter>();
 		public Dictionary<string, ASTFResourceImporter> ResourceImporters = new Dictionary<string, ASTFResourceImporter>();
+		public Dictionary<Type, ISTFAnimationPathTranslator> AnimationTranslators = new Dictionary<Type, ISTFAnimationPathTranslator>();
 	}
 
 	public class STFExportContext
@@ -19,5 +20,6 @@ namespace stf.serialisation
 		//public Dictionary<string, ASTFNodeExporter> NodeExporters = new Dictionary<string, ASTFNodeExporter>();
 		public Dictionary<Type, ASTFComponentExporter> ComponentExporters = new Dictionary<Type, ASTFComponentExporter>();
 		public Dictionary<Type, ASTFResourceExporter> ResourceExporters = new Dictionary<Type, ASTFResourceExporter>();
+		public Dictionary<Type, ISTFAnimationPathTranslator> AnimationTranslators = new Dictionary<Type, ISTFAnimationPathTranslator>();
 	}
 }
