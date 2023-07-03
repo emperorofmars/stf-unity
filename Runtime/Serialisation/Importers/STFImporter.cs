@@ -22,7 +22,8 @@ namespace stf.serialisation
 		public Dictionary<string, byte[]> buffers = new Dictionary<string, byte[]>();
 		private List<UnityEngine.Object> trash = new List<UnityEngine.Object>();
 		private List<Task> tasks = new List<Task>();
-		private List<Task> componentTasks = new List<Task>();
+		private List<Task> postprocessTasks = new List<Task>();
+		//private List<Task> componentTasks = new List<Task>();
 		public STFMeta meta = ScriptableObject.CreateInstance<STFMeta>();
 		public ISTFSecondStage nextStage;
 
@@ -67,6 +68,11 @@ namespace stf.serialisation
 			tasks.Add(task);
 		}
 
+		public void AddPostprocessTask(Task task)
+		{
+			postprocessTasks.Add(task);
+		}
+
 		public GameObject GetNode(string id)
 		{
 			if(nodes.ContainsKey(id)) return nodes[id];
@@ -96,7 +102,8 @@ namespace stf.serialisation
 
 		public Component GetComponent(string id)
 		{
-			return components[id];
+			if(components.ContainsKey(id)) return components[id];
+			else return null;
 		}
 
 		public byte[] GetBuffer(string id)
@@ -181,6 +188,8 @@ namespace stf.serialisation
 						uuidComponent.id = jsonNode.Key;
 					}
 				}
+				_runTasks();
+				tasks = postprocessTasks;
 				_runTasks();
 			} catch(Exception e)
 			{

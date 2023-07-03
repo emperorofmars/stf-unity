@@ -11,6 +11,12 @@ using UnityEditor;
 
 namespace stf.serialisation
 {
+	public class STFAnimation : ScriptableObject
+	{
+
+	}
+
+#if UNITY_EDITOR
 	public class STFAnimationExporter : ASTFResourceExporter
 	{
 		public override JToken serializeToJson(ISTFExporter state, UnityEngine.Object resource)
@@ -28,7 +34,7 @@ namespace stf.serialisation
 			}
 
 			var curvesJson = new JArray();
-			ret.Add("curves", curvesJson);
+			ret.Add("tracks", curvesJson);
 
 			state.AddTask(new Task(() => {
 				var ctx = state.GetResourceContext(resource);
@@ -75,6 +81,7 @@ namespace stf.serialisation
 			return curvesJson;
 		}
 	}
+#endif
 
 	public class STFAnimationImporter : ASTFResourceImporter
 	{
@@ -92,6 +99,40 @@ namespace stf.serialisation
 				default: ret.wrapMode = WrapMode.Once; break;
 			}
 
+			if(json["tracks"] != null) foreach(JObject track in json["tracks"])
+			{
+				state.AddPostprocessTask(new Task(() => {
+					var curve = new AnimationCurve();
+					var target_id = (string)track["target_id"];
+					var property = (string)track["property"];
+
+					Debug.Log($"AAAAAAAAA: {property}");
+
+					if(target_id == null || String.IsNullOrWhiteSpace(target_id)) throw new Exception("Target id for animation is null!");
+
+					var targetNode = state.GetNode(target_id);
+					var targetComponent = state.GetComponent(target_id);
+					var targetResource = state.GetResource(target_id);
+					
+					if(targetNode != null)
+					{
+						ret.SetCurve("STF_NODE:" + target_id, typeof(Transform), property, curve);
+					}
+					else if(targetComponent != null)
+					{
+						var goId = targetComponent.gameObject.GetComponent<STFUUID>().id;
+						ret.SetCurve("STF_COMPONENT:" + goId + ":" + target_id, targetComponent.GetType(), property, curve);
+					}
+					else if(targetResource != null)
+					{
+						ret.SetCurve("STF_RESOURCE:" + target_id, targetResource.GetType(), property, curve);
+					}
+					else
+					{
+						throw new Exception("Target id for animation is invalid");
+					}
+				}));
+			}
 			return ret;
 		}
 	}
