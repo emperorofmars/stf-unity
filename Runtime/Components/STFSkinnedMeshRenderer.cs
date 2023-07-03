@@ -117,4 +117,25 @@ namespace stf.Components
 			}
 		}
 	}
+
+	public class SkinnedMeshRendererAnimationPathTranslator : ISTFAnimationPathTranslator
+	{
+		public string ToSTF(string property)
+		{
+			if(property.StartsWith("blendShape"))
+			{
+				return "blendshape." + property.Split('.')[1];
+			}
+			throw new Exception("Unrecognized animation property: " + property);
+		}
+
+		public string ToUnity(string property)
+		{
+			if(property.StartsWith("blendshape"))
+			{
+				return "blendShape." + property.Split('.')[1];
+			}
+			throw new Exception("Unrecognized animation property: " + property);
+		}
+	}
 }

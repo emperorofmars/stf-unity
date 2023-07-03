@@ -19,22 +19,22 @@ namespace stf.serialisation
 		{
 			if(property.StartsWith("m_LocalPosition"))
 			{
-				if(property.EndsWith("x")) return "translation_x";
-				if(property.EndsWith("y")) return "translation_y";
-				if(property.EndsWith("z")) return "translation_z";
+				if(property.EndsWith("x")) return "translation.x";
+				if(property.EndsWith("y")) return "translation.y";
+				if(property.EndsWith("z")) return "translation.z";
 			}
 			else if(property.StartsWith("m_LocalRotation"))
 			{
-				if(property.EndsWith("x")) return "rotation_x";
-				if(property.EndsWith("y")) return "rotation_y";
-				if(property.EndsWith("z")) return "rotation_z";
-				if(property.EndsWith("w")) return "rotation_w";
+				if(property.EndsWith("x")) return "rotation.x";
+				if(property.EndsWith("y")) return "rotation.y";
+				if(property.EndsWith("z")) return "rotation.z";
+				if(property.EndsWith("w")) return "rotation.w";
 			}
 			else if(property.StartsWith("m_LocalScale"))
 			{
-				if(property.EndsWith("x")) return "scale_x";
-				if(property.EndsWith("y")) return "scale_y";
-				if(property.EndsWith("z")) return "scale_z";
+				if(property.EndsWith("x")) return "scale.x";
+				if(property.EndsWith("y")) return "scale.y";
+				if(property.EndsWith("z")) return "scale.z";
 			}
 			throw new Exception("Unrecognized animation property: " + property);
 		}

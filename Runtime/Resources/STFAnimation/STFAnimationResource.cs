@@ -40,7 +40,7 @@ namespace stf.serialisation
 					var root = (GameObject)ctx["root"];
 
 					curvesJson.Merge(convertCurves(state, AnimationUtility.GetCurveBindings(clip), clip, root));
-				//curvesJson.Merge(convertCurves(state, AnimationUtility.GetObjectReferenceCurveBindings(clip), clip, root));
+					//curvesJson.Merge(convertCurves(state, AnimationUtility.GetObjectReferenceCurveBindings(clip), clip, root));
 				}
 				catch(Exception e)
 				{
@@ -66,8 +66,10 @@ namespace stf.serialisation
 				curveJson.Add("target_id", targetId);
 
 				if(!state.GetContext().AnimationTranslators.ContainsKey(curveTarget.GetType()))
-					throw new Exception("Animation property can't be translated: " + c.propertyName);
+					throw new Exception("Animation property can't be translated: " + c.propertyName + " ; type: " + curveTarget.GetType());
 				curveJson.Add("property", state.GetContext().AnimationTranslators[curveTarget.GetType()].ToSTF(c.propertyName));
+
+				//Debug.Log($"Curve: {c.propertyName} : {c.isDiscreteCurve} : {c.isPPtrCurve}");
 
 				// TODO: move curve data into a binary buffer
 				var keysJson = new JArray();
@@ -125,21 +127,21 @@ namespace stf.serialisation
 							if(!state.GetContext().AnimationTranslators.ContainsKey(targetNode.GetType()))
 								throw new Exception("Property can't be translated: " + property);
 							var translatedProperty = state.GetContext().AnimationTranslators[targetNode.GetType()].ToUnity(property);
-							ret.SetCurve("STF_NODE:" + target_id, typeof(Transform), translatedProperty, curve);
+							ret.SetCurve("STF_NODE:" + target_id, targetNode.GetType(), translatedProperty, curve);
 						}
 						else if(targetComponent != null)
 						{
-							if(!state.GetContext().AnimationTranslators.ContainsKey(targetNode.GetType()))
+							if(!state.GetContext().AnimationTranslators.ContainsKey(targetComponent.GetType()))
 								throw new Exception("Property can't be translated: " + property);
-							var translatedProperty = state.GetContext().AnimationTranslators[targetNode.GetType()].ToUnity(property);
+							var translatedProperty = state.GetContext().AnimationTranslators[targetComponent.GetType()].ToUnity(property);
 							var goId = targetComponent.gameObject.GetComponent<STFUUID>().id;
 							ret.SetCurve("STF_COMPONENT:" + goId + ":" + target_id, targetComponent.GetType(), translatedProperty, curve);
 						}
 						else if(targetResource != null)
 						{
-							if(!state.GetContext().AnimationTranslators.ContainsKey(targetNode.GetType()))
+							if(!state.GetContext().AnimationTranslators.ContainsKey(targetResource.GetType()))
 								throw new Exception("Property can't be translated: " + property);
-							var translatedProperty = state.GetContext().AnimationTranslators[targetNode.GetType()].ToUnity(property);
+							var translatedProperty = state.GetContext().AnimationTranslators[targetResource.GetType()].ToUnity(property);
 							ret.SetCurve("STF_RESOURCE:" + target_id, targetResource.GetType(), translatedProperty, curve);
 						}
 						else

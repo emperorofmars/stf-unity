@@ -47,7 +47,8 @@ namespace stf.serialisation
 
 		public static readonly Dictionary<Type, ISTFAnimationPathTranslator> DefaultAnimationTranslators = new Dictionary<Type, ISTFAnimationPathTranslator>() {
 			{typeof(Transform), new STFTransformAnimationPathTranslator()},
-			{typeof(GameObject), new STFTransformAnimationPathTranslator()}
+			{typeof(GameObject), new STFTransformAnimationPathTranslator()},
+			{typeof(SkinnedMeshRenderer), new SkinnedMeshRendererAnimationPathTranslator()}
 		};
 
 		private static Dictionary<string, ISTFAssetImporter> RegisteredAssetImporters = new Dictionary<string, ISTFAssetImporter>();
