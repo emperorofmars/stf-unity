@@ -144,7 +144,8 @@ namespace stf.serialisation
 							if(!state.GetContext().AnimationTranslators.ContainsKey(targetNode.GetType()))
 								throw new Exception("Property can't be translated: " + property);
 							var translatedProperty = state.GetContext().AnimationTranslators[targetNode.GetType()].ToUnity(property);
-							ret.SetCurve("STF_NODE:" + target_id, targetNode.GetType(), translatedProperty, curve);
+							var targetType = (property.StartsWith("translation") || property.StartsWith("rotation") || property.StartsWith("scale")) ? typeof(Transform) : typeof(GameObject);
+							ret.SetCurve("STF_NODE:" + target_id, targetType, translatedProperty, curve);
 						}
 						else if(targetComponent != null)
 						{
