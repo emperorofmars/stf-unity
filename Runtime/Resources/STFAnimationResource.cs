@@ -40,7 +40,7 @@ namespace stf.serialisation
 					var root = (GameObject)ctx["root"];
 
 					curvesJson.Merge(convertCurves(state, AnimationUtility.GetCurveBindings(clip), clip, root));
-					//curvesJson.Merge(convertCurves(state, AnimationUtility.GetObjectReferenceCurveBindings(clip), clip, root));
+					curvesJson.Merge(convertCurves(state, AnimationUtility.GetObjectReferenceCurveBindings(clip), clip, root));
 				}
 				catch(Exception e)
 				{
@@ -71,15 +71,25 @@ namespace stf.serialisation
 
 				//Debug.Log($"Curve: {c.propertyName} : {c.isDiscreteCurve} : {c.isPPtrCurve}");
 
+				if(!c.isDiscreteCurve && !c.isPPtrCurve) curveJson.Add("type", "interpolated");
+				else if(c.isDiscreteCurve && !c.isPPtrCurve) curveJson.Add("type", "discrete");
+				else if(c.isPPtrCurve) curveJson.Add("type", "reference");
+
 				// TODO: move curve data into a binary buffer
 				var keysJson = new JArray();
 				curveJson.Add("keys", keysJson);
-				var curve = AnimationUtility.GetEditorCurve(clip, c);
 
-				// convert based on curve type
-				foreach(var keyframe in curve.keys)
+				if(!c.isPPtrCurve)
 				{
-					keysJson.Add(new JObject() {{"time", keyframe.time}, {"value", keyframe.value}});
+					var curve = AnimationUtility.GetEditorCurve(clip, c);
+					foreach(var keyframe in curve.keys)
+					{
+						keysJson.Add(new JObject() {{"time", keyframe.time}, {"value", keyframe.value}});
+					}
+				}
+				else
+				{
+					throw new NotImplementedException();
 				}
 			}
 			return curvesJson;
@@ -114,9 +124,16 @@ namespace stf.serialisation
 						if(target_id == null || String.IsNullOrWhiteSpace(target_id)) throw new Exception("Target id for animation is null!");
 
 						// add keys depending on curve type
-						if(track["keys"] != null) foreach(JObject key in track["keys"])
+						if((string)track["type"] == "interpolated")
 						{
-							curve.AddKey((float)key["time"], (float)key["value"]);
+							if(track["keys"] != null) foreach(JObject key in track["keys"])
+							{
+								curve.AddKey((float)key["time"], (float)key["value"]);
+							}
+						}
+						else
+						{
+							throw new NotImplementedException();
 						}
 
 						var targetNode = state.GetNode(target_id);
