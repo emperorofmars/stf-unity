@@ -49,7 +49,7 @@ namespace stf.Components
 
 	public class STFTwistConstraintBackConverter : ISTFSecondStageConverter
 	{
-		public void convert(Component component, GameObject root, List<UnityEngine.Object> resources, STFSecondStageContext context)
+		public void convert(Component component, GameObject root, List<UnityEngine.Object> resources, ISTFSecondStageContext context)
 		{
 			var stfComponent = (STFTwistConstraintBack)component;
 			var converted = component.gameObject.AddComponent<RotationConstraint>();

@@ -38,21 +38,9 @@ namespace stf.serialisation
 			convertedRoot.name = originalRoot.name + "_" + GameObjectSuffix;
 			try
 			{
-				var context = new STFSecondStageContext {RelMat = new STFRelationshipMatrix(convertedRoot, Targets, new List<Type>(Converters.Keys))};
+				var context = new STFSecondStageContext(convertedRoot, Targets, new List<Type>(Converters.Keys));
 				convertTree(convertedRoot, convertedResources, context);
-				int iteration = 0;
-				do
-				{
-					var currentTasks = context.Tasks;
-					context.Tasks = new List<Task>();
-					foreach(var task in currentTasks)
-					{
-						task.RunSynchronously();
-						if(task.Exception != null) throw task.Exception;
-					}
-					iteration++;
-				}
-				while(context.Tasks.Count > 0 && iteration < 100);
+				context.RunTasks();
 				cleanup(convertedRoot);
 			}
 			catch(Exception e)

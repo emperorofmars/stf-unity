@@ -124,7 +124,7 @@ namespace stf.serialisation
 						if(target_id == null || String.IsNullOrWhiteSpace(target_id)) throw new Exception("Target id for animation is null!");
 
 						// add keys depending on curve type
-						if((string)track["type"] == "interpolated")
+						if((string)track["type"] != "reference")
 						{
 							if(track["keys"] != null) foreach(JObject key in track["keys"])
 							{

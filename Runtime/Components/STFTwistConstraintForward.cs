@@ -60,7 +60,7 @@ namespace stf.Components
 
 	public class STFTwistConstraintForwardConverter : ISTFSecondStageConverter
 	{
-		public void convert(Component component, GameObject root, List<UnityEngine.Object> resources, STFSecondStageContext context)
+		public void convert(Component component, GameObject root, List<UnityEngine.Object> resources, ISTFSecondStageContext context)
 		{
 			var stfComponent = (STFTwistConstraintForward)component;
 			var converted = component.gameObject.AddComponent<RotationConstraint>();
