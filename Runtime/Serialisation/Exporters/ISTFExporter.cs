@@ -22,6 +22,7 @@ namespace stf.serialisation
 		string GetResourceId(UnityEngine.Object unityResource);
 		void AddResourceContext(UnityEngine.Object unityResource, string key, System.Object data);
 		Dictionary<string, System.Object> GetResourceContext(UnityEngine.Object unityResource);
+		void AddTrashObject(UnityEngine.Object trash);
 		string GetJson();
 		byte[] GetBinary();
 

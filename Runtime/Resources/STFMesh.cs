@@ -127,10 +127,14 @@ namespace stf.serialisation
 			byte[] weightBuffer = null;
 			if(mesh.HasVertexAttribute(VertexAttribute.BlendIndices))
 			{
-				ret.Add("skinned", true);
-				var resourceContext = state.GetResourceContext(mesh);
-				if(resourceContext != null || resourceContext.ContainsKey("armature"))
-					ret.Add("armature", (string)state.GetResourceContext(mesh)["armature"]);
+				state.AddTask(new Task(() => {
+					ret.Add("skinned", true);
+					var resourceContext = state.GetResourceContext(mesh);
+					if(resourceContext != null || resourceContext.ContainsKey("armature"))
+					{
+						ret.Add("armature", (string)state.GetResourceContext(mesh)["armature"]);
+					}
+				}));
 
 				foreach(var num in mesh.GetBonesPerVertex()) weightLength += num;
 				weightBuffer = new byte[weightLength * (sizeof(float) + sizeof(int))];

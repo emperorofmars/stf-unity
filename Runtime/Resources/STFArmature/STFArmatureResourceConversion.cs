@@ -31,7 +31,7 @@ namespace stf.serialisation
 				rootBoneId = armatureInstance.armature.rootId;
 				foreach(var bone in armatureInstance.armature.bones) boneIds.Add(bone.id);
 				
-				armatureInstance.armature.serializeToJson(state);
+				armatureInstance.armature.SerializeToJson(state);
 			}
 			else // determine armature from skinned mesh renderer and bindposes
 			{

@@ -9,7 +9,7 @@ namespace stf
 {
 	public static class STFArmatureUtil
 	{
-		public static List<STFArmatureResource> FindAndSetupArmatures(GameObject root)
+		public static void FindAndSetupExternalArmatures(GameObject root)
 		{
 			var ret = new List<STFArmatureResource>();
 			var tree = root.GetComponentsInChildren<Transform>();
@@ -20,7 +20,7 @@ namespace stf
 			foreach(var smr in skinnedMeshRenderers)
 			{
 				// Not in tree
-				if(tree.FirstOrDefault(t => t == smr.rootBone.parent) == null)
+				if(tree.FirstOrDefault(t => t == smr.rootBone) == null)
 				{
 					var externalArmatureInstance = smr.rootBone?.parent?.GetComponent<STFArmatureInstance>();
 					if(externalArmatureInstance)
@@ -30,7 +30,22 @@ namespace stf
 					}
 					continue;
 				}
-				else // collect mesh renderers that share the same root bone
+			}
+		}
+
+
+		public static List<STFArmatureResource> FindAndSetupArmatures(GameObject root)
+		{
+			var ret = new List<STFArmatureResource>();
+			var tree = root.GetComponentsInChildren<Transform>();
+			var skinnedMeshRenderers = root.GetComponentsInChildren<SkinnedMeshRenderer>();
+
+			var rootBones = new Dictionary<Transform, List<SkinnedMeshRenderer>>();
+
+			foreach(var smr in skinnedMeshRenderers)
+			{
+				// collect mesh renderers that share the same root bone
+				if(tree.FirstOrDefault(t => t == smr.rootBone.parent) != null)
 				{
 					if(!rootBones.ContainsKey(smr.rootBone)) rootBones.Add(smr.rootBone, new List<SkinnedMeshRenderer>{smr});
 					else rootBones[smr.rootBone].Add(smr);
@@ -41,6 +56,9 @@ namespace stf
 
 			foreach(var rootBone in rootBones)
 			{
+				// Armature already exists
+				if(rootBone.Key.parent != null && rootBone.Key.parent.GetComponent<STFArmatureInstance>()?.armature != null) continue;
+
 				var maxLength = 0;
 				SkinnedMeshRenderer takenSmr = null;
 				foreach(var smr in rootBone.Value)
@@ -57,7 +75,7 @@ namespace stf
 
 				var armature = ScriptableObject.CreateInstance<STFArmatureResource>();
 				armature.id = Guid.NewGuid().ToString();
-				armature.bindposes = takenSmr.sharedMesh.bindposes;
+				armature.bindposes = bindposes;
 
 				for(int i = 0; i < bindposes.Length; i++)
 				{

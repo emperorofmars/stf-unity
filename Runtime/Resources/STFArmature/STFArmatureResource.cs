@@ -115,7 +115,7 @@ namespace stf.serialisation
 			return ret;
 		}
 
-		public void serializeToJson(ISTFExporter state)
+		public void SerializeToJson(ISTFExporter state)
 		{
 			var ret = new JObject();
 			

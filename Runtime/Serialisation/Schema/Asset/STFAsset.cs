@@ -14,27 +14,26 @@ namespace stf.serialisation
 		public GameObject rootNode;
 		public string id;
 		public string name;
+		public string rootNodeId;
 
 		public void Convert(ISTFExporter state)
 		{
 			if(rootNode == null) throw new Exception("Root node must not be null");
+			var rootNodeInstance = UnityEngine.Object.Instantiate(rootNode);
+			rootNodeInstance.name = rootNode.name;
 
-			var assetInfo = rootNode.GetComponent<STFAssetInfo>();
-			if(assetInfo != null)
-			{
-				id = assetInfo.assetId != null && assetInfo.assetId.Length > 0 ? assetInfo.assetId : Guid.NewGuid().ToString();
-				name = assetInfo.assetName != null && assetInfo.assetName.Length > 0 ? assetInfo.assetName : rootNode.name;
-				if(assetInfo.originalMetaInformation != null) state.AddMeta(assetInfo.originalMetaInformation);
-			} else
-			{
-				id = Guid.NewGuid().ToString();
-				name = rootNode.name;
-			}
+			// Fill in all Id's, find armatures
+			STFSetup.SetupStandaloneAssetInplace(rootNodeInstance);
 
+			var assetInfo = rootNodeInstance.GetComponent<STFAssetInfo>();
+			id = assetInfo.assetId != null && assetInfo.assetId.Length > 0 ? assetInfo.assetId : Guid.NewGuid().ToString();
+			name = assetInfo.assetName != null && assetInfo.assetName.Length > 0 ? assetInfo.assetName : rootNode.name;
+			if(assetInfo.originalMetaInformation != null) state.AddMeta(assetInfo.originalMetaInformation);
+
+			// TODO: handle node export by hot loaded components, determine which to use by explicit function
 			var armatureState = new STFAssetArmatureHandler();
-			armatureState.GatherArmatures(state, rootNode.GetComponentsInChildren<SkinnedMeshRenderer>(), rootNode);
-
-			var transforms = rootNode.GetComponentsInChildren<Transform>();
+			armatureState.GatherArmatures(state, rootNodeInstance.GetComponentsInChildren<SkinnedMeshRenderer>(), rootNodeInstance);
+			var transforms = rootNodeInstance.GetComponentsInChildren<Transform>();
 			foreach(var transform in transforms)
 			{
 				if(armatureState.HandleBoneInstance(state, transform) == false)
@@ -46,6 +45,7 @@ namespace stf.serialisation
 				}
 			}
 
+			// Export Components and Resources
 			foreach(var transform in transforms)
 			{
 				var nodeId = state.GetNodeId(transform.gameObject);
@@ -74,6 +74,8 @@ namespace stf.serialisation
 					}
 				}
 			}
+			rootNodeId = state.GetNodeId(rootNodeInstance);
+			state.AddTrashObject(rootNodeInstance);
 		}
 
 		private void gatherResources(ISTFExporter state, List<KeyValuePair<UnityEngine.Object, Dictionary<string, System.Object>>> resources)
@@ -96,7 +98,7 @@ namespace stf.serialisation
 			var ret = new JObject();
 			ret.Add("type", "asset");
 			if(name != null && name.Length > 0) ret.Add("name", name);
-			ret.Add("root_node", state.GetNodeId(rootNode));
+			ret.Add("root_node", rootNodeId);
 			return ret;
 		}
 

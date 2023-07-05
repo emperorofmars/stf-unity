@@ -13,15 +13,13 @@ namespace stf.serialisation
 			{typeof(AnimationClip), new STFAnimationSecondStageProcessor()}
 		};
 
-		private Dictionary<Type, ISTFSecondStageConverter> _converters = new Dictionary<Type, ISTFSecondStageConverter>() {
+		protected override Dictionary<Type, ISTFSecondStageConverter> Converters => new Dictionary<Type, ISTFSecondStageConverter>() {
 			{typeof(STFTwistConstraintBack), new STFTwistConstraintBackConverter()},
 			{typeof(STFTwistConstraintForward), new STFTwistConstraintForwardConverter()}
 		};
 
-		protected override Dictionary<Type, ISTFSecondStageConverter> Converters => _converters;
-
 		protected override List<Type> WhitelistedComponents => new List<Type> {
-			typeof(Transform), typeof(RotationConstraint)
+			typeof(Transform), typeof(Animator), typeof(RotationConstraint), typeof(SkinnedMeshRenderer)
 		};
 
 		protected override string GameObjectSuffix => "Unity";

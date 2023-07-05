@@ -59,9 +59,7 @@ namespace stf
 				var rootInstance = Instantiate(root);
 				rootInstance.name = root.name + "_STFSetup";
 
-				Debug.Log($"PATH: {path}");
-
-				var resources = STFSetup.SetupInplace(rootInstance, path);
+				var resources = STFSetup.SetupStandaloneAssetInplace(rootInstance);
 				foreach(var resource in resources)
 				{
 					AssetDatabase.CreateAsset(resource, path + Path.DirectorySeparatorChar + resource.name + ".asset");

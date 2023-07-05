@@ -23,7 +23,7 @@ namespace stf.serialisation
 			foreach(var smr in skinnedMeshRenderers)
 			{
 				// Not in tree
-				if(tree.FirstOrDefault(t => t == smr.rootBone.parent) == null)
+				if(tree.FirstOrDefault(t => t == smr.rootBone) == null)
 				{
 					var externalArmatureInstance = smr.rootBone?.parent?.GetComponent<STFArmatureInstance>();
 					if(externalArmatureInstance)
@@ -87,6 +87,7 @@ namespace stf.serialisation
 				}
 				else
 				{
+					// Armature Instance Node
 					var node = STFArmatureInstanceNodeExporter.SerializeToJson(go, state, armatureInstances[go.transform].id, armatureInstancesBoneInstances[go.transform]);
 					state.RegisterNode(nodeId, node, go);
 					return true;
@@ -94,6 +95,7 @@ namespace stf.serialisation
 			}
 			else
 			{
+				// Bone Instance Node
 				Transform armatureInstance = null;
 				foreach(var armatureInstanceMapping in armatureInstancesBoneInstances)
 				{

@@ -30,6 +30,7 @@ namespace stf.serialisation
 		public Dictionary<string, JObject> resources = new Dictionary<string, JObject>();
 		public Dictionary<UnityEngine.Object, Dictionary<string, System.Object>> resourceContext = new Dictionary<UnityEngine.Object, Dictionary<string, System.Object>>();
 		public Dictionary<string, byte[]> buffers = new Dictionary<string, byte[]>();
+		private List<UnityEngine.Object> trash = new List<UnityEngine.Object>();
 		private JObject jsonDefinition = new JObject();
 		private List<STFMeta> originalMetas = new List<STFMeta>();
 
@@ -97,6 +98,19 @@ namespace stf.serialisation
 			} catch(Exception e)
 			{
 				throw new Exception("Error during STF export: ", e);
+			} finally
+			{
+				foreach(var trashObject in trash)
+				{
+					if(trashObject != null)
+					{
+						#if UNITY_EDITOR
+							UnityEngine.Object.DestroyImmediate(trashObject);
+						#else
+							UnityEngine.Object.Destroy(trashObject);
+						#endif
+					}
+				}
 			}
 		}
 
@@ -256,6 +270,11 @@ namespace stf.serialisation
 		public string GetResourceId(UnityEngine.Object unityResource)
 		{
 			return resourceIds[unityResource];
+		}
+
+		public void AddTrashObject(UnityEngine.Object trash)
+		{
+			this.trash.Add(trash);
 		}
 
 		private JObject createRoot()
