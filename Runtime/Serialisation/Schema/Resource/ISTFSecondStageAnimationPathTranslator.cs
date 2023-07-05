@@ -10,34 +10,24 @@ namespace stf.serialisation
 {
 	public interface ISTFSecondStageAnimationPathTranslator
 	{
-		string TranslatePath(GameObject root, string path);
-		Type TranslateType(Type originalType);
-		string TranslateProperty(string property);
+		(bool omit, string path, Type type, string property, AnimationCurve curve) Translate(GameObject root, string originalPath, Type originalType, string originalProperty, AnimationCurve originalCurve);
 	}
 
 	public abstract class ASTFSecondStageAnimationPathTranslator : ISTFSecondStageAnimationPathTranslator
 	{
-		public string TranslatePath(GameObject root, string path)
+		public (bool omit, string path, Type type, string property, AnimationCurve curve) Translate(GameObject root, string originalPath, Type originalType, string originalProperty, AnimationCurve originalCurve)
 		{
-			var targetId = path.Split(':')[1];
+			var targetId = originalPath.Split(':')[1];
 			var targetGo = root.GetComponentsInChildren<STFUUID>().First(id => id.id == targetId)?.gameObject;
 			if(targetGo == null) throw new Exception("Invalid animation path");
-			return Utils.getPath(root.transform, targetGo.transform);
-		}
-
-		public Type TranslateType(Type originalType)
-		{
-			return originalType;
-		}
-		
-		public string TranslateProperty(string property)
-		{
-			return property;
+			var newCurve = new AnimationCurve();
+			foreach(var keyframe in originalCurve.keys)
+			{
+				newCurve.AddKey(keyframe.time, keyframe.value);
+			}
+			return (false, Utils.getPath(root.transform, targetGo.transform), originalType, originalProperty, newCurve);
 		}
 	}
 
-	public class DefaultSecondStageAnimationPathTranslator : ASTFSecondStageAnimationPathTranslator
-	{
-
-	}
+	public class DefaultSecondStageAnimationPathTranslator : ASTFSecondStageAnimationPathTranslator {}
 }

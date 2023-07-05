@@ -187,7 +187,7 @@ namespace stf.serialisation
 #if UNITY_EDITOR
 	public class STFAnimationSecondStageProcessor : ISTFSecondStageResourceProcessor
 	{
-		public UnityEngine.Object convert(GameObject root, UnityEngine.Object resource, STFSecondStageContext context)
+		public UnityEngine.Object Convert(GameObject root, UnityEngine.Object resource, STFSecondStageContext context)
 		{
 			var anim = (AnimationClip)resource;
 			var convertedAnim = new AnimationClip();
@@ -195,31 +195,23 @@ namespace stf.serialisation
 			var floatBindings = AnimationUtility.GetCurveBindings(anim);
 			foreach(var binding in floatBindings)
 			{
-				var animatedObject = AnimationUtility.GetAnimatedObject(root, binding);
-				var translator = STFSecondStageAnimationPathTranslatorRegistry.Translators.ContainsKey(animatedObject.GetType()) ?
-						STFSecondStageAnimationPathTranslatorRegistry.Translators[animatedObject.GetType()] : new DefaultSecondStageAnimationPathTranslator();
-				var newCurve = new AnimationCurve();
-				var resolvedPath = translator.TranslatePath(root, binding.path);
-				var resolvedType = translator.TranslateType(animatedObject.GetType());
-				var resolvedProperty = translator.TranslateProperty(binding.propertyName);
-				
-				if(!binding.isPPtrCurve)
-				{
-					var curve = AnimationUtility.GetEditorCurve(anim, binding);
-					foreach(var keyframe in curve.keys)
-					{
-						newCurve.AddKey(keyframe.time, keyframe.value);
-					}
-				}
-				else
-				{
-					throw new NotImplementedException();
-				}
-
-				convertedAnim.SetCurve(resolvedPath, resolvedType, resolvedProperty, newCurve);
+				ConvertBindings(root, anim, binding, convertedAnim);
 			}
-
+			var refBindings = AnimationUtility.GetObjectReferenceCurveBindings(anim);
+			foreach(var binding in refBindings)
+			{
+				ConvertBindings(root, anim, binding, convertedAnim);
+			}
 			return convertedAnim;
+		}
+
+		private void ConvertBindings(GameObject root, AnimationClip originalAnim, EditorCurveBinding binding, AnimationClip convertedAnim)
+		{
+			var animatedObject = AnimationUtility.GetAnimatedObject(root, binding);
+			var translator = STFSecondStageAnimationPathTranslatorRegistry.Translators.ContainsKey(animatedObject.GetType()) ?
+					STFSecondStageAnimationPathTranslatorRegistry.Translators[animatedObject.GetType()] : new DefaultSecondStageAnimationPathTranslator();
+			var translated = translator.Translate(root, binding.path, animatedObject.GetType(), binding.propertyName, AnimationUtility.GetEditorCurve(originalAnim, binding));
+			if(translated.omit == false) convertedAnim.SetCurve(translated.path, translated.type, translated.property, translated.curve);
 		}
 	}
 #endif

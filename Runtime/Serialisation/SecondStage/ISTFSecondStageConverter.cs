@@ -53,7 +53,7 @@ namespace stf.serialisation
 			{
 				lock(resource)
 				{
-					return ResourceProcessors[resource.GetType()].convert(root, resource, context);
+					return ResourceProcessors[resource.GetType()].Convert(root, resource, context);
 				}
 			}
 			else
