@@ -61,7 +61,11 @@ namespace stf
 
 				Debug.Log($"PATH: {path}");
 
-				STFSetup.SetupInplace(rootInstance, path);
+				var resources = STFSetup.SetupInplace(rootInstance, path);
+				foreach(var resource in resources)
+				{
+					AssetDatabase.CreateAsset(resource, path + Path.DirectorySeparatorChar + resource.name + ".asset");
+				}
 				AssetDatabase.Refresh();
 				root = null;
 			}

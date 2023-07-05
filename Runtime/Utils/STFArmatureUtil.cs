@@ -9,40 +9,12 @@ namespace stf
 {
 	public static class STFArmatureUtil
 	{
-		public static void FindAndSetupExternalArmatures(GameObject root)
-		{
-			var tree = root.GetComponentsInChildren<Transform>();
-			var skinnedMeshRenderers = root.GetComponentsInChildren<SkinnedMeshRenderer>();
-
-			foreach(var smr in skinnedMeshRenderers)
-			{
-				// Not in tree
-				if(tree.FirstOrDefault(t => t == smr.rootBone.parent) == null)
-				{
-					var externalArmatureInstance = smr.rootBone?.parent?.GetComponent<STFArmatureInstance>();
-					if(externalArmatureInstance)
-					{
-						var smrAddon = smr.gameObject.AddComponent<STFSkinnedMeshRendererAddon>();
-						smrAddon.ArmatureInstanceId = externalArmatureInstance.GetComponent<STFUUID>().id;
-					}
-					continue;
-				}
-			}
-		}
-
-		private class ArmatureMapping
-		{
-			public STFArmatureResource armature;
-			public List<GameObject> roots = new List<GameObject>();
-		}
-
 		public static List<STFArmatureResource> FindAndSetupArmatures(GameObject root)
 		{
 			var ret = new List<STFArmatureResource>();
 			var tree = root.GetComponentsInChildren<Transform>();
 			var skinnedMeshRenderers = root.GetComponentsInChildren<SkinnedMeshRenderer>();
 
-			//var armatures = new Dictionary<Mesh, STFArmatureResource>();
 			var rootBones = new Dictionary<Transform, List<SkinnedMeshRenderer>>();
 
 			foreach(var smr in skinnedMeshRenderers)
@@ -58,12 +30,14 @@ namespace stf
 					}
 					continue;
 				}
-				else
+				else // collect mesh renderers that share the same root bone
 				{
 					if(!rootBones.ContainsKey(smr.rootBone)) rootBones.Add(smr.rootBone, new List<SkinnedMeshRenderer>{smr});
 					else rootBones[smr.rootBone].Add(smr);
 				}
 			}
+
+			// TODO: compare bind poses to see if the same armature is used multiple times in the scene
 
 			foreach(var rootBone in rootBones)
 			{
