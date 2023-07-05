@@ -49,16 +49,22 @@ namespace stf.serialisation
 
 		public UnityEngine.Object GetConvertedResource(GameObject root, UnityEngine.Object resource, STFSecondStageContext context)
 		{
-			if(ResourceProcessors.ContainsKey(resource.GetType()))
+			lock(ResourceConversions)
 			{
-				lock(resource)
+				if(ResourceConversions.ContainsKey(resource))
 				{
-					return ResourceProcessors[resource.GetType()].Convert(root, resource, context);
+					return ResourceConversions[resource];
 				}
-			}
-			else
-			{
-				return resource;
+				else if(ResourceProcessors.ContainsKey(resource.GetType()))
+				{
+					var converted = ResourceProcessors[resource.GetType()].Convert(root, resource, context);
+					ResourceConversions.Add(resource, converted);
+					return converted;
+				}
+				else
+				{
+					return resource;
+				}
 			}
 		}
 

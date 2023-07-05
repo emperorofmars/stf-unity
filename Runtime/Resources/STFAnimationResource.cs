@@ -71,8 +71,6 @@ namespace stf.serialisation
 					throw new Exception("Animation property can't be translated: " + c.propertyName + " ; type: " + curveTarget.GetType());
 				curveJson.Add("property", state.GetContext().AnimationTranslators[curveTarget.GetType()].ToSTF(c.propertyName));
 
-				//Debug.Log($"Curve: {c.propertyName} : {c.isDiscreteCurve} : {c.isPPtrCurve}");
-
 				if(!c.isDiscreteCurve && !c.isPPtrCurve) curveJson.Add("type", "interpolated");
 				else if(c.isDiscreteCurve && !c.isPPtrCurve) curveJson.Add("type", "discrete");
 				else if(c.isPPtrCurve) curveJson.Add("type", "reference");
