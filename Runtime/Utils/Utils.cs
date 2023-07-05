@@ -21,6 +21,16 @@ namespace stf
 			}
 			return path;
 		}
+		public static string getPath(Transform root, Transform transform)
+		{
+			string path = "/" + transform.name;
+			while (transform.parent != root && transform.parent != null)
+			{
+				transform = transform.parent;
+				path = "/" + transform.name + path;
+			}
+			return path;
+		}
 
 		public static Transform getRoot(Transform transform)
 		{

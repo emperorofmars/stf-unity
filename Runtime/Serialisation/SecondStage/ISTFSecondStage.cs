@@ -20,6 +20,7 @@ namespace stf.serialisation
 
 	public abstract class ASTFSecondStageDefault : ISTFSecondStage
 	{
+		protected abstract Dictionary<Type, ISTFSecondStageResourceProcessor> ResourceProcessors {get;}
 		protected abstract Dictionary<Type, ISTFSecondStageConverter> Converters {get;}
 		protected abstract List<Type> WhitelistedComponents {get;}
 		protected abstract string GameObjectSuffix {get;}
@@ -38,9 +39,10 @@ namespace stf.serialisation
 			convertedRoot.name = originalRoot.name + "_" + GameObjectSuffix;
 			try
 			{
-				var context = new STFSecondStageContext(convertedRoot, Targets, new List<Type>(Converters.Keys));
+				var context = new STFSecondStageContext(convertedRoot, Targets, new List<Type>(Converters.Keys), ResourceProcessors);
 				convertTree(convertedRoot, convertedResources, context);
 				context.RunTasks();
+				if(context.ResourceConversions.Count > 0) convertedResources.AddRange(context.ResourceConversions.Values);
 				cleanup(convertedRoot);
 			}
 			catch(Exception e)

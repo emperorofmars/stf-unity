@@ -9,6 +9,10 @@ namespace stf.serialisation
 {
 	public class STFDefaultSecondStage : ASTFSecondStageDefault
 	{
+		protected override Dictionary<Type, ISTFSecondStageResourceProcessor> ResourceProcessors => new Dictionary<Type, ISTFSecondStageResourceProcessor> {
+			{typeof(AnimationClip), new STFAnimationSecondStageProcessor()}
+		};
+
 		private Dictionary<Type, ISTFSecondStageConverter> _converters = new Dictionary<Type, ISTFSecondStageConverter>() {
 			{typeof(STFTwistConstraintBack), new STFTwistConstraintBackConverter()},
 			{typeof(STFTwistConstraintForward), new STFTwistConstraintForwardConverter()}

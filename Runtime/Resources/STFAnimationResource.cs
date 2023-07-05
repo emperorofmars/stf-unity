@@ -5,6 +5,8 @@ using UnityEngine;
 using System.IO;
 using System.Threading.Tasks;
 using System.Linq;
+using System.Collections.Generic;
+using stf.Components;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -176,4 +178,49 @@ namespace stf.serialisation
 			return ret;
 		}
 	}
+
+	public static class STFSecondStageAnimationPathTranslatorRegistry
+	{
+		public static Dictionary<Type, ISTFSecondStageAnimationPathTranslator> Translators = new Dictionary<Type, ISTFSecondStageAnimationPathTranslator>();
+	}
+
+#if UNITY_EDITOR
+	public class STFAnimationSecondStageProcessor : ISTFSecondStageResourceProcessor
+	{
+		public UnityEngine.Object convert(GameObject root, UnityEngine.Object resource, STFSecondStageContext context)
+		{
+			var anim = (AnimationClip)resource;
+			var convertedAnim = new AnimationClip();
+
+			var floatBindings = AnimationUtility.GetCurveBindings(anim);
+			foreach(var binding in floatBindings)
+			{
+				var animatedObject = AnimationUtility.GetAnimatedObject(root, binding);
+				var translator = STFSecondStageAnimationPathTranslatorRegistry.Translators.ContainsKey(animatedObject.GetType()) ?
+						STFSecondStageAnimationPathTranslatorRegistry.Translators[animatedObject.GetType()] : new DefaultSecondStageAnimationPathTranslator();
+				var newCurve = new AnimationCurve();
+				var resolvedPath = translator.TranslatePath(root, binding.path);
+				var resolvedType = translator.TranslateType(animatedObject.GetType());
+				var resolvedProperty = translator.TranslateProperty(binding.propertyName);
+				
+				if(!binding.isPPtrCurve)
+				{
+					var curve = AnimationUtility.GetEditorCurve(anim, binding);
+					foreach(var keyframe in curve.keys)
+					{
+						newCurve.AddKey(keyframe.time, keyframe.value);
+					}
+				}
+				else
+				{
+					throw new NotImplementedException();
+				}
+
+				convertedAnim.SetCurve(resolvedPath, resolvedType, resolvedProperty, newCurve);
+			}
+
+			return convertedAnim;
+		}
+	}
+#endif
 }

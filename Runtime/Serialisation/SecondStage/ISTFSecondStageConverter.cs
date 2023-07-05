@@ -10,7 +10,8 @@ namespace stf.serialisation
 	{
 		STFRelationshipMatrix RelMat {get;}
 		void AddTask(Task task);
-		UnityEngine.Object GetConvertedResource(UnityEngine.Object resource);
+		void AddConvertedResource(UnityEngine.Object originalResource, UnityEngine.Object convertedResource);
+		UnityEngine.Object GetConvertedResource(GameObject root, UnityEngine.Object resource, STFSecondStageContext context);
 	}
 
 	public class STFSecondStageContext : ISTFSecondStageContext
@@ -18,16 +19,19 @@ namespace stf.serialisation
 		private STFRelationshipMatrix _RelMat;
 		public STFRelationshipMatrix RelMat => _RelMat;
 		private List<Task> Tasks = new List<Task>();
-		private Dictionary<UnityEngine.Object, UnityEngine.Object> ResourceConversions = new Dictionary<UnityEngine.Object, UnityEngine.Object>();
+		Dictionary<Type, ISTFSecondStageResourceProcessor> ResourceProcessors = new Dictionary<Type, ISTFSecondStageResourceProcessor>();
+		public Dictionary<UnityEngine.Object, UnityEngine.Object> ResourceConversions = new Dictionary<UnityEngine.Object, UnityEngine.Object>();
 
-		public STFSecondStageContext(STFRelationshipMatrix relMat)
+		public STFSecondStageContext(STFRelationshipMatrix relMat, Dictionary<Type, ISTFSecondStageResourceProcessor> resourceProcessors)
 		{
 			_RelMat = relMat;
+			ResourceProcessors = resourceProcessors;
 		}
 
-		public STFSecondStageContext(GameObject root, List<string> targets, List<Type> conversibleTypes)
+		public STFSecondStageContext(GameObject root, List<string> targets, List<Type> conversibleTypes, Dictionary<Type, ISTFSecondStageResourceProcessor> resourceProcessors)
 		{
 			_RelMat = new STFRelationshipMatrix(root, targets, conversibleTypes);
+			ResourceProcessors = resourceProcessors;
 		}
 
 		public void AddTask(Task task)
@@ -35,9 +39,27 @@ namespace stf.serialisation
 			Tasks.Add(task);
 		}
 
-		public UnityEngine.Object GetConvertedResource(UnityEngine.Object resource)
+		public void AddConvertedResource(UnityEngine.Object originalResource, UnityEngine.Object convertedResource)
 		{
-			return resource != null && ResourceConversions.ContainsKey(resource) ? ResourceConversions[resource] : resource;
+			lock(originalResource)
+			{
+				ResourceConversions.Add(originalResource, convertedResource);
+			}
+		}
+
+		public UnityEngine.Object GetConvertedResource(GameObject root, UnityEngine.Object resource, STFSecondStageContext context)
+		{
+			if(ResourceProcessors.ContainsKey(resource.GetType()))
+			{
+				lock(resource)
+				{
+					return ResourceProcessors[resource.GetType()].convert(root, resource, context);
+				}
+			}
+			else
+			{
+				return resource;
+			}
 		}
 
 		public void RunTasks(int maxIterationDepth = 100)
