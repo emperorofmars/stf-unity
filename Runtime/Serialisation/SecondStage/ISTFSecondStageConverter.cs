@@ -41,7 +41,7 @@ namespace stf.serialisation
 
 		public void AddConvertedResource(UnityEngine.Object originalResource, UnityEngine.Object convertedResource)
 		{
-			lock(originalResource)
+			lock(ResourceConversions)
 			{
 				ResourceConversions.Add(originalResource, convertedResource);
 			}
