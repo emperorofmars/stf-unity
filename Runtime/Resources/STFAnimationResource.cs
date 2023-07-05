@@ -94,7 +94,9 @@ namespace stf.serialisation
 					var keyframes = AnimationUtility.GetObjectReferenceCurve(clip, c);
 					foreach(var keyframe in keyframes)
 					{
-						keysJson.Add(new JObject() {{"time", keyframe.time}, {"value", state.GetResourceId(keyframe.value)}});
+						var id = keyframe.value is GameObject || keyframe.value is Transform ?
+								state.GetNodeId(keyframe.value is GameObject ? (GameObject)keyframe.value : ((Transform)keyframe.value).gameObject) : state.GetResourceId(keyframe.value);
+						keysJson.Add(new JObject() {{"time", keyframe.time}, {"value", id}});
 					}
 				}
 			}
@@ -124,54 +126,110 @@ namespace stf.serialisation
 				state.AddPostprocessTask(new Task(() => {
 					try
 					{
-						var curve = new AnimationCurve();
 						var target_id = (string)track["target_id"];
 						var property = (string)track["property"];
 						if(target_id == null || String.IsNullOrWhiteSpace(target_id)) throw new Exception("Target id for animation is null!");
 
-						// add keys depending on curve type
-						if((string)track["type"] != "reference")
-						{
-							if(track["keys"] != null) foreach(JObject key in track["keys"])
-							{
-								curve.AddKey((float)key["time"], (float)key["value"]);
-							}
-						}
-						else
-						{
-							throw new NotImplementedException();
-						}
-
 						var targetNode = state.GetNode(target_id);
 						var targetComponent = state.GetComponent(target_id);
 						var targetResource = state.GetResource(target_id);
-						if(targetNode != null)
+
+						if(track["keys"] == null) throw new Exception("Animation track must have keys!");
+
+						// add keys depending on curve type
+						if((string)track["type"] != "reference")
 						{
-							if(!state.GetContext().AnimationTranslators.ContainsKey(targetNode.GetType()))
-								throw new Exception("Property can't be translated: " + property);
-							var translatedProperty = state.GetContext().AnimationTranslators[targetNode.GetType()].ToUnity(property);
-							var targetType = (property.StartsWith("translation") || property.StartsWith("rotation") || property.StartsWith("scale")) ? typeof(Transform) : typeof(GameObject);
-							ret.SetCurve("STF_NODE:" + target_id, targetType, translatedProperty, curve);
+							var curve = new AnimationCurve();
+							foreach(JObject key in track["keys"])
+							{
+								curve.AddKey((float)key["time"], (float)key["value"]);
+							}
+							if(targetNode != null)
+							{
+								if(!state.GetContext().AnimationTranslators.ContainsKey(targetNode.GetType()))
+									throw new Exception("Property can't be translated: " + property);
+								var translatedProperty = state.GetContext().AnimationTranslators[targetNode.GetType()].ToUnity(property);
+								var targetType = (property.StartsWith("translation") || property.StartsWith("rotation") || property.StartsWith("scale")) ? typeof(Transform) : typeof(GameObject);
+								ret.SetCurve("STF_NODE:" + target_id, targetType, translatedProperty, curve);
+							}
+							else if(targetComponent != null)
+							{
+								if(!state.GetContext().AnimationTranslators.ContainsKey(targetComponent.GetType()))
+									throw new Exception("Property can't be translated: " + property);
+								var translatedProperty = state.GetContext().AnimationTranslators[targetComponent.GetType()].ToUnity(property);
+								var goId = targetComponent.gameObject.GetComponent<STFUUID>().id;
+								ret.SetCurve("STF_COMPONENT:" + goId + ":" + target_id, targetComponent.GetType(), translatedProperty, curve);
+							}
+							else if(targetResource != null)
+							{
+								if(!state.GetContext().AnimationTranslators.ContainsKey(targetResource.GetType()))
+									throw new Exception("Property can't be translated: " + property);
+								var translatedProperty = state.GetContext().AnimationTranslators[targetResource.GetType()].ToUnity(property);
+								ret.SetCurve("STF_RESOURCE:" + target_id, targetResource.GetType(), translatedProperty, curve);
+							}
+							else
+							{
+								throw new Exception("Target id for animation is invalid");
+							}
 						}
-						else if(targetComponent != null)
-						{
-							if(!state.GetContext().AnimationTranslators.ContainsKey(targetComponent.GetType()))
-								throw new Exception("Property can't be translated: " + property);
-							var translatedProperty = state.GetContext().AnimationTranslators[targetComponent.GetType()].ToUnity(property);
-							var goId = targetComponent.gameObject.GetComponent<STFUUID>().id;
-							ret.SetCurve("STF_COMPONENT:" + goId + ":" + target_id, targetComponent.GetType(), translatedProperty, curve);
-						}
-						else if(targetResource != null)
-						{
-							if(!state.GetContext().AnimationTranslators.ContainsKey(targetResource.GetType()))
-								throw new Exception("Property can't be translated: " + property);
-							var translatedProperty = state.GetContext().AnimationTranslators[targetResource.GetType()].ToUnity(property);
-							ret.SetCurve("STF_RESOURCE:" + target_id, targetResource.GetType(), translatedProperty, curve);
-						}
+#if UNITY_EDITOR
 						else
 						{
-							throw new Exception("Target id for animation is invalid");
+							var keyframes = new ObjectReferenceKeyframe[track["keys"].Count()];
+							for(int i = 0; i < keyframes.Length; i++)
+							{
+								keyframes[i].time = (float)track["keys"][i]["time"];
+								keyframes[i].value = state.GetResource((string)track["keys"][i]["value"]);
+							}
+							if(targetNode != null)
+							{
+								if(!state.GetContext().AnimationTranslators.ContainsKey(targetNode.GetType()))
+									throw new Exception("Property can't be translated: " + property);
+								var translatedProperty = state.GetContext().AnimationTranslators[targetNode.GetType()].ToUnity(property);
+								var targetType = (property.StartsWith("translation") || property.StartsWith("rotation") || property.StartsWith("scale")) ? typeof(Transform) : typeof(GameObject);
+								
+								var newBinding = new EditorCurveBinding();
+								newBinding.path = "STF_NODE:" + target_id;
+								newBinding.propertyName = translatedProperty;
+								newBinding.type = targetType;
+								AnimationUtility.SetObjectReferenceCurve(ret, newBinding, keyframes);
+							}
+							else if(targetComponent != null)
+							{
+								if(!state.GetContext().AnimationTranslators.ContainsKey(targetComponent.GetType()))
+									throw new Exception("Property can't be translated: " + property);
+								var translatedProperty = state.GetContext().AnimationTranslators[targetComponent.GetType()].ToUnity(property);
+								var goId = targetComponent.gameObject.GetComponent<STFUUID>().id;
+								
+								var newBinding = new EditorCurveBinding();
+								newBinding.path = "STF_COMPONENT:" + goId + ":" + target_id;
+								newBinding.propertyName = translatedProperty;
+								newBinding.type = targetComponent.GetType();
+								AnimationUtility.SetObjectReferenceCurve(ret, newBinding, keyframes);
+							}
+							else if(targetResource != null)
+							{
+								if(!state.GetContext().AnimationTranslators.ContainsKey(targetResource.GetType()))
+									throw new Exception("Property can't be translated: " + property);
+								var translatedProperty = state.GetContext().AnimationTranslators[targetResource.GetType()].ToUnity(property);
+								
+								var newBinding = new EditorCurveBinding();
+								newBinding.path = "STF_RESOURCE:" + target_id;
+								newBinding.propertyName = translatedProperty;
+								newBinding.type = targetResource.GetType();
+								AnimationUtility.SetObjectReferenceCurve(ret, newBinding, keyframes);
+							}
+							else
+							{
+								throw new Exception("Target id for animation is invalid");
+							}
 						}
+#else
+						else
+						{
+							throw new Exception("Cannot handle reference animation-curves at runtime!");
+						}
+#endif
 					}
 					catch(Exception e)
 					{
@@ -198,7 +256,7 @@ namespace stf.serialisation
 
 			ConvertCurve(root, AnimationUtility.GetCurveBindings(originalAnim), originalAnim, convertedAnim);
 			ConvertCurve(root, AnimationUtility.GetObjectReferenceCurveBindings(originalAnim), originalAnim, convertedAnim);
-			
+
 			return convertedAnim;
 		}
 
