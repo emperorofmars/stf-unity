@@ -76,7 +76,7 @@ namespace stf.serialisation
 			{
 				foreach(var addonTriggerComponent in root.GetComponentsInChildren(addonType))
 				{
-					context.AddonTriggers[addonType].apply(addonTriggerComponent, root);
+					context.AddonTriggers[addonType].Apply(addonTriggerComponent, root);
 				}
 			}
 			return root;

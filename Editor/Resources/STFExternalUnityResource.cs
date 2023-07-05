@@ -9,7 +9,7 @@ namespace stf.serialisation
 	public class STFExternalUnityResourceExporter : ASTFResourceExporter
 	{
 
-		override public JToken serializeToJson(ISTFExporter state, UnityEngine.Object unityResource)
+		override public JToken SerializeToJson(ISTFExporter state, UnityEngine.Object unityResource)
 		{
 			var ret = new JObject();
 			ret.Add("type", "external");
@@ -27,7 +27,7 @@ namespace stf.serialisation
 
 	public class STFExternalResourceImporter : ASTFResourceImporter
 	{
-		override public UnityEngine.Object parseFromJson(ISTFImporter state, JToken json, string id, JObject jsonRoot)
+		override public UnityEngine.Object ParseFromJson(ISTFImporter state, JToken json, string id, JObject jsonRoot)
 		{
 			var assets = AssetDatabase.LoadAllAssetsAtPath((string)json["path"]);
 			if(assets.Length == 1) return assets[0];

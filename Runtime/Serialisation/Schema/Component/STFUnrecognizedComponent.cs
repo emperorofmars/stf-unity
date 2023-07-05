@@ -17,12 +17,12 @@ namespace stf.Components
 		[Multiline]
 		public string json;
 
-		public JToken serializeToJson(ISTFExporter state)
+		public JToken SerializeToJson(ISTFExporter state)
 		{
 			return new JRaw(json);
 		}
 
-		public void parseFromJson(ISTFImporter state, JToken json)
+		public void ParseFromJson(ISTFImporter state, JToken json)
 		{
 			this.type = (string)json["type"];
 			this.json = ((JObject)json).ToString();

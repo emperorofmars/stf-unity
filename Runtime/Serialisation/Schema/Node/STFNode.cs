@@ -8,7 +8,7 @@ namespace stf.serialisation
 {
 	public class STFNodeExporter
 	{
-		public static JObject serializeToJson(GameObject go, ISTFExporter state)
+		public static JObject SerializeToJson(GameObject go, ISTFExporter state)
 		{
 			var ret = new JObject();
 			ret.Add("name", go.name);
@@ -29,7 +29,7 @@ namespace stf.serialisation
 			return ret;
 		}
 
-		public static JObject serializeBoneInstanceToJson(GameObject go, ISTFExporter state, string boneId)
+		public static JObject SerializeBoneInstanceToJson(GameObject go, ISTFExporter state, string boneId)
 		{
 			var ret = new JObject();
 			ret.Add("name", go.name);
@@ -48,7 +48,7 @@ namespace stf.serialisation
 	{
 		public static string _TYPE = "default";
 		
-		public GameObject parseFromJson(ISTFImporter state, JToken json, JObject jsonRoot, out List<string> nodesToParse)
+		public GameObject ParseFromJson(ISTFImporter state, JToken json, JObject jsonRoot, out List<string> nodesToParse)
 		{
 			var go = new GameObject();
 			go.name = (string)json["name"];

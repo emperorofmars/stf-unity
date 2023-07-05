@@ -5,6 +5,6 @@ namespace stf.serialisation
 {
 	public interface ISTFAddonTrigger
 	{
-		void apply(Component triggerComponent, GameObject root);
+		void Apply(Component triggerComponent, GameObject root);
 	}
 }

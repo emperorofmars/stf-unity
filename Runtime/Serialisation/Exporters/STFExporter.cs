@@ -165,7 +165,7 @@ namespace stf.serialisation
 			if(id == null || id.Length == 0) id = Guid.NewGuid().ToString();
 
 			resourceIds.Add(unityResource, id);
-			resources.Add(id, (JObject)exporter.serializeToJson(this, unityResource));
+			resources.Add(id, (JObject)exporter.SerializeToJson(this, unityResource));
 			return;
 		}
 
@@ -218,7 +218,7 @@ namespace stf.serialisation
 			if(component.GetType() == typeof(STFUnrecognizedComponent))
 			{
 				var componentId = GetComponentId(component);
-				var jsonComponent = ((STFUnrecognizedComponent)component).serializeToJson(this);
+				var jsonComponent = ((STFUnrecognizedComponent)component).SerializeToJson(this);
 				AddComponentToNode(nodeId, componentId, jsonComponent);
 				return;
 			}
@@ -230,7 +230,7 @@ namespace stf.serialisation
 		{
 			registerComponentTasks.Add(new Task(() => {
 				string componentId = GetComponentId(component);
-				var jsonComponent = exporter.serializeToJson(this, component);
+				var jsonComponent = exporter.SerializeToJson(this, component);
 				AddComponentToNode(nodeId, componentId, jsonComponent);
 			}));
 			return;

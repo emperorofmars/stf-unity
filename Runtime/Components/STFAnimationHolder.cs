@@ -26,7 +26,7 @@ namespace stf.Components
 
 	public class STFAnimationHolderImporter : ASTFComponentImporter
 	{
-		override public void parseFromJson(ISTFImporter state, ISTFAsset asset, JToken json, string id, GameObject go)
+		override public void ParseFromJson(ISTFImporter state, ISTFAsset asset, JToken json, string id, GameObject go)
 		{
 			var c = go.AddComponent<STFAnimationHolder>();
 			state.AddComponent(id, c);
@@ -41,12 +41,12 @@ namespace stf.Components
 
 	public class STFAnimationHolderExporter : ASTFComponentExporter
 	{
-		public override List<KeyValuePair<UnityEngine.Object, Dictionary<string, System.Object>>> gatherResources(Component component)
+		public override List<KeyValuePair<UnityEngine.Object, Dictionary<string, System.Object>>> GatherResources(Component component)
 		{
 			return ((STFAnimationHolder)component).animations.Select(a => new KeyValuePair<UnityEngine.Object, Dictionary<string, System.Object>>(a, new Dictionary<string, System.Object> {{"root", component.gameObject}})).ToList();
 		}
 
-		override public JToken serializeToJson(ISTFExporter state, Component component)
+		override public JToken SerializeToJson(ISTFExporter state, Component component)
 		{
 			var ret = new JObject();
 			STFAnimationHolder c = (STFAnimationHolder)component;

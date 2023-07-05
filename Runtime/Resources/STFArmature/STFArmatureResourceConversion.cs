@@ -119,7 +119,7 @@ namespace stf.serialisation
 	{
 		public static string _TYPE = "STF.armature";
 
-		public override UnityEngine.Object parseFromJson(ISTFImporter state, JToken json, string id, JObject jsonRoot)
+		public override UnityEngine.Object ParseFromJson(ISTFImporter state, JToken json, string id, JObject jsonRoot)
 		{
 			var armatureResource = ScriptableObject.CreateInstance<STFArmatureResource>();
 			armatureResource.parseFromJson(state, json, id, jsonRoot);

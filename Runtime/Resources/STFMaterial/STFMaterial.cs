@@ -49,7 +49,7 @@ namespace stf.serialisation
 
 	public class STFMaterialExporter : ASTFResourceExporter
 	{
-		public override JToken serializeToJson(ISTFExporter state, UnityEngine.Object resource)
+		public override JToken SerializeToJson(ISTFExporter state, UnityEngine.Object resource)
 		{
 			var material = (Material)resource;
 			var ret = new JObject();
@@ -93,7 +93,7 @@ namespace stf.serialisation
 	{
 		public static string _TYPE = "STF.material";
 
-		public override UnityEngine.Object parseFromJson(ISTFImporter state, JToken json, string id, JObject jsonRoot)
+		public override UnityEngine.Object ParseFromJson(ISTFImporter state, JToken json, string id, JObject jsonRoot)
 		{
 			var stfMaterial = ScriptableObject.CreateInstance<STFMaterial>();
 			stfMaterial.name = (string)json["name"];

@@ -17,7 +17,7 @@ namespace stf.serialisation
 #if UNITY_EDITOR
 	public class STFAnimationExporter : ASTFResourceExporter
 	{
-		public override JToken serializeToJson(ISTFExporter state, UnityEngine.Object resource)
+		public override JToken SerializeToJson(ISTFExporter state, UnityEngine.Object resource)
 		{
 			var clip = (AnimationClip)resource;
 			var ret = new JObject();
@@ -107,7 +107,7 @@ namespace stf.serialisation
 	{
 		public static string _TYPE = "STF.animation";
 
-		public override UnityEngine.Object parseFromJson(ISTFImporter state, JToken json, string id, JObject jsonRoot)
+		public override UnityEngine.Object ParseFromJson(ISTFImporter state, JToken json, string id, JObject jsonRoot)
 		{
 			var ret = new AnimationClip();
 			ret.name = (string)json["name"];

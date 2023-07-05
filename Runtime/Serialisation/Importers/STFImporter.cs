@@ -162,7 +162,7 @@ namespace stf.serialisation
 					if((string)jsonResource.Value["type"] != null && context.ResourceImporters.ContainsKey((string)jsonResource.Value["type"]))
 					{
 						var resourceImporter = context.ResourceImporters[(string)jsonResource.Value["type"]];
-						var resource = resourceImporter.parseFromJson(this, jsonResource.Value, jsonResource.Key, jsonRoot);
+						var resource = resourceImporter.ParseFromJson(this, jsonResource.Value, jsonResource.Key, jsonRoot);
 						resources.Add(jsonResource.Key, resource);
 					}
 					else

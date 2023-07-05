@@ -87,7 +87,7 @@ namespace stf.serialisation
 				}
 				else
 				{
-					var node = STFArmatureInstanceNodeExporter.serializeToJson(go, state, armatureInstances[go.transform].id, armatureInstancesBoneInstances[go.transform]);
+					var node = STFArmatureInstanceNodeExporter.SerializeToJson(go, state, armatureInstances[go.transform].id, armatureInstancesBoneInstances[go.transform]);
 					state.RegisterNode(nodeId, node, go);
 					return true;
 				}
@@ -107,7 +107,7 @@ namespace stf.serialisation
 					}
 					if(armatureInstance != null) break;
 				}
-				var node = STFBoneInstanceNodeExporter.serializeToJson(go, state, boneMappings[go.transform], armatureInstancesBoneInstances[armatureInstance]);
+				var node = STFBoneInstanceNodeExporter.SerializeToJson(go, state, boneMappings[go.transform], armatureInstancesBoneInstances[armatureInstance]);
 				state.RegisterNode(nodeId, node, go);
 				return true;
 			}

@@ -7,17 +7,17 @@ namespace stf.serialisation
 {
 	public abstract class ASTFComponentExporter
 	{
-		virtual public List<GameObject> gatherNodes(Component component)
+		virtual public List<GameObject> GatherNodes(Component component)
 		{
 			return null;
 		}
 
-		virtual public List<KeyValuePair<UnityEngine.Object, Dictionary<string, System.Object>>> gatherResources(Component component)
+		virtual public List<KeyValuePair<UnityEngine.Object, Dictionary<string, System.Object>>> GatherResources(Component component)
 		{
 			return null;
 		}
 
-		abstract public JToken serializeToJson(ISTFExporter state, Component component);
+		abstract public JToken SerializeToJson(ISTFExporter state, Component component);
 
 		protected void SerializeRelationships(ISTFComponent component, JObject json)
 		{
@@ -29,7 +29,7 @@ namespace stf.serialisation
 	
 	public abstract class ASTFComponentImporter
 	{
-		abstract public void parseFromJson(ISTFImporter state, ISTFAsset asset, JToken json, string id, GameObject go);
+		abstract public void ParseFromJson(ISTFImporter state, ISTFAsset asset, JToken json, string id, GameObject go);
 
 		protected void ParseRelationships(JToken json, ISTFComponent component)
 		{

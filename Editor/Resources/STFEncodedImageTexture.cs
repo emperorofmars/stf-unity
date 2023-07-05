@@ -14,7 +14,7 @@ namespace stf.serialisation
 		public static string _TYPE = "STF.texture";
 		public string imageParentPath = null;
 
-		public override UnityEngine.Object parseFromJson(ISTFImporter state, JToken json, string id, JObject jsonRoot)
+		public override UnityEngine.Object ParseFromJson(ISTFImporter state, JToken json, string id, JObject jsonRoot)
 		{
 			var arrayBuffer = state.GetBuffer((string)json["buffer"]);
 			var name = (string)json["name"];

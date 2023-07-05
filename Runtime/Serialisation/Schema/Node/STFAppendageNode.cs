@@ -13,7 +13,7 @@ namespace stf.serialisation
 
 	public class STFAppendageNodeExporter
 	{
-		public static JObject serializeToJson(GameObject go, ISTFExporter state)
+		public static JObject SerializeToJson(GameObject go, ISTFExporter state)
 		{
 			var ret = new JObject();
 			ret.Add("type", STFAppendageNodeImporter._TYPE);
@@ -41,7 +41,7 @@ namespace stf.serialisation
 	{
 		public static string _TYPE = "appendage";
 		
-		public GameObject parseFromJson(ISTFImporter state, JToken json, JObject jsonRoot, out List<string> nodesToParse)
+		public GameObject ParseFromJson(ISTFImporter state, JToken json, JObject jsonRoot, out List<string> nodesToParse)
 		{
 			var go = new GameObject();
 			go.name = (string)json["name"];

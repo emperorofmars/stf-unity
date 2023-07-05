@@ -22,7 +22,7 @@ namespace stf.serialisation
 	{
 		public static string _TYPE = "STF.texture_view";
 
-		public override UnityEngine.Object parseFromJson(ISTFImporter state, JToken json, string id, JObject jsonRoot)
+		public override UnityEngine.Object ParseFromJson(ISTFImporter state, JToken json, string id, JObject jsonRoot)
 		{
 			var ret = ScriptableObject.CreateInstance<STFTextureView>();
 			ret.channel = (int)json["channel"];

@@ -26,7 +26,7 @@ namespace stf.Components
 
 	public class STFTwistConstraintForwardImporter : ASTFComponentImporter
 	{
-		override public void parseFromJson(ISTFImporter state, ISTFAsset asset, JToken json, string id, GameObject go)
+		override public void ParseFromJson(ISTFImporter state, ISTFAsset asset, JToken json, string id, GameObject go)
 		{
 			var c = go.AddComponent<STFTwistConstraintForward>();
 			state.AddComponent(id, c);
@@ -39,14 +39,14 @@ namespace stf.Components
 
 	public class STFTwistConstraintForwardExporter : ASTFComponentExporter
 	{
-		override public List<GameObject> gatherNodes(Component component)
+		override public List<GameObject> GatherNodes(Component component)
 		{
 			var c = (STFTwistConstraintForward)component;
 			var ret = new List<GameObject>();
 			if(c.target) ret.Add(c.target);
 			return ret;
 		}
-		override public JToken serializeToJson(ISTFExporter state, Component component)
+		override public JToken SerializeToJson(ISTFExporter state, Component component)
 		{
 			var ret = new JObject();
 			STFTwistConstraintForward c = (STFTwistConstraintForward)component;
@@ -60,7 +60,7 @@ namespace stf.Components
 
 	public class STFTwistConstraintForwardConverter : ISTFSecondStageConverter
 	{
-		public void convert(Component component, GameObject root, List<UnityEngine.Object> resources, ISTFSecondStageContext context)
+		public void Convert(Component component, GameObject root, List<UnityEngine.Object> resources, ISTFSecondStageContext context)
 		{
 			var stfComponent = (STFTwistConstraintForward)component;
 			var converted = component.gameObject.AddComponent<RotationConstraint>();

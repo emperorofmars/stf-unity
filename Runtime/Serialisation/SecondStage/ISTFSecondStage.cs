@@ -67,7 +67,7 @@ namespace stf.serialisation
 				foreach(var component in components)
 				{
 					if(context.RelMat.IsMatched(component))
-						converter.Value.convert(component, root, resources, context);
+						converter.Value.Convert(component, root, resources, context);
 				}
 			}
 		}

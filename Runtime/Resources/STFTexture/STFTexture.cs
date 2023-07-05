@@ -12,7 +12,7 @@ namespace stf.serialisation
 {
 	public class STFTextureExporter : ASTFResourceExporter
 	{
-		public override JToken serializeToJson(ISTFExporter state, UnityEngine.Object resource)
+		public override JToken SerializeToJson(ISTFExporter state, UnityEngine.Object resource)
 		{
 			var texture = (Texture2D)resource;
 			var ret = new JObject();
@@ -78,7 +78,7 @@ namespace stf.serialisation
 	{
 		public static string _TYPE = "STF.texture";
 
-		public override UnityEngine.Object parseFromJson(ISTFImporter state, JToken json, string id, JObject jsonRoot)
+		public override UnityEngine.Object ParseFromJson(ISTFImporter state, JToken json, string id, JObject jsonRoot)
 		{
 			// will load the gpu compressed data into memory, use only for runtime use
 			var arrayBuffer = state.GetBuffer((string)json["buffer"]);

@@ -9,7 +9,7 @@ namespace stf.serialisation
 {
 	public class STFArmatureInstanceNodeExporter
 	{
-		public static JObject serializeToJson(GameObject go, ISTFExporter state, string armatureId, Transform[] boneInstances)
+		public static JObject SerializeToJson(GameObject go, ISTFExporter state, string armatureId, Transform[] boneInstances)
 		{
 			var ret = new JObject();
 			ret.Add("name", go.name);
@@ -45,7 +45,7 @@ namespace stf.serialisation
 	{
 		public static string _TYPE = "armature_instance";
 
-		public GameObject parseFromJson(ISTFImporter state, JToken json, JObject jsonRoot, out List<string> nodesToParse)
+		public GameObject ParseFromJson(ISTFImporter state, JToken json, JObject jsonRoot, out List<string> nodesToParse)
 		{
 			var go = new GameObject();
 			go.name = (string)json["name"];

@@ -11,17 +11,7 @@ namespace stf.serialisation
 {
 	public class STFMeshExporter : ASTFResourceExporter
 	{
-		override public List<GameObject> gatherNodes(UnityEngine.Object resource)
-		{
-			return null;
-		}
-
-		override public List<KeyValuePair<UnityEngine.Object, Dictionary<string, System.Object>>> gatherResources(UnityEngine.Object resource)
-		{
-			return null;
-		}
-
-		override public JToken serializeToJson(ISTFExporter state, UnityEngine.Object resource)
+		override public JToken SerializeToJson(ISTFExporter state, UnityEngine.Object resource)
 		{
 			var ret = new JObject();
 			var mesh = (Mesh)resource;
@@ -262,7 +252,7 @@ namespace stf.serialisation
 	public class STFMeshImporter : ASTFResourceImporter
 	{
 		public static string _TYPE = "STF.mesh";
-		override public UnityEngine.Object parseFromJson(ISTFImporter state, JToken json, string id, JObject jsonRoot)
+		override public UnityEngine.Object ParseFromJson(ISTFImporter state, JToken json, string id, JObject jsonRoot)
 		{
 			var ret = new Mesh();
 			ret.name = (string)json["name"];

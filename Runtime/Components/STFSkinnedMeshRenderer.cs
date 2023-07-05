@@ -10,7 +10,7 @@ namespace stf.Components
 	public class STFMeshInstanceImporter : ASTFComponentImporter
 	{
 		public static string _TYPE = "STF.mesh_instance";
-		override public void parseFromJson(ISTFImporter state, ISTFAsset asset, JToken json, string id, GameObject go)
+		override public void ParseFromJson(ISTFImporter state, ISTFAsset asset, JToken json, string id, GameObject go)
 		{
 			var c = go.AddComponent<SkinnedMeshRenderer>();
 			var uuidComponent = go.GetComponent<STFUUID>();
@@ -67,7 +67,7 @@ namespace stf.Components
 	public class STFMeshInstanceExporter : ASTFComponentExporter
 	{
 
-		override public List<KeyValuePair<UnityEngine.Object, Dictionary<string, System.Object>>> gatherResources(Component component)
+		override public List<KeyValuePair<UnityEngine.Object, Dictionary<string, System.Object>>> GatherResources(Component component)
 		{
 			SkinnedMeshRenderer c = (SkinnedMeshRenderer)component;
 			var ret = new List<KeyValuePair<UnityEngine.Object, Dictionary<string, System.Object>>>();
@@ -76,7 +76,7 @@ namespace stf.Components
 			return ret;
 		}
 
-		override public JToken serializeToJson(ISTFExporter state, Component component)
+		override public JToken SerializeToJson(ISTFExporter state, Component component)
 		{
 			SkinnedMeshRenderer c = (SkinnedMeshRenderer)component;
 			var ret = new JObject();
@@ -95,7 +95,7 @@ namespace stf.Components
 
 	public class STFMeshInstanceAddonApplier : ISTFAddonTrigger
 	{
-		public void apply(Component triggerComponent, GameObject root)
+		public void Apply(Component triggerComponent, GameObject root)
 		{
 			GameObject go = triggerComponent.gameObject;
 			var smr = go.GetComponent<SkinnedMeshRenderer>();

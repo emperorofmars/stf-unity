@@ -42,7 +42,7 @@ namespace stf.serialisation
 					var go = transform.gameObject;
 					var nodeUuidComponent = go.GetComponent<STFUUID>();
 					var nodeId = nodeUuidComponent != null && nodeUuidComponent.id != null && nodeUuidComponent.id.Length > 0 ? nodeUuidComponent.id : Guid.NewGuid().ToString();
-					state.RegisterNode(nodeId, STFNodeExporter.serializeToJson(go, state), go);
+					state.RegisterNode(nodeId, STFNodeExporter.SerializeToJson(go, state), go);
 				}
 			}
 
@@ -65,7 +65,7 @@ namespace stf.serialisation
 					else if(state.GetContext().ComponentExporters.ContainsKey(component.GetType()))
 					{
 						var componentExporter = state.GetContext().ComponentExporters[component.GetType()];
-						gatherResources(state, componentExporter.gatherResources(component));
+						gatherResources(state, componentExporter.GatherResources(component));
 						state.RegisterComponent(nodeId, component, componentExporter);
 					}
 					else
@@ -84,7 +84,7 @@ namespace stf.serialisation
 				{
 					if(!state.GetContext().ResourceExporters.ContainsKey(resource.Key.GetType()))
 						throw new Exception("Unsupported Resource Encountered: " + resource.Key.GetType());
-					gatherResources(state, state.GetContext().ResourceExporters[resource.Key.GetType()].gatherResources(resource.Key));
+					gatherResources(state, state.GetContext().ResourceExporters[resource.Key.GetType()].GatherResources(resource.Key));
 					state.RegisterResource(resource.Key);
 					if(resource.Value != null && resource.Value.Count > 0) foreach(var ctx in resource.Value) state.AddResourceContext(resource.Key, ctx.Key, ctx.Value);
 				}
@@ -178,7 +178,7 @@ namespace stf.serialisation
 				throw new Exception($"Nodetype '{nodetype}' is not supported.");
 
 			var nodesToParse = new List<string>();
-			state.AddNode(nodeId, state.GetContext().NodeImporters[nodetype].parseFromJson(state, jsonNode, jsonRoot, out nodesToParse));
+			state.AddNode(nodeId, state.GetContext().NodeImporters[nodetype].ParseFromJson(state, jsonNode, jsonRoot, out nodesToParse));
 			
 			if(nodesToParse != null)
 			{
@@ -197,13 +197,13 @@ namespace stf.serialisation
 						if((string)jsonComponent.Value["type"] != null && state.GetContext().ComponentImporters.ContainsKey((string)jsonComponent.Value["type"]))
 						{
 							var componentImporter = state.GetContext().ComponentImporters[(string)jsonComponent.Value["type"]];
-							componentImporter.parseFromJson(state, asset, jsonComponent.Value, jsonComponent.Key, go);
+							componentImporter.ParseFromJson(state, asset, jsonComponent.Value, jsonComponent.Key, go);
 						}
 						else
 						{
 							var unrecognizedComponent = (STFUnrecognizedComponent)go.AddComponent<STFUnrecognizedComponent>();
 							unrecognizedComponent.id = jsonComponent.Key;
-							unrecognizedComponent.parseFromJson(state, jsonComponent.Value);
+							unrecognizedComponent.ParseFromJson(state, jsonComponent.Value);
 						}
 					}
 				}));
