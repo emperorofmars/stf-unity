@@ -37,7 +37,7 @@ namespace stf
 				}
 			}
 
-			// TODO: compare bind poses to see if the same armature is used multiple times in the scene
+			// TODO: compare bind poses to see if the same armature, or a subset of one, is used multiple times in the scene
 
 			foreach(var rootBone in rootBones)
 			{
