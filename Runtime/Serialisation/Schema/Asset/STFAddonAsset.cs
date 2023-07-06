@@ -19,6 +19,11 @@ namespace stf.serialisation
 		public void Convert(ISTFExporter state)
 		{
 			if(rootNode == null) throw new Exception("Root node must not be null");
+			var rootNodeInstance = UnityEngine.Object.Instantiate(rootNode);
+			rootNodeInstance.name = rootNode.name;
+			state.AddTrashObject(rootNodeInstance);
+
+			STFSetup.SetupAddonAssetInplace(rootNodeInstance);
 
 			var assetInfo = rootNode.GetComponent<STFAssetInfo>();
 			if(assetInfo != null)
@@ -33,9 +38,6 @@ namespace stf.serialisation
 			}
 
 			targetId = rootNode.GetComponent<STFAddonAssetInfo>()?.targetAssetId;
-
-			var armatureState = new STFAssetArmatureHandler();
-			armatureState.GatherArmatures(state, rootNode.GetComponentsInChildren<SkinnedMeshRenderer>(), rootNode);
 
 			var transforms = rootNode.GetComponentsInChildren<Transform>();
 			foreach(var transform in transforms)
@@ -63,10 +65,7 @@ namespace stf.serialisation
 				}
 				else
 				{
-					if(armatureState.HandleBoneInstance(state, transform) == false)
-					{
-						state.RegisterNode(nodeId, STFNodeExporter.SerializeToJson(go, state), go);
-					}
+					STFNodeHandler.RegisterNode(state, transform);
 				}
 			}
 

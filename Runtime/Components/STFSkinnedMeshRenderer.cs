@@ -71,7 +71,15 @@ namespace stf.Components
 		{
 			SkinnedMeshRenderer c = (SkinnedMeshRenderer)component;
 			var ret = new List<KeyValuePair<UnityEngine.Object, Dictionary<string, System.Object>>>();
-			ret.Add(new KeyValuePair<UnityEngine.Object, Dictionary<string, System.Object>> (c.sharedMesh, null));
+			if(c.GetComponent<STFSkinnedMeshRendererAddon>() == null)
+			{
+				ret.Add(new KeyValuePair<UnityEngine.Object, Dictionary<string, System.Object>> (c.rootBone.parent.GetComponent<STFArmatureInstance>().armature, null));
+				ret.Add(new KeyValuePair<UnityEngine.Object, Dictionary<string, System.Object>> (c.sharedMesh, new Dictionary<string, object>{{"armature", c.rootBone.parent.GetComponent<STFArmatureInstance>().armature}}));
+			}
+			else
+			{
+				ret.Add(new KeyValuePair<UnityEngine.Object, Dictionary<string, System.Object>> (c.sharedMesh, new Dictionary<string, object>{{"armature_id", c.GetComponent<STFSkinnedMeshRendererAddon>().ArmatureInstanceId}}));
+			}
 			foreach(var material in c.sharedMaterials) if(material != null) ret.Add(new KeyValuePair<UnityEngine.Object, Dictionary<string, System.Object>> (material, null));
 			return ret;
 		}

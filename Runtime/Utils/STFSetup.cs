@@ -11,7 +11,6 @@ namespace stf
 		public static List<UnityEngine.Object> SetupStandaloneAssetInplace(GameObject root)
 		{
 			var ret = new List<UnityEngine.Object>();
-
 			// Setup main asset info
 			if(root.GetComponent<STFAssetInfo>() == null)
 			{
@@ -20,7 +19,35 @@ namespace stf
 				asset.assetType = "asset";
 				asset.assetName = root.name;
 			}
+			SetupIds(root);
 
+			ret.AddRange(STFArmatureUtil.FindAndSetupArmatures(root));
+			return ret;
+		}
+
+		public static List<UnityEngine.Object> SetupAddonAssetInplace(GameObject root)
+		{
+			var ret = new List<UnityEngine.Object>();
+			if(root.GetComponent<STFAssetInfo>() == null)
+			{
+				var asset = root.AddComponent<STFAssetInfo>();
+				asset.assetId = Guid.NewGuid().ToString();
+				asset.assetType = "addon";
+				asset.assetName = root.name;
+			}
+			for(int i = 0; i < root.transform.childCount; i++)
+			{
+				var child = root.transform.GetChild(i).gameObject;
+				SetupIds(child);
+			}
+
+			ret.AddRange(STFArmatureUtil.FindAndSetupArmatures(root));
+			STFArmatureUtil.FindAndSetupExternalArmatures(root);
+			return ret;
+		}
+
+		public static void SetupIds(GameObject root)
+		{
 			// Setup Id's for all gameobjects and suitable components
 			foreach(var c in root.GetComponentsInChildren<Transform>())
 			{
@@ -37,10 +64,8 @@ namespace stf
 					if(id.componentIds.Find(i => i.component == skm) == null) id.componentIds.Add(new STFUUID.ComponentIdMapping{component = skm, id = Guid.NewGuid().ToString()});
 				}
 			}
-			ret.AddRange(STFArmatureUtil.FindAndSetupArmatures(root));
-			return ret;
 		}
 		
-		// TODO: seperate function to determine some components from naming, like twistbones and such
+		// TODO: seperate optional function to determine some components from naming, like twistbones and such
 	}
 }

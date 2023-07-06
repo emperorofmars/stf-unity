@@ -10,7 +10,7 @@ namespace stf
 {
 	public class STFArmatureInstance : MonoBehaviour
 	{
-		public STFArmatureResource armature;
+		public STFArmature armature;
 		public GameObject root;
 		public GameObject[] bones;
 	}
@@ -65,7 +65,7 @@ namespace stf
 			go.transform.localRotation = new Quaternion((float)json["trs"][1][0], (float)json["trs"][1][1], (float)json["trs"][1][2], (float)json["trs"][1][3]);
 			go.transform.localScale = new Vector3((float)json["trs"][2][0], (float)json["trs"][2][1], (float)json["trs"][2][2]);
 
-			var armature = (STFArmatureResource)state.GetResource((string)json["armature"]);
+			var armature = (STFArmature)state.GetResource((string)json["armature"]);
 			var transforms = armature.instantiate();
 			var rootInstance = transforms.First(t => t.GetComponent<STFUUID>().boneId == armature.rootId);
 

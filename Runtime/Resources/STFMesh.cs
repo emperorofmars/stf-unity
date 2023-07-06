@@ -130,9 +130,17 @@ namespace stf.serialisation
 				state.AddTask(new Task(() => {
 					ret.Add("skinned", true);
 					var resourceContext = state.GetResourceContext(mesh);
-					if(resourceContext != null || resourceContext.ContainsKey("armature"))
+					if(resourceContext != null && resourceContext.ContainsKey("armature"))
 					{
-						ret.Add("armature", (string)state.GetResourceContext(mesh)["armature"]);
+						ret.Add("armature", state.GetResourceId((STFArmature)resourceContext["armature"]));
+					}
+					else if(resourceContext != null && resourceContext.ContainsKey("armature_id"))
+					{
+						ret.Add("armature", (string)resourceContext["armature_id"]);
+					}
+					else
+					{
+						throw new Exception("No armature resource context for mesh :(");
 					}
 				}));
 
@@ -380,7 +388,7 @@ namespace stf.serialisation
 				ret.SetBoneWeights(bonesPerVertexNat, weights);
 
 				state.AddTask(new Task(() => {
-					var armature = (STFArmatureResource)state.GetResource((string)json["armature"]);
+					var armature = (STFArmature)state.GetResource((string)json["armature"]);
 					if(armature != null) ret.bindposes = armature.bindposes;
 					//else state.GetMeta().addonTriggers.Add(new STFMeta.AddonTrigger{id = id, targetId = (string)json["armature"]}); // store armature id for later, when the addon gets applied to the object actually containing the armature
 				}));

@@ -39,6 +39,7 @@ namespace stf.serialisation
 			{STFAnimationImporter._TYPE, new STFAnimationImporter()}
 		};
 		public static readonly Dictionary<Type, ASTFResourceExporter> DefaultResourceExporters = new Dictionary<Type, ASTFResourceExporter>() {
+			{typeof(STFArmature), new STFArmatureExporter()},
 			{typeof(Mesh), new STFMeshExporter()},
 			{typeof(Texture2D), new STFTextureExporter()},
 			{typeof(Material), new STFMaterialExporter()},

@@ -21,6 +21,7 @@ namespace stf.serialisation
 			if(rootNode == null) throw new Exception("Root node must not be null");
 			var rootNodeInstance = UnityEngine.Object.Instantiate(rootNode);
 			rootNodeInstance.name = rootNode.name;
+			state.AddTrashObject(rootNodeInstance);
 
 			// Fill in all Id's, find armatures
 			STFSetup.SetupStandaloneAssetInplace(rootNodeInstance);
@@ -31,18 +32,11 @@ namespace stf.serialisation
 			if(assetInfo.originalMetaInformation != null) state.AddMeta(assetInfo.originalMetaInformation);
 
 			// TODO: handle node export by hot loaded components, determine which to use by explicit function
-			var armatureState = new STFAssetArmatureHandler();
-			armatureState.GatherArmatures(state, rootNodeInstance.GetComponentsInChildren<SkinnedMeshRenderer>(), rootNodeInstance);
+			
 			var transforms = rootNodeInstance.GetComponentsInChildren<Transform>();
 			foreach(var transform in transforms)
 			{
-				if(armatureState.HandleBoneInstance(state, transform) == false)
-				{
-					var go = transform.gameObject;
-					var nodeUuidComponent = go.GetComponent<STFUUID>();
-					var nodeId = nodeUuidComponent != null && nodeUuidComponent.id != null && nodeUuidComponent.id.Length > 0 ? nodeUuidComponent.id : Guid.NewGuid().ToString();
-					state.RegisterNode(nodeId, STFNodeExporter.SerializeToJson(go, state), go);
-				}
+				STFNodeHandler.RegisterNode(state, transform);
 			}
 
 			// Export Components and Resources
@@ -52,6 +46,7 @@ namespace stf.serialisation
 				var components = transform.GetComponents<Component>();
 				foreach(var component in components)
 				{
+					// Do this type of shit more legit, with hot pluggable types to skip
 					if(component.GetType() == typeof(Transform)) continue;
 					if(component.GetType() == typeof(STFUUID)) continue;
 					if(component.GetType() == typeof(Animator)) continue;
@@ -75,7 +70,6 @@ namespace stf.serialisation
 				}
 			}
 			rootNodeId = state.GetNodeId(rootNodeInstance);
-			state.AddTrashObject(rootNodeInstance);
 		}
 
 		private void gatherResources(ISTFExporter state, List<KeyValuePair<UnityEngine.Object, Dictionary<string, System.Object>>> resources)

@@ -11,7 +11,6 @@ namespace stf
 	{
 		public static void FindAndSetupExternalArmatures(GameObject root)
 		{
-			var ret = new List<STFArmatureResource>();
 			var tree = root.GetComponentsInChildren<Transform>();
 			var skinnedMeshRenderers = root.GetComponentsInChildren<SkinnedMeshRenderer>();
 
@@ -34,9 +33,9 @@ namespace stf
 		}
 
 
-		public static List<STFArmatureResource> FindAndSetupArmatures(GameObject root)
+		public static List<STFArmature> FindAndSetupArmatures(GameObject root)
 		{
-			var ret = new List<STFArmatureResource>();
+			var ret = new List<STFArmature>();
 			var tree = root.GetComponentsInChildren<Transform>();
 			var skinnedMeshRenderers = root.GetComponentsInChildren<SkinnedMeshRenderer>();
 
@@ -45,7 +44,7 @@ namespace stf
 			foreach(var smr in skinnedMeshRenderers)
 			{
 				// collect mesh renderers that share the same root bone
-				if(tree.FirstOrDefault(t => t == smr.rootBone.parent) != null)
+				if(tree.FirstOrDefault(t => t == smr.rootBone?.parent) != null)
 				{
 					if(!rootBones.ContainsKey(smr.rootBone)) rootBones.Add(smr.rootBone, new List<SkinnedMeshRenderer>{smr});
 					else rootBones[smr.rootBone].Add(smr);
@@ -73,13 +72,13 @@ namespace stf
 				var bones = takenSmr.bones;
 				var bindposes = takenSmr.sharedMesh.bindposes;
 
-				var armature = ScriptableObject.CreateInstance<STFArmatureResource>();
+				var armature = ScriptableObject.CreateInstance<STFArmature>();
 				armature.id = Guid.NewGuid().ToString();
 				armature.bindposes = bindposes;
 
 				for(int i = 0; i < bindposes.Length; i++)
 				{
-					armature.bones.Add(new STFArmatureResource.Bone {id = Guid.NewGuid().ToString()});
+					armature.bones.Add(new STFArmature.Bone {id = Guid.NewGuid().ToString()});
 				}
 				foreach(var smr in rootBone.Value)
 				{
