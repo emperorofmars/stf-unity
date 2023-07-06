@@ -8,17 +8,8 @@ using System;
 
 namespace stf.Components
 {
-	public class STFTwistConstraintForward : MonoBehaviour, ISTFComponent
+	public class STFTwistConstraintForward : ASTFComponent
 	{
-		public string _id = Guid.NewGuid().ToString();
-		public string id {get => _id; set => _id = value;}
-		public List<string> _extends;
-		public List<string> extends {get => _extends; set => _extends = value;}
-		public List<string> _overrides;
-		public List<string> overrides {get => _overrides; set => _overrides = value;}
-		public List<string> _targets;
-		public List<string> targets {get => _targets; set => _targets = value;}
-		
 		public static string _TYPE = "STF.constraint.twist_forward";
 		public GameObject target;
 		public float weight = 0.5f;
