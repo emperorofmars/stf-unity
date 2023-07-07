@@ -30,6 +30,11 @@ namespace stf.serialisation
 
 		public abstract bool CanHandle(ISTFAsset asset, UnityEngine.Object adaptedUnityAsset);
 
+		public virtual string GetPathForResourcesThatMustExistInFS(ISTFAsset asset, UnityEngine.Object adaptedUnityAsset)
+		{
+			return null;
+		}
+
 		public SecondStageResult Convert(ISTFAsset asset, UnityEngine.Object adaptedUnityAsset)
 		{
 			var originalRoot = (GameObject)adaptedUnityAsset;
@@ -39,10 +44,11 @@ namespace stf.serialisation
 			convertedRoot.name = originalRoot.name + "_" + GameObjectSuffix;
 			try
 			{
-				var context = new STFSecondStageContext(convertedRoot, Targets, new List<Type>(Converters.Keys), ResourceProcessors);
-				convertTree(convertedRoot, convertedResources, context);
+				var context = new STFSecondStageContext(convertedRoot, Targets, new List<Type>(Converters.Keys), ResourceProcessors, GetPathForResourcesThatMustExistInFS(asset, adaptedUnityAsset));
+				convertTree(convertedRoot, context);
 				context.RunTasks();
 				if(context.ResourceConversions.Count > 0) convertedResources.AddRange(context.ResourceConversions.Values);
+				if(context.Resources.Count > 0) convertedResources.AddRange(context.Resources);
 				cleanup(convertedRoot);
 			}
 			catch(Exception e)
@@ -59,7 +65,7 @@ namespace stf.serialisation
 			return new SecondStageResult {assets = new List<ISTFAsset>{secondStageAsset}, resources = convertedResources};
 		}
 
-		protected void convertTree(GameObject root, List<UnityEngine.Object> resources, STFSecondStageContext context)
+		protected void convertTree(GameObject root, STFSecondStageContext context)
 		{
 			foreach(var converter in Converters)
 			{
@@ -67,7 +73,7 @@ namespace stf.serialisation
 				foreach(var component in components)
 				{
 					if(context.RelMat.IsMatched(component))
-						converter.Value.Convert(component, root, resources, context);
+						converter.Value.Convert(component, root, context);
 				}
 			}
 		}

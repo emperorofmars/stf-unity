@@ -10,8 +10,10 @@ namespace stf.serialisation
 	{
 		STFRelationshipMatrix RelMat {get;}
 		void AddTask(Task task);
+		void AddResource(UnityEngine.Object resource);
 		void AddConvertedResource(UnityEngine.Object originalResource, UnityEngine.Object convertedResource);
 		UnityEngine.Object GetConvertedResource(GameObject root, UnityEngine.Object resource, STFSecondStageContext context);
+		string GetPathForResourcesThatMustExistInFS();
 	}
 
 	public class STFSecondStageContext : ISTFSecondStageContext
@@ -19,24 +21,47 @@ namespace stf.serialisation
 		private STFRelationshipMatrix _RelMat;
 		public STFRelationshipMatrix RelMat => _RelMat;
 		private List<Task> Tasks = new List<Task>();
+		public List<UnityEngine.Object> Resources = new List<UnityEngine.Object>();
 		Dictionary<Type, ISTFSecondStageResourceProcessor> ResourceProcessors = new Dictionary<Type, ISTFSecondStageResourceProcessor>();
 		public Dictionary<UnityEngine.Object, UnityEngine.Object> ResourceConversions = new Dictionary<UnityEngine.Object, UnityEngine.Object>();
+		public string PathForResourcesThatMustExistInFS;
+
+		public STFSecondStageContext(STFRelationshipMatrix relMat, Dictionary<Type, ISTFSecondStageResourceProcessor> resourceProcessors, string pathForResourcesThatMustExistInFS)
+		{
+			_RelMat = relMat;
+			ResourceProcessors = resourceProcessors;
+			PathForResourcesThatMustExistInFS = pathForResourcesThatMustExistInFS;
+		}
+
+		public STFSecondStageContext(GameObject root, List<string> targets, List<Type> conversibleTypes, Dictionary<Type, ISTFSecondStageResourceProcessor> resourceProcessors, string pathForResourcesThatMustExistInFS)
+		{
+			_RelMat = new STFRelationshipMatrix(root, targets, conversibleTypes);
+			ResourceProcessors = resourceProcessors;
+			PathForResourcesThatMustExistInFS = pathForResourcesThatMustExistInFS;
+		}
 
 		public STFSecondStageContext(STFRelationshipMatrix relMat, Dictionary<Type, ISTFSecondStageResourceProcessor> resourceProcessors)
 		{
 			_RelMat = relMat;
 			ResourceProcessors = resourceProcessors;
+			PathForResourcesThatMustExistInFS = null;
 		}
 
 		public STFSecondStageContext(GameObject root, List<string> targets, List<Type> conversibleTypes, Dictionary<Type, ISTFSecondStageResourceProcessor> resourceProcessors)
 		{
 			_RelMat = new STFRelationshipMatrix(root, targets, conversibleTypes);
 			ResourceProcessors = resourceProcessors;
+			PathForResourcesThatMustExistInFS = null;
 		}
 
 		public void AddTask(Task task)
 		{
 			Tasks.Add(task);
+		}
+		
+		public void AddResource(UnityEngine.Object resource)
+		{
+			if(!Resources.Contains(resource)) Resources.Add(resource);
 		}
 
 		public void AddConvertedResource(UnityEngine.Object originalResource, UnityEngine.Object convertedResource)
@@ -84,10 +109,15 @@ namespace stf.serialisation
 			}
 			while(Tasks.Count > 0 && iteration < maxIterationDepth);
 		}
+		
+		public string GetPathForResourcesThatMustExistInFS()
+		{
+			return PathForResourcesThatMustExistInFS;
+		}
 	}
 
 	public interface ISTFSecondStageConverter
 	{
-		void Convert(Component component, GameObject root, List<UnityEngine.Object> resources, ISTFSecondStageContext context);
+		void Convert(Component component, GameObject root, ISTFSecondStageContext context);
 	}
 }
