@@ -187,7 +187,7 @@ namespace stf.serialisation
 		public void AddResourceContext(UnityEngine.Object unityResource, string key, System.Object data)
 		{
 			if(!resourceContext.ContainsKey(unityResource)) resourceContext.Add(unityResource, new Dictionary<string, System.Object>());
-			resourceContext[unityResource].Add(key, data);
+			if(!resourceContext[unityResource].ContainsKey(key)) resourceContext[unityResource].Add(key, data);
 		}
 
 		public Dictionary<string, System.Object> GetResourceContext(UnityEngine.Object unityResource)
