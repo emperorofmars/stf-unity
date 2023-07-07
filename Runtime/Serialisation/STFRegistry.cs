@@ -43,7 +43,9 @@ namespace stf.serialisation
 			{typeof(Mesh), new STFMeshExporter()},
 			{typeof(Texture2D), new STFTextureExporter()},
 			{typeof(Material), new STFMaterialExporter()},
+#if UNITY_EDITOR
 			{typeof(AnimationClip), new STFAnimationExporter()}
+#endif
 		};
 
 		public static readonly Dictionary<Type, ISTFAnimationPathTranslator> DefaultAnimationTranslators = new Dictionary<Type, ISTFAnimationPathTranslator>() {
