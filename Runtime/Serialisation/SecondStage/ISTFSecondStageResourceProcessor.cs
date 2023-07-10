@@ -8,6 +8,6 @@ namespace stf.serialisation
 {
 	public interface ISTFSecondStageResourceProcessor
 	{
-		UnityEngine.Object Convert(GameObject root, UnityEngine.Object resource, STFSecondStageContext context);
+		UnityEngine.Object Convert(GameObject root, UnityEngine.Object resource, ISTFSecondStageContext context);
 	}
 }

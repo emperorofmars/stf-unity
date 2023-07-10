@@ -247,7 +247,7 @@ namespace stf.serialisation
 #if UNITY_EDITOR
 	public class STFAnimationSecondStageProcessor : ISTFSecondStageResourceProcessor
 	{
-		public UnityEngine.Object Convert(GameObject root, UnityEngine.Object resource, STFSecondStageContext context)
+		public UnityEngine.Object Convert(GameObject root, UnityEngine.Object resource, ISTFSecondStageContext context)
 		{
 			var originalAnim = (AnimationClip)resource;
 			var convertedAnim = new AnimationClip();
@@ -262,6 +262,8 @@ namespace stf.serialisation
 		{
 			foreach(var binding in bindings)
 			{
+				// TODO: get object and component
+
 				var animatedObject = AnimationUtility.GetAnimatedObject(root, binding);
 				var translator = STFSecondStageAnimationPathTranslatorRegistry.Translators.ContainsKey(animatedObject.GetType()) ?
 						STFSecondStageAnimationPathTranslatorRegistry.Translators[animatedObject.GetType()] : new DefaultSecondStageAnimationPathTranslator();

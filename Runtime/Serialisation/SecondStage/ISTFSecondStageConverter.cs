@@ -12,7 +12,7 @@ namespace stf.serialisation
 		void AddTask(Task task);
 		void AddResource(UnityEngine.Object resource);
 		void AddConvertedResource(UnityEngine.Object originalResource, UnityEngine.Object convertedResource);
-		UnityEngine.Object GetConvertedResource(GameObject root, UnityEngine.Object resource, STFSecondStageContext context);
+		UnityEngine.Object GetConvertedResource(GameObject root, UnityEngine.Object resource);
 		string GetPathForResourcesThatMustExistInFS();
 	}
 
@@ -72,7 +72,7 @@ namespace stf.serialisation
 			}
 		}
 
-		public UnityEngine.Object GetConvertedResource(GameObject root, UnityEngine.Object resource, STFSecondStageContext context)
+		public UnityEngine.Object GetConvertedResource(GameObject root, UnityEngine.Object resource)
 		{
 			lock(ResourceConversions)
 			{
@@ -82,7 +82,7 @@ namespace stf.serialisation
 				}
 				else if(ResourceProcessors.ContainsKey(resource.GetType()))
 				{
-					var converted = ResourceProcessors[resource.GetType()].Convert(root, resource, context);
+					var converted = ResourceProcessors[resource.GetType()].Convert(root, resource, this);
 					ResourceConversions.Add(resource, converted);
 					return converted;
 				}
