@@ -262,28 +262,55 @@ namespace stf.serialisation
 		{
 			foreach(var binding in bindings)
 			{
-				// TODO: get object and component
-
-				var animatedObject = AnimationUtility.GetAnimatedObject(root, binding);
-				var translator = STFSecondStageAnimationPathTranslatorRegistry.Translators.ContainsKey(animatedObject.GetType()) ?
-						STFSecondStageAnimationPathTranslatorRegistry.Translators[animatedObject.GetType()] : new DefaultSecondStageAnimationPathTranslator();
-
-				if(!binding.isPPtrCurve)
+				UnityEngine.Object animatedObject = null;
+				ISTFSecondStageAnimationPathTranslator translator = new DefaultSecondStageAnimationPathTranslator();
+				if(binding.path.StartsWith("STF_NODE") || binding.path.StartsWith("STF_COMPONENT") || binding.path.StartsWith("STF_RESOURCE"))
 				{
-					var translated = translator.Translate(root, binding.path, animatedObject.GetType(), binding.propertyName, AnimationUtility.GetEditorCurve(originalAnim, binding));
-					if(translated.omit == false) convertedAnim.SetCurve(translated.path, translated.type, translated.property, translated.curve);
+					var pathSplit = binding.path.Split(':');
+					var nodeId = pathSplit[1];
+					if(binding.path.StartsWith("STF_NODE"))
+					{
+						animatedObject = root.GetComponentsInChildren<STFUUID>().First(id => id.id == nodeId)?.gameObject;
+					}
+					else if(binding.path.StartsWith("STF_COMPONENT"))
+					{
+						var componentId = pathSplit[2];
+						var go = root.GetComponentsInChildren<STFUUID>().First(id => id.id == nodeId)?.gameObject;
+						animatedObject = (UnityEngine.Object)go.GetComponents<ISTFComponent>()?.FirstOrDefault(c => c.id == componentId);
+						if(animatedObject == null) animatedObject = go.GetComponent<STFUUID>().componentIds.Find(c => c.id == componentId)?.component;
+						if(STFSecondStageAnimationPathTranslatorRegistry.Translators.ContainsKey(animatedObject.GetType()))
+						{
+							translator = STFSecondStageAnimationPathTranslatorRegistry.Translators[animatedObject.GetType()];
+						}
+					}
+					else if(binding.path.StartsWith("STF_RESOURCE"))
+					{
+						Debug.LogWarning("STF_RESOURCE");
+						//AAAAAAAAAAAAAAAAAAAAAAAA
+					}
+					
+					if(!binding.isPPtrCurve)
+					{
+						var translated = translator.Translate(root, binding.path, animatedObject.GetType(), binding.propertyName, AnimationUtility.GetEditorCurve(originalAnim, binding));
+						if(translated.omit == false) convertedAnim.SetCurve(translated.path, translated.type, translated.property, translated.curve);
+					}
+					else
+					{
+						var translated = translator.Translate(root, binding.path, animatedObject.GetType(), binding.propertyName, AnimationUtility.GetObjectReferenceCurve(originalAnim, binding));
+						if(translated.omit == false)
+						{
+							var newBinding = new EditorCurveBinding();
+							newBinding.path = translated.path;
+							newBinding.propertyName = translated.property;
+							newBinding.type = translated.type;
+							AnimationUtility.SetObjectReferenceCurve(convertedAnim, newBinding, translated.curve);
+						}
+					}
 				}
 				else
 				{
-					var translated = translator.Translate(root, binding.path, animatedObject.GetType(), binding.propertyName, AnimationUtility.GetObjectReferenceCurve(originalAnim, binding));
-					if(translated.omit == false)
-					{
-						var newBinding = new EditorCurveBinding();
-						newBinding.path = translated.path;
-						newBinding.propertyName = translated.property;
-						newBinding.type = translated.type;
-						AnimationUtility.SetObjectReferenceCurve(convertedAnim, newBinding, translated.curve);
-					}
+					// No need for translation assumed
+					//animatedObject = AnimationUtility.GetAnimatedObject(root, binding);
 				}
 			}
 		}
