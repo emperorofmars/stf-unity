@@ -61,6 +61,10 @@ namespace stf.serialisation
 				#endif
 				throw new Exception("Error during AVA " + StageName + " Loader import: ", e);
 			}
+			foreach(var r in convertedResources)
+			{
+				r.name = GameObjectSuffix + "_" + r.name;
+			}
 
 			var secondStageAsset = new STFSecondStageAsset(convertedRoot, asset.getId() + "_" + GameObjectSuffix, asset.GetSTFAssetName(), AssetTypeName);
 			return new SecondStageResult {assets = new List<ISTFAsset>{secondStageAsset}, resources = convertedResources};

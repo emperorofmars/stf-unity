@@ -251,6 +251,7 @@ namespace stf.serialisation
 		{
 			var originalAnim = (AnimationClip)resource;
 			var convertedAnim = new AnimationClip();
+			convertedAnim.name = originalAnim.name;
 
 			ConvertCurve(root, AnimationUtility.GetCurveBindings(originalAnim), originalAnim, convertedAnim, context);
 			ConvertCurve(root, AnimationUtility.GetObjectReferenceCurveBindings(originalAnim), originalAnim, convertedAnim, context);
