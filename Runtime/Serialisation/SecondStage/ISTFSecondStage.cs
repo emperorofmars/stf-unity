@@ -45,6 +45,7 @@ namespace stf.serialisation
 			try
 			{
 				var context = new STFSecondStageContext(convertedRoot, Targets, new List<Type>(Converters.Keys), ResourceProcessors, GetPathForResourcesThatMustExistInFS(asset, adaptedUnityAsset));
+				collectOriginalResources(convertedRoot, context);
 				convertTree(convertedRoot, context);
 				context.RunTasks();
 				if(context.ResourceConversions.Count > 0) convertedResources.AddRange(context.ResourceConversions.Values);
@@ -63,6 +64,25 @@ namespace stf.serialisation
 
 			var secondStageAsset = new STFSecondStageAsset(convertedRoot, asset.getId() + "_" + GameObjectSuffix, asset.GetSTFAssetName(), AssetTypeName);
 			return new SecondStageResult {assets = new List<ISTFAsset>{secondStageAsset}, resources = convertedResources};
+		}
+
+		protected void collectOriginalResources(GameObject root, STFSecondStageContext context)
+		{
+			foreach(var converter in Converters)
+			{
+				var components = root.GetComponentsInChildren(converter.Key);
+				foreach(var component in components)
+				{
+					if(context.RelMat.IsMatched(component))
+					{
+						var converted = converter.Value.CollectOriginalResources(component, root, context);
+						if(converted != null) foreach(var r in converted)
+						{
+							context.AddOriginalResource(r.Key, r.Value);
+						}
+					}
+				}
+			}
 		}
 
 		protected void convertTree(GameObject root, STFSecondStageContext context)

@@ -10,6 +10,8 @@ namespace stf.serialisation
 	{
 		STFRelationshipMatrix RelMat {get;}
 		void AddTask(Task task);
+		void AddOriginalResource(string id, UnityEngine.Object resource);
+		UnityEngine.Object GetOriginalResource(string id);
 		void AddResource(UnityEngine.Object resource);
 		void AddConvertedResource(UnityEngine.Object originalResource, UnityEngine.Object convertedResource);
 		UnityEngine.Object GetConvertedResource(GameObject root, UnityEngine.Object resource);
@@ -21,6 +23,7 @@ namespace stf.serialisation
 		private STFRelationshipMatrix _RelMat;
 		public STFRelationshipMatrix RelMat => _RelMat;
 		private List<Task> Tasks = new List<Task>();
+		Dictionary<string, UnityEngine.Object> OriginalResources = new Dictionary<string, UnityEngine.Object>();
 		public List<UnityEngine.Object> Resources = new List<UnityEngine.Object>();
 		Dictionary<Type, ISTFSecondStageResourceProcessor> ResourceProcessors = new Dictionary<Type, ISTFSecondStageResourceProcessor>();
 		public Dictionary<UnityEngine.Object, UnityEngine.Object> ResourceConversions = new Dictionary<UnityEngine.Object, UnityEngine.Object>();
@@ -114,10 +117,21 @@ namespace stf.serialisation
 		{
 			return PathForResourcesThatMustExistInFS;
 		}
+
+		public void AddOriginalResource(string id, UnityEngine.Object resource)
+		{
+			if(!OriginalResources.ContainsKey(id)) OriginalResources.Add(id, resource);
+		}
+
+		public UnityEngine.Object GetOriginalResource(string id)
+		{
+			return OriginalResources.ContainsKey(id) ? OriginalResources[id] : null;
+		}
 	}
 
 	public interface ISTFSecondStageConverter
 	{
+		Dictionary<string, UnityEngine.Object> CollectOriginalResources(Component component, GameObject root, ISTFSecondStageContext context);
 		void Convert(Component component, GameObject root, ISTFSecondStageContext context);
 	}
 }

@@ -36,6 +36,9 @@ namespace stf.serialisation
 			var root = UnityEngine.Object.Instantiate(originalRoot);
 			var addonRoot = addon.gameObject;
 			root.name = originalRoot.name;
+			var addonMeta = addon.GetComponent<STFAssetInfo>().originalMetaInformation;
+			if(addonMeta != null) root.GetComponent<STFAssetInfo>().addonMetaInformation.Add(addon.GetComponent<STFAssetInfo>().originalMetaInformation);
+			root.GetComponent<STFAssetInfo>().addonMetaInformation.AddRange(addon.GetComponent<STFAssetInfo>().addonMetaInformation);
 			for(int i = 0; i < addonRoot.transform.childCount; i++)
 			{
 				var a = addonRoot.transform.GetChild(i);

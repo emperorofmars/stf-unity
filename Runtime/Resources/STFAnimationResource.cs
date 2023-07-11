@@ -252,13 +252,13 @@ namespace stf.serialisation
 			var originalAnim = (AnimationClip)resource;
 			var convertedAnim = new AnimationClip();
 
-			ConvertCurve(root, AnimationUtility.GetCurveBindings(originalAnim), originalAnim, convertedAnim);
-			ConvertCurve(root, AnimationUtility.GetObjectReferenceCurveBindings(originalAnim), originalAnim, convertedAnim);
+			ConvertCurve(root, AnimationUtility.GetCurveBindings(originalAnim), originalAnim, convertedAnim, context);
+			ConvertCurve(root, AnimationUtility.GetObjectReferenceCurveBindings(originalAnim), originalAnim, convertedAnim, context);
 
 			return convertedAnim;
 		}
 
-		private void ConvertCurve(GameObject root, EditorCurveBinding[] bindings, AnimationClip originalAnim, AnimationClip convertedAnim)
+		private void ConvertCurve(GameObject root, EditorCurveBinding[] bindings, AnimationClip originalAnim, AnimationClip convertedAnim, ISTFSecondStageContext context)
 		{
 			foreach(var binding in bindings)
 			{
@@ -267,15 +267,15 @@ namespace stf.serialisation
 				if(binding.path.StartsWith("STF_NODE") || binding.path.StartsWith("STF_COMPONENT") || binding.path.StartsWith("STF_RESOURCE"))
 				{
 					var pathSplit = binding.path.Split(':');
-					var nodeId = pathSplit[1];
+					var objectId = pathSplit[1];
 					if(binding.path.StartsWith("STF_NODE"))
 					{
-						animatedObject = root.GetComponentsInChildren<STFUUID>().First(id => id.id == nodeId)?.gameObject;
+						animatedObject = root.GetComponentsInChildren<STFUUID>().First(id => id.id == objectId)?.gameObject;
 					}
 					else if(binding.path.StartsWith("STF_COMPONENT"))
 					{
 						var componentId = pathSplit[2];
-						var go = root.GetComponentsInChildren<STFUUID>().First(id => id.id == nodeId)?.gameObject;
+						var go = root.GetComponentsInChildren<STFUUID>().First(id => id.id == objectId)?.gameObject;
 						animatedObject = (UnityEngine.Object)go.GetComponents<ISTFComponent>()?.FirstOrDefault(c => c.id == componentId);
 						if(animatedObject == null) animatedObject = go.GetComponent<STFUUID>().componentIds.Find(c => c.id == componentId)?.component;
 						if(STFSecondStageAnimationPathTranslatorRegistry.Translators.ContainsKey(animatedObject.GetType()))
@@ -285,8 +285,7 @@ namespace stf.serialisation
 					}
 					else if(binding.path.StartsWith("STF_RESOURCE"))
 					{
-						Debug.LogWarning("STF_RESOURCE");
-						//AAAAAAAAAAAAAAAAAAAAAAAA
+						animatedObject = context.GetOriginalResource(objectId);
 					}
 					
 					if(!binding.isPPtrCurve)
