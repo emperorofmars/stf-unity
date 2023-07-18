@@ -13,6 +13,7 @@ namespace stf.Components
 		public List<string> overrides {get; set;}
 		public List<string> targets {get; set;}
 		public string type;
+		public List<string> resources_used {get; set;}
 
 		[Multiline]
 		public string json;
