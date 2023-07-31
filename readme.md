@@ -6,7 +6,7 @@
 ## Basic Structure
 STF is a binary format. It can have an arbitrary amount of chunks, but one is the minimum. The first chunk is a definition in the JSON format. All further chunks are binary buffers which have to be referenced by the JSON definition.
 
-The JSON definition has 6 objects in the root:
+The JSON definition has 6 properties in the root object:
 - meta: Information about the author, copyright, etc...
 - main: UUID of the main asset.
 - assets: A dict of UUID -> assets pairs. Assets can list node UUID's and resource UUID's, depending on the asset type.
