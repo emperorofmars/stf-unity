@@ -5,7 +5,7 @@
 
 ## How to Use
 - Ensure you have the Newtonsoft Json package imported in Unity. If not, install the official package in UPM.
-- Download or clone this repository and copy it into the 'Assets' folder of your Unity project.
+- Download or clone this repository and copy the entire folder into the 'Assets' folder of your Unity project.
 - Import a .fbx model, put it into the scene and export it as STF by going to 'STF Tools' -> 'Export'
 - If you exported it into the Assets hirarchy, just press CTRL+R for Unity to refresh its asset database and see it appear.
 - Play around
