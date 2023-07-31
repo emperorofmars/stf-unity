@@ -22,7 +22,9 @@ Armatures are a resource. Armatures can be instanciated as a node of the 'STF.ar
 Example:
 
 	{
-		"meta": {"author":"Emperor of Mars"},
+		"meta": {
+			"author" : "Emperor of Mars"
+		},
 		"main": "dc96ec16-17c2-4ac2-bd27-21f4c9a34bba",
 		"assets": {
 			"dc96ec16-17c2-4ac2-bd27-21f4c9a34bba": {
@@ -145,4 +147,45 @@ This way, even if a perfect conversion is not possible, the hope is that at leas
 	},
 	...
 
+Such a material format could have use beyond just STF and should propably become its own project, which STF would merely make use of.
 
+## Some Background and Motivation
+VR Avatars are currently distributed as packages for game-engines, specifically Unity. This is an issue as end users have a hard time using professional tools. Additionally, Unity is not a character-editor, its a tool with which a character-editor application can be created.
+I wanted to create a universal character-editor application aimed at end users wishing to adapt their VR Avatar models but without the technical knowledge to do so in a game-engine.
+To do so, i needed a file format that this character-editor-application could parse. This is where my descend into madness began.
+
+Initially i wanted to create a format based on GLTF 2.0 to represent VR & V-Tubing avatars in a single file, agnostic of any target application, but with support for 100% of the features of each.
+
+*VRM is a format also in the form of a GLTF extension, which also represents VR & V-Tubing avatars. However it only supports a small subset of features, supports only a small number of hardcoded materials and doesn't support animations at all.*
+
+I didn't think it would be too complicated to create something better than VRM, however i encountered countless issues with the GLTF 2.0 specification itself as well its implementations.
+I wanted to avoid having to create my own format, but after 4 months of trying, i saw no way to make this work with GLTF 2.0.
+
+After 4 more months, i have created this STF format prototype and the AVA proof of concept set of extensions. STF puts extensibility first, and supports most of everything that GLTF does, and makes it trivial to implement anything beside that.
+STF was created with consideration of how most applications like Blender, Unity, Godot or Unreal Engine represent models and scenes. As such, most headaches from GLTF should have been solved here hopefully.
+
+### GLTF 2.0 Issues
+- Material references and morphtarget values sit on the mesh, not its instances.
+  https://github.com/KhronosGroup/glTF/issues/1249
+  https://github.com/KhronosGroup/glTF/issues/1036
+- In GLTF everything is adressed by index. Indices will are very likely to break between import and export.
+- Limited animation support. Only transforms and morphtarget values (per mesh, not per mesh-instance) can be animated.
+  The [KHR_animation_pointer](https://github.com/KhronosGroup/glTF/pull/2147) extension proposal would fix that partially.
+- There is weirdness with multiple meshes sharing the same armature.
+  https://github.com/KhronosGroup/glTF/issues/1285
+- Morphtarget names are not supported by the specification. Sometimes these are stored on the 'extras' field of the mesh, sometimes on the first mesh primitive. The official Blender GLTF implementation does the first, the official  Unity GLTF implementation does the latter.
+- GLTF itself is supremely extensible, however to implement extensions in most implementations, the implementations have to be forked and modified at the core. When an implementation has support for implementing additional extensions, it is accompanied with significant issues.
+- GLTF only supports specific hardcoded materials.
+- The official Blender implementation exports insanely large files.
+  https://github.com/KhronosGroup/glTF-Blender-IO/issues/1346
+  Godot does this as well.
+  A file being 95% larger and consisting of 95% zeros in the case of my VR Avatar Base (thanks to about 200 morphtargets) is just not serious.
+- Some Godot issues and notes:
+  - Godot has some issues with blendshapes: https://github.com/godotengine/godot/issues/63198
+  - Godot blendshape implementation wishlist that would solve the biggest issue of stupid vram use and filesize in Godot at least: https://github.com/godotengine/godot-proposals/issues/2465#issuecomment-799892451
+  - glTF import and export scene handling: https://github.com/godotengine/godot-proposals/discussions/6588
+  - glTF export exclusions: https://github.com/godotengine/godot-proposals/discussions/6587
+  - ImporterMeshInstance3D metadata lost in glTF import process: https://github.com/godotengine/godot-proposals/discussions/6586
+
+To fix most of the issues, breaking changes would be needed for the GLTF specification.
+Most of this has been known for a long time, and there has been no change, only a silent abscense of general GLTF use, sadly.
