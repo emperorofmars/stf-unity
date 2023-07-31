@@ -95,6 +95,12 @@ For example, multiple Social VR applications support one or another library for 
 
 To extend STF with the ability to represend VR & V-Tubing avatars, the [AVA Proof of Concept](https://github.com/emperorofmars/ava-unity) was created. This shows the potential and ease of extending STF.
 
+## Addons
+
+It is possible to create assets of the type 'STF.addon'. These provide a list of nodes that can be of the types 'appendage' and 'patch'. They target the nodes of other assets and either append child nodes to these, patch in additional components, or replace existing components.
+
+That way it becomes trivial for a third party to create assets like a set of clothing for a base character model. This STF importer scans the Unity project for STF addons targeting an asset and presents the user with a simple checkbox to apply it.
+
 ## Materials
 As part of creating this format, i created the beginning of a universal material format, preliminarily called: MTF - Material Transfer Format.
 Its not fleshed out at all and exists in an incredibly basic form, but this is the idea:
@@ -168,7 +174,7 @@ STF was created with consideration of how most applications like Blender, Unity,
 - Material references and morphtarget values sit on the mesh, not its instances.
   https://github.com/KhronosGroup/glTF/issues/1249
   https://github.com/KhronosGroup/glTF/issues/1036
-- In GLTF everything is adressed by index. Indices will are very likely to break between import and export.
+- In GLTF everything is adressed by index. Indices are very likely to break between import and export. (If an extensions is not supported by an application and gets stored as raw json, that references other objects by index, it will break. Addons will also break.) 
 - Limited animation support. Only transforms and morphtarget values (per mesh, not per mesh-instance) can be animated.
   The [KHR_animation_pointer](https://github.com/KhronosGroup/glTF/pull/2147) extension proposal would fix that partially.
 - There is weirdness with multiple meshes sharing the same armature.
