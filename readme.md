@@ -6,13 +6,13 @@
 ## Basic Structure
 STF is a binary format. It can have an arbitrary amount of chunks, but one is the minimum. The first chunk is a definition in the JSON format. All further chunks are binary buffers which have to be referenced by the JSON definition.
 
-The JSON definition has 6 root objects
+The JSON definition has 6 root objects:
 - meta: Information about the author, copyright, etc...
-- main: UUID of the main asset
-- assets: A list of assets. Assets can reference a list of nodes and resources, depending on the asset type
-- nodes: A list of hirarchical nodes. Nodes can have a list of components
-- resources: A list of resources, referenced by nodes and components
-- buffers: A list of buffers, in the order of the binary chunks, referenced by resources
+- main: UUID of the main asset.
+- assets: A dict of UUID -> assets pairs. Assets can reference a list of nodes and resources, depending on the asset type.
+- nodes: A dict of UUID -> node pairs. Nodes can have a list of components and child-nodes.
+- resources: A list of UUID -> resource pairs. Resouces can be referenced by nodes, components and potentially assets.
+- buffers: A list of buffer UUID's in the order of the binary chunks, which referenced by resources.
 
 The STF format is similar to GLTF 2.0, especially in concept, but differs in significant ways.
 Everything has an UUID. This UUID must persist between import and export of any implementation.
@@ -83,13 +83,13 @@ The intermediary format is intended for authoring STF files. A second-stage will
 
 ## Extensibility
 The extensibility of this format is a first class feature. All implementations must provide an easy way to add and hotload support for additional types.
-By default STF supports only a limited set of features, which can be expected from a 3d file-format. These include support for meshes, skinned meshes and therefore armatures, animations, arbitrary materials and textures.
+By default STF supports only a limited set of features which can be expected from a common 3d file-format. These include support for meshes, skinned meshes, armatures, animations, materials and textures.
 
-If for example the included mesh type is not satisfactory, a different mesh type can be implemented. These can exist in paralell and will work as long as the importer has support of the one used. All types are namespaced, and can be versioned. It is the responsibility of the importer/exporter code for a type to handle that.
+If for example the included mesh type is not satisfactory, a different mesh type can be implemented. These can exist in paralell and will work as long as the importer has support of the one used. All types are namespaced, and can be versioned. It is the responsibility of the importer/exporter code for a type to handle versioning. Importers are implemented for each type in an encapsulated manner. As such it is trivial to register additional ones.
 
 Components can have defined relationships to other components and be specific to a target applications.
 Components can extend or override others.
-For example, multiple Social VR applications support one or another library for bone physics. None of which are compatible with each other, but they generally work the same. A generic component can be used to describe the common features and be conversible to all implemented applications formats, erring on the side of the resulting component not spazzing out. If there exists a dedicated STF-component for a specific application, it can override the basic generic component.
+For example, multiple Social VR applications support one or another library for bone physics. None of which are compatible with each other, but they generally work the same. A generic STF-component can be used to describe the common features and be conversible to all implemented applications formats, err-ing on the side of the resulting application-component not spazzing out. If there exists a dedicated STF-component for a specific application, it can override the basic generic component. This way multiple mutually exclusive and application/game-engine specific features can be supported simultanously.
 
 To extend STF with the ability to represend VR & V-Tubing avatars, the [AVA Proof of Concept](https://github.com/emperorofmars/ava-unity) was created. This shows the potential and ease of extending STF.
 
@@ -104,11 +104,16 @@ It is a list to account for the case in which not every implementation can under
 
 Example: The first and post prioritized object could be a methematical definition, which is only understood by a few specific applications. To make it work elsewhere, the second object could be a texture, rendered from the mathematical definition.
 
-Properties not defined in the MTF format, can be freely used. Properties can indicate to which target application/shader they belong and so can the entire material. The material can also have a set of hint properties, indication wether it should be rendered in a cartoony or realistic style for example.
+Properties not defined in the MTF format, can be freely used. Properties can indicate to which target application/shader they belong and so can the entire material. The material can also have a set of hint properties (just a list of string key-value pairs), indicating wether it should be rendered in a cartoony or realistic style for example.
+
+Converters for specific shaders can be implemented, otherwise properties can be converted based on Unitys system.
+The "target_shader" property indicates which converter is to be used. If a converter or target shader is not present, a default will be chosen, or the user can specify an alternative shader.
+This way, even if a perfect conversion is not possible, the hope is that at least the best possible conversion can happen. This will also ease the switching of shaders.
 
 	"d2a3568f-0116-4f3d-866d-9ce420035de6": {
 		"type": "STF.material",
 		"name": "Body",
+		"target_shader": "Poiyomi 8",
 		"render-hints": [ "style": "toony" ],
 		"albedo": [
 			{
@@ -134,3 +139,5 @@ Properties not defined in the MTF format, can be freely used. Properties can ind
 			...
 		]
 	}
+
+
