@@ -12,7 +12,7 @@ The JSON definition has 6 root objects:
 - assets: A dict of UUID -> assets pairs. Assets can reference a list of nodes and resources, depending on the asset type.
 - nodes: A dict of UUID -> node pairs. Nodes can have a list of components and child-nodes.
 - resources: A list of UUID -> resource pairs. Resouces can be referenced by nodes, components and potentially assets.
-- buffers: A list of buffer UUID's in the order of the binary chunks, which referenced by resources.
+- buffers: A list of buffer UUID's in the order of the binary chunks, which can be referenced by resources.
 
 The STF format is similar to GLTF 2.0, especially in concept, but differs in significant ways.
 Everything has an UUID. This UUID must persist between import and export of any implementation.
