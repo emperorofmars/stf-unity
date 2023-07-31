@@ -110,34 +110,39 @@ Converters for specific shaders can be implemented, otherwise properties can be 
 The "target_shader" property indicates which converter is to be used. If a converter or target shader is not present, a default will be chosen, or the user can specify an alternative shader.
 This way, even if a perfect conversion is not possible, the hope is that at least the best possible conversion can happen. This will also ease the switching of shaders.
 
-	"d2a3568f-0116-4f3d-866d-9ce420035de6": {
-		"type": "STF.material",
-		"name": "Body",
-		"target_shader": "Poiyomi 8",
-		"render-hints": [ "style": "toony" ],
-		"albedo": [
-			{
-				"type" : "texture",
-				"texture" : "94899926-6827-4cd3-84f8-9dbeff553199"
-			}
-		],
-		"roughness": [
-			{
-				"type": "texture_view",
-				"texture": "70cb8395-5fc8-4eff-99d8-809a20439b11",
-				"channel": 3
-			},
-			{
-				"type": "scalar",
-				"value": 0.67
-			}
-		],
-		"audiolink_emission": [
-			...
-		],
-		"fur_length": [
-			...
-		]
-	}
+	...
+	"resources": {
+		"d2a3568f-0116-4f3d-866d-9ce420035de6": {
+			"type": "STF.material",
+			"name": "Body",
+			"target_shader": "Poiyomi 8",
+			"render-hints": [ "style": "toony" ],
+			"albedo": [
+				{
+					"type" : "texture",
+					"texture" : "94899926-6827-4cd3-84f8-9dbeff553199"
+				}
+			],
+			"roughness": [
+				{
+					"type": "texture_view",
+					"texture": "70cb8395-5fc8-4eff-99d8-809a20439b11",
+					"channel": 3
+				},
+				{
+					"type": "scalar",
+					"value": 0.67
+				}
+			],
+			"audiolink_emission": [
+				...
+			],
+			"fur_length": [
+				...
+			]
+		},
+		...
+	},
+	...
 
 
