@@ -9,10 +9,10 @@ STF is a binary format. It can have an arbitrary amount of chunks, but one is th
 The JSON definition has 6 objects in the root:
 - meta: Information about the author, copyright, etc...
 - main: UUID of the main asset.
-- assets: A dict of UUID -> assets pairs. Assets can reference a list of nodes and resources, depending on the asset type.
-- nodes: A dict of UUID -> node pairs. Nodes can have a list of components and child-nodes.
-- resources: A list of UUID -> resource pairs. Resouces can be referenced by nodes, components and potentially assets.
-- buffers: A list of buffer UUID's in the order of the binary chunks, which can be referenced by resources.
+- assets: A dict of UUID -> assets pairs. Assets can list node UUID's and resource UUID's, depending on the asset type.
+- nodes: A dict of UUID -> node pairs. Nodes can have a list of components and child-node UUID's.
+- resources: A list of UUID -> resource pairs. Resouces can be referenced by nodes, components and assets.
+- buffers: A list of buffer UUID's in the order of the binary chunks. The UUID can be referenced by resources and will point to a binary buffer based on the index.
 
 The STF format is similar to GLTF 2.0, especially in concept, but differs in significant ways.
 Everything has an UUID. This UUID must persist between import and export of any implementation.
