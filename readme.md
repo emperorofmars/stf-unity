@@ -94,7 +94,7 @@ The intermediary format is intended for authoring STF files. A second-stage will
 The extensibility of this format is a first class feature. All implementations must provide an easy way to add and hotload support for additional types.
 By default STF supports only a limited set of features which can be expected from a common 3d file-format. These include support for meshes, skinned meshes, armatures, animations, materials and textures.
 
-If for example the included mesh type is not satisfactory, a different mesh type can be implemented. These can exist in paralell and will work as long as the importer has support of the one used. All types are namespaced, and can be versioned. It is the responsibility of the importer/exporter code for a type to handle versioning. Importers are implemented for each type in an encapsulated manner. As such it is trivial to register additional ones.
+If for example the included mesh type is not satisfactory, a different mesh type can be implemented. These can exist in paralell and will work as long as the an importer/exporter for the new mesh-type is present. All types are namespaced, and can be versioned. It is the responsibility of the importer/exporter for a type to handle versioning. Importers are implemented for each type in an encapsulated manner. As such it is trivial to register additional ones.
 
 Components can have defined relationships to other components and be specific to a target applications.
 Components can extend or override others.
