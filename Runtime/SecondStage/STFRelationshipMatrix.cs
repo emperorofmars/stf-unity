@@ -4,6 +4,10 @@ using UnityEngine;
 
 namespace stf.serialisation
 {
+	// Initiated at the start of a second-stage-importer.
+	// Determines which component is being overridden and should therefore not be parsed, which component is extended by which and if a component is matched for the second-stages targets.
+	// All is easily query-able by second-stage importers.
+
 	// Technically this is not a matrix. I dont care.
 	public class STFRelationshipMatrix
 	{

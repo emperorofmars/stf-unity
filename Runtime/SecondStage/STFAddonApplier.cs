@@ -6,6 +6,8 @@ using UnityEngine;
 
 namespace stf.serialisation
 {
+	// Applies selected addon-assets onto a target asset. Runs after import into the intermediary STF-Unity format but before the second stage importers.
+
 	public static class STFAddonTriggerRegistry
 	{
 		public static Dictionary<Type, ISTFAddonTrigger> RegisteredAddonTriggers = new Dictionary<Type, ISTFAddonTrigger>() {

@@ -6,6 +6,9 @@ using UnityEngine;
 
 namespace stf.serialisation
 {
+	// The interface for second-stage-importers. They convert the STF-Unity intermediary scene into an application specific one.
+	// The result of a second-stage is not back-convertable, as things will be liberally thrown away, component relationships resolved, and potential optimizations applied.
+
 	public interface ISTFSecondStageContext
 	{
 		STFRelationshipMatrix RelMat {get;}

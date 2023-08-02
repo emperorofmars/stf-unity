@@ -7,6 +7,8 @@ using UnityEngine.Animations;
 
 namespace stf.serialisation
 {
+	// The second-stage importer included by default. Runs for any 'STF.asset' and produces a pure Unity scene.
+
 	public class STFDefaultSecondStage : ASTFSecondStageDefault
 	{
 		protected override Dictionary<Type, ISTFSecondStageResourceProcessor> ResourceProcessors => new Dictionary<Type, ISTFSecondStageResourceProcessor> {
