@@ -9,6 +9,8 @@ using UnityEngine;
 
 namespace stf.serialisation
 {
+	// Describes a scene which can be applied onto another by the STFAddonApplier. It's root nodes must be either of the STFAppendageNode or STFPatchNode type.
+
 	public class STFAddonAssetExporter : ISTFAssetExporter
 	{
 		public static string _TYPE = "STF.addon_asset";

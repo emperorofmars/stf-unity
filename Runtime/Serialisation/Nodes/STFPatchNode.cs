@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 
 namespace stf.serialisation
 {
+	// The patch node must be a root node of an 'STF.addon_asset'. It's components and children will be merged into its target by the STFAddonApplier.
+
 	public class STFPatchNode : MonoBehaviour
 	{
 		public string targetId;

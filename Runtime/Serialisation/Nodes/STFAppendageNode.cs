@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 
 namespace stf.serialisation
 {
+	// The appendage node must be a root node of an 'STF.addon_asset'. It will be moved to the children of its target by the STFAddonApplier.
+
 	public class STFAppendageNode : MonoBehaviour
 	{
 		public string targetId;

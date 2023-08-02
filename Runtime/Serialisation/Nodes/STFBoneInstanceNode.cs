@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 
 namespace stf.serialisation
 {
+	// Represents the instance of a bone. If its transform differs from the bone, it means the mesh will be posed.
+
 	public class STFBoneInstanceNodeExporter// : ASTFNodeExporter
 	{
 		public static string _TYPE = "STF.bone_instance";

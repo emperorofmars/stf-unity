@@ -15,6 +15,9 @@ using UnityEditor;
 
 namespace stf.serialisation
 {
+	// The main star for export!
+	// Serializes all assets, nodes, components and resources with all the various exporters provided by the STFExportContext.
+
 	public class STFExporter : ISTFExporter
 	{
 		public static string _MAGIC = "STF0";

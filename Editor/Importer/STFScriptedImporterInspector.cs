@@ -112,8 +112,6 @@ namespace stf
 				}
 			}
 
-			// handle unparented patch assets
-
 			var changesDetected = EditorGUI.EndChangeCheck();
 			drawHLine();
 

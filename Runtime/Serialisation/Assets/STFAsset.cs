@@ -9,6 +9,8 @@ using UnityEngine;
 
 namespace stf.serialisation
 {
+	// Default asset type. Has a single root node. (An asset type for scenes should be implemented at some point)
+
 	public class STFAssetExporter : ISTFAssetExporter
 	{
 		public static string _TYPE = "STF.asset";

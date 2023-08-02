@@ -86,6 +86,7 @@ namespace stf
 				}
 			}
 
+			// Handle addons from the entire Unity project
 			var externalAddons = STFAddonUtil.GatherAddons(importer.GetMeta());
 			foreach(var externalAddon in externalAddons)
 			{
@@ -98,7 +99,7 @@ namespace stf
 			{
 				var unityAsset = asset.Value.GetAsset();
 
-				// apply internal addons
+				// Apply internal addons
 				if(addons != null)
 				{
 					foreach(var addon in addons)
@@ -112,7 +113,7 @@ namespace stf
 						}
 					}
 				}
-				// apply external addons
+				// Apply external addons
 				foreach(var addon in externalAddons)
 				{
 					var addonInfo = ((GameObject)addon.Addon.assetRoot).GetComponent<STFAddonAssetInfo>();
@@ -124,6 +125,7 @@ namespace stf
 					}
 				}
 
+				// Run second stages
 				foreach(var stage in STFImporterStageRegistry.GetStages())
 				{
 					if(stage.CanHandle(asset.Value, unityAsset))

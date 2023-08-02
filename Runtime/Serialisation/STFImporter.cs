@@ -10,6 +10,9 @@ using System.Text;
 
 namespace stf.serialisation
 {
+	// The main star for import!
+	// Parses the binary file, extracts the JSON and parses it based on the provided importers from the STFImportContext.
+
 	public class STFImporter : ISTFImporter
 	{
 		private STFImportContext context;
@@ -23,7 +26,6 @@ namespace stf.serialisation
 		private List<UnityEngine.Object> trash = new List<UnityEngine.Object>();
 		private List<Task> tasks = new List<Task>();
 		private List<Task> postprocessTasks = new List<Task>();
-		//private List<Task> componentTasks = new List<Task>();
 		public STFMeta meta = ScriptableObject.CreateInstance<STFMeta>();
 		public ISTFSecondStage nextStage;
 

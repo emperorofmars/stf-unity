@@ -8,6 +8,8 @@ using Newtonsoft.Json.Linq;
 
 namespace stf
 {
+	// Instance of an armature.
+
 	public class STFArmatureInstance : MonoBehaviour
 	{
 		public STFArmature armature;

@@ -5,6 +5,8 @@ using stf.Components;
 
 namespace stf.serialisation
 {
+	// Context's to pass into an importer and exporter respectively. Default ones are created automatically, construct these manually only for specific use cases.
+
 	public class STFImportContext
 	{
 		public Dictionary<string, ISTFAssetImporter> AssetImporters = new Dictionary<string, ISTFAssetImporter>();
@@ -16,8 +18,8 @@ namespace stf.serialisation
 
 	public class STFExportContext
 	{
-		//Assets
-		//public Dictionary<string, ASTFNodeExporter> NodeExporters = new Dictionary<string, ASTFNodeExporter>();
+		// Assets?
+		// public Dictionary<string, ASTFNodeExporter> NodeExporters = new Dictionary<string, ASTFNodeExporter>();
 		public Dictionary<Type, ASTFComponentExporter> ComponentExporters = new Dictionary<Type, ASTFComponentExporter>();
 		public Dictionary<Type, ASTFResourceExporter> ResourceExporters = new Dictionary<Type, ASTFResourceExporter>();
 		public Dictionary<Type, ISTFAnimationPathTranslator> AnimationTranslators = new Dictionary<Type, ISTFAnimationPathTranslator>();

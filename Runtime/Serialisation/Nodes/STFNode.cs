@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 
 namespace stf.serialisation
 {
+	// The default node type. If no node type is provided default is assumed.
+	
 	public class STFNodeExporter
 	{
 		public static JObject SerializeToJson(GameObject go, ISTFExporter state)

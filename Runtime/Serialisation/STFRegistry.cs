@@ -6,6 +6,7 @@ using UnityEngine;
 
 namespace stf.serialisation
 {
+	// Used to register STF object types. Default ones are included by default, additional ones can be added automatically.
 	public static class STFRegistry
 	{
 		public static readonly Dictionary<string, ISTFAssetImporter> DefaultAssetImporters = new Dictionary<string, ISTFAssetImporter>() {
@@ -18,6 +19,7 @@ namespace stf.serialisation
 			{STFAppendageNodeImporter._TYPE, new STFAppendageNodeImporter()},
 			{STFPatchNodeImporter._TYPE, new STFPatchNodeImporter()}
 		};
+		// Also add node exporters. As they cannot be mapped to a Unity type, devise a way for them to determine wether to handle a node or not, perhaps with priorities or something
 		public static readonly Dictionary<string, ASTFComponentImporter> DefaultComponentImporters = new Dictionary<string, ASTFComponentImporter>() {
 			{STFMeshInstanceImporter._TYPE, new STFMeshInstanceImporter()},
 			{STFTwistConstraintBack._TYPE, new STFTwistConstraintBackImporter()},

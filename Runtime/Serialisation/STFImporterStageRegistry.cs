@@ -4,6 +4,7 @@ using stf.serialisation;
 
 namespace stf
 {
+	// Second stages to run after the intermediate (authoring) scene has been created.
 	public static class STFImporterStageRegistry
 	{
 		private static List<ISTFSecondStage> RegisteredSecondStages = new List<ISTFSecondStage> {
