@@ -9,6 +9,8 @@ using UnityEngine;
 
 namespace stf.serialisation
 {
+	// Unity can't import encoded images, only gpu-textures. With this shitty workaround the original encoded image will be written to the Assets-folder and the relationship recorded in the STFMeta object.
+
 	public class STFEncodedImageTextureImporter : ASTFResourceImporter
 	{
 		public static string _TYPE = "STF.texture";

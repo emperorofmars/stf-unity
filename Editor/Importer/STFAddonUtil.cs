@@ -11,6 +11,10 @@ using static stf.STFScriptedImporter;
 
 namespace stf.serialisation
 {
+	// Janky code to scan the entire Unity project for addon assets.
+	// This way, as long as a addon is present, it can be enabled and automatically applied with the toggle of a checkbox and a reimport.
+	// This runs every frame and should be limited & the result cached. Im lazy -.-
+
 	[Serializable]
 	public class AddonExternal
 	{
@@ -33,7 +37,7 @@ namespace stf.serialisation
 				{
 					foreach(var externalAsset in meta.importedRawAssets)
 					{
-						if(externalAsset.assetType == "addon" && exclude.importedRawAssets.Find(a => a.assetId == externalAsset.assetId) == null)
+						if(externalAsset.assetType == STFAddonAssetExporter._TYPE && exclude.importedRawAssets.Find(a => a.assetId == externalAsset.assetId) == null)
 						{
 							var addonInfo = ((GameObject)externalAsset.assetRoot)?.GetComponent<STFAddonAssetInfo>();
 							if(addonInfo != null && exclude.importedRawAssets.Find(a => a.assetId == addonInfo.targetAssetId) != null)

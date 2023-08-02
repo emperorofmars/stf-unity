@@ -11,6 +11,10 @@ using static stf.STFScriptedImporter;
 
 namespace stf
 {
+	// A UI for the STFScriptedImporter.
+	// Apart from showing information about the file, it adds the ability to easily toggle which addons to apply for the second stages.
+	// It also has a button to instantiate the resulting scene of each second-stage, as well as the 'authoring scene' (the STF-Unity intermediary format), for each asset included in the STF file.
+
 	[CustomEditor(typeof(STFScriptedImporter))]
 	public class STFScriptedImporterInspector : Editor
 	{
@@ -21,7 +25,6 @@ namespace stf
 
 		public override void OnInspectorGUI()
 		{
-			//base.DrawDefaultInspector();
 			EditorGUILayout.LabelField("STF Import Settings", EditorStyles.whiteLargeLabel);
 			GUILayout.Space(10f);
 

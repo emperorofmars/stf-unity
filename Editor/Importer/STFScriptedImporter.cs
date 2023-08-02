@@ -13,6 +13,9 @@ using UnityEngine;
 
 namespace stf
 {
+	// A scripted importer for STF files. All the work is done by the STFImporter.
+	// It should be just as easy to create an explicit UI to import STF files into a folder structure, similar to how UniGLTF/UniVRM does it.
+	
 	[ScriptedImporter(1, new string[] {"stf"})]
 	public class STFScriptedImporter : ScriptedImporter
 	{

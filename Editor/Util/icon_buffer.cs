@@ -3,10 +3,15 @@ using System.Collections.Generic;
 
 namespace stf.serialisation
 {
+	// Cursed
+
+	// A shitty 'STF' logo encoded as PNG represented as an inline byte array.
+	// Used as the editor icon for the STFMeta object if imported by the STFScriptedImporter
+
 	public static class STFIcon
 	{
     // https://notisrac.github.io/FileToCArray/
-    // must rename image to non image file for it to convert the encoded image bytes
+    // Must rename image to non image file for it to convert the encoded png bytes and not the decoded bitmap.
 		public static readonly byte[] icon_png_array = new byte[] {
   0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00, 0x00, 0x00, 0x0d, 0x49, 0x48, 0x44, 0x52, 
   0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01, 0x00, 0x08, 0x06, 0x00, 0x00, 0x00, 0x5c, 0x72, 0xa8, 

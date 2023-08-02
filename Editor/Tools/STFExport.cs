@@ -11,6 +11,8 @@ using UnityEngine;
 
 namespace stf
 {
+	// UI to export STF-Unity intermediary scenes into STF. Apart from selecting the main asset, optionally multiple secondary assets can be included into the export.
+
 	public class STFUIExport : EditorWindow
 	{
 		private Vector2 scrollPos;
