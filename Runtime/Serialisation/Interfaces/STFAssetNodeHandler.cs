@@ -9,6 +9,9 @@ using UnityEngine;
 
 namespace stf.serialisation
 {
+	// Determine which node type is being parsed.
+	// TODO: Completely redo how nodes are exported. Register node-exporters in the registry along with a function for each to determine the priority of handling a unity Gameobject instead of this.
+
 	public static class STFNodeHandler
 	{
 		public static void RegisterNode(ISTFExporter state, Transform transform)

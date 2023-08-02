@@ -8,6 +8,8 @@ using UnityEngine.Animations;
 
 namespace stf.Components
 {
+	// Component to hold animations. This way any animation added here will be exported to a STF file.
+	
 	public class STFAnimationHolder : ASTFComponent
 	{	
 		public static string _TYPE = "STF.animation_holder";

@@ -6,6 +6,9 @@ using UnityEngine;
 
 namespace stf.Components
 {
+	// If a component is encountered which has no registered importer, this will be used to hold its data and the resource ID's it references.
+	// TODO: Actually list all referenced resources in every component. Also create a object to hold an unrecognized resource, and its buffers.
+
 	public class STFUnrecognizedComponent : MonoBehaviour, ISTFComponent
 	{
 		public string id {get; set;}

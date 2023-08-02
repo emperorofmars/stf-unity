@@ -12,6 +12,8 @@ using UnityEditor;
 
 namespace stf.serialisation
 {
+	// Animation paths are stored with UUID's and then the property. Implementing classes of this interface translate these STF paths into application specific paths for second-stage assets.
+
 	public interface ISTFSecondStageAnimationPathTranslator
 	{
 		(bool omit, string path, Type type, string property, AnimationCurve curve) Translate(GameObject root, string originalPath, Type originalType, string originalProperty, AnimationCurve originalCurve);
