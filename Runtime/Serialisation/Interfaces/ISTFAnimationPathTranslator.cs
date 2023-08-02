@@ -1,9 +1,5 @@
 
 using System;
-using Newtonsoft.Json.Linq;
-using UnityEngine;
-using System.IO;
-using System.Threading.Tasks;
 
 namespace stf.serialisation
 {

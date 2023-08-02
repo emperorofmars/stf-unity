@@ -4,6 +4,14 @@ using UnityEngine;
 
 namespace stf
 {
+	/* 
+	Holds a lot of information about an imported assed. The default Scripted importer provided by this project will add all the imported stf resources here.
+	
+	Some import operations are destructive, for example textures:
+		Unity cant import png's, it must import the gpu texture, so the original will be lost.
+		The original png buffer will be then added here alongside a reference to the imported texture, so on export, it can be looked up and the original image can be exported instead of a texture with potential lossy gpu-compression.
+	*/
+
 	public class STFMeta : ScriptableObject
 	{
 		

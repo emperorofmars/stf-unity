@@ -5,6 +5,8 @@ using UnityEngine;
 
 namespace stf
 {
+	// Component to hold the UUID of a stf node in Unity, as well as the UUID of every non STF component on that node.
+
 	public class STFUUID : MonoBehaviour
 	{
 		[Serializable]

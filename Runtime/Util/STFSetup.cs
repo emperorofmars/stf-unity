@@ -6,6 +6,8 @@ using UnityEngine;
 
 namespace stf
 {
+	// Utility to setup a non STF Unity scene into the STF Unity intermediary format. Adds uuid's to everything, determines armatures and places the appropriate STF components. Will be used by the default exporter automatically if the exported scene is not set up.
+
 	public static class STFSetup
 	{
 		public static List<UnityEngine.Object> SetupStandaloneAssetInplace(GameObject root)
@@ -16,7 +18,7 @@ namespace stf
 			{
 				var asset = root.AddComponent<STFAssetInfo>();
 				asset.assetId = Guid.NewGuid().ToString();
-				asset.assetType = "asset";
+				asset.assetType = STFAssetExporter._TYPE;
 				asset.assetName = root.name;
 			}
 			SetupIds(root);
@@ -32,7 +34,7 @@ namespace stf
 			{
 				var asset = root.AddComponent<STFAssetInfo>();
 				asset.assetId = Guid.NewGuid().ToString();
-				asset.assetType = "addon";
+				asset.assetType = STFAddonAssetExporter._TYPE;
 				asset.assetName = root.name;
 			}
 			for(int i = 0; i < root.transform.childCount; i++)

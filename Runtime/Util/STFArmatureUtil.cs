@@ -7,6 +7,8 @@ using UnityEngine;
 
 namespace stf
 {
+	// Determine armatures in a Unity gameobject tree.
+
 	public static class STFArmatureUtil
 	{
 		public static void FindAndSetupExternalArmatures(GameObject root)
