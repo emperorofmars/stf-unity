@@ -34,7 +34,7 @@ namespace stf.serialisation
 
 		public override bool CanHandle(ISTFAsset asset, UnityEngine.Object adaptedUnityAsset)
 		{
-			return asset.GetSTFAssetType() == "asset";
+			return asset.GetSTFAssetType() == STFAssetExporter._TYPE;
 		}
 	}
 }
