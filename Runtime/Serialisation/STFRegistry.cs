@@ -9,8 +9,8 @@ namespace stf.serialisation
 	public static class STFRegistry
 	{
 		public static readonly Dictionary<string, ISTFAssetImporter> DefaultAssetImporters = new Dictionary<string, ISTFAssetImporter>() {
-			{"asset", new STFAssetImporter()},
-			{"addon", new STFAddonAssetImporter()}
+			{STFAssetExporter._TYPE, new STFAssetImporter()},
+			{STFAddonAssetExporter._TYPE, new STFAddonAssetImporter()}
 		};
 		public static readonly Dictionary<string, ISTFNodeImporter> DefaultNodeImporters = new Dictionary<string, ISTFNodeImporter>() {
 			{STFNodeImporter._TYPE, new STFNodeImporter()},

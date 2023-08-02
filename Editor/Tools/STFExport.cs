@@ -109,13 +109,13 @@ namespace stf
 
 		private ISTFAssetExporter CreateAssetExporter(GameObject go)
 		{
-			if(go.GetComponent<STFAssetInfo>()?.assetType == null || go.GetComponent<STFAssetInfo>()?.assetType == "default" || go.GetComponent<STFAssetInfo>()?.assetType == "asset")
+			if(go.GetComponent<STFAssetInfo>()?.assetType == null || go.GetComponent<STFAssetInfo>()?.assetType == STFAssetExporter._TYPE)
 			{
 				var exporter = new STFAssetExporter();
 				exporter.rootNode = go;
 				return exporter;
 			}
-			else if(go.GetComponent<STFAssetInfo>()?.assetType == "addon")
+			else if(go.GetComponent<STFAssetInfo>()?.assetType == STFAddonAssetExporter._TYPE)
 			{
 				var exporter = new STFAddonAssetExporter();
 				exporter.rootNode = go;

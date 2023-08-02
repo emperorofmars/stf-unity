@@ -50,7 +50,7 @@ namespace stf
 
 	public class STFArmatureInstanceNodeImporter : ISTFNodeImporter
 	{
-		public static string _TYPE = "armature_instance";
+		public static string _TYPE = "STF.armature_instance";
 
 		public GameObject ParseFromJson(ISTFImporter state, JToken json, JObject jsonRoot, out List<string> nodesToParse)
 		{

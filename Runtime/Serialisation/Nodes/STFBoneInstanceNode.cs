@@ -8,11 +8,12 @@ namespace stf.serialisation
 {
 	public class STFBoneInstanceNodeExporter// : ASTFNodeExporter
 	{
+		public static string _TYPE = "STF.bone_instance";
 		public static JObject SerializeToJson(GameObject go, ISTFExporter state, string boneId, Transform[] boneInstances)
 		{
 			var ret = new JObject();
 			ret.Add("name", go.name);
-			ret.Add("type", "bone_instance");
+			ret.Add("type", _TYPE);
 			ret.Add("bone", boneId);
 			ret.Add("trs", new JArray() {
 				new JArray() {go.transform.localPosition.x, go.transform.localPosition.y, go.transform.localPosition.z},
