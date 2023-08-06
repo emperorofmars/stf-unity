@@ -13,7 +13,7 @@ namespace stf.serialisation
 
 	public class STFAddonAssetExporter : ISTFAssetExporter
 	{
-		public static string _TYPE = "STF.addon_asset";
+		public static string _TYPE = "STF.addon";
 		public GameObject rootNode;
 		public string id;
 		public string name;

@@ -154,7 +154,7 @@ namespace stf
 			}
 			GUILayout.EndHorizontal();
 
-			var addons = meta.importedRawAssets.FindAll(a => a.assetType == "addon");
+			var addons = meta.importedRawAssets.FindAll(a => a.assetType == STFAddonAssetExporter._TYPE);
 			if(addons != null && addons.Count > 0)
 			{
 				EditorGUILayout.LabelField("Addons in File", EditorStyles.boldLabel);

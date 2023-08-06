@@ -79,7 +79,7 @@ namespace stf
 			}
 
 			// Handle internal addons
-			var addons = importer.GetMeta().importedRawAssets.FindAll(a => a.assetType == "addon");
+			var addons = importer.GetMeta().importedRawAssets.FindAll(a => a.assetType == STFAddonAssetExporter._TYPE);
 			if(addons != null)
 			{
 				foreach(var addon in addons)
