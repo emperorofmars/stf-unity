@@ -271,7 +271,7 @@ namespace stf.serialisation
 					var objectId = pathSplit[1];
 					if(binding.path.StartsWith("STF_NODE"))
 					{
-						animatedObject = root.GetComponentsInChildren<STFUUID>().First(id => id.id == objectId)?.gameObject;
+						animatedObject = root.GetComponentsInChildren<STFUUID>().First(id => id.id == objectId)?.transform;
 					}
 					else if(binding.path.StartsWith("STF_COMPONENT"))
 					{

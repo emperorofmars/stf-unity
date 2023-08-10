@@ -11,7 +11,7 @@ namespace stf
 {
 	public static class Utils
 	{
-		public static string getPath(Transform transform)
+		public static string getPath(Transform transform, bool relative = false)
 		{
 			string path = "/" + transform.name;
 			while (transform.parent != null)
@@ -19,6 +19,7 @@ namespace stf
 				transform = transform.parent;
 				path = "/" + transform.name + path;
 			}
+			if(relative) path = path.Substring(1);
 			return path;
 		}
 		public static string getPath(Transform root, Transform transform, bool relative = false)
