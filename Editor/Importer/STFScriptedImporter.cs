@@ -103,17 +103,14 @@ namespace stf
 				var unityAsset = asset.Value.GetAsset();
 
 				// Apply internal addons
-				if(addons != null)
+				if(addons != null) foreach(var addon in addons)
 				{
-					foreach(var addon in addons)
+					var addonInfo = ((GameObject)addon.assetRoot).GetComponent<STFAddonAssetInfo>();
+					var enabled = AddonsEnabled.Find(a => a.AddonId == addon.assetId);
+					if(addonInfo != null && addonInfo.targetAssetId == asset.Key && enabled != null && enabled.AddonEnabled == true)
 					{
-						var addonInfo = ((GameObject)addon.assetRoot).GetComponent<STFAddonAssetInfo>();
-						var enabled = AddonsEnabled.Find(a => a.AddonId == addon.assetId);
-						if(addonInfo != null && addonInfo.targetAssetId == asset.Key && enabled != null && enabled.AddonEnabled == true)
-						{
-							unityAsset = AddonApplier.ApplyAddon((GameObject)unityAsset, ((GameObject)addon.assetRoot).GetComponent<STFAddonAssetInfo>());
-							objectsToDestroy.Add(unityAsset);
-						}
+						unityAsset = AddonApplier.ApplyAddon((GameObject)unityAsset, ((GameObject)addon.assetRoot).GetComponent<STFAddonAssetInfo>());
+						objectsToDestroy.Add(unityAsset);
 					}
 				}
 				// Apply external addons
@@ -134,17 +131,14 @@ namespace stf
 					if(stage.CanHandle(asset.Value, unityAsset))
 					{
 						var converted = stage.Convert(asset.Value, unityAsset);
-						foreach(var resource in converted.resources)
+						foreach(var resource in converted.resources.FindAll(r => r != null))
 						{
-							if(resource != null)
-							{
-								if(resource.GetType() == typeof(Mesh))
-									ctx.AddObjectToAsset("meshes/" + resource.name + ".mesh", resource);
-								else if(resource.GetType() == typeof(Texture2D))
-									ctx.AddObjectToAsset("textures/" + resource.name + ".texture2d", resource);
-								else
-									ctx.AddObjectToAsset(resource.name, resource);
-							}
+							if(resource.GetType() == typeof(Mesh))
+								ctx.AddObjectToAsset("meshes/" + resource.name + ".mesh", resource);
+							else if(resource.GetType() == typeof(Texture2D))
+								ctx.AddObjectToAsset("textures/" + resource.name + ".texture2d", resource);
+							else
+								ctx.AddObjectToAsset(resource.name, resource);
 						}
 						foreach(var subAsset in converted.assets)
 						{

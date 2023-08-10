@@ -34,7 +34,7 @@ namespace stf.serialisation
 			{
 				newCurve.AddKey(keyframe.time, keyframe.value);
 			}
-			return (false, Utils.getPath(root.transform, targetGo.transform), originalType, originalProperty, newCurve);
+			return (false, Utils.getPath(root.transform, targetGo.transform, true), originalType, originalProperty, newCurve);
 		}
 		
 #if UNITY_EDITOR
@@ -49,7 +49,7 @@ namespace stf.serialisation
 				newCurve[i].time = originalCurve[i].time;
 				newCurve[i].value = originalCurve[i].value;
 			}
-			return (false, Utils.getPath(root.transform, targetGo.transform), originalType, originalProperty, newCurve);
+			return (false, Utils.getPath(root.transform, targetGo.transform, true), originalType, originalProperty, newCurve);
 		}
 #endif
 	}
