@@ -82,7 +82,7 @@ namespace stf.serialisation
 		{
 			// will load the gpu compressed data into memory, use only for runtime use
 			var arrayBuffer = state.GetBuffer((string)json["buffer"]);
-			var ret = new Texture2D((int)json["width"], (int)json["height"], (bool)json["linear"] ? TextureFormat.DXT5 : TextureFormat.BC7, true, (bool)json["linear"]);
+			var ret = new Texture2D((int)json["width"], (int)json["height"], TextureFormat.BC7, true, (bool)json["linear"]);
 			ret.name = (string)json["name"];
 
 			var originalTextureResource = ScriptableObject.CreateInstance<STFTextureResource>();
@@ -97,7 +97,7 @@ namespace stf.serialisation
 			state.AddResources(id + "_original", originalTextureResource);
 
 			ret.LoadImage(arrayBuffer);
-			ret.Compress(true);
+			//ret.Compress(true);
 
 			state.GetMeta().resourceInfo.Add(new STFMeta.ResourceInfo {type = "texture", name = ret.name, resource = ret, id = id, originalFormat = (string)json["format"], external = false, originalResource = originalTextureResource});
 			return ret;
