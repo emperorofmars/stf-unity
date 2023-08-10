@@ -97,7 +97,7 @@ namespace stf.serialisation
 			state.AddResources(id + "_original", originalTextureResource);
 
 			ret.LoadImage(arrayBuffer);
-			//ret.Compress(true);
+			ret.Compress(true); // This does only DXT5 no matter what.
 
 			state.GetMeta().resourceInfo.Add(new STFMeta.ResourceInfo {type = "texture", name = ret.name, resource = ret, id = id, originalFormat = (string)json["format"], external = false, originalResource = originalTextureResource});
 			return ret;
