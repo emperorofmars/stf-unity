@@ -15,8 +15,8 @@ namespace stf.Components
 		public List<string> extends {get; set;}
 		public List<string> overrides {get; set;}
 		public List<string> targets {get; set;}
-		public string type;
 		public List<string> resources_used {get; set;}
+		public string type;
 
 		[Multiline]
 		public string json;

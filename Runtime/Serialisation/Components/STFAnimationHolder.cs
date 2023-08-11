@@ -44,6 +44,7 @@ namespace stf.Components
 			var ret = new JObject();
 			STFAnimationHolder c = (STFAnimationHolder)component;
 			ret.Add("type", STFAnimationHolder._TYPE);
+			ret.Add("resources_used", new JArray(c.animations.Select(a => state.GetResourceId(a)).ToList()));
 			this.SerializeRelationships(c, ret);
 			var animIds = new JArray();
 			foreach(var a in c.animations)

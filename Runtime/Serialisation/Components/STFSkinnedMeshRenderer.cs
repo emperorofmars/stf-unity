@@ -97,6 +97,9 @@ namespace stf.Components
 
 			ret.Add("materials", new JArray(c.sharedMaterials.Select(m => m != null ? state.GetResourceId(m) : null)));
 			ret.Add("morphtarget_values", new JArray(Enumerable.Range(0, c.sharedMesh.blendShapeCount).Select(i => c.GetBlendShapeWeight(i))));
+			
+			ret.Add("resources_used", new JArray(state.GetResourceId(c.sharedMesh), ret["armature_instance"]));
+			((JArray)ret["resources_used"]).Merge(ret["morphtarget_values"]);
 			return ret;
 		}
 	}
