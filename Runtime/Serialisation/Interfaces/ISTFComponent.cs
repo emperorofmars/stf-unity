@@ -12,7 +12,6 @@ namespace stf.serialisation
 		List<string> extends {get; set;}
 		List<string> overrides {get; set;}
 		List<string> targets {get; set;}
-		List<string> resources_used {get; set;}
 	}
 	public abstract class ASTFComponent : MonoBehaviour, ISTFComponent
 	{
@@ -58,7 +57,6 @@ namespace stf.serialisation
 			if(json["extends"] != null) component.extends = json["extends"].ToObject<List<string>>();
 			if(json["overrides"] != null) component.overrides = json["overrides"].ToObject<List<string>>();
 			if(json["targets"] != null) component.targets = json["targets"].ToObject<List<string>>();
-			if(json["resources_used"] != null) component.resources_used = json["resources_used"].ToObject<List<string>>();
 		}
 	}
 }
