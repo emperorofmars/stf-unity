@@ -22,6 +22,7 @@ namespace stf.serialisation
 
 		public STFRelationshipMatrix(GameObject root, List<string> targets, List<Type> conversibleTypes)
 		{
+			// First build Component <--> ID maps
 			foreach(var component in root.GetComponentsInChildren<Component>())
 			{
 				if(component is ISTFComponent)
@@ -30,6 +31,7 @@ namespace stf.serialisation
 					IdToComponent.Add(((ISTFComponent)component).id, component);
 				}
 			}
+			// Check which component is valid for the current target
 			foreach(var component in root.GetComponentsInChildren<ISTFComponent>())
 			{
 				bool match = false;
@@ -50,9 +52,10 @@ namespace stf.serialisation
 				}
 				TargetMatch.Add((Component) component, match);
 			}
+			// Figure out which component overrides which component
 			foreach(var component in root.GetComponentsInChildren<Component>())
 			{
-				if(component is ISTFComponent && conversibleTypes.Contains(component.GetType()))
+				if(component is ISTFComponent && conversibleTypes.Contains(component.GetType()) && TargetMatch.ContainsKey(component))
 				{
 					var c = (ISTFComponent)component;
 					if(c.overrides != null)
@@ -68,9 +71,10 @@ namespace stf.serialisation
 					}
 				}
 			}
+			// Build the extends relationship lists
 			foreach(var component in root.GetComponentsInChildren<Component>())
 			{
-				if(component is ISTFComponent && !IsOverridden.Contains(component))
+				if(component is ISTFComponent && TargetMatch.ContainsKey(component) && !IsOverridden.Contains(component))
 				{
 					var c = (ISTFComponent)component;
 					if(c.extends != null) foreach(var extend in c.extends)
