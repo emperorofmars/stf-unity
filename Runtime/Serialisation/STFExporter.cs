@@ -235,6 +235,10 @@ namespace stf.serialisation
 			if(component.GetType() == typeof(STFUnrecognizedComponent))
 			{
 				var componentId = GetComponentId(component);
+				foreach(var resource in ((STFUnrecognizedComponent)component).resources_used)
+				{
+					RegisterResource(resource);
+				}
 				var jsonComponent = ((STFUnrecognizedComponent)component).SerializeToJson(this);
 				AddComponentToNode(nodeId, componentId, jsonComponent);
 				return;

@@ -13,17 +13,23 @@ namespace stf.serialisation
 		List<string> overrides {get; set;}
 		List<string> targets {get; set;}
 	}
+
 	public abstract class ASTFComponent : MonoBehaviour, ISTFComponent
 	{
 		public string _id = Guid.NewGuid().ToString();
 		public string id {get => _id; set => _id = value;}
-		public List<string> _extends;
+
+		public List<string> _extends = new List<string>();
 		public List<string> extends {get => _extends; set => _extends = value;}
-		public List<string> _overrides;
+
+		public List<string> _overrides = new List<string>();
 		public List<string> overrides {get => _overrides; set => _overrides = value;}
-		public List<string> _targets;
+
+		public List<string> _targets = new List<string>();
 		public List<string> targets {get => _targets; set => _targets = value;}
-		public List<string> resources_used {get => _targets; set => _targets = value;}
+
+		public List<string> _resources_used = new List<string>();
+		public List<string> resources_used {get => _resources_used; set => _resources_used = value;}
 	}
 	
 	public abstract class ASTFComponentExporter
