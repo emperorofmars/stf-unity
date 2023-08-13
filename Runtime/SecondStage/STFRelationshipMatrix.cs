@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using stf.Components;
 using UnityEngine;
 
 namespace stf.serialisation
@@ -25,7 +26,7 @@ namespace stf.serialisation
 			// First build Component <--> ID maps
 			foreach(var component in root.GetComponentsInChildren<Component>())
 			{
-				if(component is ISTFComponent)
+				if(component is ISTFComponent && component.GetType() != typeof(STFUnrecognizedComponent))
 				{
 					ComponentToId.Add(component, ((ISTFComponent)component).id);
 					IdToComponent.Add(((ISTFComponent)component).id, component);
