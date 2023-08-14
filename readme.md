@@ -15,16 +15,16 @@ Supports import and export!
 - Play around
 
 ## STF Format
-STF is a binary format. It can have an arbitrary amount of chunks, but one is the minimum. The first chunk is a definition in the JSON format. All further chunks are binary buffers which have to be referenced by the JSON definition.
+STF is a binary format consisting of an arbitrary amount of chunks. The first chunk is always a definition in the JSON format. All further chunks are optional binary buffers which have to be referenced by the JSON definition.
 
 The JSON definition has 6 properties in the root object:
-- meta: Information about the author, copyright, etc...
-- main: UUID of the main asset.
-- assets: A dict of UUID -> assets pairs. Assets can list node UUID's and resource UUID's, depending on the asset type.
-- nodes: A dict of UUID -> node pairs. Nodes can have a list of components and child-node UUID's. Specific node types can reference resources, other nodes and assets. (assets for example for a prefab instance, alternatively these could be done as components)
-	- components: Components describe additional information and behavior of a node. For example mesh-instances or rotation constraints. Components can reference other nodes, resources and assets.
-- resources: A list of UUID -> resource pairs. Resources can be referenced by nodes, components and assets. Resources can reference nodes, other resources and buffers. A resource's importer/exporter is responsible for dealing with any referenced buffer. A buffer can be only referenced by one resource, but one resource can reference multiple buffers.
-- buffers: A list of buffer UUID's in the order of the binary chunks. A UUID can be referenced by a resource. The index of the buffer UUID corresponds to the index of the buffer in the STF file + 1. (The JSON definition is at the first index)
+- **meta:** Information about the author, copyright, etc...
+- **main:** UUID of the main asset.
+- **assets:** A dict of UUID -> assets pairs. Assets can list node UUID's and resource UUID's, depending on the asset type.
+- **nodes:** A dict of UUID -> node pairs. Nodes can have a list of components and child-node UUID's. Specific node types can reference resources, other nodes and assets. (assets for example for a prefab instance, alternatively these could be done as components)
+	- **components:** A node's components describe additional information and behavior. For example mesh-instances or rotation constraints. Components can reference other nodes, resources and assets.
+- **resources:** A list of UUID -> resource pairs. Resources can be referenced by nodes, components and assets. Resources can reference nodes, other resources and buffers. A resource's importer/exporter is responsible for dealing with any referenced buffer. A buffer can be only referenced by one resource, but one resource can reference multiple buffers.
+- **buffers:** A list of buffer UUID's in the order of the binary chunks. A UUID can be referenced by a resource. The index of the buffer UUID corresponds to the index of the buffer in the STF file + 1. (The JSON definition is at the first index)
 
 The STF format is similar to GLTF 2.0, but differs in significant ways.
 
