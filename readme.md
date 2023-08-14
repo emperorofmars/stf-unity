@@ -3,8 +3,9 @@
 
 Implementation for Unity 2019.4 or higher.
 
+Supports import and export!
 
-## **This is a prototype and not intended for productive use!**
+**This is a prototype and not intended for productive use!**
 
 ## How to Use
 - Ensure you have the Newtonsoft JSON package imported in Unity. If not, install the official package in UPM.
@@ -20,15 +21,20 @@ The JSON definition has 6 properties in the root object:
 - meta: Information about the author, copyright, etc...
 - main: UUID of the main asset.
 - assets: A dict of UUID -> assets pairs. Assets can list node UUID's and resource UUID's, depending on the asset type.
-- nodes: A dict of UUID -> node pairs. Nodes can have a list of components and child-node UUID's.
-- resources: A list of UUID -> resource pairs. Resources can be referenced by nodes, components and assets.
+- nodes: A dict of UUID -> node pairs. Nodes can have a list of components and child-node UUID's. Specific node types can reference resources, other nodes and assets. (assets for example for a prefab instance, alternatively these could be done as components)
+	- components: Components describe additional information and behavior of a node. For example mesh-instances or rotation constraints. Components can reference other nodes, resources and assets.
+- resources: A list of UUID -> resource pairs. Resources can be referenced by nodes, components and assets. Resources can reference nodes, other resources and buffers.
 - buffers: A list of buffer UUID's in the order of the binary chunks. The UUID can be referenced by resources and will point to a binary buffer based on the index.
 
-The STF format is similar to GLTF 2.0, especially in concept, but differs in significant ways.
-Everything has a UUID. This UUID must persist between import and export of any implementation.
-Every asset, node, component and resource has a type. These objects are parsed based on the type. If a type is not supported by an implementation, the JSON and all referenced objects have to be preserved and reexported unless manually removed. A file cannot be changed automatically between import and export, unless explicitly desired by the user.
+The STF format is similar to GLTF 2.0, but differs in significant ways.
 
-Armatures are a resource. Armatures can be instantiated as a node of the 'STF.armature-instance' type and. The armature-instance can be referenced by one or more mesh-instance components.
+Everything is addressed by UUID. It must persist between import and export.
+
+Every asset, node, component and resource has a type. The importer/exporter component for each object is selected by its type. Support for additional types can be hot-loaded.
+
+If a type is not supported, the JSON and all referenced objects have to be preserved and reexported unless manually removed.
+
+A file cannot be changed automatically between import and export, unless explicitly desired by the user.
 
 Example:
 
@@ -91,20 +97,26 @@ Example:
 	}
 
 ## STF-Unity Specific Notes
-This implementation for Unity uses a two stage design. The first one parses any STF file into Unity, however it uses its own components which represent the STF file 1:1 with no regard for Unity functionality. Multiple second stages can be registered, to convert the intermediary scene into an application-specific one. Included is a basic second stage which converts into a pure Unity scene, and throws everything else away.
-The intermediary format is intended for authoring STF files. A second-stage will throw all STF related information away, resolve all relationships between components and will potentially apply optimizations.
+This implementation for Unity uses a two stage design. The first one parses any STF file into a Unity scene using its own components which represent the STF file 1:1 with no regard for Unity functionality. This is called the authoring scene, as it can be used to export STF files.
+
+Multiple second stages can be registered to convert the intermediary authoring scene into an application-specific one. This step is destructive and throws information not relevant for the target application away, including all STF related meta-information, resolves all relationships between components and potentially applies optimizations.
+
+Included is a basic second stage which converts into a pure Unity scene, and throws everything else away.
+The intermediary format is intended for authoring STF files.
 
 ## Extensibility
 The extensibility of this format is a first class feature. All implementations must provide an easy way to add and hotload support for additional types.
-By default STF supports only a limited set of features which can be expected from a common 3d file-format. These include support for meshes, skinned meshes, armatures, animations, materials and textures.
+
+By default, STF supports only a limited set of features which can be expected from a common 3d file-format. These include support for meshes, skinned meshes, armatures, animations, materials and textures.
 
 If for example the included mesh type is not satisfactory, a different mesh type can be implemented. These can exist in parallel and will work as long as the importer/exporter for the new mesh-type is present. All types are namespaced, and can be versioned. It is the responsibility of the importer/exporter for a type to handle versioning. Importers are implemented for each type in an encapsulated manner. As such it is trivial to register additional ones.
 
 Components can have defined relationships to other components and be specific to a target application.
 Components can extend or override others.
+
 For example, multiple Social VR applications support one or another library for bone physics. None of which are compatible with each other, but they generally work the same. A generic STF-component can be used to describe the common features and be conversible to all implemented applications formats, err-ing on the side of the resulting application-component not spazzing out. If there exists a dedicated STF-component for a specific application, it can override the basic generic component. This way multiple mutually exclusive and application/game-engine specific features can be supported simultaneously.
 
-To extend STF with the ability to represent VR & V-Tubing avatars, the [AVA Proof of Concept](https://github.com/emperorofmars/ava-unity) was created. This shows the potential and ease of extending STF.
+**To extend STF with the ability to represent VR & V-Tubing avatars, the [AVA Proof of Concept](https://github.com/emperorofmars/ava-unity) was created. This shows the potential and ease of extending STF.**
 
 ## Addons
 
@@ -168,6 +180,7 @@ Such a material format could have use beyond just STF and should probably become
 
 ## Some Background and Motivation
 VR Avatars are currently distributed as packages for game-engines, specifically Unity. This is an issue as end users have a hard time using professional tools. Additionally, Unity is not a character-editor, it's a tool with which a character-editor application can be created.
+
 I wanted to create a universal character-editor application aimed at end users wishing to adapt their VR Avatar models but without the technical knowledge to do so in a game-engine.
 To do so, i needed a file format that this character-editor-application could parse. This is where my descend into madness began.
 
