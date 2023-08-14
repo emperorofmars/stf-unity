@@ -23,8 +23,8 @@ The JSON definition has 6 properties in the root object:
 - assets: A dict of UUID -> assets pairs. Assets can list node UUID's and resource UUID's, depending on the asset type.
 - nodes: A dict of UUID -> node pairs. Nodes can have a list of components and child-node UUID's. Specific node types can reference resources, other nodes and assets. (assets for example for a prefab instance, alternatively these could be done as components)
 	- components: Components describe additional information and behavior of a node. For example mesh-instances or rotation constraints. Components can reference other nodes, resources and assets.
-- resources: A list of UUID -> resource pairs. Resources can be referenced by nodes, components and assets. Resources can reference nodes, other resources and buffers.
-- buffers: A list of buffer UUID's in the order of the binary chunks. The UUID can be referenced by resources and will point to a binary buffer based on the index.
+- resources: A list of UUID -> resource pairs. Resources can be referenced by nodes, components and assets. Resources can reference nodes, other resources and buffers. A resource's importer/exporter is responsible for dealing with any referenced buffer. A buffer can be only referenced by one resource, but one resource can reference multiple buffers.
+- buffers: A list of buffer UUID's in the order of the binary chunks. A UUID can be referenced by a resource. The index of the buffer UUID corresponds to the index of the buffer in the STF file + 1. (The JSON definition is at the first index)
 
 The STF format is similar to GLTF 2.0, but differs in significant ways.
 
