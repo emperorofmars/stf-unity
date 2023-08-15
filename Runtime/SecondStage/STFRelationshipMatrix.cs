@@ -80,11 +80,14 @@ namespace stf.serialisation
 					var c = (ISTFComponent)component;
 					if(c.extends != null) foreach(var extend in c.extends)
 					{
-						if(Extends.ContainsKey(component)) Extends[component].Add(IdToComponent[extend]);
-						else Extends.Add(component, new List<Component> {IdToComponent[extend]});
-						
-						if(ExtendedBys.ContainsKey(IdToComponent[extend])) ExtendedBys[IdToComponent[extend]].Add(component);
-						else ExtendedBys.Add(IdToComponent[extend], new List<Component> {component});
+						if(IdToComponent.ContainsKey(extend))
+						{
+							if(Extends.ContainsKey(component)) Extends[component].Add(IdToComponent[extend]);
+							else Extends.Add(component, new List<Component> {IdToComponent[extend]});
+							
+							if(ExtendedBys.ContainsKey(IdToComponent[extend])) ExtendedBys[IdToComponent[extend]].Add(component);
+							else ExtendedBys.Add(IdToComponent[extend], new List<Component> {component});
+						}
 					}
 				}
 			}

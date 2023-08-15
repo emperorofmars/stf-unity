@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using System.Text;
-using UnityEditor.PackageManager;
 
 #if UNITY_EDITOR
 using UnityEditor;
