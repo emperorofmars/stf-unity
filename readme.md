@@ -14,6 +14,8 @@ Supports import and export!
 - If you exported it into the Assets hierarchy, just press CTRL+R for Unity to refresh its asset database and see it appear.
 - Play around
 
+![Screenshot of an STF file's inspector in Unity.](./doc/img/import_settings.png)
+
 ## STF Format
 STF is a binary format consisting of an arbitrary amount of chunks. The first chunk is always a definition in the JSON format. All further chunks are optional binary buffers which have to be referenced by the JSON definition.
 
