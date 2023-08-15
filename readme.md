@@ -3,9 +3,7 @@
 
 Implementation for Unity 2019.4 or higher.
 
-Supports import and export!
-
-**This is a prototype and not intended for productive use!**
+## **This is a prototype and not intended for productive use!**
 
 ## How to Use
 - Ensure you have the Newtonsoft JSON package imported in Unity. If not, install the official package in UPM.
