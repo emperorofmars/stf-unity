@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using System.Text;
+using UnityEditor.PackageManager;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -284,19 +285,34 @@ namespace stf.serialisation
 			this.trash.Add(trash);
 		}
 
+		private JObject createMeta()
+		{
+			var ret = new JObject() {
+				{"version", "0.0.1"},
+				{"generator", "stf-unity"}
+			};
+			if(this.GetMetas().Count > 0)
+			{
+				var meta = this.GetMetas()[0];
+				if(!String.IsNullOrWhiteSpace(meta.author)) ret.Add("author", meta.author);
+				if(!String.IsNullOrWhiteSpace(meta.copyright)) ret.Add("copyright", meta.copyright);
+			}
+			return ret;
+		}
+
 		private JObject createRoot()
 		{
+
 			var ret = new JObject();
-			ret.Add("meta", new JObject() {
-					{"version", "0.0.1"},
-					{"copyright", "testcopyright"},
-					{"generator", "stf-unity"},
-					{"author", "testauthor"}
-			});
+			ret.Add("meta", createMeta());
 			if(assets != null && assets.Count > 0)
 			{
 				ret.Add("main", assets[0].GetId(this));
 				ret.Add("assets", new JObject(assets.Select(asset => new JProperty(asset.GetId(this), asset.SerializeToJson(this)))));
+			}
+			else
+			{
+				throw new Exception("At least one asset is required!");
 			}
 			ret.Add("nodes", new JObject(nodes.Select(node => new JProperty(node.Key, node.Value))));
 			ret.Add("resources", new JObject(resources.Select(resource => new JProperty(resource.Key, resource.Value))));
