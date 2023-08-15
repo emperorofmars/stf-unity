@@ -15,7 +15,7 @@ Implementation for Unity 2019.4 or higher.
 ![Screenshot of an STF file's inspector in Unity.](./doc/img/import_settings.png)
 
 ## STF Format
-STF is a binary format consisting of an arbitrary amount of chunks. The first chunk is always a definition in the JSON format. All further chunks are optional binary buffers which have to be referenced by the JSON definition.
+STF is a binary format consisting of an arbitrary amount of chunks. The first chunk is always a UTF-8 encoded definition in the JSON format. All further chunks are optional binary buffers which have to be referenced by the JSON definition.
 
 The JSON definition has 6 properties in the root object:
 - **meta:** Information about the author, copyright, etc...
