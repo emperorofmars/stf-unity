@@ -6,19 +6,19 @@ Implementation for Unity 2019.4 or higher.
 **This is a prototype and not intended for productive use!**
 
 ## Table of Content
-- [How to Use](#How-to-Use)
-- [STF-Unity Specific Notes](#STF-Unity-Specific-Notes)
-- [Extensibility](#Extensibility)
-- [Addons](#Addons)
-- [Material Format](#Material-Format)
-- [Some Background and Motivation](#Some-Background-and-Motivation)
-	- [GLTF 2.0 Issues](#GLTF-2.0-Issues)
+- [How to Use](#how-to-use)
+- [STF-Unity Specific Notes](#stf-unity-specific-notes)
+- [Extensibility](#extensibility)
+- [Addons](#addons)
+- [Material Format](#material-format)
+- [Some Background and Motivation](#some-background-and-motivation)
+	- [GLTF 2.0 Issues](#gltf-20-issues)
 
 ## How to Use
 - Ensure you have the Newtonsoft JSON package imported in Unity. If not, install the official package in UPM.
 - Either:
 	- Download the latest release from this repository and import the .unitypackage into Unity.
-	- Or download or clone this repository and copy the entire folder into the 'Assets' folder of your Unity project.
+	- Or clone this repository into the 'Assets' folder of your Unity project.
 - Import a .fbx model, put it into the scene and export it as STF by going to 'STF Tools' -> 'Export'
 - If you exported it into the Assets hierarchy, just press CTRL+R for Unity to refresh its asset database and see it appear.
 - Play around
