@@ -1,13 +1,24 @@
 # STF - Scene Transfer Format
-## The Worlds Most Extensible Fileformat for 3D Models and Scenes
+**The Worlds Most Extensible Fileformat for 3D Models and Scenes**
 
 Implementation for Unity 2019.4 or higher.
 
-## **This is a prototype and not intended for productive use!**
+**This is a prototype and not intended for productive use!**
+
+## Table of Content
+- [How to Use](#How-to-Use)
+- [STF-Unity Specific Notes](#STF-Unity-Specific-Notes)
+- [Extensibility](#Extensibility)
+- [Addons](#Addons)
+- [Material Format](#Material-Format)
+- [Some Background and Motivation](#Some-Background-and-Motivation)
+	- [GLTF 2.0 Issues](#GLTF-2.0-Issues)
 
 ## How to Use
 - Ensure you have the Newtonsoft JSON package imported in Unity. If not, install the official package in UPM.
-- Download or clone this repository and copy the entire folder into the 'Assets' folder of your Unity project.
+- Either:
+	- Download the latest release from this repository and import the .unitypackage into Unity.
+	- Or download or clone this repository and copy the entire folder into the 'Assets' folder of your Unity project.
 - Import a .fbx model, put it into the scene and export it as STF by going to 'STF Tools' -> 'Export'
 - If you exported it into the Assets hierarchy, just press CTRL+R for Unity to refresh its asset database and see it appear.
 - Play around
@@ -16,15 +27,6 @@ Implementation for Unity 2019.4 or higher.
 
 ## STF Format
 STF is a binary format consisting of an arbitrary amount of chunks. The first chunk is always a UTF-8 encoded definition in the JSON format. All further chunks are optional binary buffers which have to be referenced by the JSON definition.
-
-The JSON definition has 6 properties in the root object:
-- **meta:** Information about the author, copyright, etc...
-- **main:** UUID of the main asset.
-- **assets:** A dict of UUID -> assets pairs. Assets can list node UUID's and resource UUID's, depending on the asset type.
-- **nodes:** A dict of UUID -> node pairs. Nodes can have a list of components and child-node UUID's. Specific node types can reference resources, other nodes and assets. (assets for example for a prefab instance, alternatively these could be done as components)
-	- **components:** A node's components describe additional information and behavior. For example mesh-instances or rotation constraints. Components can reference other nodes, resources and assets.
-- **resources:** A list of UUID -> resource pairs. Resources can be referenced by nodes, components and assets. Resources can reference nodes, other resources and buffers. A resource's importer/exporter is responsible for dealing with any referenced buffer.
-- **buffers:** A list of buffer UUID's in the order of the binary chunks. The index of the buffer UUID corresponds to the index of the buffer in the STF file + 1. (The JSON definition is at the first index)
 
 The STF format is similar to GLTF 2.0, but differs in significant ways.
 
@@ -35,6 +37,15 @@ Every asset, node, component and resource has a type. The importer/exporter comp
 If a type is not supported, the JSON and all referenced objects have to be preserved and reexported unless manually removed.
 
 A file cannot be changed automatically between import and export, unless explicitly desired by the user.
+
+The JSON definition has 6 properties in the root object:
+- **meta:** Information about the author, copyright, etc...
+- **main:** UUID of the main asset.
+- **assets:** A dict of UUID -> assets pairs. Assets can list node UUID's and resource UUID's, depending on the asset type.
+- **nodes:** A dict of UUID -> node pairs. Nodes can have a list of components and child-node UUID's. Specific node types can reference resources, other nodes and assets. (assets for example for a prefab instance, alternatively these could be done as components)
+	- **components:** A node's components describe additional information and behavior. For example mesh-instances or rotation constraints. Components can reference other nodes, resources and assets.
+- **resources:** A list of UUID -> resource pairs. Resources can be referenced by nodes, components and assets. Resources can reference nodes, other resources and buffers. A resource's importer/exporter is responsible for dealing with any referenced buffer.
+- **buffers:** A list of buffer UUID's in the order of the binary chunks. The index of the buffer UUID corresponds to the index of the buffer in the STF file + 1. (The JSON definition is at the first index)
 
 Example:
 
@@ -124,7 +135,7 @@ It is possible to create assets of the type 'STF.addon'. These provide a list of
 
 That way it becomes trivial for a third party to create assets like a set of clothing for a base character model. This STF importer scans the Unity project for STF addons targeting an asset and presents the user with a simple checkbox to apply it.
 
-## Materials
+## Material Format
 As part of creating this format, i created the beginning of a universal material format, preliminarily called: MTF - Material Transfer Format.
 It's not fleshed out at all and exists in an incredibly basic form, but this is the idea:
 
