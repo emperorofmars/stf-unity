@@ -7,6 +7,7 @@ Implementation for Unity 2019.4 or higher.
 
 ## Table of Content
 - [How to Use](#how-to-use)
+- [STF Format](#stf-format)
 - [STF-Unity Specific Notes](#stf-unity-specific-notes)
 - [Extensibility](#extensibility)
 - [Addons](#addons)
