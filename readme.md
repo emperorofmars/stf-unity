@@ -159,7 +159,7 @@ This way, even if a perfect conversion is not possible, the hope is that at leas
 			"type": "STF.material",
 			"name": "Body",
 			"target_shader": "Poiyomi 8",
-			"render-hints": [ "style": "toony" ],
+			"render-hints": { "style": "toony" },
 			"albedo": [
 				{
 					"type" : "texture",
