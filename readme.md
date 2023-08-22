@@ -232,8 +232,8 @@ STF was created with consideration of how most applications like Blender, Unity,
   Godot does this as well.
   A file being 95% larger and consisting of 95% zeros in the case of my VR Avatar Base (thanks to about 200 morphtargets) is just not serious.
 - Some Godot issues and notes:
-  - Godot has some issues with blendshapes: https://github.com/godotengine/godot/issues/63198
-  - Godot blendshape implementation wishlist that would solve the biggest issue of stupid VRAM use and filesize in Godot at least: https://github.com/godotengine/godot-proposals/issues/2465#issuecomment-799892451
+  - Godot also has some issues with blendshapes: https://github.com/godotengine/godot/issues/63198
+  	- Godot blendshape implementation wishlist that would solve the biggest issue of stupid VRAM use and filesize in Godot at least: https://github.com/godotengine/godot-proposals/issues/2465#issuecomment-799892451
   - glTF import and export scene handling: https://github.com/godotengine/godot-proposals/discussions/6588
   - glTF export exclusions: https://github.com/godotengine/godot-proposals/discussions/6587
   - ImporterMeshInstance3D metadata lost in glTF import process: https://github.com/godotengine/godot-proposals/discussions/6586
