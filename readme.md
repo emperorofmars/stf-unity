@@ -8,6 +8,7 @@ Implementation for Unity 2019.4 or higher.
 ## Table of Content
 - [How to Use](#how-to-use)
 - [STF Format](#stf-format)
+	- [JSON Definition](#jSON-definition)
 - [STF-Unity Specific Notes](#stf-unity-specific-notes)
 - [Extensibility](#extensibility)
 - [Addons](#addons)
@@ -27,19 +28,19 @@ Implementation for Unity 2019.4 or higher.
 ![Screenshot of an STF file's inspector in Unity.](./doc/img/import_settings.png)
 
 ## STF Format
-STF is a binary format consisting of an arbitrary amount of chunks. The first chunk is always a UTF-8 encoded definition in the JSON format. All further chunks are optional binary buffers which have to be referenced by the JSON definition.
+STF is a binary format made up of at least one chunk, which is always a UTF-8 encoded definition in the JSON format. All further chunks are optional buffers which have to be referenced by the JSON definition.
 
 The STF format is similar to GLTF 2.0, but differs in significant ways.
 
 Everything is addressed by UUID. It must persist between import and export.
 
-Every asset, node, component and resource has a type. The importer/exporter component for each object is selected by its type. Support for additional types can be hot-loaded.
-
-If a type is not supported, the JSON and all referenced objects have to be preserved and reexported unless manually removed.
+Every asset, node, component and resource has a type. The importer/exporter for each object is selected by its type. Support for additional types can be hot-loaded.
+If a type is not supported, the JSON and all referenced objects have to be preserved and reexported unless manually removed. (This is implemented only for components currently)
 
 A file cannot be changed automatically between import and export, unless explicitly desired by the user.
 
-The JSON definition has 6 properties in the root object:
+### JSON Definition
+The JSON definition has 6 properties in the root object.
 - **meta:** Information about the author, copyright, etc...
 - **main:** UUID of the main asset.
 - **assets:** A dict of UUID -> assets pairs. Assets can list node UUID's and resource UUID's, depending on the asset type.
@@ -108,8 +109,12 @@ Example:
 		]
 	}
 
+### Some Considerations
+- Components could be moved into their own root object instead of being placed directly into nodes.
+- What functionality should be described by nodes or components? Should, for example, mesh instances be a node or component? Currently, STF.mesh_instance is a component.
+
 ## STF-Unity Specific Notes
-This implementation for Unity uses a two stage design. The first one parses any STF file into a Unity scene using its own components which represent the STF file 1:1 with no regard for Unity functionality. This is called the authoring scene, as it can be used to export STF files.
+This implementation for Unity uses a two stage design. The first one parses an STF file into a Unity scene using its own components which represent the STF file 1:1 with no regard for Unity functionality. This is called the authoring scene, as it can be used to export STF files.
 
 Multiple second stages can be registered to convert the intermediary authoring scene into an application-specific one. This step is destructive and throws information not relevant for the target application away, including all STF related meta-information, resolves all relationships between components and potentially applies optimizations.
 
@@ -216,7 +221,7 @@ STF was created with consideration of how most applications like Blender, Unity,
 - There is weirdness with multiple meshes sharing the same armature.
   https://github.com/KhronosGroup/glTF/issues/1285
 - Morphtarget names are not supported by the specification. Sometimes these are stored on the 'extras' field of the mesh, sometimes on the first mesh primitive. The official Blender GLTF implementation does the first, the official Unity GLTF implementation does the latter.
-- GLTF itself is supremely extensible, however to implement extensions in most implementations, the implementations have to be forked and modified at the core. When an implementation has support for implementing additional extensions, it is accompanied by significant issues.
+- GLTF itself is supremely extensible, however to implement extensions in most GLTF libraries, they have to be forked and modified at the core. When an GLTF implementation has support for loading additional extensions, like in the Godot 4 engine, it is often accompanied by significant issues.
 - GLTF only supports specific hard-coded materials.
 - The official Blender implementation exports insanely large files.
   https://github.com/KhronosGroup/glTF-Blender-IO/issues/1346
