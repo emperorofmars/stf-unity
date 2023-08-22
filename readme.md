@@ -115,7 +115,7 @@ Example:
 ### Some Considerations
 - Components could be moved into their own root object instead of being placed directly into nodes.
 - What functionality should be described by nodes or components? Should, for example, mesh instances be a node or component? Currently, STF.mesh_instance is a component.
-- Animation paths import in the STF representation into Unity. They only get resolved during a second stage's process. To make animations easier to work with for authoring, they should convert into the authoring format, targeting STF specific components.
+- Animation paths import in the STF representation into Unity. They only get resolved during a second stage's process. To make animations easier to work with for authoring, they should convert into the authoring format, targeting STF specific components. Perhaps animation path conversion could also be streamlined into component and resource converters directly instead of them being their own hot loadable interface.
 
 ## STF-Unity Specific Notes
 This implementation for Unity uses a two stage design. The first one parses an STF file into a Unity scene using its own components which represent the STF file 1:1 with no regard for Unity functionality. This is called the authoring scene, as it can be used to export STF files.
