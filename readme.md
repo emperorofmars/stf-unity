@@ -5,7 +5,7 @@ Implementation for Unity 2019.4 or higher.
 
 **This is a prototype and not intended for productive use!**
 
-## [Watch the video presentation here!]()
+## [Watch the video presentation about STF and its AVA extensions here!]()
 
 ## Table of Content
 - [How to Use](#how-to-use)
