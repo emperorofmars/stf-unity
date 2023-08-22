@@ -11,8 +11,8 @@ Implementation for Unity 2019.4 or higher.
 - [How to Use](#how-to-use)
 - [STF Format](#stf-format)
 	- [JSON Definition](#json-definition)
-	- [Some Considerations](#some-considerations)
 - [STF-Unity Specific Notes](#stf-unity-specific-notes)
+	- [Some Considerations](#some-considerations)
 - [Extensibility](#extensibility)
 - [Addons](#addons)
 - [Material Format](#material-format)
@@ -112,11 +112,6 @@ Example:
 		]
 	}
 
-### Some Considerations
-- Components could be moved into their own root object instead of being placed directly into nodes.
-- What functionality should be described by nodes or components? Should, for example, mesh instances be a node or component? Currently, STF.mesh_instance is a component.
-- Animation paths import in the STF representation into Unity. They only get resolved during a second stage's process. To make animations easier to work with for authoring, they should convert into the authoring format, targeting STF specific components. Perhaps animation path conversion could also be streamlined into component and resource converters directly instead of them being their own hot loadable interface.
-
 ## STF-Unity Specific Notes
 This implementation for Unity uses a two stage design. The first one parses an STF file into a Unity scene using its own components which represent the STF file 1:1 with no regard for Unity functionality. This is called the authoring scene, as it can be used to export STF files.
 
@@ -124,6 +119,11 @@ Multiple second stages can be registered to convert the intermediary authoring s
 
 Included is a basic second stage which converts into a pure Unity scene, and throws everything else away.
 The intermediary format is intended for authoring STF files.
+
+### Some Considerations
+- Components could be moved into their own root object instead of being placed directly into nodes.
+- What functionality should be described by nodes or components? Should, for example, mesh instances be a node or component? Currently, STF.mesh_instance is a component.
+- Animation paths import in the STF representation into Unity. They only get resolved during a second stage's process. To make animations easier to work with for authoring, they should convert into the authoring format, targeting STF specific components. Perhaps animation path conversion could also be streamlined into component and resource converters directly instead of them being their own hot loadable interface.
 
 ## Extensibility
 The extensibility of this format is a first class feature. All implementations must provide an easy way to add and hotload support for additional types.
