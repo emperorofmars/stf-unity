@@ -5,6 +5,8 @@ Implementation for Unity 2019.4 or higher.
 
 **This is a prototype and not intended for productive use!**
 
+## [Watch the video presentation here!]()
+
 ## Table of Content
 - [How to Use](#how-to-use)
 - [STF Format](#stf-format)
@@ -147,10 +149,10 @@ It's not fleshed out at all and exists in an incredibly basic form, but this is 
 
 The material consists of a dictionary of properties. A set of universal properties will be defined and must be used in its specified manner. These include albedo, roughness, specular, glossiness, ... The name is used as the key for the dictionary.
 
-Each property has a list of objects, in order of priority. Each object has a type property, and can be an scalar, integer, string, texture reference (by UUID), texture channel reference, ..., and anything that the importer/exporter has support for.
+Each property has a list of objects, in order of priority. Each object has a type property, and can be a scalar, integer, string, texture reference (by UUID), texture channel reference, ..., and anything that the importer/exporter has support for.
 It is a list to account for the case in which not every implementation can understand every type of property. The first object which is understood by the implementation/target-material will be used.
 
-Example: The first and post prioritized object could be a mathematical definition, which is only understood by a few specific applications. To make it work elsewhere, the second object could be a texture, rendered from the mathematical definition.
+Example: The first and most prioritized object could be a mathematical definition, which is only understood by a few specific applications. To make it work elsewhere, the second object could be a texture, rendered from the mathematical definition.
 
 Properties not defined in the MTF format, can be freely used. Properties can indicate to which target application/shader they belong and so can the entire material. The material can also have a set of hint properties (just a list of string key-value pairs), indicating whether it should be rendered in a cartoony or realistic style for example.
 
