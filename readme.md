@@ -11,11 +11,11 @@ Implementation for Unity 2019.4 or higher.
 - [How to Use](#how-to-use)
 - [STF Format](#stf-format)
 	- [JSON Definition](#json-definition)
-- [STF-Unity Specific Notes](#stf-unity-specific-notes)
-	- [Some Considerations](#some-considerations)
-- [Extensibility](#extensibility)
-- [Addons](#addons)
-- [Material Format](#material-format)
+	- [STF-Unity Specific Notes](#stf-unity-specific-notes)
+	- [Extensibility](#extensibility)
+	- [Addons](#addons)
+	- [Material Format](#material-format)
+- [Current Status and Considerations](#current-status-and-considerations)
 - [Some Background and Motivation](#some-background-and-motivation)
 	- [GLTF 2.0 Issues](#gltf-20-issues)
 
@@ -112,7 +112,7 @@ Example:
 		]
 	}
 
-## STF-Unity Specific Notes
+### STF-Unity Specific Notes
 This implementation for Unity uses a two stage design. The first one parses an STF file into a Unity scene using its own components which represent the STF file 1:1 with no regard for Unity functionality. This is called the authoring scene, as it can be used to export STF files.
 
 Multiple second stages can be registered to convert the intermediary authoring scene into an application-specific one. This step is destructive and throws information not relevant for the target application away, including all STF related meta-information, resolves all relationships between components and potentially applies optimizations.
@@ -120,12 +120,7 @@ Multiple second stages can be registered to convert the intermediary authoring s
 Included is a basic second stage which converts into a pure Unity scene, and throws everything else away.
 The intermediary format is intended for authoring STF files.
 
-### Some Considerations
-- Components could be moved into their own root object instead of being placed directly into nodes.
-- What functionality should be described by nodes or components? Should, for example, mesh instances be a node or component? Currently, STF.mesh_instance is a component.
-- Animation paths import in the STF representation into Unity. They only get resolved during a second stage's process. To make animations easier to work with for authoring, they should convert into the authoring format, targeting STF specific components. Perhaps animation path conversion could also be streamlined into component and resource converters directly instead of them being their own hot loadable interface.
-
-## Extensibility
+### Extensibility
 The extensibility of this format is a first class feature. All implementations must provide an easy way to add and hotload support for additional types.
 
 By default, STF supports only a limited set of features which can be expected from a common 3d file-format. These include support for meshes, skinned meshes, armatures, animations, materials and textures.
@@ -139,13 +134,13 @@ For example, multiple Social VR applications support one or another library for 
 
 **To extend STF with the ability to represent VR & V-Tubing avatars, the [AVA Proof of Concept](https://github.com/emperorofmars/ava-unity) was created. This shows the potential and ease of extending STF.**
 
-## Addons
+### Addons
 
 It is possible to create assets of the type 'STF.addon'. These provide a list of nodes that can be of the types 'appendage' and 'patch'. They target the nodes of other assets and either append child nodes to these, patch in additional components, or replace existing components.
 
 That way it becomes trivial for a third party to create assets like a set of clothing for a base character model. This STF importer scans the Unity project for STF addons targeting an asset and presents the user with a simple checkbox to apply it.
 
-## Material Format
+### Material Format
 As part of creating this format, i created the beginning of a universal material format, preliminarily called: MTF - Material Transfer Format.
 It's not fleshed out at all and exists in an incredibly basic form, but this is the idea:
 
@@ -198,6 +193,11 @@ This way, even if a perfect conversion is not possible, the hope is that at leas
 	...
 
 Such a material format could have use beyond just STF and should probably become its own project, which STF would merely make use of.
+
+## Current Status and Considerations
+- Components could be moved into their own root object instead of being placed directly into nodes.
+- What functionality should be described by nodes or components? Should, for example, mesh instances be a node or component? Currently, STF.mesh_instance is a component.
+- Animation paths import in the STF representation into Unity. They only get resolved during a second stage's process. To make animations easier to work with for authoring, they should convert into the authoring format, targeting STF specific components. Perhaps animation path conversion could also be streamlined into component and resource converters directly instead of them being their own hot loadable interface.
 
 ## Some Background and Motivation
 VR Avatars are currently distributed as packages for game-engines, specifically Unity. This is an issue as end users have a hard time using professional tools. Additionally, Unity is not a character-editor, it's a tool with which a character-editor application can be created.
