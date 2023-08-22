@@ -20,7 +20,7 @@ Implementation for Unity 2019.4 or higher.
 	- [GLTF 2.0 Issues](#gltf-20-issues)
 
 ## How to Use
-- Ensure you have the Newtonsoft JSON package imported in Unity. If not, install the official package in UPM.
+- Ensure you have the Newtonsoft JSON package imported in Unity. If you set up your Unity project with the VRC Creator Companion, it will be already imported. If not, install the official package in UPM.
 - Either:
 	- Download the latest release from this repository and import the .unitypackage into Unity.
 	- Or clone this repository into the 'Assets' folder of your Unity project.
@@ -140,6 +140,8 @@ It is possible to create assets of the type 'STF.addon'. These provide a list of
 
 That way it becomes trivial for a third party to create assets like a set of clothing for a base character model. This STF importer scans the Unity project for STF addons targeting an asset and presents the user with a simple checkbox to apply it.
 
+![Screenshot of an STF file's inspector in Unity, containing a list of detected addons, with a checkbox to apply it to the current model.](./doc/img/import_settings_addons.png)
+
 ### Material Format
 As part of creating this format, i created the beginning of a universal material format, preliminarily called: MTF - Material Transfer Format.
 It's not fleshed out at all and exists in an incredibly basic form, but this is the idea:
@@ -240,3 +242,9 @@ STF was created with consideration of how most applications like Blender, Unity,
 
 To fix most of the issues, breaking changes would be needed for the GLTF specification.
 Most of this has been known for a long time, and there has been no change, only a silent absence of general GLTF use, sadly.
+
+My hope is that i was able to account for all issues with STF and create something that can be extended further to fit in any use case for a 3d file format, while being extremely easy to work with.
+
+---
+
+Cheers!
