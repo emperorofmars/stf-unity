@@ -205,7 +205,7 @@ Such a material format could have use beyond just STF and should probably become
 - Create more addon applier classes. For example one to set specific blendshapes on the target asset.
 - Generally refine the entire user experience of using STF. Build better inspectors for components and resources.
 - Potentially consolidate the various hot loadable components. Animation path translation for example could become the concern of the appropriate component's or resource's loader.
-- Build a UI for MTF materials. It should make it easy to add properties and generate Unity materials for whatever shader is selected.
+- Build a UI for MTF materials. It should make it easy to add properties and generate Unity materials for whatever shader is selected. Maybe make MTF its own exportable file-format as well!
 
 ## Some Background and Motivation
 VR Avatars are currently distributed as packages for game-engines, specifically Unity. This is an issue as end users have a hard time using professional tools. Additionally, Unity is not a character-editor, it's a tool with which a character-editor application can be created.
