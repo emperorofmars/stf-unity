@@ -146,9 +146,10 @@ That way it becomes trivial for a third party to create assets like a set of clo
 As part of creating this format, i created the beginning of a universal material format, preliminarily called: MTF - Material Transfer Format.
 It's not fleshed out at all and exists in an incredibly basic form, but this is the idea:
 
-The material consists of a dictionary of properties. A set of universal properties will be defined and must be used in its specified manner. These include albedo, roughness, specular, glossiness, ... The name is used as the key for the dictionary.
+Materials consist of a dictionary of properties. A set of universal properties will be defined and must be used in its specified manner. These include albedo, roughness, specular, glossiness, ... The name is used as the key for the dictionary.
 
-Each property has a list of objects, in order of priority. Each object has a type property, and can be a scalar, integer, string, texture reference (by UUID), texture channel reference, ..., and anything that the importer/exporter has support for.
+Each property has a list of objects, in order of priority. Each object has a type property and can be a scalar, integer, string, texture reference (by UUID), texture channel reference, ..., and anything else that the importer/exporter has support for.
+
 It is a list to account for the case in which not every implementation can understand every type of property. The first object which is understood by the implementation/target-material will be used.
 
 Example: The first and most prioritized object could be a mathematical definition, which is only understood by a few specific applications. To make it work elsewhere, the second object could be a texture, rendered from the mathematical definition.
@@ -200,6 +201,10 @@ Such a material format could have use beyond just STF and should probably become
 - Components could be moved into their own root object instead of being placed directly into nodes.
 - What functionality should be described by nodes or components? Should, for example, mesh instances be a node or component? Currently, STF.mesh_instance is a component.
 - Animation paths import in the STF representation into Unity. They only get resolved during a second stage's process. To make animations easier to work with for authoring, they should convert into the authoring format, targeting STF specific components. Perhaps animation path conversion could also be streamlined into component and resource converters directly instead of them being their own hot loadable interface.
+- Refine the import and export UI's. Addon applying and second-stage-loaders should be able to hook their own options into the importer UI.
+- Generally refine the entire user experience of using STF. Build better inspectors for components and resources.
+- Potentially consolidate the various hot loadable components. Animation path translation for example could become the concern of the appropriate component's or resource's loader.
+- Build a UI for MTF materials. It should make it easy to add properties and generate Unity materials for whatever shader is selected.
 
 ## Some Background and Motivation
 VR Avatars are currently distributed as packages for game-engines, specifically Unity. This is an issue as end users have a hard time using professional tools. Additionally, Unity is not a character-editor, it's a tool with which a character-editor application can be created.
