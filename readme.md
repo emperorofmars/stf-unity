@@ -226,19 +226,19 @@ STF was created with consideration of how most applications like Blender, Unity,
 - Material references and morphtarget values sit on the mesh, not its instances.
   https://github.com/KhronosGroup/glTF/issues/1249
   https://github.com/KhronosGroup/glTF/issues/1036
-- In GLTF everything is addressed by index. Indices are very likely to break between import and export. (If an extension is not supported by an application and gets stored as raw JSON, that references other objects by index, it will break. Addons will also break.) 
+- In GLTF everything is addressed by index. Indices are very likely to break between import and export. (If an extension is not supported by an application and gets stored as raw JSON, that references other objects by index, it will break. Addon assets like supported by STF would also break.)
 - Limited animation support. Only transforms and morphtarget values (per mesh, not per mesh-instance) can be animated.
   The [KHR_animation_pointer](https://github.com/KhronosGroup/glTF/pull/2147) extension proposal would fix that partially.
 - There is weirdness with multiple meshes sharing the same armature.
   https://github.com/KhronosGroup/glTF/issues/1285
-- Morphtarget names are not supported by the specification. Sometimes these are stored on the 'extras' field of the mesh, sometimes on the first mesh primitive. The official Blender GLTF implementation does the first, the official Unity GLTF implementation does the latter.
-- GLTF itself is supremely extensible, however to implement extensions in most GLTF libraries, they have to be forked and modified at the core. When an GLTF implementation has support for loading additional extensions, like in the Godot 4 engine, it is often accompanied by significant issues.
+- Morphtarget names are not supported by the specification. Sometimes these are stored on the 'extras' field of the mesh, sometimes on the first mesh primitive. The Blender GLTF implementation does the first, the UnityGLTF implementation does the latter.
+- GLTF itself is supremely extensible, however to implement additional extensions in most GLTF libraries, they have to be forked and modified at the core. When an GLTF implementation has support for loading additional extensions, like the Godot 4 engine, it is often accompanied by significant issues.
 - GLTF only supports specific hard-coded materials.
-- The official Blender implementation exports insanely large files.
+- The Blender implementation exports insanely large files.
   https://github.com/KhronosGroup/glTF-Blender-IO/issues/1346
   Godot does this as well.
-  A file being 95% larger and consisting of 95% zeros in the case of my VR Avatar Base (thanks to about 200 morphtargets) is just not serious.
-- Some Godot issues and notes:
+  A file being 95% larger and consisting of 95% zeros in the case of my Fox VR Avatar Base (thanks to about 200 morphtargets) is just not serious.
+- Some Godot GLTF and related issues and notes:
   - Godot also has some issues with blendshapes: https://github.com/godotengine/godot/issues/63198
   	- Godot blendshape implementation wishlist that would solve the biggest issue of stupid VRAM use and filesize in Godot at least: https://github.com/godotengine/godot-proposals/issues/2465#issuecomment-799892451
   - glTF import and export scene handling: https://github.com/godotengine/godot-proposals/discussions/6588
