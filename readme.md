@@ -130,7 +130,7 @@ If for example the included mesh type is not satisfactory, a different mesh type
 Components can have defined relationships to other components and be specific to a target application.
 Components can extend or override others.
 
-For example, multiple Social VR applications support one or another library for bone physics. None of which are compatible with each other, but they generally work the same. A generic STF-component can be used to describe the common features and be conversible to all implemented applications formats, err-ing on the side of the resulting application-component not spazzing out. If there exists a dedicated STF-component for a specific application, it can override the basic generic component. This way multiple mutually exclusive and application/game-engine specific features can be supported simultaneously.
+For example, multiple Social VR applications support one or another library for bone physics. None of which are compatible with each other, but they generally work the same. A generic STF-component can be used to describe the common features and be conversible to all implemented applications formats, err-ing on the side of the resulting physics not flipping out in the application. If there exists a dedicated STF-component for a specific application, it can override the basic generic component. This way multiple mutually exclusive and application/game-engine specific features can be supported simultaneously.
 
 **To extend STF with the ability to represent VR & V-Tubing avatars, the [AVA Proof of Concept](https://github.com/emperorofmars/ava-unity) was created. This shows the potential and ease of extending STF.**
 
@@ -143,7 +143,7 @@ That way it becomes trivial for a third party to create assets like a set of clo
 ![Screenshot of an STF file's inspector in Unity, containing a list of detected addons, with a checkbox to apply it to the current model.](./doc/img/import_settings_addons.png)
 
 ### Material Format
-As part of creating this format, i created the beginning of a universal material format, preliminarily called: MTF - Material Transfer Format.
+As part of creating this format, I created the beginning of a universal material format, preliminarily called: MTF - Material Transfer Format.
 It's not fleshed out at all and exists in an incredibly basic form, but this is the idea:
 
 Materials consist of a dictionary of properties. A set of universal properties will be defined and must be used in its specified manner. These include albedo, roughness, specular, glossiness, ... The name is used as the key for the dictionary.
@@ -212,16 +212,16 @@ Such a material format could have use beyond just STF and should probably become
 VR Avatars are currently distributed as packages for game-engines, specifically Unity. This is an issue as end users have a hard time using professional tools. Additionally, Unity is not a character-editor, it's a tool with which a character-editor application can be created.
 
 I wanted to create a universal character-editor application aimed at end users wishing to adapt their VR Avatar models but without the technical knowledge to do so in a game-engine.
-To do so, i needed a file format that this character-editor-application could parse. This is where my descend into madness began.
+Therefore, I needed a file format that this character-editor-application could parse. This is where my descend into madness began.
 
-Initially i wanted to create a format based on GLTF 2.0 to represent VR & V-Tubing avatars in a single file, agnostic of any target application, but with support for 100% of the features of each.
+Initially I wanted to create a format based on GLTF 2.0 to represent VR & V-Tubing avatars in a single file, agnostic of any target application, but with support for 100% of the features of each.
 
 *VRM is a format also in the form of a GLTF extension, which also represents VR & V-Tubing avatars. However, it only supports a small subset of features, supports only a small number of hard-coded materials and doesn't support animations at all.*
 
-I didn't think it would be too complicated to create something better than VRM, however i encountered countless issues with the GLTF 2.0 specification itself as well its implementations.
-I wanted to avoid having to create my own format, but after 4 months of trying, i saw no way to make this work with GLTF 2.0.
+I didn't think it would be too complicated to create something better than VRM, however I encountered countless issues with the GLTF 2.0 specification itself as well its implementations.
+I wanted to avoid having to create my own format, but after 4 months of trying, I saw no way to make this work with GLTF 2.0.
 
-After 4 more months, i have created this STF format prototype and the AVA proof of concept set of extensions. STF puts extensibility first, and supports most of everything that GLTF does, and makes it trivial to implement anything beside that.
+After 4 more months, I have created this STF format prototype and the AVA proof of concept set of extensions. STF puts extensibility first, and supports most of everything that GLTF does, and makes it trivial to implement anything beside that.
 STF was created with consideration of how most applications like Blender, Unity, Godot or Unreal Engine represent models and scenes. As such, most headaches from GLTF should have been solved here, hopefully.
 
 ### GLTF 2.0 Issues
@@ -250,7 +250,7 @@ STF was created with consideration of how most applications like Blender, Unity,
 To fix most of the issues, breaking changes would be needed for the GLTF specification.
 Most of this has been known for a long time, and there has been no change, only a silent absence of general GLTF use, sadly.
 
-My hope is that i was able to account for all issues with STF and create something that can be extended further to fit in any use case for a 3d file format, while being extremely easy to work with.
+My hope is that I was able to account for all issues with STF and create something that can be extended further to fit in any use case for a 3d file format, while being extremely easy to work with.
 
 ---
 
