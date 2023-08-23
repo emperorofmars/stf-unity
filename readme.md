@@ -136,7 +136,7 @@ For example, multiple Social VR applications support one or another library for 
 
 ### Addons
 
-It is possible to create assets of the type `STF.addon`. These provide a list of nodes that can be of the types 'appendage' and 'patch'. They target the nodes of other assets and either append child nodes to these, patch in additional components, or replace existing components.
+It is possible to create assets of the type `STF.addon`. These provide a list of nodes that can be of the types `STF.appendage_node` and `STF.patch_node`. They target the nodes of other assets and either append child nodes to these, patch in additional components, or replace existing components.
 
 That way it becomes trivial for a third party to create assets like a set of clothing for a base character model. This STF importer scans the Unity project for STF addons targeting an asset and presents the user with a simple checkbox to apply it.
 
