@@ -24,7 +24,7 @@ Implementation for Unity 2019.4 or higher.
 - Either:
 	- Download the latest release from this repository and import the .unitypackage into Unity.
 	- Or clone this repository into the 'Assets' folder of your Unity project.
-- Import a .fbx model, put it into the scene and export it as STF by going to 'STF Tools' -> 'Export'
+- Import a .fbx model, put it into the scene and export it as STF by going to `STF Tools` → `Export`
 - If you exported it into the Assets hierarchy, just press CTRL+R for Unity to refresh its asset database and see it appear.
 - Play around
 
@@ -44,13 +44,13 @@ A file cannot be changed automatically between import and export, unless explici
 
 ### JSON Definition
 The JSON definition has 6 properties in the root object.
-- **meta:** Information about the author, copyright, etc...
-- **main:** UUID of the main asset.
-- **assets:** A dict of UUID -> assets pairs. Assets can list node UUID's and resource UUID's, depending on the asset type.
-- **nodes:** A dict of UUID -> node pairs. Nodes can have a list of components and child-node UUID's. Specific node types can reference resources, other nodes and assets. (assets for example for a prefab instance, alternatively these could be done as components)
-	- **components:** A node's components describe additional information and behavior. For example mesh-instances or rotation constraints. Components can reference other nodes, resources and assets.
-- **resources:** A list of UUID -> resource pairs. Resources can be referenced by nodes, components and assets. Resources can reference nodes, other resources and buffers. A resource's importer/exporter is responsible for dealing with any referenced buffer.
-- **buffers:** A list of buffer UUID's in the order of the binary chunks. The index of the buffer UUID corresponds to the index of the buffer in the STF file + 1. (The JSON definition is at the first index)
+- `meta` Information about the author, copyright, etc...
+- `main` UUID of the main asset.
+- `assets` A dict of UUID → assets pairs. Assets can list node UUID's and resource UUID's, depending on the asset type.
+- `nodes` A dict of UUID → node pairs. Nodes can have a list of components and child-node UUID's. Specific node types can reference resources, other nodes and assets. (assets for example for a prefab instance, alternatively these could be done as components)
+	- `components` A node's components describe additional information and behavior. For example mesh-instances or rotation constraints. Components can reference other nodes, resources and assets.
+- `resources` A list of UUID → resource pairs. Resources can be referenced by nodes, components and assets. Resources can reference nodes, other resources and buffers. A resource's importer/exporter is responsible for dealing with any referenced buffer.
+- `buffers` A list of buffer UUID's in the order of the binary chunks. The index of the buffer UUID corresponds to the index of the buffer in the STF file + 1. (The JSON definition is at the first index)
 
 Example:
 
@@ -136,7 +136,7 @@ For example, multiple Social VR applications support one or another library for 
 
 ### Addons
 
-It is possible to create assets of the type 'STF.addon'. These provide a list of nodes that can be of the types 'appendage' and 'patch'. They target the nodes of other assets and either append child nodes to these, patch in additional components, or replace existing components.
+It is possible to create assets of the type `STF.addon`. These provide a list of nodes that can be of the types 'appendage' and 'patch'. They target the nodes of other assets and either append child nodes to these, patch in additional components, or replace existing components.
 
 That way it becomes trivial for a third party to create assets like a set of clothing for a base character model. This STF importer scans the Unity project for STF addons targeting an asset and presents the user with a simple checkbox to apply it.
 
@@ -199,7 +199,7 @@ Such a material format could have use beyond just STF and should probably become
 
 ## Current Status and Considerations
 - Components could be moved into their own root object instead of being placed directly into nodes.
-- What functionality should be described by nodes or components? Should, for example, mesh instances be a node or component? Currently, STF.mesh_instance is a component.
+- What functionality should be described by nodes or components? Should, for example, mesh instances be a node or component? Currently, `STF.mesh_instance` is a component.
 - Animation paths import in the STF representation into Unity. They only get resolved during a second stage's process. To make animations easier to work with for authoring, they should convert into the authoring format, targeting STF specific components. Perhaps animation path conversion could also be streamlined into component and resource converters directly instead of them being their own hot loadable interface.
 - Refine the import and export UI's. Addon applying and second-stage-loaders should be able to hook their own options into the importer UI.
 - Create more addon applier classes. For example one to set specific blendshapes on the target asset.
