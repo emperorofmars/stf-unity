@@ -150,15 +150,16 @@ Materials consist of a dictionary of properties. A set of universal properties w
 
 Each property has a list of objects, in order of priority. Each object has a type property and can be a scalar, integer, string, texture reference (by UUID), texture channel reference, ..., and anything else that the importer/exporter has support for.
 
-It is a list to account for the case in which not every implementation can understand every type of property. The first object which is understood by the implementation/target-material will be used.
+It is a list to account for the case in which not every implementation can understand every type of property. The first object which is understood by the implementation and target-material will be used.
 
 Example: The first and most prioritized object could be a mathematical definition, which is only understood by a few specific applications. To make it work elsewhere, the second object could be a texture, rendered from the mathematical definition.
 
-Properties not defined in the MTF format, can be freely used. Properties can indicate to which target application/shader they belong and so can the entire material. The material can also have a set of hint properties (just a list of string key-value pairs), indicating whether it should be rendered in a cartoony or realistic style for example.
+Properties, not specified by the MTF format, can be freely used. Properties can indicate to which target application/shader they belong and so can the entire material. The material can also have a set of hint properties (just a list of string key-value pairs), indicating whether it should be rendered in a cartoony or realistic style for example.
 
 Converters for specific shaders can be implemented, otherwise properties can be converted based on Unity's system.
 The "target_shader" property indicates which converter is to be used. If a converter or target shader is not present, a default will be chosen, or the user can specify an alternative shader.
-This way, even if a perfect conversion is not possible, the hope is that at least the best possible conversion can happen. This will also ease the switching of shaders.
+
+Even if a perfect conversion is not possible, the hope is that at least the best possible conversion can happen. This will also ease the switching to a different target shader.
 
 	...
 	"resources": {
@@ -199,8 +200,8 @@ Such a material format could have use beyond just STF and should probably become
 
 ## Current Status and Considerations
 - Components could be moved into their own root object instead of being placed directly into nodes.
-- What functionality should be described by nodes or components? Should, for example, mesh instances be a node or component? Currently, `STF.mesh_instance` is a component.
-- Animation paths import in the STF representation into Unity. They only get resolved during a second stage's process. To make animations easier to work with for authoring, they should convert into the authoring format, targeting STF specific components. Perhaps animation path conversion could also be streamlined into component and resource converters directly instead of them being their own hot loadable interface.
+- What functionality should be described by nodes or components? Should for example mesh instances be a node or component? Currently, `STF.mesh_instance` is a component.
+- Animation paths import in the STF representation into Unity (prefix + UUID + property path). They only get resolved during a second stage's process. To make animations easier to work with for authoring, they should convert into the authoring format, targeting STF specific components with valid Unity paths. Perhaps animation path conversion could also be streamlined into component and resource converters directly instead of them being their own hot loadable interface.
 - Refine the import and export UI's. Addon applying and second-stage-loaders should be able to hook their own options into the importer UI.
 - Create more addon applier classes. For example one to set specific blendshapes on the target asset.
 - Generally refine the entire user experience of using STF. Build better inspectors for components and resources.
