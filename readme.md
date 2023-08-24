@@ -200,7 +200,7 @@ Such a material format could have use beyond just STF and should probably become
 
 ## Current Status and Considerations
 - Components could be moved into their own root object instead of being placed directly into nodes.
-- What functionality should be described by nodes or components? Should for example mesh instances be a node or component? Currently, `STF.mesh_instance` is a component. Should the relationship system be expanded to nodes and resources as well?
+- What functionality should be described by nodes or components? Should for example mesh instances be a node or component? Currently, `STF.mesh_instance` is a component. Should the relationship system be expanded to nodes and resources as well? Or should all information on a node, beyond the transform and its child nodes, be moved to its components?
 - Animation paths import in the STF representation into Unity (prefix + UUID + property path). They only get resolved during a second stage's process. To make animations easier to work with for authoring, they should convert into the authoring format, targeting STF specific components with valid Unity paths. Perhaps animation path conversion could also be streamlined into component and resource converters directly instead of them being their own hot loadable interface.
 - Refine the import and export UI's. Addon applying and second-stage-loaders should be able to hook their own options into the importer UI.
 - Create more addon applier classes. For example one to set specific blendshapes on the target asset or one to merge meshes together.
