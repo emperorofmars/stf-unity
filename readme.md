@@ -5,6 +5,10 @@ Implementation for Unity 2019.4 or higher.
 
 **This is a prototype and not intended for productive use!**
 
+You are very welcome to open discussions with your ideas, suggestions and questions about the format and its possibilities.
+
+Open issues for concrete changes. Pull requests are very welcome!
+
 ## [Watch the video presentation about STF and its AVA extensions here!](https://youtu.be/ozkmGxFG_ug)
 
 ## Table of Content
