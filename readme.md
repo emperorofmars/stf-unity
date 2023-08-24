@@ -5,7 +5,7 @@ Implementation for Unity 2019.4 or higher.
 
 **This is a prototype and not intended for productive use!**
 
-## [Watch the video presentation about STF and its AVA extensions here!]()
+## [Watch the video presentation about STF and its AVA extensions here!](https://youtu.be/ozkmGxFG_ug)
 
 ## Table of Content
 - [How to Use](#how-to-use)
@@ -200,10 +200,10 @@ Such a material format could have use beyond just STF and should probably become
 
 ## Current Status and Considerations
 - Components could be moved into their own root object instead of being placed directly into nodes.
-- What functionality should be described by nodes or components? Should for example mesh instances be a node or component? Currently, `STF.mesh_instance` is a component.
+- What functionality should be described by nodes or components? Should for example mesh instances be a node or component? Currently, `STF.mesh_instance` is a component. Should the relationship system be expanded to nodes and resources as well?
 - Animation paths import in the STF representation into Unity (prefix + UUID + property path). They only get resolved during a second stage's process. To make animations easier to work with for authoring, they should convert into the authoring format, targeting STF specific components with valid Unity paths. Perhaps animation path conversion could also be streamlined into component and resource converters directly instead of them being their own hot loadable interface.
 - Refine the import and export UI's. Addon applying and second-stage-loaders should be able to hook their own options into the importer UI.
-- Create more addon applier classes. For example one to set specific blendshapes on the target asset.
+- Create more addon applier classes. For example one to set specific blendshapes on the target asset or one to merge meshes together.
 - Generally refine the entire user experience of using STF. Build better inspectors for components and resources.
 - Potentially consolidate the various hot loadable components. Animation path translation for example could become the concern of the appropriate component's or resource's loader.
 - Build a UI for MTF materials. It should make it easy to add properties and generate Unity materials for whatever shader is selected. Maybe make MTF its own exportable file-format as well!
