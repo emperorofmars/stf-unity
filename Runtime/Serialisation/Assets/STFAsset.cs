@@ -177,7 +177,7 @@ namespace stf.serialisation
 				throw new Exception($"Nodetype '{nodetype}' is not supported.");
 
 			var nodesToParse = new List<string>();
-			state.AddNode(nodeId, state.GetContext().NodeImporters[nodetype].ParseFromJson(state, jsonNode, jsonRoot, out nodesToParse));
+			state.AddNode(nodeId, state.GetContext().NodeImporters[nodetype].ParseFromJson(state, jsonNode, jsonRoot, asset, this, out nodesToParse));
 			
 			if(nodesToParse != null)
 			{
@@ -186,13 +186,20 @@ namespace stf.serialisation
 					convertAssetNode(state, childId, jsonRoot, asset);
 				}
 			}
-			
+			var go = state.GetNode(nodeId);
+			convertNode(state, nodeId, jsonRoot, asset);
+		}
+
+		public void convertNode(ISTFImporter state, string nodeId, JObject jsonRoot, ISTFAsset asset)
+		{
+			var jsonNode = (JObject)jsonRoot["nodes"][nodeId];
 			var go = state.GetNode(nodeId);
 			if((JObject)jsonNode["components"] != null)
 			{
 				state.AddTask(new Task(() => {
 					foreach(var jsonComponent in (JObject)jsonNode["components"])
 					{
+						Debug.Log((string)jsonComponent.Value["type"]);
 						if((string)jsonComponent.Value["type"] != null && state.GetContext().ComponentImporters.ContainsKey((string)jsonComponent.Value["type"]))
 						{
 							var componentImporter = state.GetContext().ComponentImporters[(string)jsonComponent.Value["type"]];

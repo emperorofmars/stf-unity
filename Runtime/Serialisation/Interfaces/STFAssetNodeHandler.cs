@@ -32,8 +32,8 @@ namespace stf.serialisation
 				foreach(var bone in armatureInstance.bones)
 				{
 					var boneIdComponent = bone.GetComponent<STFUUID>();
-					var boneNode = STFBoneInstanceNodeExporter.SerializeToJson(bone, state, boneIdComponent.boneId, boneInstances);
-					state.RegisterNode(boneIdComponent.id, boneNode, bone);
+					var boneNode = STFBoneInstanceNodeExporter.SerializeToJson(bone.gameObject, state, boneIdComponent.boneId, boneInstances);
+					state.RegisterNode(boneIdComponent.id, boneNode, bone.gameObject);
 				}
 				return;
 			}

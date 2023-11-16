@@ -74,22 +74,26 @@ namespace stf
 				var bones = takenSmr.bones;
 				var bindposes = takenSmr.sharedMesh.bindposes;
 
-				var armature = ScriptableObject.CreateInstance<STFArmature>();
-				armature.id = Guid.NewGuid().ToString();
+				var armatureGo = new GameObject();
+				var armature = armatureGo.AddComponent<STFArmature>();
+				armature.armatureId = Guid.NewGuid().ToString();
 				armature.bindposes = bindposes;
 
 				for(int i = 0; i < bindposes.Length; i++)
 				{
-					armature.bones.Add(new STFArmature.Bone {id = Guid.NewGuid().ToString()});
+					var bone = new GameObject();
+					var boneId = bone.AddComponent<STFUUID>();
+					boneId.boneId = Guid.NewGuid().ToString();
+					armature.bones.Add(bone.transform);
 				}
 				foreach(var smr in rootBone.Value)
 				{
 					for(int i = 0; i < bindposes.Length; i++)
 					{
-						smr.bones[i].GetComponent<STFUUID>().boneId = armature.bones[i].id;
+						smr.bones[i].GetComponent<STFUUID>().boneId = armature.bones[i].GetComponent<STFUUID>().boneId;
 					}
 				}
-				armature.rootId = takenSmr.rootBone.GetComponent<STFUUID>().boneId;
+				armature.root = takenSmr.rootBone;
 
 				// calculate trs from bindposes
 				for(int i = 0; i < bindposes.Length; i++)
@@ -132,7 +136,7 @@ namespace stf
 						{
 							if(bones[boneIdx] == bones[i].GetChild(childIdx))
 							{
-								armature.bones[i].children.Add(armature.bones[boneIdx].id);
+								armature.bones[boneIdx].SetParent(armature.bones[i], false);
 								break;
 							}
 						}
@@ -143,15 +147,15 @@ namespace stf
 				armature.name = rootBone.Key.parent.name + "Armature";
 				if(rootBone.Key.parent != null)
 				{
-					armature.armaturePosition = new Vector3(rootBone.Key.parent.localPosition.x, rootBone.Key.parent.localPosition.y, rootBone.Key.parent.localPosition.z);
-					armature.armatureRotation = new Quaternion(rootBone.Key.parent.localRotation.x, rootBone.Key.parent.localRotation.y, rootBone.Key.parent.localRotation.z, rootBone.Key.parent.localRotation.w);
-					armature.armatureScale = new Vector3(rootBone.Key.parent.localScale.x, rootBone.Key.parent.localScale.y, rootBone.Key.parent.localScale.z);
+					armature.transform.localPosition = new Vector3(rootBone.Key.parent.localPosition.x, rootBone.Key.parent.localPosition.y, rootBone.Key.parent.localPosition.z);
+					armature.transform.localRotation = new Quaternion(rootBone.Key.parent.localRotation.x, rootBone.Key.parent.localRotation.y, rootBone.Key.parent.localRotation.z, rootBone.Key.parent.localRotation.w);
+					armature.transform.localScale = new Vector3(rootBone.Key.parent.localScale.x, rootBone.Key.parent.localScale.y, rootBone.Key.parent.localScale.z);
 				}
 
 				var armatureInstance = rootBone.Key.parent.gameObject.AddComponent<STFArmatureInstance>();
 				armatureInstance.armature = armature;
-				armatureInstance.root = takenSmr.bones.First(b => b.GetComponent<STFUUID>().boneId == armature.rootId).gameObject;
-				armatureInstance.bones = takenSmr.bones.Select(b => b.gameObject).ToArray();
+				armatureInstance.root = takenSmr.bones.First(b => b.GetComponent<STFUUID>().boneId == armature.root.GetComponent<STFUUID>().boneId);
+				armatureInstance.bones = takenSmr.bones;
 
 				ret.Add(armature);
 			}

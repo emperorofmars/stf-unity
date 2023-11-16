@@ -208,7 +208,7 @@ namespace stf.serialisation
 
 			foreach(var rootNodeId in rootNodeIds)
 			{
-				convertAssetNode(state, rootNodeId, jsonRoot, ret);
+				convertNode(state, rootNodeId, jsonRoot, ret);
 				state.AddTask(new Task(() => {
 					var node = state.GetNode(rootNodeId);
 					node.transform.parent = ret.holder.transform;
@@ -218,7 +218,7 @@ namespace stf.serialisation
 			return ret;
 		}
 
-		private void convertAssetNode(ISTFImporter state, string nodeId, JObject jsonRoot, ISTFAsset asset)
+		public void convertNode(ISTFImporter state, string nodeId, JObject jsonRoot, ISTFAsset asset)
 		{
 			var jsonNode = (JObject)jsonRoot["nodes"][nodeId];
 			var nodetype = (string)jsonNode["type"] == null || ((string)jsonNode["type"]).Length == 0 ? "default" : (string)jsonNode["type"];
@@ -226,13 +226,13 @@ namespace stf.serialisation
 				throw new Exception($"Nodetype '{nodetype}' is not supported.");
 
 			var nodesToParse = new List<string>();
-			state.AddNode(nodeId, state.GetContext().NodeImporters[nodetype].ParseFromJson(state, jsonNode, jsonRoot, out nodesToParse));
+			state.AddNode(nodeId, state.GetContext().NodeImporters[nodetype].ParseFromJson(state, jsonNode, jsonRoot, asset, this, out nodesToParse));
 			
 			if(nodesToParse != null)
 			{
 				foreach(var childId in nodesToParse)
 				{
-					convertAssetNode(state, childId, jsonRoot, asset);
+					convertNode(state, childId, jsonRoot, asset);
 				}
 			}
 			

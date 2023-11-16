@@ -129,7 +129,6 @@ namespace stf.serialisation
 
 		public void RegisterNode(string nodeId, JObject node)
 		{
-			//nodeIds.Add(go, nodeId);
 			nodes.Add(nodeId, node);
 		}
 

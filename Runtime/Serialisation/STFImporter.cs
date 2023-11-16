@@ -182,12 +182,15 @@ namespace stf.serialisation
 				}
 				foreach(var jsonNode in ((JObject)jsonRoot["nodes"]))
 				{
-					var go = nodes[jsonNode.Key];
-
-					if(go.GetComponent<STFUUID>() == null)
+					if(nodes.ContainsKey(jsonNode.Key))
 					{
-						var uuidComponent = go.AddComponent<STFUUID>();
-						uuidComponent.id = jsonNode.Key;
+						var go = nodes[jsonNode.Key];
+
+						if(go.GetComponent<STFUUID>() == null)
+						{
+							var uuidComponent = go.AddComponent<STFUUID>();
+							uuidComponent.id = jsonNode.Key;
+						}
 					}
 				}
 				_runTasks();

@@ -26,5 +26,6 @@ namespace stf.serialisation
 	public interface ISTFAssetImporter
 	{
 		ISTFAsset ParseFromJson(ISTFImporter state, JToken jsonAsset, string id, JObject jsonRoot);
+		void convertNode(ISTFImporter state, string nodeId, JObject jsonRoot, ISTFAsset asset);
 	}
 }

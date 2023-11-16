@@ -43,7 +43,7 @@ namespace stf.serialisation
 	{
 		public static string _TYPE = "STF.appendage_node";
 		
-		public GameObject ParseFromJson(ISTFImporter state, JToken json, JObject jsonRoot, out List<string> nodesToParse)
+		public GameObject ParseFromJson(ISTFImporter state, JToken json, JObject jsonRoot, ISTFAsset asset, ISTFAssetImporter assetContext, out List<string> nodesToParse)
 		{
 			var go = new GameObject();
 			go.name = (string)json["name"];
