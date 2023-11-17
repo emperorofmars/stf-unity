@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 <<<<<<<< HEAD:Runtime/Serialisation/Components/STFUnrecognizedComponent.cs.meta
-guid: b87af48101eda27489548b9e04214976
+guid: f04865bd10a4e394c9c6375bbf908e80
 ========
 guid: 053a8451c3e91dd4db2cda881ba10db5
 >>>>>>>> 366ae69 (started rewrite):Editor/Serde/Interfaces/STFUnrecognizedComponent.cs.meta
