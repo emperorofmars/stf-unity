@@ -9,40 +9,39 @@ using UnityEditor.Experimental.AssetImporters;
 using UnityEngine;
 using STF.Serde;
 using Newtonsoft.Json.Linq;
-
+using UnityEditor;
 
 namespace STF.Tools
 {
-	// A scripted importer for STF files. All the work is done by the STFImporter.
-	// It should be just as easy to create an explicit UI to import STF files into a folder structure, similar to how UniGLTF/UniVRM does it.
-
+	// A scripted importer for STF files. It only parses the basic info about the contained assets, the full import happens on an explicit user action. Full import puts everything into the Assets folder.
 	[ScriptedImporter(1, new string[] {"stf"})]
 	public class STFScriptedImporter : ScriptedImporter
 	{
+		public static string DefaultUnpackFolder = "/STF Imports";
+		public string UnpackFolder;
+
 		public override void OnImportAsset(AssetImportContext ctx)
 		{
-			byte[] byteArray = File.ReadAllBytes(ctx.assetPath);
-			var buffers = STFBufferImporter.ParseBuffersFromBinary(byteArray);
+			var importInfo = STFImportInfo.CreateInstance(new STFBuffers(ctx.assetPath));
 
-			var jsonRoot = JObject.Parse(buffers.json);
-			var imporInfo = ScriptableObject.CreateInstance<STFImportInfo>();
+			ctx.AddObjectToAsset("main", importInfo);
+			ctx.SetMainObject(importInfo);
 
-			foreach(var jsonAsset in (JObject)jsonRoot["assets"])
+			EnsureDefaultUnpackFolder(Path.GetFileNameWithoutExtension(ctx.assetPath));
+		}
+
+		public void EnsureDefaultUnpackFolder(string filename)
+		{
+			if(!Directory.Exists("Assets/" + DefaultUnpackFolder))
 			{
-				imporInfo.assets.Add(new IdComponents.STFAssetInfo {
-					assetId = jsonAsset.Key,
-					assetType = (string)jsonAsset.Value["type"],
-					assetName = (string)jsonAsset.Value["name"],
-					assetVersion = (string)jsonAsset.Value["version"],
-					assetAuthor = (string)jsonAsset.Value["author"],
-					assetURL = (string)jsonAsset.Value["url"],
-					assetLicense = (string)jsonAsset.Value["license"],
-					assetLicenseLink = (string)jsonAsset.Value["license_link"]
-				});
+				AssetDatabase.CreateFolder("Assets", DefaultUnpackFolder);
+				AssetDatabase.Refresh();
 			}
-
-			ctx.AddObjectToAsset("main", imporInfo);
-			ctx.SetMainObject(imporInfo);
+			if(!Directory.Exists("Assets/" + DefaultUnpackFolder + "/" + filename))
+			{
+				AssetDatabase.CreateFolder("Assets/" + DefaultUnpackFolder, filename);
+				AssetDatabase.Refresh();
+			}
 		}
 	}
 }

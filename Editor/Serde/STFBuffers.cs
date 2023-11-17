@@ -4,38 +4,51 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using System.Text;
 using STF.IdComponents;
+using System.ComponentModel;
 
 namespace STF.Serde
 {
+	// Read and write binary STF files
+	[Serializable]
 	public class STFBuffers
-	{
-		public int versionMajor = 0;
-		public int versionMinor = 0;
-		public string json;
-		// id -> buffer
-		public List<byte[]> buffers = new List<byte[]>();
-	}
-
-	// Parses binary STF files
-	public class STFBufferImporter
 	{
 		public static string _MAGIC = "STF0";
 
-		public static STFBuffers ParseBuffersFromBinary(byte[] byteArray)
-		{
-			var ret = new STFBuffers();
+		public int VersionMajor = 0;
+		public int VersionMinor = 1;
+		public string Json;
+		public List<byte[]> Buffers = new List<byte[]>();
 
+		public STFBuffers(string Json, List<byte[]> Buffers)
+		{
+			this.Json = Json;
+			this.Buffers = Buffers;
+		}
+
+		public STFBuffers(string path)
+		{
+			this.parse(File.ReadAllBytes(path));
+		}
+
+		public STFBuffers(byte[] ByteArray)
+		{
+			this.parse(ByteArray);
+		}
+
+		private void parse(byte[] ByteArray)
+		{
 			var offset = 0;
 
 			// Magic
-			int magicLen = Encoding.UTF8.GetBytes(_MAGIC).Length;
+			int magicLen = Encoding.UTF8.GetBytes(STFBuffers._MAGIC).Length;
 			var magicUtf8 = new byte[magicLen];
-			Buffer.BlockCopy(byteArray, 0, magicUtf8, 0, magicUtf8.Length * sizeof(byte));
+			Buffer.BlockCopy(ByteArray, 0, magicUtf8, 0, magicUtf8.Length * sizeof(byte));
 			offset += magicUtf8.Length * sizeof(byte);
 
 			var magic = Encoding.UTF8.GetString(magicUtf8);
@@ -43,20 +56,20 @@ namespace STF.Serde
 				throw new Exception("Not an STF file, invalid magic number.");
 			
 			// Version
-			ret.versionMajor = BitConverter.ToInt32(byteArray, offset);
+			this.VersionMajor = BitConverter.ToInt32(ByteArray, offset);
 			offset += sizeof(int);
-			ret.versionMinor = BitConverter.ToInt32(byteArray, offset);
+			this.VersionMinor = BitConverter.ToInt32(ByteArray, offset);
 			offset += sizeof(int);
 			
 			// Header Length
-			int headerLen = BitConverter.ToInt32(byteArray, offset);
+			int headerLen = BitConverter.ToInt32(ByteArray, offset);
 			offset += sizeof(int);
 
 			// Buffer Lengths
 			var bufferLengths = new int[headerLen / sizeof(int)];
 			for(int i = 0; i < headerLen / sizeof(int); i++)
 			{
-				bufferLengths[i] = BitConverter.ToInt32(byteArray, offset);
+				bufferLengths[i] = BitConverter.ToInt32(ByteArray, offset);
 				offset += sizeof(int);
 			}
 
@@ -65,30 +78,28 @@ namespace STF.Serde
 				throw new Exception("Invalid file: At least one buffer needed.");
 			var totalLengthCheck = offset;
 			foreach(var l in bufferLengths) totalLengthCheck += l;
-			if(totalLengthCheck != byteArray.Length)
-				throw new Exception("Invalid file: Size of buffers doesn't line up with total file size. ( calculated: " + totalLengthCheck + " | actual: " + byteArray.Length + " )");
+			if(totalLengthCheck != ByteArray.Length)
+				throw new Exception("Invalid file: Size of buffers doesn't line up with total file size. ( calculated: " + totalLengthCheck + " | actual: " + ByteArray.Length + " )");
 
 			// First buffer, the Json definition
-			ret.json = Encoding.UTF8.GetString(byteArray, offset, bufferLengths[0]);
+			this.Json = Encoding.UTF8.GetString(ByteArray, offset, bufferLengths[0]);
 			offset += bufferLengths[0];
 
 			for(int i = 1; i < bufferLengths.Count(); i++)
 			{
 				var buffer = new byte[bufferLengths[i]];
-				Buffer.BlockCopy(byteArray, offset, buffer, 0, bufferLengths[i]);
+				Buffer.BlockCopy(ByteArray, offset, buffer, 0, bufferLengths[i]);
 				offset += bufferLengths[i];
-				ret.buffers.Add(buffer);
+				this.Buffers.Add(buffer);
 			}
-
-			return ret;
 		}
-
-		public byte[] CreateBinaryFromBuffers(STFBuffers buffers)
+		
+		public byte[] CreateBinaryFromBuffers()
 		{
-			byte[] magicUtf8 = Encoding.UTF8.GetBytes(STFBufferImporter._MAGIC);
-			var headerSize = (buffers.buffers.Count + 1) * sizeof(int); // +1 for the json definition
-			var bufferInfo = buffers.buffers.Select(buffer => buffer.Length).ToArray(); // lengths of all binary buffers
-			byte[] jsonUtf8 = Encoding.UTF8.GetBytes(buffers.json);
+			byte[] magicUtf8 = Encoding.UTF8.GetBytes(STFBuffers._MAGIC);
+			var headerSize = (this.Buffers.Count + 1) * sizeof(int); // +1 for the json definition
+			var bufferInfo = this.Buffers.Select(buffer => buffer.Length).ToArray(); // lengths of all binary buffers
+			byte[] jsonUtf8 = Encoding.UTF8.GetBytes(this.Json);
 
 			var arrayLen = magicUtf8.Length * sizeof(byte) + sizeof(int) * 2 + sizeof(int) + headerSize + jsonUtf8.Length * sizeof(byte);
 			foreach(var bufferLen in bufferInfo) arrayLen += bufferLen;
@@ -108,9 +119,9 @@ namespace STF.Serde
 			// Version
 			{
 				var size = sizeof(int);
-				Buffer.BlockCopy(BitConverter.GetBytes(0), 0, byteArray, offset, size); // Mayor
+				Buffer.BlockCopy(BitConverter.GetBytes(this.VersionMajor), 0, byteArray, offset, size);
 				offset += size;
-				Buffer.BlockCopy(BitConverter.GetBytes(0), 0, byteArray, offset, size); // Minor
+				Buffer.BlockCopy(BitConverter.GetBytes(this.VersionMinor), 0, byteArray, offset, size);
 				offset += size;
 			}
 
@@ -144,7 +155,7 @@ namespace STF.Serde
 			}
 
 			// Now all the buffers
-			foreach(var buffer in buffers.buffers)
+			foreach(var buffer in this.Buffers)
 			{
 				var size = buffer.Length * sizeof(byte);
 				Buffer.BlockCopy(buffer, 0, byteArray, offset, size);
