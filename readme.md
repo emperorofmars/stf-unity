@@ -14,12 +14,6 @@ Open issues for concrete changes. Pull requests are very welcome!
 ## Table of Content
 - [How to Use](#how-to-use)
 - [STF Format](#stf-format)
-	- [JSON Definition](#json-definition)
-	- [STF-Unity Specific Notes](#stf-unity-specific-notes)
-	- [Extensibility](#extensibility)
-	- [Addons](#addons)
-	- [Material Format](#material-format)
-- [Current Status and Considerations](#current-status-and-considerations)
 - [Some Background and Motivation](#some-background-and-motivation)
 	- [GLTF 2.0 Issues](#gltf-20-issues)
 
@@ -32,12 +26,12 @@ Open issues for concrete changes. Pull requests are very welcome!
 - If you exported it into the Assets hierarchy, just press CTRL+R for Unity to refresh its asset database and see it appear.
 - Play around
 
-![Screenshot of an STF file's inspector in Unity.](./doc/img/import_settings.png)
+![Screenshot of an STF file's inspector in Unity.](./Docs/Images/import_settings.png)
 
 ## STF Format
 
 The STF format is essentially my idea of how GLTF would be done right.
-[Read up on how STF works.](./stf_format.md)
+[Read up on how STF works.](./Docs/stf_format.md)
 
 ## Some Background and Motivation
 VR Avatars are currently distributed as packages for game-engines, specifically Unity. This is an issue as end users have a hard time using professional tools. Additionally, Unity is not a character-editor, it's a tool with which a character-editor application can be created.

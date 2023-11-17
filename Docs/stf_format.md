@@ -1,4 +1,5 @@
 
+
 # STF Format
 STF is a binary format made up of at least one chunk, which is always a UTF-8 encoded definition in the JSON format. All further chunks are optional buffers which have to be referenced by the JSON definition.
 
@@ -10,6 +11,14 @@ Every asset, node, component and resource has a type. The importer/exporter for 
 If a type is not supported, the JSON and all referenced objects have to be preserved and reexported unless manually removed. (This is implemented only for components currently)
 
 A file cannot be changed automatically between import and export, unless explicitly desired by the user.
+
+## Table of Content
+- [JSON Definition](#json-definition)
+- [STF-Unity Specific Notes](#stf-unity-specific-notes)
+- [Extensibility](#extensibility)
+- [Addons](#addons)
+- [Material Format](#material-format)
+- [Current Status and Considerations](#current-status-and-considerations)
 
 ## JSON Definition
 The JSON definition has 6 properties in the root object.

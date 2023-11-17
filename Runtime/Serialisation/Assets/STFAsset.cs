@@ -199,7 +199,6 @@ namespace stf.serialisation
 				state.AddTask(new Task(() => {
 					foreach(var jsonComponent in (JObject)jsonNode["components"])
 					{
-						Debug.Log((string)jsonComponent.Value["type"]);
 						if((string)jsonComponent.Value["type"] != null && state.GetContext().ComponentImporters.ContainsKey((string)jsonComponent.Value["type"]))
 						{
 							var componentImporter = state.GetContext().ComponentImporters[(string)jsonComponent.Value["type"]];
