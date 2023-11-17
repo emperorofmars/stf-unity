@@ -27,7 +27,8 @@ namespace STF.Serde
 		public Dictionary<string, GameObject> Nodes = new Dictionary<string, GameObject>();
 
 		// id -> resource
-		public Dictionary<string, UnityEngine.Object> Resources = new Dictionary<string, UnityEngine.Object>();
+		public Dictionary<UnityEngine.Object, JObject> Resources = new Dictionary<UnityEngine.Object, JObject>();
+		public Dictionary<UnityEngine.Object, string> ResourceIds = new Dictionary<UnityEngine.Object, string>();
 
 		// id -> component
 		public Dictionary<string, Component> Components = new Dictionary<string, Component>();
@@ -42,6 +43,25 @@ namespace STF.Serde
 		public STFExportState(string TargetLocation)
 		{
 			this.TargetLocation = TargetLocation;
+		}
+
+		public void AddTask(Task task)
+		{
+			Tasks.Add(task);
+		}
+
+		public string AddBuffer(byte[] Data, string Id = null)
+		{
+			if(Id == null || Id.Length == 0) Id = Guid.NewGuid().ToString();
+			Buffers.Add(Id, Data);
+			return Id;
+		}
+
+		public void AddResource(UnityEngine.Object Resource, JObject Serialized, string Id = null)
+		{
+			if(Id == null || Id.Length == 0) Id = Guid.NewGuid().ToString();
+			Resources.Add(Resource, Serialized);
+			ResourceIds.Add(Resource, Id);
 		}
 	}
 

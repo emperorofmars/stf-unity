@@ -7,17 +7,17 @@ namespace STF.Serde
 {
 	public interface ISTFResourceExporter
 	{
-		List<GameObject> GatherUsedNodes(Object resource);
+		List<GameObject> GatherUsedNodes(Object Resource);
 		//List<KeyValuePair<Object, Dictionary<string, System.Object>>> GatherResources(Object resource);
-		List<Object> GatherUsedResources(Object resource);
-		List<string> GatherUsedBuffers(Object resource);
-		JToken SerializeToJson(STFExportState state, Object resource);
+		List<Object> GatherUsedResources(Object Resource);
+		List<string> GatherUsedBuffers(Object Resource);
+		JToken SerializeToJson(STFExportState State, Object Resource);
 		string ConvertPropertyPath(string UnityProperty);
 	}
 
 	public interface ISTFResourceImporter
 	{
-		Object ParseFromJson(STFImportState state, JObject json, string id);
+		Object ParseFromJson(STFImportState State, JObject Json, string Id);
 		string ConvertPropertyPath(string STFProperty);
 	}
 }

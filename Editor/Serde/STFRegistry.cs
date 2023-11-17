@@ -56,16 +56,17 @@ namespace STF.Serde
 		};
 		public static readonly Dictionary<string, ISTFResourceImporter> DefaultResourceImporters = new Dictionary<string, ISTFResourceImporter>() {
 			//{STFMeshImporter._TYPE, new STFMeshImporter()},
-			//{STFTextureImporter._TYPE, new STFTextureImporter()},
+			{STFTextureImporter._TYPE, new STFTextureImporter()},
 			//{STFArmatureImporter._TYPE, new STFArmatureImporter()},
 			//{STFMaterialImporter._TYPE, new STFMaterialImporter()},
 			//{STFTextureViewImporter._TYPE, new STFTextureViewImporter()},
 			//{STFAnimationImporter._TYPE, new STFAnimationImporter()}
 		};
 		public static readonly Dictionary<Type, ISTFResourceExporter> DefaultResourceExporters = new Dictionary<Type, ISTFResourceExporter>() {
-			//{typeof(STFArmature), new STFArmatureExporter()},
 			//{typeof(Mesh), new STFMeshExporter()},
-			//{typeof(Texture2D), new STFTextureExporter()},
+			{typeof(Texture2D), new STFTexture2dExporter()},
+			{typeof(STFTexture), new STFTextureMetaExporter()},
+			//{typeof(STFArmature), new STFArmatureExporter()},
 			//{typeof(Material), new STFMaterialExporter()},
 			//{typeof(AnimationClip), new STFAnimationExporter()}
 		};

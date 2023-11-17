@@ -12,12 +12,12 @@ namespace STF.Serde
 {
 	public interface ISTFNodeExporter
 	{
-		JToken SerializeToJson(STFExportState state, GameObject go);
+		JToken SerializeToJson(STFExportState State, GameObject Go);
 	}
 
 	public interface ISTFNodeImporter
 	{
-		GameObject ParseFromJson(STFImportState state, JToken jsonAsset, string id, JObject jsonRoot);
+		GameObject ParseFromJson(STFImportState State, JToken JsonAsset, string Id);
 	}
 }
 

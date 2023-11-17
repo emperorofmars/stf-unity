@@ -31,49 +31,49 @@ namespace STF.Serde
 	
 	public interface ISTFComponentExporter
 	{
-		List<GameObject> GatherNodes(Component component);
+		List<GameObject> GatherNodes(Component Component);
 
-		List<KeyValuePair<UnityEngine.Object, Dictionary<string, System.Object>>> GatherResources(Component component);
+		List<KeyValuePair<UnityEngine.Object, Dictionary<string, System.Object>>> GatherResources(Component Component);
 
-		JToken SerializeToJson(STFExportState state, Component component);
+		JToken SerializeToJson(STFExportState State, Component Component);
 	}
 	
 	public interface ISTFComponentImporter
 	{
-		void ParseFromJson(STFImportState state, JToken json, string id, GameObject go);
+		void ParseFromJson(STFImportState State, JToken Json, string Id, GameObject Go);
 	}
 	
 	public abstract class ASTFComponentExporter : ISTFComponentExporter
 	{
-		virtual public List<GameObject> GatherNodes(Component component)
+		virtual public List<GameObject> GatherNodes(Component Component)
 		{
 			return null;
 		}
 
-		virtual public List<KeyValuePair<UnityEngine.Object, Dictionary<string, System.Object>>> GatherResources(Component component)
+		virtual public List<KeyValuePair<UnityEngine.Object, Dictionary<string, System.Object>>> GatherResources(Component Component)
 		{
 			return null;
 		}
 
-		abstract public JToken SerializeToJson(STFExportState state, Component component);
+		abstract public JToken SerializeToJson(STFExportState State, Component Component);
 
-		protected void SerializeRelationships(ISTFComponent component, JObject json)
+		protected void SerializeRelationships(ISTFComponent Component, JObject Json)
 		{
-			if(component.Extends != null && component.Extends.Count > 0) json.Add("extends", new JArray(component.Extends));
-			if(component.Overrides != null && component.Overrides.Count > 0) json.Add("overrides", new JArray(component.Overrides));
-			if(component.Targets != null && component.Targets.Count > 0) json.Add("targets", new JArray(component.Targets));
+			if(Component.Extends != null && Component.Extends.Count > 0) Json.Add("extends", new JArray(Component.Extends));
+			if(Component.Overrides != null && Component.Overrides.Count > 0) Json.Add("overrides", new JArray(Component.Overrides));
+			if(Component.Targets != null && Component.Targets.Count > 0) Json.Add("targets", new JArray(Component.Targets));
 		}
 	}
 	
 	public abstract class ASTFComponentImporter : ISTFComponentImporter
 	{
-		abstract public void ParseFromJson(STFImportState state, JToken json, string id, GameObject go);
+		abstract public void ParseFromJson(STFImportState State, JToken Json, string Id, GameObject Go);
 
-		protected void ParseRelationships(JToken json, ISTFComponent component)
+		protected void ParseRelationships(JToken Json, ISTFComponent Component)
 		{
-			if(json["extends"] != null) component.Extends = json["extends"].ToObject<List<string>>();
-			if(json["overrides"] != null) component.Overrides = json["overrides"].ToObject<List<string>>();
-			if(json["targets"] != null) component.Targets = json["targets"].ToObject<List<string>>();
+			if(Json["extends"] != null) Component.Extends = Json["extends"].ToObject<List<string>>();
+			if(Json["overrides"] != null) Component.Overrides = Json["overrides"].ToObject<List<string>>();
+			if(Json["targets"] != null) Component.Targets = Json["targets"].ToObject<List<string>>();
 		}
 	}
 }

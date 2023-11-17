@@ -12,6 +12,7 @@ using System.Text;
 using STF.IdComponents;
 using UnityEditor;
 using UnityScript.Steps;
+using Serilog;
 
 namespace STF.Serde
 {
@@ -48,6 +49,21 @@ namespace STF.Serde
 			this.Context = Context;
 			this.TargetLocation = TargetLocation;
 			this.JsonRoot = JsonRoot;
+		}
+
+		public void AddTask(Task task)
+		{
+			Tasks.Add(task);
+		}
+
+		public string GetResourceLocation()
+		{
+			return Path.Combine(TargetLocation, STFConstants.ResourceDirectoryName);
+		}
+
+		public void AddResource(UnityEngine.Object Resource, string Id)
+		{
+			Resources.Add(Id, Resource);
 		}
 	}
 
@@ -107,11 +123,11 @@ namespace STF.Serde
 			var existingEntries = Directory.EnumerateFileSystemEntries(state.TargetLocation);foreach(var entry in existingEntries)
 			{
 				if(File.Exists(entry)) File.Delete(entry);
-				else Directory.Delete(entry);
+				else Directory.Delete(entry, true);
 			}
-			AssetDatabase.CreateFolder(state.TargetLocation, "Resources");
-			AssetDatabase.CreateFolder(state.TargetLocation, "Secondary Assets");
-			AssetDatabase.CreateFolder(state.TargetLocation, "Preserved Buffers");
+			AssetDatabase.CreateFolder(state.TargetLocation, STFConstants.ResourceDirectoryName);
+			AssetDatabase.CreateFolder(state.TargetLocation, STFConstants.SecondaryAssetsDirectoryName);
+			AssetDatabase.CreateFolder(state.TargetLocation, STFConstants.PreservedBuffersDirectoryName);
 			AssetDatabase.Refresh();
 		}
 
@@ -127,7 +143,17 @@ namespace STF.Serde
 		{
 			foreach(var entry in (JObject)state.JsonRoot["resources"])
 			{
-				Debug.Log(entry);
+				var type = (string)entry.Value["type"];
+				if(state.Context.ResourceImporters.ContainsKey(type))
+				{
+					Debug.Log($"Parsing Resource: {type}");
+					state.Context.ResourceImporters[type].ParseFromJson(state, (JObject)entry.Value, entry.Key);
+				}
+				else
+				{
+					Debug.LogWarning($"Unrecognized Resource: {type}");
+					// Unrecognized Resource
+				}
 			}
 		}
 

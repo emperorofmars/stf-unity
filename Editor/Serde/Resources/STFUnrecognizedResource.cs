@@ -1,15 +1,12 @@
 
+#if UNITY_EDITOR
+
 using System;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 using System.IO;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-
-
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
 
 namespace stf.serialisation
 {
@@ -56,3 +53,5 @@ namespace stf.serialisation
 		}
 	}*/
 }
+
+#endif
