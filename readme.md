@@ -9,6 +9,7 @@ You are very welcome to open discussions with your ideas, suggestions and questi
 
 Open issues for concrete changes. Pull requests are very welcome!
 
+## [Check out an example file here!](https://emperorofmars.itch.io/stf-avatar-showcase)
 ## [Watch the video presentation about STF and its AVA extensions here!](https://youtu.be/ozkmGxFG_ug)
 
 ## Table of Content
