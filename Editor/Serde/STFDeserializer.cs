@@ -11,15 +11,18 @@ using Newtonsoft.Json.Linq;
 using System.Text;
 using STF.IdComponents;
 using UnityEditor;
+using UnityScript.Steps;
 
 namespace STF.Serde
 {
 	public class STFImportState
 	{
+		public STFImportContext Context;
 
-		public string TargetLocation = "STF_Imports";
-		public string Filename;
+		public string TargetLocation;
 		public string MainAssetId;
+
+		public JObject JsonRoot;
 
 		// id -> asset
 		public Dictionary<string, STFAsset> Assets = new Dictionary<string, STFAsset>();
@@ -37,13 +40,14 @@ namespace STF.Serde
 		public Dictionary<string, byte[]> Buffers = new Dictionary<string, byte[]>();
 
 		// stuff to delete before the import finishes
-		private List<UnityEngine.Object> Trash = new List<UnityEngine.Object>();
-		private List<Task> Tasks = new List<Task>();
+		public List<UnityEngine.Object> Trash = new List<UnityEngine.Object>();
+		public List<Task> Tasks = new List<Task>();
 
-		public STFImportState(string TargetLocation, string Filename)
+		public STFImportState(STFImportContext Context, string TargetLocation, JObject JsonRoot)
 		{
+			this.Context = Context;
 			this.TargetLocation = TargetLocation;
-			this.Filename = Filename;
+			this.JsonRoot = JsonRoot;
 		}
 	}
 
@@ -53,13 +57,49 @@ namespace STF.Serde
 	{
 		private STFImportState state;
 
-		public STFDeserializer(string TargetLocation, string path)
+		public STFDeserializer(string TargetLocation, string Path)
 		{
-			var buffers = new STFBuffers(path);
-			this.state = new STFImportState(TargetLocation, Path.GetFileNameWithoutExtension(path));
+			Parse(STFRegistry.GetDefaultImportContext(), TargetLocation, Path);
+		}
 
-			EnsureFolderStructure();
-			AssetDatabase.Refresh();
+		public STFDeserializer(STFImportContext Context, string TargetLocation, string Path)
+		{
+			Parse(Context, TargetLocation, Path);
+		}
+
+		private void Parse(STFImportContext Context, string TargetLocation, string Path)
+		{
+			try
+			{
+				var buffers = new STFBuffers(Path);
+				this.state = new STFImportState(Context, TargetLocation, JObject.Parse(buffers.Json));
+			
+				EnsureFolderStructure();
+
+				ParseBuffers(buffers);
+				ParseResources();
+			}
+			catch(Exception e)
+			{
+				foreach(var node in state.Nodes.Values)
+				{
+					if(node != null)
+					{
+						UnityEngine.Object.DestroyImmediate(node);
+					}
+				}
+				throw new Exception("Error during STF import: ", e);
+			}
+			finally
+			{
+				foreach(var trashObject in state.Trash)
+				{
+					if(trashObject != null)
+					{
+						UnityEngine.Object.DestroyImmediate(trashObject);
+					}
+				}
+			}
 		}
 
 		private void EnsureFolderStructure()
@@ -68,6 +108,26 @@ namespace STF.Serde
 			{
 				if(File.Exists(entry)) File.Delete(entry);
 				else Directory.Delete(entry);
+			}
+			AssetDatabase.CreateFolder(state.TargetLocation, "Resources");
+			AssetDatabase.CreateFolder(state.TargetLocation, "Secondary Assets");
+			AssetDatabase.CreateFolder(state.TargetLocation, "Preserved Buffers");
+			AssetDatabase.Refresh();
+		}
+
+		private void ParseBuffers(STFBuffers buffers)
+		{
+			for(int i = 1; i < buffers.Buffers.Count(); i++)
+			{
+				state.Buffers.Add((string)state.JsonRoot["buffers"][i], buffers.Buffers[i]);
+			}
+		}
+
+		private void ParseResources()
+		{
+			foreach(var entry in (JObject)state.JsonRoot["resources"])
+			{
+				Debug.Log(entry);
 			}
 		}
 

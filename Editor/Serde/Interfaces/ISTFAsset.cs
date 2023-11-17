@@ -12,8 +12,7 @@ namespace STF.Serde
 {
 	public interface ISTFAssetExporter
 	{
-		//void Convert(STFExportState state);
-		//JToken SerializeToJson(STFExportState state);
+		JToken SerializeToJson(STFExportState state);
 	}
 	
 	public interface ISTFAssetImporter

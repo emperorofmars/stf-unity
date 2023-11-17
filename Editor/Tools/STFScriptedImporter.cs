@@ -30,7 +30,7 @@ namespace STF.Tools
 			EnsureDefaultUnpackFolder(Path.GetFileNameWithoutExtension(ctx.assetPath));
 		}
 
-		public void EnsureDefaultUnpackFolder(string filename)
+		private void EnsureDefaultUnpackFolder(string filename)
 		{
 			if(!Directory.Exists("Assets/" + DefaultUnpackFolder))
 			{
