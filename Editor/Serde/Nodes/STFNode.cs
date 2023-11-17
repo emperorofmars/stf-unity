@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace STF.IdComponents
+namespace STF.Serde
 {
 	public class STFNode : MonoBehaviour
 	{

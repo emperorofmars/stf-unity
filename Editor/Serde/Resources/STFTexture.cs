@@ -106,6 +106,7 @@ namespace STF.Serde
 			ret.Add("buffer", bufferId);
 
 			ret.Add("used_buffers", new JArray() {bufferId});
+			state.AddResource(resource, ret, meta?.Id);
 			return ret;
 		}
 	}

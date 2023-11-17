@@ -12,13 +12,12 @@ namespace STF.Serde
 {
 	public interface ISTFAssetExporter
 	{
-		JToken SerializeToJson(STFExportState state);
+		JObject SerializeToJson(STFExportState State, System.Object Asset);
 	}
 	
 	public interface ISTFAssetImporter
 	{
-		STFAsset ParseFromJson(STFImportState state, JToken jsonAsset, string id, JObject jsonRoot);
-		void convertNode(STFImportState state, string nodeId, JObject jsonRoot, STFAsset asset);
+		UnityEngine.Object ParseFromJson(STFImportState State, JObject JsonAsset, string Id, JObject JsonRoot);
 	}
 }
 

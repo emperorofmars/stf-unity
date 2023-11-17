@@ -16,17 +16,17 @@ namespace STF.Serde
 {
 	public class STFExportState
 	{
-
 		public string TargetLocation;
 		public string MainAssetId;
 
 		// id -> asset
 		public Dictionary<string, STFAsset> Assets = new Dictionary<string, STFAsset>();
 
-		// id -> node
-		public Dictionary<string, GameObject> Nodes = new Dictionary<string, GameObject>();
+		// Unity GameObject -> STF Json node
+		public Dictionary<GameObject, JObject> Nodes = new Dictionary<GameObject, JObject>();
+		public Dictionary<GameObject, string> NodeIds = new Dictionary<GameObject, string>();
 
-		// id -> resource
+		// Unity resource -> STF Json resource
 		public Dictionary<UnityEngine.Object, JObject> Resources = new Dictionary<UnityEngine.Object, JObject>();
 		public Dictionary<UnityEngine.Object, string> ResourceIds = new Dictionary<UnityEngine.Object, string>();
 
@@ -57,11 +57,20 @@ namespace STF.Serde
 			return Id;
 		}
 
-		public void AddResource(UnityEngine.Object Resource, JObject Serialized, string Id = null)
+		public string AddResource(UnityEngine.Object Resource, JObject Serialized, string Id = null)
 		{
 			if(Id == null || Id.Length == 0) Id = Guid.NewGuid().ToString();
 			Resources.Add(Resource, Serialized);
 			ResourceIds.Add(Resource, Id);
+			return Id;
+		}
+
+		public string AddNode(GameObject Go, JObject Serialized, string Id = null)
+		{
+			if(Id == null || Id.Length == 0) Id = Guid.NewGuid().ToString();
+			Nodes.Add(Go, Serialized);
+			NodeIds.Add(Go, Id);
+			return Id;
 		}
 	}
 
@@ -79,7 +88,7 @@ namespace STF.Serde
 			}
 			catch(Exception e)
 			{
-				foreach(var node in state.Nodes.Values)
+				foreach(var node in state.Nodes.Keys)
 				{
 					if(node != null)
 					{

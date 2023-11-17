@@ -293,12 +293,13 @@ namespace STF.Serde
 				}
 			}
 
-			var bufferId = state.AddBuffer(byteArray);
+			var bufferId = state.AddBuffer(byteArray, meta.OriginalBufferId);
 			ret.Add("buffer", bufferId);
 			
 			ret.Add("used_buffers", new JArray() {bufferId});
 			ret.Add("used_resources", usedResources);
 
+			state.AddResource(mesh, ret, meta.Id);
 			return ret;
 		}
 	}

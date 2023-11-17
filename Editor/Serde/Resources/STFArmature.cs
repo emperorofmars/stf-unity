@@ -21,8 +21,28 @@ namespace STF.Serde
 		public Matrix4x4[] bindposes;
 	}
 
-	/*public class STFArmatureExporter : ISTFResourceExporter
+	public class STFArmatureExporter : ISTFResourceExporter
 	{
+		public string ConvertPropertyPath(string UnityProperty)
+		{
+			throw new NotImplementedException();
+		}
+
+		public List<string> GatherUsedBuffers(UnityEngine.Object Resource)
+		{
+			throw new NotImplementedException();
+		}
+
+		public List<GameObject> GatherUsedNodes(UnityEngine.Object Resource)
+		{
+			throw new NotImplementedException();
+		}
+
+		public List<UnityEngine.Object> GatherUsedResources(UnityEngine.Object Resource)
+		{
+			throw new NotImplementedException();
+		}
+
 		public JToken SerializeToJson(STFExportState state, UnityEngine.Object resource)
 		{
 			var armature = (STFArmature)resource;
@@ -30,7 +50,7 @@ namespace STF.Serde
 			var ret = new JObject();
 			ret.Add("type", STFArmatureImporter._TYPE);
 			ret.Add("name", armature.armatureName);
-			ret.Add("root", armature.root.GetComponent<STFUUID>().boneId);
+			ret.Add("root", armature.root.GetComponent<STFNode>().NodeId);
 
 			var boneIds = new List<string>();
 			foreach(var bone in armature.bones)
@@ -47,18 +67,19 @@ namespace STF.Serde
 				var childIds = new String[bone.childCount];
 				for(int childIdx = 0; childIdx < bone.childCount; childIdx++)
 				{
-					childIds[childIdx] = bone.GetChild(childIdx).GetComponent<STFUUID>().boneId;
+					childIds[childIdx] = bone.GetChild(childIdx).GetComponent<STFNode>().NodeId;
 				}
 				boneJson.Add("children", new JArray(childIds));
 
-				var boneId = bone.GetComponent<STFUUID>().boneId;
+				var boneId = bone.GetComponent<STFNode>().NodeId;
 				boneIds.Add(boneId);
-				state.RegisterNode(boneId, boneJson);
+				state.AddNode(bone.gameObject, boneJson, boneId);
 			}
 			ret.Add("bones", new JArray(boneIds));
+			state.AddResource(armature, ret, armature.armatureId);
 			return ret;
 		}
-	}*/
+	}
 
 	public class STFArmatureImporter : ISTFResourceImporter
 	{
@@ -127,8 +148,9 @@ namespace STF.Serde
 				armature.bindposes[i] = armature.bones[i].worldToLocalMatrix;
 			}
 
-			var ResourceLocation = Path.Combine(State.GetResourceLocation(), armature.armatureName + "_" + Id + ".Prefab");
+			var ResourceLocation = Path.Combine(State.GetResourceLocation(), armature.armatureName + "_" + armature.armatureId + ".Prefab");
 			PrefabUtility.SaveAsPrefabAsset(go, ResourceLocation);
+			State.AddResource(armature, armature.armatureId);
 
 			State.AddTrash(go);
 			return armature;
