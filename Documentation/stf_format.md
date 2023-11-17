@@ -118,11 +118,7 @@ It is possible to create assets of the type `STF.addon`. These provide a list of
 
 That way it becomes trivial for a third party to create assets like a set of clothing for a base character model. The STF importer scans the Unity project for STF addons targeting the selected asset and presents the user with a simple checkbox to apply it.
 
-<<<<<<<< HEAD:Docs/stf_format.md
 ![Screenshot of an STF file's inspector in Unity, containing a list of detected addons, with a checkbox to apply it to the current model.](./Images/import_settings_addons.png)
-========
-![Screenshot of an STF file's inspector in Unity, containing a list of detected addons, with a checkbox to apply it to the current model.](./Images/img/import_settings_addons.png)
->>>>>>>> 366ae69 (started rewrite):Documentation/stf_format.md
 
 ## Material Format
 As part of creating this format, I created the beginning of a universal material format, preliminarily called: MTF - Material Transfer Format.

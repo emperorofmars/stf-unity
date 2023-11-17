@@ -31,7 +31,6 @@ Open issues for concrete changes. Pull requests are very welcome!
 
 ## STF Format
 
-The STF format is essentially my idea of how GLTF would be done right.
 [Read up on how STF works.](./Docs/stf_format.md)
 
 ## Some Background and Motivation
