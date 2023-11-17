@@ -57,7 +57,7 @@ namespace STF.Serde
 		public static readonly Dictionary<string, ISTFResourceImporter> DefaultResourceImporters = new Dictionary<string, ISTFResourceImporter>() {
 			{STFMeshImporter._TYPE, new STFMeshImporter()},
 			{STFTextureImporter._TYPE, new STFTextureImporter()},
-			//{STFArmatureImporter._TYPE, new STFArmatureImporter()},
+			{STFArmatureImporter._TYPE, new STFArmatureImporter()},
 			//{STFMaterialImporter._TYPE, new STFMaterialImporter()},
 			//{STFTextureViewImporter._TYPE, new STFTextureViewImporter()},
 			//{STFAnimationImporter._TYPE, new STFAnimationImporter()}

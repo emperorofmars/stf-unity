@@ -65,6 +65,11 @@ namespace STF.Serde
 		{
 			Resources.Add(Id, Resource);
 		}
+
+		public void AddTrash(UnityEngine.Object Trash)
+		{
+			this.Trash.Add(Trash);
+		}
 	}
 
 	// The main star for import!

@@ -9,9 +9,9 @@ namespace STF.IdComponents
 {
 	public class STFNode : MonoBehaviour
 	{
-		public string nodeId = Guid.NewGuid().ToString();
-		public string type = "STF.Node";
-		public string origin;
+		public string NodeId = Guid.NewGuid().ToString();
+		public string Type = "STF.Node";
+		public string Origin;
 	}
 }
 

@@ -14,6 +14,7 @@ namespace STF.Serde
 	public class STFMesh : ASTFResource
 	{
 		public string OriginalBufferId;
+		public string ArmatureId;
 	}
 
 	public class STFMeshExporter : ISTFResourceExporter
@@ -42,6 +43,12 @@ namespace STF.Serde
 		{
 			var ret = new JObject();
 			var mesh = (Mesh)resource;
+			
+			var usedResources = new JArray();
+			
+			var assetPath = AssetDatabase.GetAssetPath(mesh);
+			var metaPath = Path.Combine(Path.GetDirectoryName(assetPath), Path.ChangeExtension(assetPath, "Asset"));
+			var meta = AssetDatabase.LoadAssetAtPath<STFMesh>(metaPath);
 
 			ret.Add("type", STFMeshImporter._TYPE);
 			ret.Add("name", mesh.name);
@@ -154,6 +161,11 @@ namespace STF.Serde
 			byte[] weightBuffer = null;
 			if(mesh.HasVertexAttribute(VertexAttribute.BlendIndices))
 			{
+				ret.Add("skinned", true);
+				ret.Add("armature", meta.ArmatureId);
+				usedResources.Add(meta.ArmatureId);
+
+
 				/*state.AddTask(new Task(() => {
 					ret.Add("skinned", true);
 					var resourceContext = state.GetResourceContext(mesh);
@@ -284,6 +296,9 @@ namespace STF.Serde
 			var bufferId = state.AddBuffer(byteArray);
 			ret.Add("buffer", bufferId);
 			
+			ret.Add("used_buffers", new JArray() {bufferId});
+			ret.Add("used_resources", usedResources);
+
 			return ret;
 		}
 	}
@@ -301,6 +316,12 @@ namespace STF.Serde
 		{
 			var ret = new Mesh();
 			ret.name = (string)Json["name"];
+			
+			var meta = ScriptableObject.CreateInstance<STFMesh>();
+			meta.ResourceLocation = Path.Combine(State.GetResourceLocation(), ret.name + "_" + Id + ".mesh");
+			meta.OriginalBufferId = (string)Json["buffer"];
+			meta.Name = ret.name;
+			meta.ArmatureId = (string)Json["armature"];
 
 			var bufferWidth = 3;
 			var numUVs = 0;
@@ -421,11 +442,13 @@ namespace STF.Serde
 
 				ret.SetBoneWeights(bonesPerVertexNat, weights);
 
-				/*State.AddTask(new Task(() => {
-					var armature = (STFArmature)State.GetResource((string)Json["armature"]);
-					if(armature != null) ret.bindposes = armature.bindposes;
-					//else state.GetMeta().addonTriggers.Add(new STFMeta.AddonTrigger{id = id, targetId = (string)Json["armature"]}); // store armature id for later, when the addon gets applied to the object actually containing the armature
-				}));*/
+				State.AddTask(new Task(() => {
+					var armature = (STFArmature)State.Resources[((string)Json["armature"])];
+					if(armature != null)
+					{
+						ret.bindposes = armature.bindposes;
+					}
+				}));
 			}
 			
 			if(Json["blendshape_count"] != null && (int)Json["blendshape_count"] > 0)
@@ -480,13 +503,8 @@ namespace STF.Serde
 			ret.UploadMeshData(false);
 			ret.RecalculateBounds();
 
-			var meta = ScriptableObject.CreateInstance<STFMesh>();
-			meta.ResourceLocation = Path.Combine(State.GetResourceLocation(), ret.name + "_" + Id + ".mesh");
-			meta.OriginalBufferId = (string)Json["buffer"];
 			AssetDatabase.CreateAsset(ret, meta.ResourceLocation);
 			AssetDatabase.CreateAsset(meta, Path.ChangeExtension(meta.ResourceLocation, "Asset"));
-
-			//State.GetMeta().resourceInfo.Add(new STFMeta.ResourceInfo {name = ret.name, resource = ret, id = id, external = false });
 
 			return ret;
 		}
