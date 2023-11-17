@@ -18,9 +18,9 @@ namespace STF.Tools
 		public string MainAssetId;
 		public List<STFAssetInfo> Assets;
 		[SerializeField]
-		public STFBuffers Buffers;
+		public STFFile Buffers;
 
-		public static STFImportInfo CreateInstance(STFBuffers Buffers)
+		public static STFImportInfo CreateInstance(STFFile Buffers)
 		{
 			var ret = ScriptableObject.CreateInstance<STFImportInfo>();
 			ret.Assets = new List<STFAssetInfo>();

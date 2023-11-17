@@ -71,7 +71,7 @@ namespace STF.Serde
 		{
 			try
 			{
-				var buffers = new STFBuffers(Path);
+				var buffers = new STFFile(Path);
 				this.state = new STFImportState(Context, TargetLocation, JObject.Parse(buffers.Json));
 			
 				EnsureFolderStructure();
@@ -115,7 +115,7 @@ namespace STF.Serde
 			AssetDatabase.Refresh();
 		}
 
-		private void ParseBuffers(STFBuffers buffers)
+		private void ParseBuffers(STFFile buffers)
 		{
 			for(int i = 1; i < buffers.Buffers.Count(); i++)
 			{

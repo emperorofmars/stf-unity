@@ -22,7 +22,7 @@ namespace STF.Tools
 
 		public override void OnImportAsset(AssetImportContext ctx)
 		{
-			var importInfo = STFImportInfo.CreateInstance(new STFBuffers(ctx.assetPath));
+			var importInfo = STFImportInfo.CreateInstance(new STFFile(ctx.assetPath));
 
 			ctx.AddObjectToAsset("main", importInfo);
 			ctx.SetMainObject(importInfo);

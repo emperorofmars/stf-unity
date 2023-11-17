@@ -16,7 +16,7 @@ namespace STF.Serde
 {
 	// Read and write binary STF files
 	[Serializable]
-	public class STFBuffers
+	public class STFFile
 	{
 		public static string _MAGIC = "STF0";
 
@@ -25,18 +25,18 @@ namespace STF.Serde
 		public string Json;
 		public List<byte[]> Buffers = new List<byte[]>();
 
-		public STFBuffers(string Json, List<byte[]> Buffers)
+		public STFFile(string Json, List<byte[]> Buffers)
 		{
 			this.Json = Json;
 			this.Buffers = Buffers;
 		}
 
-		public STFBuffers(string path)
+		public STFFile(string path)
 		{
 			this.parse(File.ReadAllBytes(path));
 		}
 
-		public STFBuffers(byte[] ByteArray)
+		public STFFile(byte[] ByteArray)
 		{
 			this.parse(ByteArray);
 		}
@@ -46,7 +46,7 @@ namespace STF.Serde
 			var offset = 0;
 
 			// Magic
-			int magicLen = Encoding.UTF8.GetBytes(STFBuffers._MAGIC).Length;
+			int magicLen = Encoding.UTF8.GetBytes(STFFile._MAGIC).Length;
 			var magicUtf8 = new byte[magicLen];
 			Buffer.BlockCopy(ByteArray, 0, magicUtf8, 0, magicUtf8.Length * sizeof(byte));
 			offset += magicUtf8.Length * sizeof(byte);
@@ -96,7 +96,7 @@ namespace STF.Serde
 		
 		public byte[] CreateBinaryFromBuffers()
 		{
-			byte[] magicUtf8 = Encoding.UTF8.GetBytes(STFBuffers._MAGIC);
+			byte[] magicUtf8 = Encoding.UTF8.GetBytes(STFFile._MAGIC);
 			var headerSize = (this.Buffers.Count + 1) * sizeof(int); // +1 for the json definition
 			var bufferInfo = this.Buffers.Select(buffer => buffer.Length).ToArray(); // lengths of all binary buffers
 			byte[] jsonUtf8 = Encoding.UTF8.GetBytes(this.Json);
