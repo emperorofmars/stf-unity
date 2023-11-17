@@ -133,9 +133,10 @@ namespace STF.Serde
 
 		private void ParseBuffers(STFFile buffers)
 		{
-			for(int i = 1; i < buffers.Buffers.Count(); i++)
+			for(int i = 0; i < buffers.Buffers.Count(); i++)
 			{
 				state.Buffers.Add((string)state.JsonRoot["buffers"][i], buffers.Buffers[i]);
+				Debug.Log((string)state.JsonRoot["buffers"][i]);
 			}
 		}
 

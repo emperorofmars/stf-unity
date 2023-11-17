@@ -10,11 +10,8 @@ using System.Collections.Generic;
 
 namespace STF.Serde
 {
-	public class STFTexture : ScriptableObject
+	public class STFTexture : ASTFResource
 	{
-		public string Id;
-		public string ResourceLocation;
-		public string Name;
 		public bool Linear;
 		public string OriginalBufferId;
 	}

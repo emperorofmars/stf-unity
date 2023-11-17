@@ -1,18 +1,19 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using Unity.Collections;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
 
 namespace STF.Serde
 {
-	public class STFMesh : ScriptableObject
+	public class STFMesh : ASTFResource
 	{
-		public string Id;
-		
+		public string OriginalBufferId;
 	}
 
 	public class STFMeshExporter : ISTFResourceExporter
@@ -296,7 +297,7 @@ namespace STF.Serde
 			throw new NotImplementedException();
 		}
 
-		public UnityEngine.Object ParseFromJson(STFImportState State, JToken Json, string Id)
+		public UnityEngine.Object ParseFromJson(STFImportState State, JObject Json, string Id)
 		{
 			var ret = new Mesh();
 			ret.name = (string)Json["name"];
@@ -310,6 +311,7 @@ namespace STF.Serde
 			if(Json["color"] != null) bufferWidth += 4;
 			if(Json["uvs"] != null) { bufferWidth += 2 * (int)Json["uvs"]; numUVs = (int)Json["uvs"]; }
 
+			Debug.Log("Buffer: " + (string)Json["buffer"]);
 			var arrayBuffer = State.Buffers[(string)Json["buffer"]];
 
 			var vertexbuffer = new float[vertexCount * bufferWidth];
@@ -478,14 +480,15 @@ namespace STF.Serde
 			ret.UploadMeshData(false);
 			ret.RecalculateBounds();
 
+			var meta = ScriptableObject.CreateInstance<STFMesh>();
+			meta.ResourceLocation = Path.Combine(State.GetResourceLocation(), ret.name + "_" + Id + ".mesh");
+			meta.OriginalBufferId = (string)Json["buffer"];
+			AssetDatabase.CreateAsset(ret, meta.ResourceLocation);
+			AssetDatabase.CreateAsset(meta, Path.ChangeExtension(meta.ResourceLocation, "Asset"));
+
 			//State.GetMeta().resourceInfo.Add(new STFMeta.ResourceInfo {name = ret.name, resource = ret, id = id, external = false });
 
 			return ret;
-		}
-
-		public UnityEngine.Object ParseFromJson(STFImportState State, JObject Json, string Id)
-		{
-			throw new NotImplementedException();
 		}
 	}
 }
