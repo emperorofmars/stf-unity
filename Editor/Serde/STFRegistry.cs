@@ -76,7 +76,6 @@ namespace STF.Serde
 		private static Dictionary<string, ISTFAssetExporter> RegisteredAssetExporters = new Dictionary<string, ISTFAssetExporter>();
 
 		private static Dictionary<string, ISTFNodeImporter> RegisteredNodeImporters = new Dictionary<string, ISTFNodeImporter>();
-
 		private static Dictionary<string, ISTFNodeExporter> RegisteredNodeExporters = new Dictionary<string, ISTFNodeExporter>();
 
 		private static Dictionary<string, ISTFComponentImporter> RegisteredComponentImporters = new Dictionary<string, ISTFComponentImporter>();

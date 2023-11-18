@@ -15,7 +15,7 @@ namespace STF.Serde
 {
 	public class STFAssetExporter : ISTFAssetExporter
 	{
-		public JObject SerializeToJson(STFExportState State, System.Object Asset)
+		public JObject SerializeToJson(STFExportState State, UnityEngine.Object Asset)
 		{
 			var ret = new JObject();
 
@@ -27,7 +27,7 @@ namespace STF.Serde
 	{
 		public static string _TYPE = "STF.asset";
 
-		public UnityEngine.Object ParseFromJson(STFImportState State, JObject JsonAsset, string Id)
+		public void ParseFromJson(STFImportState State, JObject JsonAsset, string Id)
 		{
 			try
 			{
@@ -87,7 +87,7 @@ namespace STF.Serde
 					}
 				}
 			}
-			return null;
+			return;
 		}
 	}
 }
