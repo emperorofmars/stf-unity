@@ -30,11 +30,7 @@ namespace STF.Serde
 		Dictionary<string, Component> Components {get;}
 
 		void AddTask(Task task);
-
-		string GetResourceLocation();
-
-		void AddResource(UnityEngine.Object Resource, string Id);
-
+		void AddNode(GameObject Node, string Id);
 		void AddTrash(UnityEngine.Object Trash);
 	}
 
@@ -73,9 +69,10 @@ namespace STF.Serde
 			return Path.Combine(State.TargetLocation, STFConstants.ResourceDirectoryName);
 		}
 
-		public void AddResource(UnityEngine.Object Resource, string Id)
+		public void AddNode(GameObject Node, string Id)
 		{
-			Resources.Add(Id, Resource);
+			Nodes.Add(Id, Node);
+			AddTrash(Node);
 		}
 
 		public void AddTrash(UnityEngine.Object Trash)

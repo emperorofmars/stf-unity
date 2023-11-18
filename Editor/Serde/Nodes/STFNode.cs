@@ -30,6 +30,8 @@ namespace STF.Serde
 		public GameObject ParseFromJson(ISTFAssetImportState State, JObject JsonAsset, string Id)
 		{
 			var ret = new GameObject();
+			State.AddNode(ret, Id);
+			
 			var node = ret.AddComponent<STFNode>();
 			node.NodeId = Id;
 			node.name = (String)JsonAsset["name"];

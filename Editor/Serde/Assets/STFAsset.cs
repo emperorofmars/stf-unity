@@ -29,46 +29,63 @@ namespace STF.Serde
 
 		public UnityEngine.Object ParseFromJson(STFImportState State, JObject JsonAsset, string Id)
 		{
-			var assetImportState = new STFAssetImportState(
-				new STFAssetInfo {
-					assetId = Id,
-					assetType = (string)JsonAsset["type"],
-					assetName = (string)JsonAsset["name"],
-					assetVersion = (string)JsonAsset["version"],
-					assetAuthor = (string)JsonAsset["author"],
-					assetURL = (string)JsonAsset["url"],
-					assetLicense = (string)JsonAsset["license"],
-					assetLicenseLink = (string)JsonAsset["license_link"]
-				},
-				State,
-				State.Context
-			);
-			var rootId = (string)JsonAsset["root_node"];
-			var nodeJson = (JObject)State.JsonRoot["nodes"][rootId];
-			var type = (string)nodeJson["type"];
-			if(type == null || type.Length == 0) type = STFNodeImporter._TYPE;
-
-			if(assetImportState.Context.NodeImporters.ContainsKey(type))
+			try
 			{
-				Debug.Log($"Parsing Node: {type}");
-				var rootGo = assetImportState.Context.NodeImporters[type].ParseFromJson(assetImportState, nodeJson, rootId);
+				var assetImportState = new STFAssetImportState(
+					new STFAssetInfo {
+						assetId = Id,
+						assetType = (string)JsonAsset["type"],
+						assetName = (string)JsonAsset["name"],
+						assetVersion = (string)JsonAsset["version"],
+						assetAuthor = (string)JsonAsset["author"],
+						assetURL = (string)JsonAsset["url"],
+						assetLicense = (string)JsonAsset["license"],
+						assetLicenseLink = (string)JsonAsset["license_link"]
+					},
+					State,
+					State.Context
+				);
+				var rootId = (string)JsonAsset["root_node"];
+				var nodeJson = (JObject)State.JsonRoot["nodes"][rootId];
+				var type = (string)nodeJson["type"];
+				if(type == null || type.Length == 0) type = STFNodeImporter._TYPE;
 
-				var assetComponent = rootGo.AddComponent<STFAsset>();
-				assetComponent.assetInfo = assetImportState.AssetInfo;
-
-				if(State.MainAssetId == Id)
+				if(assetImportState.Context.NodeImporters.ContainsKey(type))
 				{
-					PrefabUtility.SaveAsPrefabAsset(rootGo, Path.Combine(State.TargetLocation, assetImportState.AssetInfo.assetName + ".Prefab"));
+					Debug.Log($"Parsing Node: {type}");
+					var rootGo = assetImportState.Context.NodeImporters[type].ParseFromJson(assetImportState, nodeJson, rootId);
+
+					var assetComponent = rootGo.AddComponent<STFAsset>();
+					assetComponent.assetInfo = assetImportState.AssetInfo;
+
+					if(State.MainAssetId == Id)
+					{
+						PrefabUtility.SaveAsPrefabAsset(rootGo, Path.Combine(State.TargetLocation, assetImportState.AssetInfo.assetName + ".Prefab"));
+					}
+					else
+					{
+						PrefabUtility.SaveAsPrefabAsset(rootGo, Path.Combine(State.TargetLocation, STFConstants.SecondaryAssetsDirectoryName, assetImportState.AssetInfo.assetName + ".Prefab"));
+					}
 				}
 				else
 				{
-					PrefabUtility.SaveAsPrefabAsset(rootGo, Path.Combine(State.TargetLocation, STFConstants.SecondaryAssetsDirectoryName, assetImportState.AssetInfo.assetName + ".Prefab"));
+					Debug.LogWarning($"Unrecognized Node: {type}");
+					// Unrecognized Node
 				}
 			}
-			else
+			catch(Exception e)
 			{
-				Debug.LogWarning($"Unrecognized Node: {type}");
-				// Unrecognized Node
+				throw new Exception("Error during Asset import: ", e);
+			}
+			finally
+			{
+				foreach(var trashObject in State.Trash)
+				{
+					if(trashObject != null)
+					{
+						UnityEngine.Object.DestroyImmediate(trashObject);
+					}
+				}
 			}
 			return null;
 		}
