@@ -15,8 +15,8 @@ namespace STF.Serde
 	public interface ISTFAssetImportState
 	{
 		STFImportContext Context {get;}
-
 		STFAssetInfo AssetInfo {get;}
+		JObject JsonRoot {get;}
 		// id -> asset
 		Dictionary<string, STFAsset> Assets {get;}
 
@@ -45,6 +45,7 @@ namespace STF.Serde
 		public STFImportContext Context {get =>_Context;}
 		STFAssetInfo _AssetInfo;
 		public STFAssetInfo AssetInfo {get =>_AssetInfo;}
+		public JObject JsonRoot {get => State.JsonRoot;}
 
 		Dictionary<string, GameObject> _Nodes = new Dictionary<string, GameObject>();
 		public Dictionary<string, GameObject> Nodes {get => _Nodes;}
@@ -53,9 +54,6 @@ namespace STF.Serde
 
 		public Dictionary<string, STFAsset> Assets {get => State.Assets;}
 		public Dictionary<string, UnityEngine.Object> Resources {get => State.Resources;}
-
-		// stuff to delete before the import finishes
-		public List<UnityEngine.Object> Trash = new List<UnityEngine.Object>();
 		public List<Task> Tasks = new List<Task>();
 
 		public STFAssetImportState(STFAssetInfo AssetInfo, STFImportState State, STFImportContext Context)
@@ -82,7 +80,7 @@ namespace STF.Serde
 
 		public void AddTrash(UnityEngine.Object Trash)
 		{
-			this.Trash.Add(Trash);
+			this.State.AddTrash(Trash);
 		}
 	}
 	
