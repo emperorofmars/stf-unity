@@ -90,9 +90,10 @@ namespace STF.Serde
 			throw new NotImplementedException();
 		}
 
-		public UnityEngine.Object ParseFromJson(STFImportState State, JObject Json, string Id)
+		public UnityEngine.Object ParseFromJson(ISTFImportState State, JObject Json, string Id)
 		{
 			var go = new GameObject();
+			State.AddTrash(go);
 			var armature = go.AddComponent<STFArmature>();
 			
 			armature.armatureId = Id;
@@ -113,6 +114,7 @@ namespace STF.Serde
 			{
 				var boneNodeJson = State.JsonRoot["nodes"][boneIds[i]];
 				var boneGO = new GameObject();
+				State.AddTrash(boneGO);
 				var bone = boneGO.AddComponent<STFNode>();
 				
 				bone.NodeId = boneIds[i];
@@ -152,7 +154,6 @@ namespace STF.Serde
 			PrefabUtility.SaveAsPrefabAsset(go, ResourceLocation);
 			State.AddResource(armature, armature.armatureId);
 
-			State.AddTrash(go);
 			return armature;
 		}
 	}

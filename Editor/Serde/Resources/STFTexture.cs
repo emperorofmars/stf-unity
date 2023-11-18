@@ -120,14 +120,12 @@ namespace STF.Serde
 			throw new NotImplementedException();
 		}
 
-		public UnityEngine.Object ParseFromJson(STFImportState State, JObject Json, string Id)
+		public UnityEngine.Object ParseFromJson(ISTFImportState State, JObject Json, string Id)
 		{
 			var ret = ScriptableObject.CreateInstance<STFTexture>();
 			ret.Id = Id;
 			ret.Name = (string)Json["name"];
 			ret.ResourceLocation = Path.Combine(State.GetResourceLocation(), ret.Name + "_" + Id + "." + (string)Json["format"]);
-			Debug.Log(State.GetResourceLocation());
-			Debug.Log(ret.ResourceLocation);
 			ret.Linear = (bool)Json["linear"];
 			ret.OriginalBufferId = (string)Json["buffer"];
 			

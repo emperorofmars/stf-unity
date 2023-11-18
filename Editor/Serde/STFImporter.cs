@@ -16,74 +16,18 @@ using Serilog;
 
 namespace STF.Serde
 {
-	public class STFImportState
-	{
-		public STFImportContext Context;
-
-		public string TargetLocation;
-		public string MainAssetId;
-
-		public JObject JsonRoot;
-
-		// id -> asset
-		public Dictionary<string, STFAsset> Assets = new Dictionary<string, STFAsset>();
-
-		// id -> node
-		public Dictionary<string, GameObject> Nodes = new Dictionary<string, GameObject>();
-
-		// id -> resource
-		public Dictionary<string, UnityEngine.Object> Resources = new Dictionary<string, UnityEngine.Object>();
-
-		// id -> component
-		public Dictionary<string, Component> Components = new Dictionary<string, Component>();
-
-		// id -> buffer
-		public Dictionary<string, byte[]> Buffers = new Dictionary<string, byte[]>();
-
-		// stuff to delete before the import finishes
-		public List<UnityEngine.Object> Trash = new List<UnityEngine.Object>();
-		public List<Task> Tasks = new List<Task>();
-
-		public STFImportState(STFImportContext Context, string TargetLocation, JObject JsonRoot)
-		{
-			this.Context = Context;
-			this.TargetLocation = TargetLocation;
-			this.JsonRoot = JsonRoot;
-		}
-
-		public void AddTask(Task task)
-		{
-			Tasks.Add(task);
-		}
-
-		public string GetResourceLocation()
-		{
-			return Path.Combine(TargetLocation, STFConstants.ResourceDirectoryName);
-		}
-
-		public void AddResource(UnityEngine.Object Resource, string Id)
-		{
-			Resources.Add(Id, Resource);
-		}
-
-		public void AddTrash(UnityEngine.Object Trash)
-		{
-			this.Trash.Add(Trash);
-		}
-	}
-
 	// The main star for import!
 	// Parses the Json and buffers based on the provided importers from the STFImportContext.
-	public class STFDeserializer
+	public class STFImporter
 	{
 		private STFImportState state;
 
-		public STFDeserializer(string TargetLocation, string Path)
+		public STFImporter(string TargetLocation, string Path)
 		{
 			Parse(STFRegistry.GetDefaultImportContext(), TargetLocation, Path);
 		}
 
-		public STFDeserializer(STFImportContext Context, string TargetLocation, string Path)
+		public STFImporter(STFImportContext Context, string TargetLocation, string Path)
 		{
 			Parse(Context, TargetLocation, Path);
 		}
@@ -99,16 +43,10 @@ namespace STF.Serde
 
 				ParseBuffers(buffers);
 				ParseResources();
+				ParseAssets();
 			}
 			catch(Exception e)
 			{
-				foreach(var node in state.Nodes.Values)
-				{
-					if(node != null)
-					{
-						UnityEngine.Object.DestroyImmediate(node);
-					}
-				}
 				throw new Exception("Error during STF import: ", e);
 			}
 			finally
@@ -141,7 +79,6 @@ namespace STF.Serde
 			for(int i = 0; i < buffers.Buffers.Count(); i++)
 			{
 				state.Buffers.Add((string)state.JsonRoot["buffers"][i], buffers.Buffers[i]);
-				Debug.Log((string)state.JsonRoot["buffers"][i]);
 			}
 		}
 
@@ -152,13 +89,30 @@ namespace STF.Serde
 				var type = (string)entry.Value["type"];
 				if(state.Context.ResourceImporters.ContainsKey(type))
 				{
-					Debug.Log($"Parsing Resource: {type}");
 					state.Context.ResourceImporters[type].ParseFromJson(state, (JObject)entry.Value, entry.Key);
 				}
 				else
 				{
 					Debug.LogWarning($"Unrecognized Resource: {type}");
 					// Unrecognized Resource
+				}
+			}
+		}
+
+		private void ParseAssets()
+		{
+			foreach(var entry in (JObject)state.JsonRoot["assets"])
+			{
+				var type = (string)entry.Value["type"];
+				if(state.Context.AssetImporters.ContainsKey(type))
+				{
+					Debug.Log($"Parsing Asset: {type}");
+					state.Context.AssetImporters[type].ParseFromJson(state, (JObject)entry.Value, entry.Key);
+				}
+				else
+				{
+					Debug.LogWarning($"Unrecognized Asset: {type}");
+					// Unrecognized Asset
 				}
 			}
 		}

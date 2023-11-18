@@ -313,7 +313,7 @@ namespace STF.Serde
 			throw new NotImplementedException();
 		}
 
-		public UnityEngine.Object ParseFromJson(STFImportState State, JObject Json, string Id)
+		public UnityEngine.Object ParseFromJson(ISTFImportState State, JObject Json, string Id)
 		{
 			var ret = new Mesh();
 			ret.name = (string)Json["name"];

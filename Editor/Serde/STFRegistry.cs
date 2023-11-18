@@ -30,16 +30,17 @@ namespace STF.Serde
 			//{STFAddonAssetExporter._TYPE, new STFAddonAssetImporter()}
 		};
 		public static readonly Dictionary<string, ISTFAssetImporter> DefaultAssetImporters = new Dictionary<string, ISTFAssetImporter>() {
-			//{STFAssetExporter._TYPE, new STFAssetImporter()},
-			//{STFAddonAssetExporter._TYPE, new STFAddonAssetImporter()}
+			{STFAssetImporter._TYPE, new STFAssetImporter()},
+			//{STFAddonAssetImporter._TYPE, new STFAddonAssetImporter()}
 		};
 		public static readonly Dictionary<string, ISTFNodeImporter> DefaultNodeImporters = new Dictionary<string, ISTFNodeImporter>() {
-			//{STFNodeImporter._TYPE, new STFNodeImporter()},
+			{STFNodeImporter._TYPE, new STFNodeImporter()},
 			//{STFArmatureInstanceNodeImporter._TYPE, new STFArmatureInstanceNodeImporter()},
 			//{STFAppendageNodeImporter._TYPE, new STFAppendageNodeImporter()},
 			//{STFPatchNodeImporter._TYPE, new STFPatchNodeImporter()}
 		};
 		public static readonly Dictionary<string, ISTFNodeExporter> DefaultNodeExporters = new Dictionary<string, ISTFNodeExporter>() {
+			{STFNodeImporter._TYPE, new STFNodeExporter()},
 		};
 		// Also add node exporters. As they cannot be mapped to a Unity type, devise a way for them to determine wether to handle a node or not, perhaps with priorities or something
 		public static readonly Dictionary<string, ISTFComponentImporter> DefaultComponentImporters = new Dictionary<string, ISTFComponentImporter>() {

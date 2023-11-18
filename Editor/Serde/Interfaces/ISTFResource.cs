@@ -36,7 +36,7 @@ namespace STF.Serde
 
 	public interface ISTFResourceImporter
 	{
-		Object ParseFromJson(STFImportState State, JObject Json, string Id);
+		Object ParseFromJson(ISTFImportState State, JObject Json, string Id);
 		string ConvertPropertyPath(string STFProperty);
 	}
 }

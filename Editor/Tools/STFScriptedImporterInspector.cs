@@ -58,7 +58,7 @@ namespace STF.Tools
 
 			GUILayout.Space(10f);
 			if(GUILayout.Button("Import To Selected Location", GUILayout.ExpandWidth(false))) {
-				var deserializer = new STFDeserializer("Assets" + selectedUnpackLocation, importer.assetPath);
+				var deserializer = new STFImporter("Assets" + selectedUnpackLocation, importer.assetPath);
 			}
 
 			drawHLine();

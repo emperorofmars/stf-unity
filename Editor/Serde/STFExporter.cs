@@ -76,11 +76,11 @@ namespace STF.Serde
 
 	// The main star for import!
 	// Parses the Json and buffers based on the provided importers from the STFImportContext.
-	public class STFSerializer
+	public class STFExporter
 	{
 		private STFExportState state;
 
-		public STFSerializer(string TargetLocation, string path)
+		public STFExporter(string TargetLocation, string path)
 		{
 			try
 			{
