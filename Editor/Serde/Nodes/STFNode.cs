@@ -9,11 +9,10 @@ using UnityEngine;
 
 namespace STF.Serde
 {
-	public class STFNode : MonoBehaviour
+	public class STFNode : ASTFNode
 	{
-		public string NodeId = Guid.NewGuid().ToString();
-		public string Type = "STF.Node";
-		public string Origin;
+		public static string _TYPE = "STF.Node";
+		public override string Type => _TYPE;
 	}
 
 	public class STFNodeExporter : ISTFNodeExporter
@@ -26,7 +25,6 @@ namespace STF.Serde
 
 	public class STFNodeImporter : ISTFNodeImporter
 	{
-		public static string _TYPE = "STF.Node";
 		public GameObject ParseFromJson(ISTFAssetImportState State, JObject JsonAsset, string Id)
 		{
 			var ret = new GameObject();
@@ -43,7 +41,7 @@ namespace STF.Serde
 			{
 				var childJson = (JObject)State.JsonRoot["nodes"][childId];
 				var type = (string)childJson["type"];
-				if(type == null || type.Length == 0) type = STFNodeImporter._TYPE;
+				if(type == null || type.Length == 0) type = STFNode._TYPE;
 				if(State.Context.NodeImporters.ContainsKey(type))
 				{
 					Debug.Log($"Parsing Node: {type}");

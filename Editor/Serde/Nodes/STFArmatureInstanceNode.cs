@@ -12,13 +12,11 @@ using UnityEngine;
 
 namespace STF.Serde
 {
-	public class STFArmatureInstance : MonoBehaviour
+	public class STFArmatureInstanceNode : ASTFNode
 	{
-		public string NodeId = Guid.NewGuid().ToString();
-		public string Type = "STF.armature_instance";
-		public string Origin;
+		public static string _TYPE = "STF.armature_instance";
+		public override string Type => _TYPE;
 
-		
 		public STFArmature armature;
 		public GameObject root;
 		public List<GameObject> bones;
@@ -34,8 +32,6 @@ namespace STF.Serde
 
 	public class STFArmatureInstanceImporter : ISTFNodeImporter
 	{
-		public static string _TYPE = "STF.armature_instance";
-
 		public GameObject ParseFromJson(ISTFAssetImportState State, JObject JsonAsset, string Id)
 		{
 			/*var ret = new GameObject();
@@ -73,33 +69,31 @@ namespace STF.Serde
 			var armatureResource = (STFArmature)State.Resources[(string)JsonAsset["armature"]];
 			var go = (GameObject)PrefabUtility.InstantiatePrefab(armatureResource._Resource);
 			State.AddNode(go, Id);
-			var armature = go.GetComponent<STFArmatureNodeInfo>();
+			var armatureInfo = go.GetComponent<STFArmatureNodeInfo>();
 
 			go.name = (string)JsonAsset["name"];
 			var children = JsonAsset["children"].ToObject<List<string>>();
 
-			var armatureInstance = go.AddComponent<STFArmatureInstance>();
+			var armatureInstance = go.AddComponent<STFArmatureInstanceNode>();
 			armatureInstance.NodeId = Id;
 			armatureInstance.name = (String)JsonAsset["name"];
 			armatureInstance.Origin = State.AssetInfo.assetId;
 			
 			TRSUtil.ParseTRS(go, JsonAsset);
 
-			armatureInstance.armature = armatureResource;
-
-			armatureInstance.root = armature.Root.gameObject;
-			armatureInstance.bones = armature.Bones;
-
-			armature.transform.SetParent(go.transform, false);
+			go.transform.SetParent(go.transform, false);
 			var boneInstanceIds = JsonAsset["bone_instances"].ToObject<List<string>>();
+
+			armatureInstance.armature = armatureResource;
+			armatureInstance.root = armatureInfo.Root;
+			armatureInstance.bones = new List<GameObject>(new GameObject[boneInstanceIds.Count]);
 
 			for(int i = 0; i < boneInstanceIds.Count; i++)
 			{
 				var boneInstanceJson = (JObject)State.JsonRoot["nodes"][boneInstanceIds[i]];
-				var bone = armatureInstance.GetComponentsInChildren<STFNode>().First(bi => (string)boneInstanceJson["bone"] == bi.NodeId);
-				var boneInstance = bone.gameObject.AddComponent<STFNode>();
+				var bone = armatureInstance.GetComponentsInChildren<STFBoneNode>().First(bi => (string)boneInstanceJson["bone"] == bi.NodeId);
+				var boneInstance = bone.gameObject.AddComponent<STFBoneInstanceNode>();
 				boneInstance.NodeId = boneInstanceIds[i];
-				boneInstance.Type = "STF.bone_instance";
 				boneInstance.Origin = State.AssetInfo.assetId;
 				armatureInstance.bones[i] = boneInstance.gameObject;
 
@@ -111,7 +105,7 @@ namespace STF.Serde
 				{
 					var childJson = (JObject)State.JsonRoot["nodes"][childId];
 					var type = (string)childJson["type"];
-					if(type == null || type.Length == 0) type = STFNodeImporter._TYPE;
+					if(type == null || type.Length == 0) type = STFNode._TYPE;
 					if(State.Context.NodeImporters.ContainsKey(type))
 					{
 						Debug.Log($"Parsing Node: {type}");
@@ -131,7 +125,7 @@ namespace STF.Serde
 			{
 				var childJson = (JObject)State.JsonRoot["nodes"][childId];
 				var type = (string)childJson["type"];
-				if(type == null || type.Length == 0) type = STFNodeImporter._TYPE;
+				if(type == null || type.Length == 0) type = STFNode._TYPE;
 				if(State.Context.NodeImporters.ContainsKey(type))
 				{
 					Debug.Log($"Parsing Node: {type}");

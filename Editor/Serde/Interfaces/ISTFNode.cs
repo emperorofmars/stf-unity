@@ -10,6 +10,21 @@ using STF.IdComponents;
 
 namespace STF.Serde
 {
+	public interface ISTFNode
+	{
+		string Type {get;}
+		string NodeId {get; set;}
+		string Origin {get; set;}
+	}
+	public abstract class ASTFNode : MonoBehaviour, ISTFNode
+	{
+		public abstract string Type { get; }
+		public string _NodeId = Guid.NewGuid().ToString();
+		public string NodeId {get => _NodeId; set => _NodeId = value;}
+		public string _Origin;
+		public string Origin {get => _Origin; set => _Origin = value;}
+	}
+
 	public interface ISTFNodeExporter
 	{
 		//JObject SerializeToJson(ISTFAssetExportState State, GameObject Go);

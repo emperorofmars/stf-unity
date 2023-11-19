@@ -48,7 +48,7 @@ namespace STF.Serde
 				var rootId = (string)JsonAsset["root_node"];
 				var nodeJson = (JObject)State.JsonRoot["nodes"][rootId];
 				var type = (string)nodeJson["type"];
-				if(type == null || type.Length == 0) type = STFNodeImporter._TYPE;
+				if(type == null || type.Length == 0) type = STFNode._TYPE;
 
 				if(assetImportState.Context.NodeImporters.ContainsKey(type))
 				{

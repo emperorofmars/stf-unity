@@ -96,13 +96,16 @@ namespace STF.Serde
 		{
 			var go = new GameObject();
 			State.AddTrash(go);
-			var armature = go.AddComponent<STFArmatureNodeInfo>();
+			var armatureInfo = go.AddComponent<STFArmatureNodeInfo>();
 			
-			armature.ArmatureId = Id;
-			armature.name = (string)Json["name"];
-			armature.ArmatureName = (string)Json["name"];
+			var ret = ScriptableObject.CreateInstance<STFArmature>();
+			ret.Id = Id;
+			ret.Name = (string)Json["name"];
 
-			if(Json["trs"] != null) TRSUtil.ParseTRS(armature.gameObject, Json);
+			armatureInfo.ArmatureId = Id;
+			armatureInfo.ArmatureName = ret.Name;
+
+			if(Json["trs"] != null) TRSUtil.ParseTRS(go, Json);
 
 			var boneIds = Json["bones"].ToObject<List<string>>();
 
@@ -113,19 +116,18 @@ namespace STF.Serde
 				var boneGO = new GameObject();
 				State.AddTrash(boneGO);
 
-				var bone = boneGO.AddComponent<STFNode>();
-				bone.Type = "STF.bone";
+				var bone = boneGO.AddComponent<STFBoneNode>();
 				bone.NodeId = boneIds[i];
 				bone.name = (string)boneNodeJson["name"];
 				bone.Origin = Id;
 				TRSUtil.ParseTRS(bone.gameObject, boneNodeJson);
 
-				armature.Bones.Add(bone.gameObject);
+				armatureInfo.Bones.Add(bone.gameObject);
 				
 				foreach(string childId in boneNodeJson["children"]?.ToObject<List<string>>())
 				{
 					tasks.Add(new Task(() => {
-						var childBone = armature.Bones.Find(b => b.GetComponent<STFNode>().NodeId == childId);
+						var childBone = armatureInfo.Bones.Find(b => b.GetComponent<ISTFNode>().NodeId == childId);
 						childBone.transform.SetParent(bone.transform, false);
 					}));
 				}
@@ -135,27 +137,24 @@ namespace STF.Serde
 				task.RunSynchronously();
 				if(task.Exception != null) throw task.Exception;
 			}
-			var root = armature.Bones.Find(b => b.GetComponent<STFNode>().NodeId == (string)Json["root"]);
-			root.transform.SetParent(armature.transform, false);
-			armature.Root = root;
+			var root = armatureInfo.Bones.Find(b => b.GetComponent<ISTFNode>().NodeId == (string)Json["root"]);
+			root.transform.SetParent(go.transform, false);
+			armatureInfo.Root = root;
 
 			var bindposes = new Matrix4x4[boneIds.Count];
 			for(int i = 0; i < boneIds.Count; i++)
 			{
-				bindposes[i] = armature.Bones[i].transform.worldToLocalMatrix;
+				bindposes[i] = armatureInfo.Bones[i].transform.worldToLocalMatrix;
 			}
 
-			var ResourceLocation = Path.Combine(State.GetResourceLocation(), armature.ArmatureName + "_" + armature.ArmatureId + ".Prefab");
+			var ResourceLocation = Path.Combine(State.GetResourceLocation(), ret.Name + "_" + ret.Id + ".Prefab");
 			var saved = PrefabUtility.SaveAsPrefabAsset(go, ResourceLocation);
 
-			var ret = ScriptableObject.CreateInstance<STFArmature>();
-			ret.Id = Id;
-			ret.Name = armature.name;
 			ret.ResourceLocation = ResourceLocation;
 			ret.Resource = saved;
 			ret.Bindposes = bindposes;
 			
-			State.AddResource(ret, armature.ArmatureId);
+			State.AddResource(ret, Id);
 			AssetDatabase.CreateAsset(ret, Path.ChangeExtension(ret.ResourceLocation, "Asset"));
 			AssetDatabase.Refresh();
 
