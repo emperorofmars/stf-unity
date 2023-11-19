@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace STF.Serde
 {
-	public interface ISTFComponent
+	public interface ISTFNodeComponent
 	{
 		string Id {get; set;}
 		List<string> Extends {get; set;}
@@ -14,7 +14,7 @@ namespace STF.Serde
 		List<string> Targets {get; set;}
 	}
 
-	public abstract class ASTFComponent : MonoBehaviour, ISTFComponent
+	public abstract class ASTFNodeComponent : MonoBehaviour, ISTFNodeComponent
 	{
 		public string _id = Guid.NewGuid().ToString();
 		public string Id {get => _id; set => _id = value;}
@@ -29,7 +29,7 @@ namespace STF.Serde
 		public List<string> Targets {get => _targets; set => _targets = value;}
 	}
 	
-	public interface ISTFComponentExporter
+	public interface ISTFNodeComponentExporter
 	{
 		List<GameObject> GatherNodes(Component Component);
 
@@ -38,12 +38,12 @@ namespace STF.Serde
 		JToken SerializeToJson(STFExportState State, Component Component);
 	}
 	
-	public interface ISTFComponentImporter
+	public interface ISTFNodeComponentImporter
 	{
 		void ParseFromJson(STFImportState State, JToken Json, string Id, GameObject Go);
 	}
 	
-	public abstract class ASTFComponentExporter : ISTFComponentExporter
+	public abstract class ASTFNodeComponentExporter : ISTFNodeComponentExporter
 	{
 		virtual public List<GameObject> GatherNodes(Component Component)
 		{
@@ -57,7 +57,7 @@ namespace STF.Serde
 
 		abstract public JToken SerializeToJson(STFExportState State, Component Component);
 
-		protected void SerializeRelationships(ISTFComponent Component, JObject Json)
+		protected void SerializeRelationships(ISTFNodeComponent Component, JObject Json)
 		{
 			if(Component.Extends != null && Component.Extends.Count > 0) Json.Add("extends", new JArray(Component.Extends));
 			if(Component.Overrides != null && Component.Overrides.Count > 0) Json.Add("overrides", new JArray(Component.Overrides));
@@ -65,11 +65,11 @@ namespace STF.Serde
 		}
 	}
 	
-	public abstract class ASTFComponentImporter : ISTFComponentImporter
+	public abstract class ASTFNodeComponentImporter : ISTFNodeComponentImporter
 	{
 		abstract public void ParseFromJson(STFImportState State, JToken Json, string Id, GameObject Go);
 
-		protected void ParseRelationships(JToken Json, ISTFComponent Component)
+		protected void ParseRelationships(JToken Json, ISTFNodeComponent Component)
 		{
 			if(Json["extends"] != null) Component.Extends = Json["extends"].ToObject<List<string>>();
 			if(Json["overrides"] != null) Component.Overrides = Json["overrides"].ToObject<List<string>>();
