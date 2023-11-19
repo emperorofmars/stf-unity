@@ -447,7 +447,7 @@ namespace STF.Serde
 					var armature = (STFArmature)State.Resources[((string)Json["armature"])];
 					if(armature != null)
 					{
-						ret.bindposes = armature.bindposes;
+						ret.bindposes = armature.Bindposes;
 					}
 				}));
 			}

@@ -35,7 +35,7 @@ namespace STF.Serde
 		};
 		public static readonly Dictionary<string, ISTFNodeImporter> DefaultNodeImporters = new Dictionary<string, ISTFNodeImporter>() {
 			{STFNodeImporter._TYPE, new STFNodeImporter()},
-			//{STFArmatureInstanceNodeImporter._TYPE, new STFArmatureInstanceNodeImporter()},
+			{STFArmatureInstanceImporter._TYPE, new STFArmatureInstanceImporter()},
 			//{STFAppendageNodeImporter._TYPE, new STFAppendageNodeImporter()},
 			//{STFPatchNodeImporter._TYPE, new STFPatchNodeImporter()}
 		};

@@ -1,4 +1,5 @@
 
+#if UNITY_EDITOR
 
 using System;
 using System.Collections.Generic;
@@ -7,18 +8,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using STF.IdComponents;
+using STF.Util;
 using UnityEditor;
 using UnityEngine;
 
 namespace STF.Serde
 {
-	public class STFArmature : MonoBehaviour
+	public class STFArmature : ASTFResource
 	{
-		public string armatureId;
-		public string armatureName;
-		public Transform root;
-		public List<Transform> bones = new List<Transform>();
-		public Matrix4x4[] bindposes;
+		public Matrix4x4[] Bindposes;
 	}
 
 	public class STFArmatureExporter : ISTFResourceExporter
@@ -45,29 +43,30 @@ namespace STF.Serde
 
 		public JToken SerializeToJson(STFExportState state, UnityEngine.Object resource)
 		{
-			var armature = (STFArmature)resource;
+			/*var armature = (STFArmatureNodeInfo)resource;
 			
 			var ret = new JObject();
 			ret.Add("type", STFArmatureImporter._TYPE);
-			ret.Add("name", armature.armatureName);
-			ret.Add("root", armature.root.GetComponent<STFNode>().NodeId);
+			ret.Add("name", armature.ArmatureName);
+			ret.Add("root", armature.Root.GetComponent<STFNode>().NodeId);
 
 			var boneIds = new List<string>();
-			foreach(var bone in armature.bones)
+			foreach(var bone in armature.Bones)
 			{
 				var boneJson = new JObject();
 				boneJson.Add("name", bone.name);
 				boneJson.Add("type", "bone");
 
 				boneJson.Add("trs", new JArray() {
-					new JArray() {bone.localPosition.x, bone.localPosition.y, bone.localPosition.z},
-					new JArray() {bone.localRotation.x, bone.localRotation.y, bone.localRotation.z, bone.localRotation.w},
-					new JArray() {bone.localScale.x, bone.localScale.y, bone.localScale.z}
+					new JArray() {bone.transform.localPosition.x, bone.transform.localPosition.y, bone.transform.localPosition.z},
+					new JArray() {bone.transform.localRotation.x, bone.transform.localRotation.y, bone.transform.localRotation.z, bone.transform.localRotation.w},
+					new JArray() {bone.transform.localScale.x, bone.transform.localScale.y, bone.transform.localScale.z}
 				});
-				var childIds = new String[bone.childCount];
-				for(int childIdx = 0; childIdx < bone.childCount; childIdx++)
+
+				var childIds = new String[bone.transform.childCount];
+				for(int childIdx = 0; childIdx < bone.transform.childCount; childIdx++)
 				{
-					childIds[childIdx] = bone.GetChild(childIdx).GetComponent<STFNode>().NodeId;
+					childIds[childIdx] = bone.transform.GetChild(childIdx).GetComponent<STFNode>().NodeId;
 				}
 				boneJson.Add("children", new JArray(childIds));
 
@@ -77,8 +76,10 @@ namespace STF.Serde
 			}
 			ret.Add("bones", new JArray(boneIds));
 			ret.Add("used_nodes", new JArray(boneIds));
-			state.AddResource(armature, ret, armature.armatureId);
-			return ret;
+			state.AddResource(armature, ret, armature.ArmatureId);
+			return ret;*/
+
+			return null;
 		}
 	}
 
@@ -95,44 +96,37 @@ namespace STF.Serde
 		{
 			var go = new GameObject();
 			State.AddTrash(go);
-			var armature = go.AddComponent<STFArmature>();
+			var armature = go.AddComponent<STFArmatureNodeInfo>();
 			
-			armature.armatureId = Id;
+			armature.ArmatureId = Id;
 			armature.name = (string)Json["name"];
-			armature.armatureName = (string)Json["name"];
+			armature.ArmatureName = (string)Json["name"];
 
-			if(Json["trs"] != null)
-			{
-				armature.transform.localPosition = new Vector3((float)Json["trs"][0][0], (float)Json["trs"][0][1], (float)Json["trs"][0][2]);
-				armature.transform.localRotation = new Quaternion((float)Json["trs"][1][0], (float)Json["trs"][1][1], (float)Json["trs"][1][2], (float)Json["trs"][1][3]);
-				armature.transform.localScale = new Vector3((float)Json["trs"][2][0], (float)Json["trs"][2][1], (float)Json["trs"][2][2]);
-			}
+			if(Json["trs"] != null) TRSUtil.ParseTRS(armature.gameObject, Json);
 
 			var boneIds = Json["bones"].ToObject<List<string>>();
 
 			var tasks = new List<Task>();
 			for(int i = 0; i < boneIds.Count; i++)
 			{
-				var boneNodeJson = State.JsonRoot["nodes"][boneIds[i]];
+				var boneNodeJson = (JObject)State.JsonRoot["nodes"][boneIds[i]];
 				var boneGO = new GameObject();
 				State.AddTrash(boneGO);
+
 				var bone = boneGO.AddComponent<STFNode>();
-				
+				bone.Type = "STF.bone";
 				bone.NodeId = boneIds[i];
 				bone.name = (string)boneNodeJson["name"];
 				bone.Origin = Id;
+				TRSUtil.ParseTRS(bone.gameObject, boneNodeJson);
 
-				bone.transform.localPosition = new Vector3((float)boneNodeJson["trs"][0][0], (float)boneNodeJson["trs"][0][1], (float)boneNodeJson["trs"][0][2]);
-				bone.transform.localRotation = new Quaternion((float)boneNodeJson["trs"][1][0], (float)boneNodeJson["trs"][1][1], (float)boneNodeJson["trs"][1][2], (float)boneNodeJson["trs"][1][3]);
-				bone.transform.localScale = new Vector3((float)boneNodeJson["trs"][2][0], (float)boneNodeJson["trs"][2][1], (float)boneNodeJson["trs"][2][2]);
-
-				armature.bones.Add(bone.transform);
+				armature.Bones.Add(bone.gameObject);
 				
 				foreach(string childId in boneNodeJson["children"]?.ToObject<List<string>>())
 				{
 					tasks.Add(new Task(() => {
-						var childBone = armature.bones.Find(b => b.GetComponent<STFNode>().NodeId == childId);
-						childBone.SetParent(bone.transform, false);
+						var childBone = armature.Bones.Find(b => b.GetComponent<STFNode>().NodeId == childId);
+						childBone.transform.SetParent(bone.transform, false);
 					}));
 				}
 			}
@@ -141,21 +135,33 @@ namespace STF.Serde
 				task.RunSynchronously();
 				if(task.Exception != null) throw task.Exception;
 			}
-			var root = armature.bones.Find(b => b.GetComponent<STFNode>().NodeId == (string)Json["root"]);
-			root.SetParent(armature.transform, false);
-			armature.root = root;
+			var root = armature.Bones.Find(b => b.GetComponent<STFNode>().NodeId == (string)Json["root"]);
+			root.transform.SetParent(armature.transform, false);
+			armature.Root = root;
 
-			armature.bindposes = new Matrix4x4[boneIds.Count];
+			var bindposes = new Matrix4x4[boneIds.Count];
 			for(int i = 0; i < boneIds.Count; i++)
 			{
-				armature.bindposes[i] = armature.bones[i].worldToLocalMatrix;
+				bindposes[i] = armature.Bones[i].transform.worldToLocalMatrix;
 			}
 
-			var ResourceLocation = Path.Combine(State.GetResourceLocation(), armature.armatureName + "_" + armature.armatureId + ".Prefab");
-			PrefabUtility.SaveAsPrefabAsset(go, ResourceLocation);
-			State.AddResource(armature, armature.armatureId);
+			var ResourceLocation = Path.Combine(State.GetResourceLocation(), armature.ArmatureName + "_" + armature.ArmatureId + ".Prefab");
+			var saved = PrefabUtility.SaveAsPrefabAsset(go, ResourceLocation);
 
-			return armature;
+			var ret = ScriptableObject.CreateInstance<STFArmature>();
+			ret.Id = Id;
+			ret.Name = armature.name;
+			ret.ResourceLocation = ResourceLocation;
+			ret.Resource = saved;
+			ret.Bindposes = bindposes;
+			
+			State.AddResource(ret, armature.ArmatureId);
+			AssetDatabase.CreateAsset(ret, Path.ChangeExtension(ret.ResourceLocation, "Asset"));
+			AssetDatabase.Refresh();
+
+			return ret;
 		}
 	}
 }
+
+#endif
