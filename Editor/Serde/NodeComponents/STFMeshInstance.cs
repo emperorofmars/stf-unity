@@ -8,7 +8,8 @@ namespace STF.Serde
 {
 	public class STFMeshInstance : ASTFNodeComponent
 	{
-
+		public STFArmatureInstanceNode ArmatureInstance;
+		public string ArmatureInstanceId;
 	}
 
 	public class STFMeshInstanceExporter : ASTFNodeComponentExporter
@@ -61,18 +62,17 @@ namespace STF.Serde
 			if((string)Json["armature_instance"] != null)
 			{
 				var armatureInstanceNode = State.Nodes[(string)Json["armature_instance"]];
-
 				if(armatureInstanceNode != null)
 				{
 					var armatureInstance = armatureInstanceNode.GetComponent<STFArmatureInstanceNode>();
+					meshInstanceComponent.ArmatureInstance = armatureInstance;
 					c.rootBone = armatureInstance.root.transform;
 					c.bones = armatureInstance.bones.Select(b => b.transform).ToArray();
 					c.updateWhenOffscreen = true;
 				}
 				else
 				{
-					//var addonDef = go.AddComponent<STFSkinnedMeshRendererAddon>();
-					//addonDef.ArmatureInstanceId = (string)json["armature_instance"];
+					meshInstanceComponent.ArmatureInstanceId = (string)Json["armature_instance"];
 				}
 			}
 

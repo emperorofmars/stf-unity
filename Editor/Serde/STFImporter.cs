@@ -8,12 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
-using System.Text;
-using STF.IdComponents;
 using UnityEditor;
-using UnityScript.Steps;
-using Serilog;
-using UnityEditorInternal;
 
 namespace STF.Serde
 {
