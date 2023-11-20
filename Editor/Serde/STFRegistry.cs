@@ -12,6 +12,7 @@ namespace STF.Serde
 		public Dictionary<string, ISTFNodeImporter> NodeImporters = new Dictionary<string, ISTFNodeImporter>();
 		public Dictionary<string, ISTFNodeComponentImporter> NodeComponentImporters = new Dictionary<string, ISTFNodeComponentImporter>();
 		public Dictionary<string, ISTFResourceImporter> ResourceImporters = new Dictionary<string, ISTFResourceImporter>();
+		//public Dictionary<Type, ISTFResourceComponentImporter> ResourceComponentImporters = new Dictionary<Type, ISTFResourceComponentImporter>();
 	}
 
 	public class STFExportContext
@@ -20,14 +21,15 @@ namespace STF.Serde
 		public Dictionary<string, ISTFNodeExporter> NodeExporters = new Dictionary<string, ISTFNodeExporter>();
 		public Dictionary<Type, ISTFNodeComponentExporter> NodeComponentExporters = new Dictionary<Type, ISTFNodeComponentExporter>();
 		public Dictionary<Type, ISTFResourceExporter> ResourceExporters = new Dictionary<Type, ISTFResourceExporter>();
+		//public Dictionary<Type, ISTFResourceComponentExporter> ResourceComponentExporters = new Dictionary<Type, ISTFResourceComponentExporter>();
 	}
 
 	// Used to register STF object types. Default ones are included by default, additional ones can be added automatically.
 	public static class STFRegistry
 	{
 		public static readonly Dictionary<string, ISTFAssetExporter> DefaultAssetExporters = new Dictionary<string, ISTFAssetExporter>() {
-			//{STFAssetExporter._TYPE, new STFAssetImporter()},
-			//{STFAddonAssetExporter._TYPE, new STFAddonAssetImporter()}
+			{STFAssetImporter._TYPE, new STFAssetExporter()},
+			//{STFAddonAssetExporter._TYPE, new STFAddonAssetExporter()}
 		};
 		public static readonly Dictionary<string, ISTFAssetImporter> DefaultAssetImporters = new Dictionary<string, ISTFAssetImporter>() {
 			{STFAssetImporter._TYPE, new STFAssetImporter()},

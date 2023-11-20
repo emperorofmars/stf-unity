@@ -39,10 +39,10 @@ namespace STF.Serde
 			throw new NotImplementedException();
 		}
 
-		public JToken SerializeToJson(STFExportState state, UnityEngine.Object resource)
+		public JObject SerializeToJson(ISTFExportState State, UnityEngine.Object Resource)
 		{
 			var ret = new JObject();
-			var mesh = (Mesh)resource;
+			var mesh = (Mesh)Resource;
 			
 			var usedResources = new JArray();
 			
@@ -293,13 +293,13 @@ namespace STF.Serde
 				}
 			}
 
-			var bufferId = state.AddBuffer(byteArray, meta.OriginalBufferId);
+			var bufferId = State.AddBuffer(byteArray, meta.OriginalBufferId);
 			ret.Add("buffer", bufferId);
 			
 			ret.Add("used_buffers", new JArray() {bufferId});
 			ret.Add("used_resources", usedResources);
 
-			state.AddResource(mesh, ret, meta.Id);
+			State.AddResource(mesh, ret, meta.Id);
 			return ret;
 		}
 	}
@@ -319,7 +319,7 @@ namespace STF.Serde
 			ret.name = (string)Json["name"];
 			
 			var meta = ScriptableObject.CreateInstance<STFMesh>();
-			meta.ResourceLocation = Path.Combine(State.GetResourceLocation(), ret.name + "_" + Id + ".mesh");
+			meta.ResourceLocation = Path.Combine(State.TargetLocation, STFConstants.ResourceDirectoryName, ret.name + "_" + Id + ".mesh");
 			meta.OriginalBufferId = (string)Json["buffer"];
 			meta.Name = ret.name;
 			meta.ArmatureId = (string)Json["armature"];

@@ -41,7 +41,7 @@ namespace STF.Serde
 			throw new NotImplementedException();
 		}
 
-		public JToken SerializeToJson(STFExportState state, UnityEngine.Object resource)
+		public JObject SerializeToJson(ISTFExportState state, UnityEngine.Object resource)
 		{
 			/*var armature = (STFArmatureNodeInfo)resource;
 			
@@ -147,7 +147,7 @@ namespace STF.Serde
 				bindposes[i] = armatureInfo.Bones[i].transform.worldToLocalMatrix;
 			}
 
-			var ResourceLocation = Path.Combine(State.GetResourceLocation(), ret.Name + "_" + ret.Id + ".Prefab");
+			var ResourceLocation = Path.Combine(State.TargetLocation, STFConstants.ResourceDirectoryName, ret.Name + "_" + ret.Id + ".Prefab");
 			var saved = PrefabUtility.SaveAsPrefabAsset(go, ResourceLocation);
 
 			ret.ResourceLocation = ResourceLocation;

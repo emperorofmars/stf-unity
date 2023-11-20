@@ -43,7 +43,7 @@ namespace STF.Serde
 			var c = Go.AddComponent<SkinnedMeshRenderer>();
 			var meshInstanceComponent = Go.AddComponent<STFMeshInstance>();
 			meshInstanceComponent.Id = Id;
-			//state.AddComponent(id, c);
+			State.AddComponent(meshInstanceComponent, Id);
 
 			Debug.Log(Json);
 

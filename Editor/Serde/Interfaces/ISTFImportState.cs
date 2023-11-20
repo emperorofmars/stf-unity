@@ -30,10 +30,10 @@ namespace STF.Serde
 		Dictionary<string, byte[]> Buffers {get;}
 
 		void AddTask(Task task);
-		string GetResourceLocation();
 		void AddResource(UnityEngine.Object Resource, string Id);
 		void AddTrash(UnityEngine.Object Trash);
 	}
+
 	public class STFImportState : ISTFImportState
 	{
 		STFImportContext _Context;
@@ -66,11 +66,6 @@ namespace STF.Serde
 		public void AddTask(Task task)
 		{
 			Tasks.Add(task);
-		}
-
-		public string GetResourceLocation()
-		{
-			return Path.Combine(TargetLocation, STFConstants.ResourceDirectoryName);
 		}
 
 		public void AddResource(UnityEngine.Object Resource, string Id)

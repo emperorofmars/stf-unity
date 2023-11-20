@@ -31,6 +31,7 @@ namespace STF.Serde
 
 		void AddTask(Task task);
 		void AddNode(GameObject Node, string Id);
+		void AddComponent(Component Node, string Id);
 		void AddTrash(UnityEngine.Object Trash);
 	}
 
@@ -73,6 +74,11 @@ namespace STF.Serde
 		{
 			Nodes.Add(Id, Node);
 			AddTrash(Node);
+		}
+
+		public void AddComponent(Component Component, string Id)
+		{
+			Components.Add(Id, Component);
 		}
 
 		public void AddTrash(UnityEngine.Object Trash)

@@ -40,7 +40,7 @@ namespace STF.Serde
 		//List<KeyValuePair<Object, Dictionary<string, System.Object>>> GatherResources(Object resource);
 		List<Object> GatherUsedResources(Object Resource);
 		List<string> GatherUsedBuffers(Object Resource);
-		JToken SerializeToJson(STFExportState State, Object Resource);
+		JObject SerializeToJson(ISTFExportState State, Object Resource);
 		string ConvertPropertyPath(string UnityProperty);
 	}
 

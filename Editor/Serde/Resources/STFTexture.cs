@@ -38,7 +38,7 @@ namespace STF.Serde
 			throw new NotImplementedException();
 		}
 
-		public JToken SerializeToJson(STFExportState state, UnityEngine.Object resource)
+		public JObject SerializeToJson(ISTFExportState state, UnityEngine.Object resource)
 		{
 			var texture = (Texture2D)resource;
 			var ret = new JObject();
@@ -87,7 +87,7 @@ namespace STF.Serde
 			throw new NotImplementedException();
 		}
 
-		public JToken SerializeToJson(STFExportState state, UnityEngine.Object resource)
+		public JObject SerializeToJson(ISTFExportState state, UnityEngine.Object resource)
 		{
 			var meta = (STFTexture)resource;
 			var ret = new JObject();
@@ -125,7 +125,7 @@ namespace STF.Serde
 			var ret = ScriptableObject.CreateInstance<STFTexture>();
 			ret.Id = Id;
 			ret.Name = (string)Json["name"];
-			ret.ResourceLocation = Path.Combine(State.GetResourceLocation(), ret.Name + "_" + Id + "." + (string)Json["format"]);
+			ret.ResourceLocation = Path.Combine(State.TargetLocation, STFConstants.ResourceDirectoryName, ret.Name + "_" + Id + "." + (string)Json["format"]);
 			ret.Linear = (bool)Json["linear"];
 			ret.OriginalBufferId = (string)Json["buffer"];
 			
