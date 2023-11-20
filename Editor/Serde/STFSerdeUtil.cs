@@ -61,7 +61,7 @@ namespace STF.Serde
 		public static string SerializeNode(ISTFExportState State, GameObject Go)
 		{
 			var node = Go.GetComponent<ISTFNode>();
-			if(State.Context.NodeExporters.ContainsKey(node.Type))
+			if(node != null && State.Context.NodeExporters.ContainsKey(node.Type))
 			{
 				Debug.Log($"Serializing Node: {node.Type}");
 				return State.Context.NodeExporters[node.Type].SerializeToJson(State, Go);

@@ -28,43 +28,40 @@ namespace STF.Serde
 
 		public string SerializeToJson(ISTFExportState state, UnityEngine.Object resource)
 		{
-			/*var armature = (STFArmatureNodeInfo)resource;
+			var meta = (STFArmature)resource;
+			var armatureGo = (GameObject)meta.Resource;
+			var armature = armatureGo.GetComponent<STFArmatureNodeInfo>();
 			
 			var ret = new JObject();
 			ret.Add("type", STFArmatureImporter._TYPE);
 			ret.Add("name", armature.ArmatureName);
-			ret.Add("root", armature.Root.GetComponent<STFNode>().NodeId);
+			ret.Add("root", armature.Root.GetComponent<STFBoneNode>().NodeId);
 
 			var boneIds = new List<string>();
 			foreach(var bone in armature.Bones)
 			{
-				var boneJson = new JObject();
-				boneJson.Add("name", bone.name);
-				boneJson.Add("type", "bone");
-
-				boneJson.Add("trs", new JArray() {
-					new JArray() {bone.transform.localPosition.x, bone.transform.localPosition.y, bone.transform.localPosition.z},
-					new JArray() {bone.transform.localRotation.x, bone.transform.localRotation.y, bone.transform.localRotation.z, bone.transform.localRotation.w},
-					new JArray() {bone.transform.localScale.x, bone.transform.localScale.y, bone.transform.localScale.z}
-				});
+				var boneJson = new JObject
+				{
+					{"name", bone.name},
+					{"type", STFBoneNode._TYPE},
+					{"trs", TRSUtil.SerializeTRS(bone)},
+				};
 
 				var childIds = new String[bone.transform.childCount];
 				for(int childIdx = 0; childIdx < bone.transform.childCount; childIdx++)
 				{
-					childIds[childIdx] = bone.transform.GetChild(childIdx).GetComponent<STFNode>().NodeId;
+					childIds[childIdx] = bone.transform.GetChild(childIdx).GetComponent<STFBoneNode>().NodeId;
 				}
 				boneJson.Add("children", new JArray(childIds));
 
-				var boneId = bone.GetComponent<STFNode>().NodeId;
+				var boneId = bone.GetComponent<STFBoneNode>().NodeId;
 				boneIds.Add(boneId);
 				state.AddNode(bone.gameObject, boneJson, boneId);
 			}
 			ret.Add("bones", new JArray(boneIds));
 			ret.Add("used_nodes", new JArray(boneIds));
-			state.AddResource(armature, ret, armature.ArmatureId);
-			return ret;*/
 
-			return null;
+			return state.AddResource(armature, ret, armature.ArmatureId);
 		}
 	}
 
@@ -112,7 +109,7 @@ namespace STF.Serde
 				foreach(string childId in boneNodeJson["children"]?.ToObject<List<string>>())
 				{
 					tasks.Add(new Task(() => {
-						var childBone = armatureInfo.Bones.Find(b => b.GetComponent<ISTFNode>().NodeId == childId);
+						var childBone = armatureInfo.Bones.Find(b => b.GetComponent<STFBoneNode>().NodeId == childId);
 						childBone.transform.SetParent(bone.transform, false);
 					}));
 				}
@@ -122,7 +119,7 @@ namespace STF.Serde
 				task.RunSynchronously();
 				if(task.Exception != null) throw task.Exception;
 			}
-			var root = armatureInfo.Bones.Find(b => b.GetComponent<ISTFNode>().NodeId == (string)Json["root"]);
+			var root = armatureInfo.Bones.Find(b => b.GetComponent<STFBoneNode>().NodeId == (string)Json["root"]);
 			root.transform.SetParent(go.transform, false);
 			armatureInfo.Root = root;
 

@@ -11,7 +11,8 @@ namespace STF.Serde
 {
 	public class STFBoneNode : ASTFNode
 	{
-		public override string Type => "STF.bone";
+		public static string _TYPE = "STF.bone";
+		public override string Type => _TYPE;
 	}
 }
 

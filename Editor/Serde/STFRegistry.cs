@@ -43,6 +43,7 @@ namespace STF.Serde
 		};
 		public static readonly Dictionary<string, ISTFNodeExporter> DefaultNodeExporters = new Dictionary<string, ISTFNodeExporter>() {
 			{STFNode._TYPE, new STFNodeExporter()},
+			{STFArmatureInstanceNode._TYPE, new STFArmatureInstanceExporter()},
 		};
 		// Also add node exporters. As they cannot be mapped to a Unity type, devise a way for them to determine wether to handle a node or not, perhaps with priorities or something
 		public static readonly Dictionary<string, ISTFNodeComponentImporter> DefaultNodeComponentImporters = new Dictionary<string, ISTFNodeComponentImporter>() {
@@ -62,14 +63,13 @@ namespace STF.Serde
 			{STFTextureImporter._TYPE, new STFTextureImporter()},
 			{STFArmatureImporter._TYPE, new STFArmatureImporter()},
 			//{STFMaterialImporter._TYPE, new STFMaterialImporter()},
-			//{STFTextureViewImporter._TYPE, new STFTextureViewImporter()},
 			//{STFAnimationImporter._TYPE, new STFAnimationImporter()}
 		};
 		public static readonly Dictionary<Type, ISTFResourceExporter> DefaultResourceExporters = new Dictionary<Type, ISTFResourceExporter>() {
 			//{typeof(Mesh), new STFMeshExporter()},
 			{typeof(Texture2D), new STFTexture2dExporter()},
 			{typeof(STFTexture), new STFTextureMetaExporter()},
-			//{typeof(STFArmature), new STFArmatureExporter()},
+			{typeof(STFArmature), new STFArmatureExporter()},
 			//{typeof(Material), new STFMaterialExporter()},
 			//{typeof(AnimationClip), new STFAnimationExporter()}
 		};

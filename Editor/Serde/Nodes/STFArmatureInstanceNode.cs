@@ -26,7 +26,18 @@ namespace STF.Serde
 	{
 		public string SerializeToJson(ISTFExportState State, GameObject Go)
 		{
-			throw new NotImplementedException();
+			var node = Go.GetComponent<STFArmatureInstanceNode>();
+			var ret = new JObject
+			{
+				{"type", STFArmatureInstanceNode._TYPE},
+				{"name", Go.name},
+				{"trs", TRSUtil.SerializeTRS(Go)},
+				{"armature", STFSerdeUtil.SerializeResource(State, node.armature)}
+			};
+			// bone instances
+
+
+			return State.AddNode(Go, ret, node.NodeId);
 		}
 	}
 

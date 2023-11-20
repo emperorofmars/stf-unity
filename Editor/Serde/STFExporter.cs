@@ -65,8 +65,10 @@ namespace STF.Serde
 
 				JObject Json = new JObject
 				{
-					{"generator", "stf-unity"},
-					{"timestamp", DateTime.Now.ToString()},
+					{"meta", new JObject {
+						{"generator", "stf-unity"},
+						{"timestamp", DateTime.Now.ToString()},
+					}},
 					{"main", state.MainAssetId},
 					{"assets", new JObject(state.Assets.Select(entry => new JProperty(entry.Value.Key, entry.Value.Value)))},
 					{"nodes", new JObject(state.Nodes.Select(entry => new JProperty(entry.Value.Key, entry.Value.Value)))},

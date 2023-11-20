@@ -29,6 +29,27 @@ namespace STF.Util
 		{
 			ParseTRS(Target.transform, Json);
 		}
+		
+		public static JArray SerializeLocation(Transform T)
+		{
+			return new JArray {T.localPosition.x, T.localPosition.y, T.localPosition.z};
+		}
+		public static JArray SerializeRotation(Transform T)
+		{
+			return new JArray {T.transform.localRotation.x, T.transform.localRotation.y, T.transform.localRotation.z, T.transform.localRotation.w};
+		}
+		public static JArray SerializeScale(Transform T)
+		{
+			return new JArray {T.transform.localScale.x, T.transform.localScale.y, T.transform.localScale.z};
+		}
+		public static JArray SerializeTRS(Transform T)
+		{
+			return new JArray {SerializeLocation(T), SerializeRotation(T), SerializeScale(T)};
+		}
+		public static JArray SerializeTRS(GameObject Go)
+		{
+			return SerializeTRS(Go.transform);
+		}
 	}
 }
 

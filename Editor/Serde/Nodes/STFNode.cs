@@ -25,7 +25,7 @@ namespace STF.Serde
 			{
 				{"type", STFNode._TYPE},
 				{"name", Go.name},
-
+				{"trs", TRSUtil.SerializeTRS(Go)}
 			};
 
 			var childIds = new JArray();
@@ -35,7 +35,7 @@ namespace STF.Serde
 				if(child != null) childIds.Add(child);
 				else
 				{
-					Debug.LogWarning($"Skipping Unrecognized Unity Node: {child}");
+					Debug.LogWarning($"Skipping Unrecognized Unity Node: {Go.transform.GetChild(childIdx)}");
 				}
 			}
 			ret.Add("children", childIds);

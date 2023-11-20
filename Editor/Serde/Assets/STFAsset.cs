@@ -29,7 +29,7 @@ namespace STF.Serde
 			};
 			if(Asset.assetInfo.assetPreview) ret.Add("preview", STFSerdeUtil.SerializeResource(State, Asset.assetInfo.assetPreview));
 
-			ret.Add("root", STFSerdeUtil.SerializeNode(State, Asset.gameObject));
+			ret.Add("root_node", STFSerdeUtil.SerializeNode(State, Asset.gameObject));
 
 			return State.AddAsset(Asset, ret, Asset.assetInfo.assetId);
 		}
