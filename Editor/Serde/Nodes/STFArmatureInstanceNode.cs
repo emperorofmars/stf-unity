@@ -34,45 +34,12 @@ namespace STF.Serde
 	{
 		public GameObject ParseFromJson(ISTFAssetImportState State, JObject JsonAsset, string Id)
 		{
-			/*var ret = new GameObject();
-			State.AddNode(ret, Id);
-			
-			var node = ret.AddComponent<STFNode>();
-			node.NodeId = Id;
-			node.name = (String)JsonAsset["name"];
-			node.Origin = State.AssetInfo.assetId;
-
-			TRSUtil.ParseTRS(ret, JsonAsset);
-
-			foreach(string childId in JsonAsset["children"])
-			{
-				var childJson = (JObject)State.JsonRoot["nodes"][childId];
-				var type = (string)childJson["type"];
-				if(type == null || type.Length == 0) type = STFNodeImporter._TYPE;
-				if(State.Context.NodeImporters.ContainsKey(type))
-				{
-					Debug.Log($"Parsing Node: {type}");
-					var childGo = State.Context.NodeImporters[type].ParseFromJson(State, childJson, childId);
-					childGo.transform.SetParent(ret.transform);
-				}
-				else
-				{
-					Debug.LogWarning($"Unrecognized Node: {type}");
-					// Unrecognized Node
-				}
-			}
-
-			//Components
-			return ret;*/
-
-			
 			var armatureResource = (STFArmature)State.Resources[(string)JsonAsset["armature"]];
 			var go = (GameObject)PrefabUtility.InstantiatePrefab(armatureResource._Resource);
 			State.AddNode(go, Id);
 			var armatureInfo = go.GetComponent<STFArmatureNodeInfo>();
 
 			go.name = (string)JsonAsset["name"];
-			var children = JsonAsset["children"].ToObject<List<string>>();
 
 			var armatureInstance = go.AddComponent<STFArmatureInstanceNode>();
 			armatureInstance.NodeId = Id;
@@ -100,44 +67,10 @@ namespace STF.Serde
 				TRSUtil.ParseTRS(boneInstance.gameObject, boneInstanceJson);
 				State.AddNode(boneInstance.gameObject, boneInstance.NodeId);
 
-				// Parse BoneInstance Children
-				foreach(string childId in boneInstanceJson["children"])
-				{
-					var childJson = (JObject)State.JsonRoot["nodes"][childId];
-					var type = (string)childJson["type"];
-					if(type == null || type.Length == 0) type = STFNode._TYPE;
-					if(State.Context.NodeImporters.ContainsKey(type))
-					{
-						Debug.Log($"Parsing Node: {type}");
-						var childGo = State.Context.NodeImporters[type].ParseFromJson(State, childJson, childId);
-						childGo.transform.SetParent(boneInstance.transform);
-					}
-					else
-					{
-						Debug.LogWarning($"Unrecognized Node: {type}");
-						// Unrecognized Node
-					}
-				}
-				// Parse Bone Instance Components
+				STFNodeUtil.Parse(State, boneInstance.gameObject, boneInstanceJson);
 			}
 
-			foreach(string childId in JsonAsset["children"])
-			{
-				var childJson = (JObject)State.JsonRoot["nodes"][childId];
-				var type = (string)childJson["type"];
-				if(type == null || type.Length == 0) type = STFNode._TYPE;
-				if(State.Context.NodeImporters.ContainsKey(type))
-				{
-					Debug.Log($"Parsing Node: {type}");
-					var childGo = State.Context.NodeImporters[type].ParseFromJson(State, childJson, childId);
-					childGo.transform.SetParent(go.transform);
-				}
-				else
-				{
-					Debug.LogWarning($"Unrecognized Node: {type}");
-					// Unrecognized Node
-				}
-			}
+			STFNodeUtil.Parse(State, go, JsonAsset);
 			return go;
 		}
 	}

@@ -44,7 +44,7 @@ namespace STF.Serde
 		};
 		// Also add node exporters. As they cannot be mapped to a Unity type, devise a way for them to determine wether to handle a node or not, perhaps with priorities or something
 		public static readonly Dictionary<string, ISTFNodeComponentImporter> DefaultNodeComponentImporters = new Dictionary<string, ISTFNodeComponentImporter>() {
-			//{STFMeshInstanceImporter._TYPE, new STFMeshInstanceImporter()},
+			{STFMeshInstanceImporter._TYPE, new STFMeshInstanceImporter()},
 			//{STFTwistConstraintBack._TYPE, new STFTwistConstraintBackImporter()},
 			//{STFTwistConstraintForward._TYPE, new STFTwistConstraintForwardImporter()},
 			//{STFAnimationHolder._TYPE, new STFAnimationHolderImporter()}
@@ -141,6 +141,8 @@ namespace STF.Serde
 				else resourceImporters.Add(e.Key, e.Value);
 			}
 
+			//ResourceComponents
+
 			return new STFImportContext() {
 				AssetImporters = assetImporters,
 				NodeImporters = nodeImporters,
@@ -178,6 +180,8 @@ namespace STF.Serde
 				if(resourceExporters.ContainsKey(e.Key)) resourceExporters[e.Key] = e.Value;
 				else resourceExporters.Add(e.Key, e.Value);
 			}
+
+			//ResourceComponents
 
 			return new STFExportContext() {
 				AssetImporters = assetExporters,

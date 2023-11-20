@@ -33,14 +33,14 @@ namespace STF.Serde
 	{
 		List<GameObject> GatherNodes(Component Component);
 
-		List<KeyValuePair<UnityEngine.Object, Dictionary<string, System.Object>>> GatherResources(Component Component);
+		List<UnityEngine.Object> GatherResources(Component Component);
 
-		JToken SerializeToJson(STFExportState State, Component Component);
+		JObject SerializeToJson(STFExportState State, Component Component);
 	}
 	
 	public interface ISTFNodeComponentImporter
 	{
-		void ParseFromJson(STFImportState State, JToken Json, string Id, GameObject Go);
+		void ParseFromJson(ISTFAssetImportState State, JObject Json, string Id, GameObject Go);
 	}
 	
 	public abstract class ASTFNodeComponentExporter : ISTFNodeComponentExporter
@@ -50,12 +50,12 @@ namespace STF.Serde
 			return null;
 		}
 
-		virtual public List<KeyValuePair<UnityEngine.Object, Dictionary<string, System.Object>>> GatherResources(Component Component)
+		virtual public List<UnityEngine.Object> GatherResources(Component Component)
 		{
 			return null;
 		}
 
-		abstract public JToken SerializeToJson(STFExportState State, Component Component);
+		abstract public JObject SerializeToJson(STFExportState State, Component Component);
 
 		protected void SerializeRelationships(ISTFNodeComponent Component, JObject Json)
 		{
@@ -67,9 +67,9 @@ namespace STF.Serde
 	
 	public abstract class ASTFNodeComponentImporter : ISTFNodeComponentImporter
 	{
-		abstract public void ParseFromJson(STFImportState State, JToken Json, string Id, GameObject Go);
+		abstract public void ParseFromJson(ISTFAssetImportState State, JObject Json, string Id, GameObject Go);
 
-		protected void ParseRelationships(JToken Json, ISTFNodeComponent Component)
+		protected void ParseRelationships(JObject Json, ISTFNodeComponent Component)
 		{
 			if(Json["extends"] != null) Component.Extends = Json["extends"].ToObject<List<string>>();
 			if(Json["overrides"] != null) Component.Overrides = Json["overrides"].ToObject<List<string>>();

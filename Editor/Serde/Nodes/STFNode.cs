@@ -11,7 +11,7 @@ namespace STF.Serde
 {
 	public class STFNode : ASTFNode
 	{
-		public static string _TYPE = "STF.Node";
+		public static string _TYPE = "STF.node";
 		public override string Type => _TYPE;
 	}
 
@@ -36,26 +36,7 @@ namespace STF.Serde
 			node.Origin = State.AssetInfo.assetId;
 
 			TRSUtil.ParseTRS(ret, JsonAsset);
-
-			foreach(string childId in JsonAsset["children"])
-			{
-				var childJson = (JObject)State.JsonRoot["nodes"][childId];
-				var type = (string)childJson["type"];
-				if(type == null || type.Length == 0) type = STFNode._TYPE;
-				if(State.Context.NodeImporters.ContainsKey(type))
-				{
-					Debug.Log($"Parsing Node: {type}");
-					var childGo = State.Context.NodeImporters[type].ParseFromJson(State, childJson, childId);
-					childGo.transform.SetParent(ret.transform);
-				}
-				else
-				{
-					Debug.LogWarning($"Unrecognized Node: {type}");
-					// Unrecognized Node
-				}
-			}
-
-			//Components
+			STFNodeUtil.Parse(State, ret, JsonAsset);
 			return ret;
 		}
 	}

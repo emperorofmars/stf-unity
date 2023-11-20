@@ -13,6 +13,7 @@ using STF.IdComponents;
 using UnityEditor;
 using UnityScript.Steps;
 using Serilog;
+using UnityEditorInternal;
 
 namespace STF.Serde
 {
@@ -43,7 +44,9 @@ namespace STF.Serde
 
 				ParseBuffers(buffers);
 				ParseResources();
+				_runTasks();
 				ParseAssets();
+				_runTasks();
 			}
 			catch(Exception e)
 			{
@@ -120,6 +123,21 @@ namespace STF.Serde
 		private void WriteToAssets()
 		{
 			
+		}
+
+		private void _runTasks()
+		{
+			do
+			{
+				var currentTasks = state.Tasks;
+				state.Tasks = new List<Task>();
+				foreach(var task in currentTasks)
+				{
+					task.RunSynchronously();
+					if(task.Exception != null) throw task.Exception;
+				}
+			}
+			while(state.Tasks.Count > 0);
 		}
 	}
 }

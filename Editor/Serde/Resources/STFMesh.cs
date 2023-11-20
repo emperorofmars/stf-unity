@@ -444,7 +444,7 @@ namespace STF.Serde
 				ret.SetBoneWeights(bonesPerVertexNat, weights);
 
 				State.AddTask(new Task(() => {
-					var armature = (STFArmature)State.Resources[((string)Json["armature"])];
+					var armature = (STFArmature)State.Resources[(string)Json["armature"]];
 					if(armature != null)
 					{
 						ret.bindposes = armature.Bindposes;
@@ -505,7 +505,10 @@ namespace STF.Serde
 			ret.RecalculateBounds();
 
 			AssetDatabase.CreateAsset(ret, meta.ResourceLocation);
+			meta._Resource = ret;
 			AssetDatabase.CreateAsset(meta, Path.ChangeExtension(meta.ResourceLocation, "Asset"));
+
+			State.AddResource(meta, Id);
 
 			return ret;
 		}
