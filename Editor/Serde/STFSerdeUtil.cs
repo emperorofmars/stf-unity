@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using Codice.Client.Common.TreeGrouper;
 using Newtonsoft.Json.Linq;
 using STF.Util;
 using UnityEngine;
@@ -58,6 +59,18 @@ namespace STF.Serde
 			ParseNodeComponents(State, Go, JsonAsset);
 		}
 
+		public static JArray SerializeChildren(ISTFExportState State, GameObject Go)
+		{
+			var ret = new JArray();
+			for(int childIdx = 0; childIdx < Go.transform.childCount; childIdx++)
+			{
+				var child = SerializeNode(State, Go.transform.GetChild(childIdx).gameObject);
+				if(child != null) ret.Add(child);
+				else Debug.LogWarning($"Skipping Unrecognized Unity Node: {Go.transform.GetChild(childIdx)}");
+			}
+			return ret;
+		}
+
 		public static string SerializeNode(ISTFExportState State, GameObject Go)
 		{
 			var node = Go.GetComponent<ISTFNode>();
@@ -72,6 +85,19 @@ namespace STF.Serde
 				// Unrecognized Asset
 				return null;
 			}
+		}
+
+		public static JObject SerializeComponents(ISTFExportState State, Component[] NodeComponents, List<Type> Exclusions)
+		{
+			var ret = new JObject();
+			foreach(var component in NodeComponents)
+			{
+				if(Exclusions != null && Exclusions.Find(e => component.GetType().IsSubclassOf(e) || component.GetType() == e) != null) continue;
+				var serializedComponent = SerializeComponent(State, component);
+				if(serializedComponent.Key != null)	ret.Add(serializedComponent.Key, serializedComponent.Value);
+				else Debug.LogWarning($"Skipping Unrecognized Unity Component: {component}");
+			}
+			return ret;
 		}
 
 		public static KeyValuePair<string, JObject> SerializeComponent(ISTFExportState State, Component NodeComponent)

@@ -25,10 +25,12 @@ namespace STF.Serde
 			{
 				{"type", STFNode._TYPE},
 				{"name", Go.name},
-				{"trs", TRSUtil.SerializeTRS(Go)}
+				{"trs", TRSUtil.SerializeTRS(Go)},
+				{"children", STFSerdeUtil.SerializeChildren(State, Go)},
+				{"components", STFSerdeUtil.SerializeComponents(State, Go.GetComponents<Component>(), new List<Type> {typeof(Transform), typeof(ISTFNode), typeof(Animator), typeof(STFAsset)})}
 			};
 
-			var childIds = new JArray();
+			/*var childIds = new JArray();
 			for(int childIdx = 0; childIdx < Go.transform.childCount; childIdx++)
 			{
 				var child = STFSerdeUtil.SerializeNode(State, Go.transform.GetChild(childIdx).gameObject);
@@ -38,9 +40,9 @@ namespace STF.Serde
 					Debug.LogWarning($"Skipping Unrecognized Unity Node: {Go.transform.GetChild(childIdx)}");
 				}
 			}
-			ret.Add("children", childIds);
+			ret.Add("children", childIds);*/
 
-			var components = new JObject();
+			/*var components = new JObject();
 			foreach(var component in Go.GetComponents<Component>())
 			{
 				if(component.GetType() == typeof(Transform)) continue;
@@ -55,7 +57,7 @@ namespace STF.Serde
 					Debug.LogWarning($"Skipping Unrecognized Unity Component: {component}");
 				}
 			}
-			ret.Add("components", components);
+			ret.Add("components", components);*/
 
 			return State.AddNode(Go, ret, node.NodeId);
 		}

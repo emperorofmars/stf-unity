@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
+using STF.IdComponents;
 using STF.Util;
 using UnityEditor;
 using UnityEngine;
@@ -32,10 +33,26 @@ namespace STF.Serde
 				{"type", STFArmatureInstanceNode._TYPE},
 				{"name", Go.name},
 				{"trs", TRSUtil.SerializeTRS(Go)},
-				{"armature", STFSerdeUtil.SerializeResource(State, node.armature)}
+				{"children", STFSerdeUtil.SerializeChildren(State, Go)},
+				{"components", STFSerdeUtil.SerializeComponents(State, Go.GetComponents<Component>(), new List<Type> {typeof(Transform), typeof(ISTFNode), typeof(Animator), typeof(STFAsset)})},
+				{"armature", STFSerdeUtil.SerializeResource(State, node.armature)},
 			};
-			// bone instances
-
+			var boneInstances = new JArray();
+			foreach(var entry in node.bones)
+			{
+				var bone = entry.GetComponent<STFBoneNode>();
+				var boneInstance = entry.GetComponent<STFBoneInstanceNode>();
+				var boneInstanceJson = new JObject {
+					{"type", STFBoneInstanceNode._TYPE},
+					{"name", boneInstance.name},
+					{"bone", bone.NodeId},
+					{"trs", TRSUtil.SerializeTRS(boneInstance.gameObject)},
+					{"children", STFSerdeUtil.SerializeChildren(State, boneInstance.gameObject)},
+					{"components", STFSerdeUtil.SerializeComponents(State, boneInstance.GetComponents<Component>(), new List<Type> {typeof(Transform), typeof(ISTFNode), typeof(Animator), typeof(STFAsset)})},
+				};
+				boneInstances.Add(State.AddNode(boneInstance.gameObject, boneInstanceJson, boneInstance.NodeId));
+			}
+			ret.Add("bone_instances", boneInstances);
 
 			return State.AddNode(Go, ret, node.NodeId);
 		}
