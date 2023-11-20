@@ -26,22 +26,7 @@ namespace STF.Serde
 			throw new NotImplementedException();
 		}
 
-		public List<string> GatherUsedBuffers(UnityEngine.Object Resource)
-		{
-			throw new NotImplementedException();
-		}
-
-		public List<GameObject> GatherUsedNodes(UnityEngine.Object Resource)
-		{
-			throw new NotImplementedException();
-		}
-
-		public List<UnityEngine.Object> GatherUsedResources(UnityEngine.Object Resource)
-		{
-			throw new NotImplementedException();
-		}
-
-		public JObject SerializeToJson(ISTFExportState state, UnityEngine.Object resource)
+		public string SerializeToJson(ISTFExportState state, UnityEngine.Object resource)
 		{
 			/*var armature = (STFArmatureNodeInfo)resource;
 			

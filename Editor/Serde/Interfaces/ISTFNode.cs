@@ -27,7 +27,7 @@ namespace STF.Serde
 
 	public interface ISTFNodeExporter
 	{
-		//JObject SerializeToJson(ISTFAssetExportState State, GameObject Go);
+		string SerializeToJson(ISTFExportState State, GameObject Go);
 	}
 
 	public interface ISTFNodeImporter

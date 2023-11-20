@@ -17,7 +17,7 @@ namespace STF.Serde
 
 	public class STFExportContext
 	{
-		public Dictionary<string, ISTFAssetExporter> AssetImporters = new Dictionary<string, ISTFAssetExporter>();
+		public Dictionary<string, ISTFAssetExporter> AssetExporters = new Dictionary<string, ISTFAssetExporter>();
 		public Dictionary<string, ISTFNodeExporter> NodeExporters = new Dictionary<string, ISTFNodeExporter>();
 		public Dictionary<Type, ISTFNodeComponentExporter> NodeComponentExporters = new Dictionary<Type, ISTFNodeComponentExporter>();
 		public Dictionary<Type, ISTFResourceExporter> ResourceExporters = new Dictionary<Type, ISTFResourceExporter>();
@@ -186,7 +186,7 @@ namespace STF.Serde
 			//ResourceComponents
 
 			return new STFExportContext() {
-				AssetImporters = assetExporters,
+				AssetExporters = assetExporters,
 				NodeExporters = nodeExporters,
 				NodeComponentExporters = componentExporters,
 				ResourceExporters = resourceExporters

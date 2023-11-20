@@ -20,7 +20,7 @@ namespace STF.IdComponents
 		public Texture2D assetPreview;
 
 		public string assetId = Guid.NewGuid().ToString();
-		public string assetType = "STF.Asset";
+		public string assetType = "STF.asset";
 	}
 
 	public class STFAsset : MonoBehaviour

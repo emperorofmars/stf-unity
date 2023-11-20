@@ -24,7 +24,7 @@ namespace STF.Serde
 
 	public class STFArmatureInstanceExporter : ISTFNodeExporter
 	{
-		public JObject SerializeToJson(STFExportState State, GameObject Go)
+		public string SerializeToJson(ISTFExportState State, GameObject Go)
 		{
 			throw new NotImplementedException();
 		}
@@ -67,10 +67,10 @@ namespace STF.Serde
 				TRSUtil.ParseTRS(boneInstance.gameObject, boneInstanceJson);
 				State.AddNode(boneInstance.gameObject, boneInstance.NodeId);
 
-				STFNodeUtil.Parse(State, boneInstance.gameObject, boneInstanceJson);
+				STFSerdeUtil.ParseNode(State, boneInstance.gameObject, boneInstanceJson);
 			}
 
-			STFNodeUtil.Parse(State, go, JsonAsset);
+			STFSerdeUtil.ParseNode(State, go, JsonAsset);
 			return go;
 		}
 	}

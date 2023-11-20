@@ -23,22 +23,7 @@ namespace STF.Serde
 			throw new NotImplementedException();
 		}
 
-		public List<string> GatherUsedBuffers(UnityEngine.Object resource)
-		{
-			throw new NotImplementedException();
-		}
-
-		public List<GameObject> GatherUsedNodes(UnityEngine.Object resource)
-		{
-			throw new NotImplementedException();
-		}
-
-		public List<UnityEngine.Object> GatherUsedResources(UnityEngine.Object resource)
-		{
-			throw new NotImplementedException();
-		}
-
-		public JObject SerializeToJson(ISTFExportState state, UnityEngine.Object resource)
+		public string SerializeToJson(ISTFExportState state, UnityEngine.Object resource)
 		{
 			var texture = (Texture2D)resource;
 			var ret = new JObject();
@@ -60,8 +45,7 @@ namespace STF.Serde
 
 			ret.Add("used_buffers", new JArray() {bufferId});
 
-			state.AddResource(resource, ret, meta?.Id);
-			return ret;
+			return state.AddResource(resource, ret, meta?.Id);
 		}
 	}
 
@@ -72,22 +56,7 @@ namespace STF.Serde
 			throw new NotImplementedException();
 		}
 
-		public List<string> GatherUsedBuffers(UnityEngine.Object resource)
-		{
-			throw new NotImplementedException();
-		}
-
-		public List<GameObject> GatherUsedNodes(UnityEngine.Object resource)
-		{
-			throw new NotImplementedException();
-		}
-
-		public List<UnityEngine.Object> GatherUsedResources(UnityEngine.Object resource)
-		{
-			throw new NotImplementedException();
-		}
-
-		public JObject SerializeToJson(ISTFExportState state, UnityEngine.Object resource)
+		public string SerializeToJson(ISTFExportState state, UnityEngine.Object resource)
 		{
 			var meta = (STFTexture)resource;
 			var ret = new JObject();
@@ -106,8 +75,7 @@ namespace STF.Serde
 			ret.Add("buffer", bufferId);
 
 			ret.Add("used_buffers", new JArray() {bufferId});
-			state.AddResource(resource, ret, meta?.Id);
-			return ret;
+			return state.AddResource(resource, ret, meta?.Id);
 		}
 	}
 

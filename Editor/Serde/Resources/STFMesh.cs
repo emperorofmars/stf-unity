@@ -24,22 +24,7 @@ namespace STF.Serde
 			throw new NotImplementedException();
 		}
 
-		public List<string> GatherUsedBuffers(UnityEngine.Object Resource)
-		{
-			throw new NotImplementedException();
-		}
-
-		public List<GameObject> GatherUsedNodes(UnityEngine.Object Resource)
-		{
-			throw new NotImplementedException();
-		}
-
-		public List<UnityEngine.Object> GatherUsedResources(UnityEngine.Object Resource)
-		{
-			throw new NotImplementedException();
-		}
-
-		public JObject SerializeToJson(ISTFExportState State, UnityEngine.Object Resource)
+		public string SerializeToJson(ISTFExportState State, UnityEngine.Object Resource)
 		{
 			var ret = new JObject();
 			var mesh = (Mesh)Resource;
@@ -299,8 +284,7 @@ namespace STF.Serde
 			ret.Add("used_buffers", new JArray() {bufferId});
 			ret.Add("used_resources", usedResources);
 
-			State.AddResource(mesh, ret, meta.Id);
-			return ret;
+			return State.AddResource(mesh, ret, meta.Id);
 		}
 	}
 

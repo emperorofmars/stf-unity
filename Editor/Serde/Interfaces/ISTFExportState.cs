@@ -20,20 +20,16 @@ namespace STF.Serde
 		string MainAssetId {get;}
 
 		// Unity Asset -> Json Asset
-		Dictionary<STFAsset, JObject> Assets {get;}
-		Dictionary<STFAsset, string> AssetIds {get;}
+		Dictionary<STFAsset, KeyValuePair<string, JObject>> Assets {get;}
 
 		// Unity Resource -> Json Resource
-		Dictionary<UnityEngine.Object, JObject> Resources {get;}
-		Dictionary<UnityEngine.Object, string> ResourceIds {get;}
+		Dictionary<UnityEngine.Object, KeyValuePair<string, JObject>> Resources {get;}
 
 		// Unity GameObject -> STF Json Node
-		Dictionary<GameObject, JObject> Nodes {get;}
-		Dictionary<GameObject, string> NodeIds {get;}
+		Dictionary<GameObject, KeyValuePair<string, JObject>> Nodes {get;}
 
 		// Unity Component -> STF Json Component
-		Dictionary<Component, JObject> Components {get;}
-		Dictionary<Component, string> ComponentIds {get;}
+		Dictionary<Component, KeyValuePair<string, JObject>> Components {get;}
 
 		void AddTask(Task task);
 		string AddAsset(STFAsset Asset, JObject Serialized, string Id = null);
@@ -50,29 +46,21 @@ namespace STF.Serde
 		public STFExportContext Context {get =>_Context;}
 		string _TargetLocation;
 		public string TargetLocation {get =>_TargetLocation;}
-		string _MainAssetId;
+		public string _MainAssetId;
 		public string MainAssetId {get => _MainAssetId;}
 
-		public Dictionary<STFAsset, JObject> _Assets = new Dictionary<STFAsset, JObject>();
-		public Dictionary<STFAsset, JObject> Assets {get => _Assets;}
-		public Dictionary<STFAsset, string> _AssetIds = new Dictionary<STFAsset, string>();
-		public Dictionary<STFAsset, string> AssetIds {get => _AssetIds;}
+		public Dictionary<STFAsset, KeyValuePair<string, JObject>> _Assets = new Dictionary<STFAsset, KeyValuePair<string, JObject>>();
+		public Dictionary<STFAsset, KeyValuePair<string, JObject>> Assets {get => _Assets;}
 
 
-		public Dictionary<GameObject, JObject> _Nodes = new Dictionary<GameObject, JObject>();
-		public Dictionary<GameObject, JObject> Nodes {get => _Nodes;}
-		public Dictionary<GameObject, string> _NodeIds = new Dictionary<GameObject, string>();
-		public Dictionary<GameObject, string> NodeIds {get => _NodeIds;}
+		public Dictionary<GameObject, KeyValuePair<string, JObject>> _Nodes = new Dictionary<GameObject, KeyValuePair<string, JObject>>();
+		public Dictionary<GameObject, KeyValuePair<string, JObject>> Nodes {get => _Nodes;}
 
-		public Dictionary<UnityEngine.Object, JObject> _Resources = new Dictionary<UnityEngine.Object, JObject>();
-		public Dictionary<UnityEngine.Object, JObject> Resources {get => Resources;}
-		public Dictionary<UnityEngine.Object, string> _ResourceIds = new Dictionary<UnityEngine.Object, string>();
-		public Dictionary<UnityEngine.Object, string> ResourceIds {get => _ResourceIds;}
+		public Dictionary<UnityEngine.Object, KeyValuePair<string, JObject>> _Resources = new Dictionary<UnityEngine.Object, KeyValuePair<string, JObject>>();
+		public Dictionary<UnityEngine.Object, KeyValuePair<string, JObject>> Resources {get => _Resources;}
 
-		public Dictionary<Component, JObject> _Components = new Dictionary<Component, JObject>();
-		public Dictionary<Component, JObject> Components {get => _Components;}
-		public Dictionary<Component, string> _ComponentIds = new Dictionary<Component, string>();
-		public Dictionary<Component, string> ComponentIds {get => _ComponentIds;}
+		public Dictionary<Component, KeyValuePair<string, JObject>> _Components = new Dictionary<Component, KeyValuePair<string, JObject>>();
+		public Dictionary<Component, KeyValuePair<string, JObject>> Components {get => _Components;}
 
 		// id -> buffer
 		public Dictionary<string, byte[]> Buffers = new Dictionary<string, byte[]>();
@@ -81,8 +69,9 @@ namespace STF.Serde
 		public List<UnityEngine.Object> Trash = new List<UnityEngine.Object>();
 		public List<Task> Tasks = new List<Task>();
 
-		public STFExportState(string TargetLocation)
+		public STFExportState(STFExportContext Context, string TargetLocation)
 		{
+			this._Context = Context;
 			this._TargetLocation = TargetLocation;
 		}
 
@@ -94,32 +83,28 @@ namespace STF.Serde
 		public string AddAsset(STFAsset Asset, JObject Serialized, string Id = null)
 		{
 			if(Id == null || Id.Length == 0) Id = Guid.NewGuid().ToString();
-			Assets.Add(Asset, Serialized);
-			AssetIds.Add(Asset, Id);
+			Assets.Add(Asset, new KeyValuePair<string, JObject>(Id, Serialized));
 			return Id;
 		}
 
 		public string AddNode(GameObject Go, JObject Serialized, string Id = null)
 		{
 			if(Id == null || Id.Length == 0) Id = Guid.NewGuid().ToString();
-			Nodes.Add(Go, Serialized);
-			NodeIds.Add(Go, Id);
+			Nodes.Add(Go, new KeyValuePair<string, JObject>(Id, Serialized));
 			return Id;
 		}
 
 		public string AddComponent(Component Component, JObject Serialized, string Id = null)
 		{
 			if(Id == null || Id.Length == 0) Id = Guid.NewGuid().ToString();
-			Components.Add(Component, Serialized);
-			ComponentIds.Add(Component, Id);
+			Components.Add(Component, new KeyValuePair<string, JObject>(Id, Serialized));
 			return Id;
 		}
 
 		public string AddResource(UnityEngine.Object Resource, JObject Serialized, string Id = null)
 		{
 			if(Id == null || Id.Length == 0) Id = Guid.NewGuid().ToString();
-			Resources.Add(Resource, Serialized);
-			ResourceIds.Add(Resource, Id);
+			Resources.Add(Resource, new KeyValuePair<string, JObject>(Id, Serialized));
 			return Id;
 		}
 

@@ -1,3 +1,6 @@
+
+#if UNITY_EDITOR
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +17,7 @@ namespace STF.Serde
 
 	public class STFMeshInstanceExporter : ASTFNodeComponentExporter
 	{
-		override public JObject SerializeToJson(STFExportState state, Component component)
+		public override KeyValuePair<string, JObject> SerializeToJson(ISTFExportState State, Component component)
 		{
 			SkinnedMeshRenderer c = (SkinnedMeshRenderer)component;
 			var ret = new JObject();
@@ -30,7 +33,7 @@ namespace STF.Serde
 			
 			ret.Add("resources_used", new JArray(state.GetResourceId(c.sharedMesh), ret["armature_instance"]));
 			((JArray)ret["resources_used"]).Merge(ret["morphtarget_values"]);*/
-			return ret;
+			return new KeyValuePair<string, JObject>("", ret);
 		}
 	}
 
@@ -94,3 +97,5 @@ namespace STF.Serde
 		}
 	}
 }
+
+#endif

@@ -65,11 +65,6 @@ namespace STF.Serde
 			Tasks.Add(task);
 		}
 
-		public string GetResourceLocation()
-		{
-			return Path.Combine(State.TargetLocation, STFConstants.ResourceDirectoryName);
-		}
-
 		public void AddNode(GameObject Node, string Id)
 		{
 			Nodes.Add(Id, Node);
@@ -89,7 +84,7 @@ namespace STF.Serde
 	
 	public interface ISTFAssetExporter
 	{
-		JObject SerializeToJson(STFExportState State, UnityEngine.Object Asset);
+		string SerializeToJson(STFExportState State, STFAsset Asset);
 	}
 	
 	public interface ISTFAssetImporter

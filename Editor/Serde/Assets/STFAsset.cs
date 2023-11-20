@@ -15,11 +15,23 @@ namespace STF.Serde
 {
 	public class STFAssetExporter : ISTFAssetExporter
 	{
-		public JObject SerializeToJson(STFExportState State, UnityEngine.Object Asset)
+		public string SerializeToJson(STFExportState State, STFAsset Asset)
 		{
-			var ret = new JObject();
+			var ret = new JObject
+			{
+				{"type", STFAssetImporter._TYPE},
+				{"name", Asset.assetInfo.assetName},
+				{"version", Asset.assetInfo.assetVersion},
+				{"author", Asset.assetInfo.assetAuthor},
+				{"url", Asset.assetInfo.assetURL},
+				{"license", Asset.assetInfo.assetLicense},
+				{"license_link", Asset.assetInfo.assetLicenseLink}
+			};
+			if(Asset.assetInfo.assetPreview) ret.Add("preview", STFSerdeUtil.SerializeResource(State, Asset.assetInfo.assetPreview));
 
-			return ret;
+			ret.Add("root", STFSerdeUtil.SerializeNode(State, Asset.gameObject));
+
+			return State.AddAsset(Asset, ret, Asset.assetInfo.assetId);
 		}
 	}
 	

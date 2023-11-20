@@ -9,6 +9,7 @@ using UnityEngine;
 using STF.IdComponents;
 using STF.Serde;
 using static STF.Tools.STFScriptedImporter;
+using System;
 
 namespace STF.Tools
 {
@@ -57,7 +58,7 @@ namespace STF.Tools
 			}
 
 			GUILayout.Space(10f);
-			if(GUILayout.Button("Import To Selected Location", GUILayout.ExpandWidth(false))) {
+			if(GUILayout.Button("Import To Selected Location", GUILayout.ExpandWidth(true))) {
 				var deserializer = new STFImporter("Assets" + selectedUnpackLocation, importer.assetPath);
 			}
 
@@ -102,6 +103,7 @@ namespace STF.Tools
 		{
 			if(asset != null)
 			{
+
 				EditorGUILayout.BeginHorizontal();
 				EditorGUILayout.PrefixLabel("Type");
 				EditorGUILayout.LabelField(asset.assetType);

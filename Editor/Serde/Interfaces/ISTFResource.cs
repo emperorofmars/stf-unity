@@ -36,11 +36,7 @@ namespace STF.Serde
 
 	public interface ISTFResourceExporter
 	{
-		List<GameObject> GatherUsedNodes(Object Resource);
-		//List<KeyValuePair<Object, Dictionary<string, System.Object>>> GatherResources(Object resource);
-		List<Object> GatherUsedResources(Object Resource);
-		List<string> GatherUsedBuffers(Object Resource);
-		JObject SerializeToJson(ISTFExportState State, Object Resource);
+		string SerializeToJson(ISTFExportState State, Object Resource);
 		string ConvertPropertyPath(string UnityProperty);
 	}
 

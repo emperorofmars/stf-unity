@@ -4,6 +4,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using STF.IdComponents;
+using STF.Serde;
 using UnityEditor;
 using UnityEngine;
 
@@ -15,8 +17,8 @@ namespace STF.Tools
 	public class STFUIExport : EditorWindow
 	{
 		private Vector2 scrollPos;
-		public GameObject mainExport;
-		private List<GameObject> exports = new List<GameObject>() {};
+		public STFAsset mainExport;
+		private List<STFAsset> exports = new List<STFAsset>() {};
 
 
 		[MenuItem("STF Tools/Export")]
@@ -36,9 +38,9 @@ namespace STF.Tools
 			
 			GUILayout.BeginHorizontal();
 			GUILayout.Label("Select Main Asset", EditorStyles.whiteLargeLabel, GUILayout.ExpandWidth(false));
-			mainExport = ((GameObject)EditorGUILayout.ObjectField(
+			mainExport = ((STFAsset)EditorGUILayout.ObjectField(
 				mainExport,
-				typeof(GameObject),
+				typeof(STFAsset),
 				true,
 				GUILayout.ExpandWidth(true)
 			));
@@ -49,9 +51,9 @@ namespace STF.Tools
 			{
 				GUILayout.BeginHorizontal();
 				GUILayout.Label("Select Secondary Asset", GUILayout.ExpandWidth(false));
-				exports[i] = ((GameObject)EditorGUILayout.ObjectField(
+				exports[i] = ((STFAsset)EditorGUILayout.ObjectField(
 					exports[i],
-					typeof(GameObject),
+					typeof(STFAsset),
 					true,
 					GUILayout.ExpandWidth(true)
 				));
@@ -75,7 +77,7 @@ namespace STF.Tools
 			GUILayout.Space(10);
 			drawHLine();
 			if(mainExport && GUILayout.Button("Export", GUILayout.ExpandWidth(true))) {
-				var path = EditorUtility.SaveFilePanel("STF Export", "Assets", mainExport.name + ".stf", "stf");
+				var path = EditorUtility.SaveFilePanel("STF Export", "Assets", mainExport.name + "01" + ".stf", "stf");
 				if(path != null && path.Length > 0) {
 					SerializeAsSTFBinary(mainExport, exports, path);
 				}
@@ -92,8 +94,9 @@ namespace STF.Tools
 			GUILayout.Space(10);
 		}
 
-		private void SerializeAsSTFBinary(GameObject mainExport, List<GameObject> secondaryExports, string path)
+		private void SerializeAsSTFBinary(STFAsset MainAsset, List<STFAsset> SecondaryAssets, string ExportPath)
 		{
+			var exporter = new STFExporter(MainAsset, SecondaryAssets, ExportPath, true);
 			/*var assets = new List<ISTFAssetExporter>() {CreateAssetExporter(mainExport)};
 			foreach(var export in secondaryExports)
 			{
