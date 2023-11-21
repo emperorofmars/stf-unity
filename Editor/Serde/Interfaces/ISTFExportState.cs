@@ -39,7 +39,8 @@ namespace STF.Serde
 		string AddBuffer(byte[] Data, string Id = null);
 		void AddTrash(UnityEngine.Object Trash);
 
-		T LoadMeta<T>(UnityEngine.Object Resource) where T: UnityEngine.Object;
+		T LoadMeta<T>(UnityEngine.Object Resource) where T: UnityEngine.Object, ISTFResource;
+		(byte[], T, string) LoadAsset<T>(UnityEngine.Object Resource) where T: UnityEngine.Object, ISTFResource;
 	}
 
 	public class STFExportState : ISTFExportState
@@ -125,13 +126,20 @@ namespace STF.Serde
 			this.Trash.Add(Trash);
 		}
 
-		public T LoadMeta<T>(UnityEngine.Object Resource) where T: UnityEngine.Object
+		public T LoadMeta<T>(UnityEngine.Object Resource) where T: UnityEngine.Object, ISTFResource
 		{
 			if(ResourceMeta.ContainsKey(Resource)) return (T)ResourceMeta[Resource];
 			
 			var assetPath = AssetDatabase.GetAssetPath(Resource);
 			var metaPath = Path.ChangeExtension(assetPath, "Asset");
 			return AssetDatabase.LoadAssetAtPath<T>(metaPath);
+		}
+		public (byte[], T, string) LoadAsset<T>(UnityEngine.Object Resource) where T: UnityEngine.Object, ISTFResource
+		{
+			var assetPath = AssetDatabase.GetAssetPath(Resource);
+			var arrayBuffer = File.ReadAllBytes(assetPath);
+			var meta = AssetDatabase.LoadAssetAtPath<T>(Path.ChangeExtension(assetPath, "Asset"));
+			return (arrayBuffer, meta, Path.GetFileName(assetPath));
 		}
 	}
 }

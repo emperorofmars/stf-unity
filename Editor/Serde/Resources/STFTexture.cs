@@ -5,8 +5,6 @@ using System;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 using System.IO;
-using UnityEditor;
-using System.Collections.Generic;
 
 namespace STF.Serde
 {
@@ -30,12 +28,10 @@ namespace STF.Serde
 				{"type", STFTextureImporter._TYPE}
 			};
 
-			var assetPath = AssetDatabase.GetAssetPath(texture);
-			var arrayBuffer = File.ReadAllBytes(assetPath);
-			var meta = State.LoadMeta<STFTexture>(Resource);
+			var (arrayBuffer, meta, fileName) = State.LoadAsset<STFTexture>(texture);
 
-			ret.Add("name", meta ? meta.name : Path.GetFileNameWithoutExtension(assetPath));
-			ret.Add("format", Path.GetExtension(assetPath));
+			ret.Add("name", meta != null ? meta.Name : Path.GetFileNameWithoutExtension(fileName));
+			ret.Add("format", Path.GetExtension(fileName));
 			ret.Add("width", texture.width);
 			ret.Add("height", texture.height);
 			if(texture.graphicsFormat.ToString().ToLower().EndsWith("unorm")) ret.Add("linear", true);

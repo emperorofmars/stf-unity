@@ -5,7 +5,6 @@ using System.IO;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using Unity.Collections;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
 
