@@ -37,7 +37,7 @@ namespace STF.Serde
 
 	public class STFAssetImportState : ISTFAssetImportState
 	{
-		private STFImportState State;
+		private ISTFImportState State;
 		STFImportContext _Context;
 		public STFImportContext Context {get =>_Context;}
 		STFAssetInfo _AssetInfo;
@@ -53,7 +53,7 @@ namespace STF.Serde
 		public Dictionary<string, UnityEngine.Object> Resources {get => State.Resources;}
 		public List<Task> Tasks = new List<Task>();
 
-		public STFAssetImportState(STFAssetInfo AssetInfo, STFImportState State, STFImportContext Context)
+		public STFAssetImportState(STFAssetInfo AssetInfo, ISTFImportState State, STFImportContext Context)
 		{
 			this._AssetInfo = AssetInfo;
 			this.State = State;

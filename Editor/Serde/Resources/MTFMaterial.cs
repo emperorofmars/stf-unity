@@ -17,15 +17,14 @@ namespace STF.Serde
 
 		public string SerializeToJson(ISTFExportState State, UnityEngine.Object Resource)
 		{
-			var texture = (Texture2D)Resource;
+			var mat = (MTF.Material)Resource;
 			var ret = new JObject{
 				{"type", MTFMaterialImporter._TYPE}
 			};
 
 
-			//ret.Add("used_buffers", new JArray() {bufferId});
-			//return State.AddResource(Resource, ret, meta ? meta.Id : Guid.NewGuid().ToString());
-			return null;
+			//ret.Add("used_resources", new JArray());
+			return State.AddResource(Resource, ret, mat.Id);
 		}
 	}
 
@@ -40,15 +39,11 @@ namespace STF.Serde
 
 		public void ParseFromJson(ISTFImportState State, JObject Json, string Id)
 		{
-			/*var meta = ScriptableObject.CreateInstance<STFTexture>();
-			meta.Id = Id;
-			meta.Name = (string)Json["name"];
-			meta.ResourceLocation = Path.Combine(State.TargetLocation, STFConstants.ResourceDirectoryName, meta.Name + "_" + Id + "." + (string)Json["format"]);
-			meta.Linear = (bool)Json["linear"];
-			meta.OriginalBufferId = (string)Json["buffer"];
+			var mat = ScriptableObject.CreateInstance<MTF.Material>();
+			mat.Id = Id;
+			mat.name = (string)Json["name"];
 			
-			var arrayBuffer = State.Buffers[meta.OriginalBufferId];
-			State.SaveResource(arrayBuffer, (string)Json["format"], meta, Id);*/
+			State.SaveResource(mat, "Asset", Id);
 			return;
 		}
 	}

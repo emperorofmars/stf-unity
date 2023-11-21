@@ -23,10 +23,8 @@ namespace STF.Serde
 		public static (string, JObject) SerializeToJson(ISTFExportState State, Component Component)
 		{
 			var c = (STFUnrecognizedNodeComponent)Component;
-			var ret = new JObject {
-
-			};
-			ASTFNodeComponentExporter.SerializeRelationships(c, ret);
+			var ret = JObject.Parse(c.PreservedJson);
+			//ASTFNodeComponentExporter.SerializeRelationships(c, ret);
 			foreach(var usedResource in c.usedResources) STFSerdeUtil.SerializeResource(State, usedResource);
 			foreach(var usedNode in c.usedNodes) STFSerdeUtil.SerializeNode(State, usedNode.Item2);
 			return (c.Id, ret);
@@ -39,7 +37,7 @@ namespace STF.Serde
 		{
 			var c = Go.AddComponent<STFUnrecognizedNodeComponent>();
 			c.Id = Id;
-			ASTFNodeComponentImporter.ParseRelationships(Json, c);
+			//ASTFNodeComponentImporter.ParseRelationships(Json, c);
 			c._TYPE = (string)Json["type"];
 			c.PreservedJson = Json.ToString();
 			if(Json["used_resources"] != null) foreach(string resourceId in Json["used_resources"])

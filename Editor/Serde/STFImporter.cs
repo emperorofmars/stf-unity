@@ -92,7 +92,7 @@ namespace STF.Serde
 				else
 				{
 					Debug.LogWarning($"Unrecognized Resource: {type}");
-					// Unrecognized Resource
+					STFUnrecognizedResourceImporter.ParseFromJson(state, (JObject)entry.Value, entry.Key);
 				}
 			}
 		}

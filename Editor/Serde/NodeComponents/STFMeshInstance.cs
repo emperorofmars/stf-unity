@@ -99,10 +99,16 @@ namespace STF.Serde
 			var materials = new Material[c.sharedMesh.subMeshCount];
 			for(int i = 0; i < materials.Length; i++)
 			{
-				if((string)Json["materials"][i] != null && State.Resources.ContainsKey((string)Json["materials"][i]))
+				try{
+					if((string)Json["materials"][i] != null && State.Resources.ContainsKey((string)Json["materials"][i]))
+					{
+						var mtfMaterial = (MTF.Material)State.Resources[(string)Json["materials"][i]];
+						materials[i] = mtfMaterial?.ConvertedMaterial;
+					}
+				}
+				catch(Exception e)
 				{
-					var mtfMaterial = (MTF.Material)State.Resources[(string)Json["materials"][i]];
-					materials[i] = mtfMaterial?.ConvertedMaterial;
+					Debug.LogWarning("Material Import Error, Skipping.");
 				}
 			}
 			if(c.sharedMesh.blendShapeCount > 0 && Json["morphtarget_values"] != null)
