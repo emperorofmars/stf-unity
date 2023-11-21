@@ -68,6 +68,10 @@ namespace STF.Tools
 
 			EditorGUI.indentLevel++;
 			renderAsset(mainAsset, importer);
+			if(GUILayout.Button("Instantiate", GUILayout.ExpandWidth(false))) {
+				var asset = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(Path.Combine("Assets" + selectedUnpackLocation, mainAsset.assetName + ".Prefab"));
+				PrefabUtility.InstantiatePrefab(asset);
+			}
 			EditorGUI.indentLevel--;
 
 			drawHLine();

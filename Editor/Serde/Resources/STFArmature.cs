@@ -28,10 +28,11 @@ namespace STF.Serde
 			var armatureGo = (GameObject)meta.Resource;
 			var armature = armatureGo.GetComponent<STFArmatureNodeInfo>();
 			
-			var ret = new JObject();
-			ret.Add("type", STFArmatureImporter._TYPE);
-			ret.Add("name", armature.ArmatureName);
-			ret.Add("root", armature.Root.GetComponent<STFBoneNode>().NodeId);
+			var ret = new JObject {
+				{"type", STFArmatureImporter._TYPE},
+				{"name", armature.ArmatureName},
+				{"root", armature.Root.GetComponent<STFBoneNode>().NodeId}
+			};
 
 			var boneIds = new List<string>();
 			foreach(var bone in armature.Bones)
