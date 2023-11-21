@@ -5,6 +5,7 @@ using System.Linq;
 using STF.IdComponents;
 using STF.Serde;
 using STF.Util;
+using UnityEditor.VersionControl;
 using UnityEngine;
 
 namespace STF.Tools
@@ -15,15 +16,16 @@ namespace STF.Tools
 		public static void SetupStandaloneAssetInplace(GameObject root)
 		{
 			// Setup main asset info
-			if(root.GetComponent<STFAsset>() == null)
+			var asset = root.GetComponent<STFAsset>();
+			if(asset == null)
 			{
-				var asset = root.AddComponent<STFAsset>();
+				asset = root.AddComponent<STFAsset>();
 				asset.assetInfo.assetId = Guid.NewGuid().ToString();
 				asset.assetInfo.assetType = STFAssetImporter._TYPE;
 				asset.assetInfo.assetName = root.name;
 				asset.assetInfo.assetVersion = "0.0.1";
 			}
-			STFArmatureUtil.FindAndSetupArmaturesInplace(root);
+			asset.ResourceMeta = STFArmatureUtil.FindAndSetupArmaturesInplace(root);
 			SetupIds(root);
 		}
 
@@ -88,14 +90,13 @@ namespace STF.Tools
 			}
 		}*/
 
-		public static void FindAndSetupArmaturesInplace(GameObject Root)
+		public static Dictionary<UnityEngine.Object, UnityEngine.Object> FindAndSetupArmaturesInplace(GameObject Root)
 		{
-			var armatureInstancesToSetup = new List<STFArmatureInstanceNode>();
+			var resourceMeta = new Dictionary<UnityEngine.Object, UnityEngine.Object>();
 
+			var armatureInstancesToSetup = new List<STFArmatureInstanceNode>();
 			foreach(var smr in Root.GetComponentsInChildren<SkinnedMeshRenderer>())
 			{
-				Debug.Log(smr);
-
 				// Check if meshInstance is already set up
 				var meshInstance = smr.GetComponent<STFMeshInstance>();
 				if(meshInstance == null) meshInstance = smr.gameObject.AddComponent<STFMeshInstance>();
@@ -113,8 +114,17 @@ namespace STF.Tools
 					armatureInstancesToSetup.Add(armatureInstance);
 					SetupArmature(smr, armatureInstance);
 				}
+
+				if(!resourceMeta.ContainsKey(smr.sharedMesh))
+				{
+					var stfMesh = ScriptableObject.CreateInstance<STFMesh>();
+					stfMesh.ArmatureId = armatureInstance.armature.Id;
+					resourceMeta.Add(smr.sharedMesh, stfMesh);
+				}
 			}
 			// TODO: compare bind poses to see if the same armature, or a subset of one, is used multiple times in the scene
+
+			return resourceMeta;
 		}
 
 		public static void SetupArmature(SkinnedMeshRenderer Smr, STFArmatureInstanceNode ArmatureInstance)

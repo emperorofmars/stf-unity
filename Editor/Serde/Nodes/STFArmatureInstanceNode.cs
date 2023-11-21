@@ -90,7 +90,7 @@ namespace STF.Serde
 
 			var armatureInstance = go.AddComponent<STFArmatureInstanceNode>();
 			armatureInstance.NodeId = Id;
-			armatureInstance.name = (String)JsonAsset["name"];
+			armatureInstance.name = (string)JsonAsset["name"];
 			armatureInstance.Origin = State.AssetInfo.assetId;
 			
 			TRSUtil.ParseTRS(go, JsonAsset);

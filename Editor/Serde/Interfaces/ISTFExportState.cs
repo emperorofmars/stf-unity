@@ -71,10 +71,13 @@ namespace STF.Serde
 		public List<UnityEngine.Object> Trash = new List<UnityEngine.Object>();
 		public List<Task> Tasks = new List<Task>();
 
-		public STFExportState(STFExportContext Context, string TargetLocation)
+		public Dictionary<UnityEngine.Object, UnityEngine.Object> ResourceMeta = new Dictionary<UnityEngine.Object, UnityEngine.Object>();
+
+		public STFExportState(STFExportContext Context, string TargetLocation, Dictionary<UnityEngine.Object, UnityEngine.Object> ResourceMeta)
 		{
 			this._Context = Context;
 			this._TargetLocation = TargetLocation;
+			this.ResourceMeta = ResourceMeta;
 		}
 
 		public void AddTask(Task task)
@@ -124,6 +127,8 @@ namespace STF.Serde
 
 		public T LoadMeta<T>(UnityEngine.Object Resource) where T: UnityEngine.Object
 		{
+			if(ResourceMeta.ContainsKey(Resource)) return (T)ResourceMeta[Resource];
+			
 			var assetPath = AssetDatabase.GetAssetPath(Resource);
 			var metaPath = Path.ChangeExtension(assetPath, "Asset");
 			return AssetDatabase.LoadAssetAtPath<T>(metaPath);

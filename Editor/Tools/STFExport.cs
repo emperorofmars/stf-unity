@@ -38,12 +38,12 @@ namespace STF.Tools
 			
 			GUILayout.BeginHorizontal();
 			GUILayout.Label("Select Main Asset", EditorStyles.whiteLargeLabel, GUILayout.ExpandWidth(false));
-			mainExport = ((STFAsset)EditorGUILayout.ObjectField(
+			mainExport = (STFAsset)EditorGUILayout.ObjectField(
 				mainExport,
 				typeof(STFAsset),
 				true,
 				GUILayout.ExpandWidth(true)
-			));
+			);
 			GUILayout.EndHorizontal();
 			drawHLine();
 

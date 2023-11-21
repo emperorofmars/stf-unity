@@ -35,7 +35,10 @@ namespace STF.Serde
 		{
 			try
 			{
-				state = new STFExportState(Context, ExportPath);
+				var resourceMeta = MainAsset.ResourceMeta;
+				foreach(var secondaryAsset in SecondaryAssets) foreach(var entry in secondaryAsset.ResourceMeta) if(!resourceMeta.ContainsKey(entry.Key)) resourceMeta.Add(entry.Key, entry.Value);
+
+				state = new STFExportState(Context, ExportPath, resourceMeta);
 				state._MainAssetId = MainAsset.assetInfo.assetId;
 
 				if(state.Context.AssetExporters.ContainsKey(MainAsset.assetInfo.assetType))

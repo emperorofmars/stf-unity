@@ -27,6 +27,7 @@ namespace STF.IdComponents
 	{
 		public STFAssetInfo assetInfo = new STFAssetInfo();
 		public List<string> appliedAddonIds = new List<string>();
+		public Dictionary<UnityEngine.Object, UnityEngine.Object> ResourceMeta = new Dictionary<UnityEngine.Object, UnityEngine.Object>();
 	}
 }
 
