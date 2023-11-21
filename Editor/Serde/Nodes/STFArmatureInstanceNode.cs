@@ -32,7 +32,7 @@ namespace STF.Serde
 			for(int childIdx = 0; childIdx < Go.transform.childCount; childIdx++)
 			{
 				var child = Go.transform.GetChild(childIdx);
-				if(child.GetComponent<STFBoneNode>() == null || child.GetComponent<STFBoneInstanceNode>() == null)
+				if(child.GetComponent<STFBoneNode>() == null && child.GetComponent<STFBoneInstanceNode>() == null)
 				{
 					armatureInstanceChildren.Add(STFSerdeUtil.SerializeNode(State, child.gameObject));
 				}
@@ -54,7 +54,7 @@ namespace STF.Serde
 				for(int childIdx = 0; childIdx < boneInstance.transform.childCount; childIdx++)
 				{
 					var child = boneInstance.transform.GetChild(childIdx);
-					if(child.GetComponent<STFBoneNode>() == null || child.GetComponent<STFBoneInstanceNode>() == null)
+					if(child.GetComponent<STFBoneNode>() == null && child.GetComponent<STFBoneInstanceNode>() == null)
 					{
 						boneInstanceChildren.Add(STFSerdeUtil.SerializeNode(State, child.gameObject));
 					}
