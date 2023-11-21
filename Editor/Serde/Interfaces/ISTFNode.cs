@@ -7,6 +7,7 @@ using UnityEngine;
 using System.Linq;
 using Newtonsoft.Json.Linq;
 using STF.IdComponents;
+using STF.Inspectors;
 
 namespace STF.Serde
 {

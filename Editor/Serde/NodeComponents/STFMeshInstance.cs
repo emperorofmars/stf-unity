@@ -13,6 +13,7 @@ namespace STF.Serde
 	public class STFMeshInstance : ASTFNodeComponent
 	{
 		public static string _TYPE = "STF.mesh_instance";
+		public override string Type => _TYPE;
 		public STFArmatureInstanceNode ArmatureInstance;
 		public string ArmatureInstanceId;
 	}
@@ -24,7 +25,7 @@ namespace STF.Serde
 			throw new NotImplementedException();
 		}
 
-		public override KeyValuePair<string, JObject> SerializeToJson(ISTFExportState State, Component component)
+		public override (string, JObject) SerializeToJson(ISTFExportState State, Component component)
 		{
 			SkinnedMeshRenderer c = (SkinnedMeshRenderer)component;
 			var meshId = STFSerdeUtil.SerializeResource(State, c.sharedMesh);
@@ -42,8 +43,7 @@ namespace STF.Serde
 			ret.Add("morphtarget_values", new JArray(Enumerable.Range(0, c.sharedMesh.blendShapeCount).Select(i => c.GetBlendShapeWeight(i))));
 			
 			ret.Add("resources_used", new JArray(meshId, ret["armature_instance"])); // add materials
-			//((JArray)ret["resources_used"]).Merge(ret["morphtarget_values"]);
-			return new KeyValuePair<string, JObject>(meshInstance.Id, ret);
+			return (meshInstance.Id, ret);
 		}
 	}
 

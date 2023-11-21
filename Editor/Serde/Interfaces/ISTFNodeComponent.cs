@@ -9,6 +9,7 @@ namespace STF.Serde
 	public interface ISTFNodeComponent
 	{
 		string Id {get; set;}
+		string Type {get;}
 		List<string> Extends {get; set;}
 		List<string> Overrides {get; set;}
 		List<string> Targets {get; set;}
@@ -18,6 +19,7 @@ namespace STF.Serde
 	{
 		public string _id = Guid.NewGuid().ToString();
 		public string Id {get => _id; set => _id = value;}
+		public abstract string Type { get; }
 
 		public List<string> _extends = new List<string>();
 		public List<string> Extends {get => _extends; set => _extends = value;}
@@ -32,7 +34,7 @@ namespace STF.Serde
 	public interface ISTFNodeComponentExporter
 	{
 		string ConvertPropertyPath(string UnityProperty);
-		KeyValuePair<string, JObject> SerializeToJson(ISTFExportState State, Component Component);
+		(string, JObject) SerializeToJson(ISTFExportState State, Component Component);
 	}
 	
 	public interface ISTFNodeComponentImporter
@@ -44,7 +46,7 @@ namespace STF.Serde
 	public abstract class ASTFNodeComponentExporter : ISTFNodeComponentExporter
 	{
 		public abstract string ConvertPropertyPath(string UnityProperty);
-		abstract public KeyValuePair<string, JObject> SerializeToJson(ISTFExportState State, Component Component);
+		abstract public (string, JObject) SerializeToJson(ISTFExportState State, Component Component);
 
 		public static void SerializeRelationships(ISTFNodeComponent Component, JObject Json)
 		{

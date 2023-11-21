@@ -95,13 +95,13 @@ namespace STF.Serde
 			{
 				if(State.Context.ExportExclusions.Find(e => component.GetType().IsSubclassOf(e) || component.GetType() == e) != null) continue;
 				var serializedComponent = SerializeComponent(State, component);
-				if(serializedComponent.Key != null)	ret.Add(serializedComponent.Key, serializedComponent.Value);
+				if(serializedComponent.Item1 != null)	ret.Add(serializedComponent.Item1, serializedComponent.Item2);
 				else Debug.LogWarning($"Skipping Unrecognized Unity Component: {component}");
 			}
 			return ret;
 		}
 
-		public static KeyValuePair<string, JObject> SerializeComponent(ISTFExportState State, Component NodeComponent)
+		public static (string, JObject) SerializeComponent(ISTFExportState State, Component NodeComponent)
 		{
 			if(State.Context.NodeComponentExporters.ContainsKey(NodeComponent.GetType()))
 			{
@@ -112,7 +112,7 @@ namespace STF.Serde
 			{
 				Debug.LogWarning($"Unrecognized Node Component: {NodeComponent.GetType()}");
 				// Unrecognized Asset
-				return new KeyValuePair<string, JObject>(null, null);
+				return (null, null);
 			}
 		}
 
