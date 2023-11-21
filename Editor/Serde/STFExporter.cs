@@ -78,7 +78,6 @@ namespace STF.Serde
 					{"resources", new JObject(state.Resources.Select(entry => new JProperty(entry.Value.Key, entry.Value.Value)))},
 					{"buffers", new JArray(state.Buffers.Select(entry => entry.Key))}
 				};
-
 				
 				var file = new STFFile(Json.ToString(Formatting.None), new List<byte[]>(state.Buffers.Select(entry => entry.Value)));
 				File.WriteAllBytes(ExportPath, file.CreateBinaryFromBuffers());

@@ -32,6 +32,10 @@ namespace STF.Serde
 		void AddTask(Task task);
 		void AddResource(UnityEngine.Object Resource, string Id);
 		void AddTrash(UnityEngine.Object Trash);
+
+		void SaveResource<T>(UnityEngine.Object Resource, string FileExtension, T Meta, string Id) where T: UnityEngine.Object, ISTFResource;
+		void SaveResource<T>(GameObject Resource, T Meta, string Id) where T: UnityEngine.Object, ISTFResource;
+		void SaveResource<T>(byte[] Resource, string FileExtension, T Meta, string Id) where T: UnityEngine.Object, ISTFResource;
 	}
 
 	public class STFImportState : ISTFImportState
@@ -76,6 +80,36 @@ namespace STF.Serde
 		public void AddTrash(UnityEngine.Object Trash)
 		{
 			this.Trash.Add(Trash);
+		}
+
+		public void SaveResource<T>(UnityEngine.Object Resource, string FileExtension, T Meta, string Id) where T: UnityEngine.Object, ISTFResource
+		{
+			var location = Path.Combine(TargetLocation, STFConstants.ResourceDirectoryName, Meta.Name + "_" + Id + "." + FileExtension);
+			AssetDatabase.CreateAsset(Resource, location);
+			Meta.Resource = Resource;
+			Meta.ResourceLocation = location;
+			AssetDatabase.CreateAsset(Meta, Path.ChangeExtension(location, "Asset"));
+			AddResource(Meta, Id);
+			AssetDatabase.Refresh();
+		}
+		public void SaveResource<T>(GameObject Resource, T Meta, string Id) where T: UnityEngine.Object, ISTFResource
+		{
+			var location = Path.Combine(TargetLocation, STFConstants.ResourceDirectoryName, Meta.Name + "_" + Id + ".Prefab");
+			var saved = PrefabUtility.SaveAsPrefabAsset(Resource, location);
+			Meta.Resource = saved;
+			Meta.ResourceLocation = location;
+			AssetDatabase.CreateAsset(Meta, Path.ChangeExtension(location, "Asset"));
+			AddResource(Meta, Id);
+			AssetDatabase.Refresh();
+		}
+		public void SaveResource<T>(byte[] Resource, string FileExtension, T Meta, string Id) where T: UnityEngine.Object, ISTFResource
+		{
+			var location = Path.Combine(TargetLocation, STFConstants.ResourceDirectoryName, Meta.Name + "_" + Id + "." + FileExtension);
+			File.WriteAllBytes(location, Resource);
+			Meta.ResourceLocation = location;
+			AssetDatabase.CreateAsset(Meta, Path.ChangeExtension(location, "Asset"));
+			AddResource(Meta, Id);
+			AssetDatabase.Refresh();
 		}
 	}
 }

@@ -293,15 +293,15 @@ namespace STF.Serde
 			throw new NotImplementedException();
 		}
 
-		public UnityEngine.Object ParseFromJson(ISTFImportState State, JObject Json, string Id)
+		public void ParseFromJson(ISTFImportState State, JObject Json, string Id)
 		{
-			var ret = new Mesh();
-			ret.name = (string)Json["name"];
+			var mesh = new Mesh();
+			mesh.name = (string)Json["name"];
 			
 			var meta = ScriptableObject.CreateInstance<STFMesh>();
-			meta.ResourceLocation = Path.Combine(State.TargetLocation, STFConstants.ResourceDirectoryName, ret.name + "_" + Id + ".mesh");
+			meta.ResourceLocation = Path.Combine(State.TargetLocation, STFConstants.ResourceDirectoryName, mesh.name + "_" + Id + ".mesh");
 			meta.OriginalBufferId = (string)Json["buffer"];
-			meta.Name = ret.name;
+			meta.Name = mesh.name;
 			meta.ArmatureId = (string)Json["armature"];
 
 			var bufferWidth = 3;
@@ -313,7 +313,6 @@ namespace STF.Serde
 			if(Json["color"] != null) bufferWidth += 4;
 			if(Json["uvs"] != null) { bufferWidth += 2 * (int)Json["uvs"]; numUVs = (int)Json["uvs"]; }
 
-			Debug.Log("Buffer: " + (string)Json["buffer"]);
 			var arrayBuffer = State.Buffers[(string)Json["buffer"]];
 
 			var vertexbuffer = new float[vertexCount * bufferWidth];
@@ -327,7 +326,7 @@ namespace STF.Serde
 				{
 					vertices.Add(new Vector3(vertexbuffer[i * bufferWidth], vertexbuffer[i * bufferWidth + 1], vertexbuffer[i * bufferWidth + 2]));
 				}
-				ret.SetVertices(vertices);
+				mesh.SetVertices(vertices);
 				offset += 3;
 			}
 			if((bool)Json["normal"] == true)
@@ -337,7 +336,7 @@ namespace STF.Serde
 				{
 					normals.Add(new Vector3(vertexbuffer[i * bufferWidth + offset], vertexbuffer[i * bufferWidth + offset + 1], vertexbuffer[i * bufferWidth + offset + 2]));
 				}
-				ret.SetNormals(normals);
+				mesh.SetNormals(normals);
 				offset += 3;
 			}
 			if((bool)Json["tangent"] == true)
@@ -347,7 +346,7 @@ namespace STF.Serde
 				{
 					tangents.Add(new Vector4(vertexbuffer[i * bufferWidth + offset], vertexbuffer[i * bufferWidth + offset + 1], vertexbuffer[i * bufferWidth + offset + 2], vertexbuffer[i * bufferWidth + offset + 3]));
 				}
-				ret.SetTangents(tangents);
+				mesh.SetTangents(tangents);
 				offset += 4;
 			}
 			if((bool)Json["color"] == true)
@@ -357,7 +356,7 @@ namespace STF.Serde
 				{
 					colors.Add(new Color(vertexbuffer[i * bufferWidth + offset], vertexbuffer[i * bufferWidth + offset + 1], vertexbuffer[i * bufferWidth + offset + 2], vertexbuffer[i * bufferWidth + offset + 3]));
 				}
-				ret.SetColors(colors);
+				mesh.SetColors(colors);
 				offset += 4;
 			}
 			for(int uvIdx = 0; uvIdx < numUVs; uvIdx++)
@@ -369,7 +368,7 @@ namespace STF.Serde
 					{
 						uvs.Add(new Vector2(vertexbuffer[i * bufferWidth + offset], vertexbuffer[i * bufferWidth + offset + 1]));
 					}
-					ret.SetUVs(uvIdx, uvs);
+					mesh.SetUVs(uvIdx, uvs);
 					offset += 2;
 				}
 			}
@@ -377,7 +376,7 @@ namespace STF.Serde
 			var indicesPosCounted = 0;
 
 			var primitives = (JArray)Json["primitives"];
-			ret.subMeshCount = primitives.Count;
+			mesh.subMeshCount = primitives.Count;
 			for(int subMeshIdx = 0; subMeshIdx < primitives.Count; subMeshIdx++)
 			{
 				var primitive = (JObject)primitives[subMeshIdx];
@@ -388,7 +387,7 @@ namespace STF.Serde
 				Buffer.BlockCopy(arrayBuffer, indicesPosCounted * sizeof(int) + vertexCount * bufferWidth * sizeof(float), indexBuffer, 0, indicesLen * sizeof(int));
 
 				var topology = ((string)primitive["topology"]) == "tris" ? MeshTopology.Triangles : MeshTopology.Quads;
-				ret.SetIndices(indexBuffer, topology, subMeshIdx);
+				mesh.SetIndices(indexBuffer, topology, subMeshIdx);
 
 				indicesPosCounted += indicesLen;
 			}
@@ -421,13 +420,13 @@ namespace STF.Serde
 				}
 				var bonesPerVertexNat = new NativeArray<byte>(bonesPerVertex, Allocator.Temp);
 
-				ret.SetBoneWeights(bonesPerVertexNat, weights);
+				mesh.SetBoneWeights(bonesPerVertexNat, weights);
 
 				State.AddTask(new Task(() => {
 					var armature = (STFArmature)State.Resources[(string)Json["armature"]];
 					if(armature != null)
 					{
-						ret.bindposes = armature.Bindposes;
+						mesh.bindposes = armature.Bindposes;
 					}
 				}));
 			}
@@ -476,21 +475,16 @@ namespace STF.Serde
 						}
 					}
 
-					ret.AddBlendShapeFrame(blendshapeName, 100, blendshapeVertecies, blendshapeNormals, blendshapeTangents);
+					mesh.AddBlendShapeFrame(blendshapeName, 100, blendshapeVertecies, blendshapeNormals, blendshapeTangents);
 					bufferOffset += blendshapeLength * blendshapeBufferWidth * sizeof(float);
 				}
 			}
 
-			ret.UploadMeshData(false);
-			ret.RecalculateBounds();
+			mesh.UploadMeshData(false);
+			mesh.RecalculateBounds();
 
-			AssetDatabase.CreateAsset(ret, meta.ResourceLocation);
-			meta._Resource = ret;
-			AssetDatabase.CreateAsset(meta, Path.ChangeExtension(meta.ResourceLocation, "Asset"));
-
-			State.AddResource(meta, Id);
-
-			return ret;
+			State.SaveResource(mesh, "mesh", meta, Id);
+			return;
 		}
 	}
 }

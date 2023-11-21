@@ -74,7 +74,7 @@ namespace STF.Serde
 			throw new NotImplementedException();
 		}
 
-		public UnityEngine.Object ParseFromJson(ISTFImportState State, JObject Json, string Id)
+		public void ParseFromJson(ISTFImportState State, JObject Json, string Id)
 		{
 			var go = new GameObject();
 			State.AddTrash(go);
@@ -83,6 +83,7 @@ namespace STF.Serde
 			var meta = ScriptableObject.CreateInstance<STFArmature>();
 			meta.Id = Id;
 			meta.Name = (string)Json["name"];
+			go.name = meta.Name;
 
 			armatureInfo.ArmatureId = Id;
 			armatureInfo.ArmatureName = meta.Name;
@@ -128,19 +129,10 @@ namespace STF.Serde
 			{
 				bindposes[i] = armatureInfo.Bones[i].transform.worldToLocalMatrix;
 			}
-
-			var ResourceLocation = Path.Combine(State.TargetLocation, STFConstants.ResourceDirectoryName, meta.Name + "_" + meta.Id + ".Prefab");
-			var saved = PrefabUtility.SaveAsPrefabAsset(go, ResourceLocation);
-
-			meta.ResourceLocation = ResourceLocation;
-			meta.Resource = saved;
 			meta.Bindposes = bindposes;
-			
-			State.AddResource(meta, Id);
-			AssetDatabase.CreateAsset(meta, Path.ChangeExtension(meta.ResourceLocation, "Asset"));
-			AssetDatabase.Refresh();
 
-			return meta;
+			State.SaveResource(go, meta, Id);
+			return;
 		}
 	}
 }

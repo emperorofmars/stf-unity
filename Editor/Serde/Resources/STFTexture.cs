@@ -32,9 +32,9 @@ namespace STF.Serde
 
 			var assetPath = AssetDatabase.GetAssetPath(texture);
 			var arrayBuffer = File.ReadAllBytes(assetPath);
-			var meta = State.LoadMeta<STFMesh>(Resource);
+			var meta = State.LoadMeta<STFTexture>(Resource);
 
-			ret.Add("name", meta.Name);
+			ret.Add("name", meta ? meta.name : Path.GetFileNameWithoutExtension(assetPath));
 			ret.Add("format", Path.GetExtension(assetPath));
 			ret.Add("width", texture.width);
 			ret.Add("height", texture.height);
@@ -44,7 +44,7 @@ namespace STF.Serde
 			ret.Add("buffer", bufferId);
 
 			ret.Add("used_buffers", new JArray() {bufferId});
-			return State.AddResource(Resource, ret, meta?.Id);
+			return State.AddResource(Resource, ret, meta ? meta.Id : Guid.NewGuid().ToString());
 		}
 	}
 
@@ -57,22 +57,18 @@ namespace STF.Serde
 			throw new NotImplementedException();
 		}
 
-		public UnityEngine.Object ParseFromJson(ISTFImportState State, JObject Json, string Id)
+		public void ParseFromJson(ISTFImportState State, JObject Json, string Id)
 		{
-			var ret = ScriptableObject.CreateInstance<STFTexture>();
-			ret.Id = Id;
-			ret.Name = (string)Json["name"];
-			ret.ResourceLocation = Path.Combine(State.TargetLocation, STFConstants.ResourceDirectoryName, ret.Name + "_" + Id + "." + (string)Json["format"]);
-			ret.Linear = (bool)Json["linear"];
-			ret.OriginalBufferId = (string)Json["buffer"];
+			var meta = ScriptableObject.CreateInstance<STFTexture>();
+			meta.Id = Id;
+			meta.Name = (string)Json["name"];
+			meta.ResourceLocation = Path.Combine(State.TargetLocation, STFConstants.ResourceDirectoryName, meta.Name + "_" + Id + "." + (string)Json["format"]);
+			meta.Linear = (bool)Json["linear"];
+			meta.OriginalBufferId = (string)Json["buffer"];
 			
-			var arrayBuffer = State.Buffers[ret.OriginalBufferId];
-			File.WriteAllBytes(ret.ResourceLocation, arrayBuffer);
-			AssetDatabase.CreateAsset(ret, Path.ChangeExtension(ret.ResourceLocation, "Asset"));
-			AssetDatabase.Refresh();
-
-			State.AddResource(ret, Id);
-			return ret;
+			var arrayBuffer = State.Buffers[meta.OriginalBufferId];
+			State.SaveResource(arrayBuffer, (string)Json["format"], meta, Id);
+			return;
 		}
 	}
 }

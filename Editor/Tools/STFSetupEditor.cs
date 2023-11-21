@@ -14,7 +14,6 @@ namespace STF.Tools
 {
 	// Editor tool to setup a unity scene root GameObject into the STF-Unity intermediary format.
 	// Will add UUID's and determine armatures. May be expanded in the future.
-
 	public class STFSetupEditor : EditorWindow
 	{
 		private Vector2 scrollPos;
