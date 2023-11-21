@@ -37,6 +37,8 @@ namespace STF.Serde
 			};
 
 			var meshInstance = c.gameObject.GetComponent<STFMeshInstance>();
+			SerializeRelationships(meshInstance, ret);
+			
 			if(meshInstance.ArmatureInstanceId != null && meshInstance.ArmatureInstanceId.Length > 0) ret.Add("armature_instance", meshInstance.ArmatureInstanceId);
 			else ret.Add("armature_instance", State.Nodes[c.rootBone.parent.gameObject].Key);
 
@@ -61,6 +63,7 @@ namespace STF.Serde
 		{
 			var c = Go.AddComponent<SkinnedMeshRenderer>();
 			var meshInstanceComponent = Go.AddComponent<STFMeshInstance>();
+			ParseRelationships(Json, meshInstanceComponent);
 			meshInstanceComponent.Id = Id;
 			State.AddComponent(meshInstanceComponent, Id);
 
@@ -96,7 +99,7 @@ namespace STF.Serde
 			var materials = new Material[c.sharedMesh.subMeshCount];
 			for(int i = 0; i < materials.Length; i++)
 			{
-				if((string)Json["materials"][i] != null)
+				if((string)Json["materials"][i] != null && State.Resources.ContainsKey((string)Json["materials"][i]))
 				{
 					var mtfMaterial = (MTF.Material)State.Resources[(string)Json["materials"][i]];
 					materials[i] = mtfMaterial?.ConvertedMaterial;

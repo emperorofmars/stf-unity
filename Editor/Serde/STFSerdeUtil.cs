@@ -28,7 +28,6 @@ namespace STF.Serde
 				else
 				{
 					Debug.LogWarning($"Unrecognized Node: {type}");
-					// Unrecognized Node
 				}
 			}
 		}
@@ -47,6 +46,7 @@ namespace STF.Serde
 				else
 				{
 					Debug.LogWarning($"Unrecognized Component: {type}");
+					STFUnrecognizedNodeComponentImporter.ParseFromJson(State, (JObject)entry.Value, entry.Key, Go);
 				}
 			}
 		}
@@ -80,7 +80,6 @@ namespace STF.Serde
 			else
 			{
 				Debug.LogWarning($"Unrecognized Node: {node.Type}");
-				// Unrecognized Asset
 				return null;
 			}
 		}
@@ -92,7 +91,7 @@ namespace STF.Serde
 			{
 				if(State.Context.ExportExclusions.Find(e => component.GetType().IsSubclassOf(e) || component.GetType() == e) != null) continue;
 				var serializedComponent = SerializeComponent(State, component);
-				if(serializedComponent.Item1 != null)	ret.Add(serializedComponent.Item1, serializedComponent.Item2);
+				if(serializedComponent.Item1 != null) ret.Add(serializedComponent.Item1, serializedComponent.Item2);
 				else Debug.LogWarning($"Skipping Unrecognized Unity Component: {component}");
 			}
 			return ret;
@@ -106,9 +105,7 @@ namespace STF.Serde
 			}
 			else
 			{
-				Debug.LogWarning($"Unrecognized Node Component: {NodeComponent.GetType()}");
-				// Unrecognized Asset
-				return (null, null);
+				return STFUnrecognizedNodeComponentExporter.SerializeToJson(State, NodeComponent);
 			}
 		}
 
@@ -122,7 +119,6 @@ namespace STF.Serde
 			else
 			{
 				Debug.LogWarning($"Unrecognized Resource: {Resource.GetType()}");
-				// Unrecognized Asset
 				return null;
 			}
 		}
