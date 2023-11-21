@@ -22,7 +22,6 @@ namespace STF.Serde
 				if(type == null || type.Length == 0) type = STFNode._TYPE;
 				if(State.Context.NodeImporters.ContainsKey(type))
 				{
-					Debug.Log($"Parsing Node: {type}");
 					var childGo = State.Context.NodeImporters[type].ParseFromJson(State, childJson, childId);
 					childGo.transform.SetParent(Go.transform);
 				}
@@ -43,7 +42,6 @@ namespace STF.Serde
 				if(type == null || type.Length == 0) type = STFNode._TYPE;
 				if(State.Context.NodeComponentImporters.ContainsKey(type))
 				{
-					Debug.Log($"Parsing Component: {type}");
 					State.Context.NodeComponentImporters[type].ParseFromJson(State, (JObject)entry.Value, entry.Key, Go);
 				}
 				else
@@ -77,7 +75,6 @@ namespace STF.Serde
 			var node = Go.GetComponent<ISTFNode>();
 			if(node != null && State.Context.NodeExporters.ContainsKey(node.Type))
 			{
-				Debug.Log($"Serializing Node: {node.Type}");
 				return State.Context.NodeExporters[node.Type].SerializeToJson(State, Go);
 			}
 			else
@@ -105,7 +102,6 @@ namespace STF.Serde
 		{
 			if(State.Context.NodeComponentExporters.ContainsKey(NodeComponent.GetType()))
 			{
-				Debug.Log($"Serializing NodeComponent: {NodeComponent.GetType()}");
 				return State.Context.NodeComponentExporters[NodeComponent.GetType()].SerializeToJson(State, NodeComponent);
 			}
 			else
@@ -121,7 +117,6 @@ namespace STF.Serde
 			if(State.Resources.ContainsKey(Resource)) return State.Resources[Resource].Key;
 			if(State.Context.ResourceExporters.ContainsKey(Resource.GetType()))
 			{
-				Debug.Log($"Serializing Resource: {Resource.GetType()}");
 				return State.Context.ResourceExporters[Resource.GetType()].SerializeToJson(State, Resource);
 			}
 			else

@@ -30,8 +30,21 @@ namespace MTF
 	public class Material : ScriptableObject
 	{
 		public string Id = Guid.NewGuid().ToString();
+		public UnityEngine.Material ConvertedMaterial;
 		public List<string> PreferedShaderPerTarget = new List<string>();
 		public List<string> StyleHints = new List<string>();
 		public List<IProperty> Properties = new List<IProperty>();
+	}
+
+	public interface IMaterialConverter
+	{
+		string ShaderName {get;}
+		UnityEngine.Material ConvertToUnityMaterial(Material MTFMaterial, UnityEngine.Material ExistingUnityMaterial);
+	}
+
+	public interface IMaterialParser
+	{
+		string ShaderName {get;}
+		Material ParseFromUnityMaterial(UnityEngine.Material UnityMaterial, Material ExistingMTFMaterial);
 	}
 }

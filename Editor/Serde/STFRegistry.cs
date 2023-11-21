@@ -65,14 +65,14 @@ namespace STF.Serde
 			{STFMeshImporter._TYPE, new STFMeshImporter()},
 			{STFTextureImporter._TYPE, new STFTextureImporter()},
 			{STFArmatureImporter._TYPE, new STFArmatureImporter()},
-			//{STFMaterialImporter._TYPE, new STFMaterialImporter()},
+			//{MTFMaterialImporter._TYPE, new MTFMaterialImporter()},
 			//{STFAnimationImporter._TYPE, new STFAnimationImporter()}
 		};
 		public static readonly Dictionary<Type, ISTFResourceExporter> DefaultResourceExporters = new Dictionary<Type, ISTFResourceExporter>() {
 			{typeof(Mesh), new STFMeshExporter()},
 			{typeof(Texture2D), new STFTexture2dExporter()},
 			{typeof(STFArmature), new STFArmatureExporter()},
-			//{typeof(Material), new STFMaterialExporter()},
+			//{typeof(Material), new MTFMaterialExporter()},
 			//{typeof(AnimationClip), new STFAnimationExporter()}
 		};
 		public static readonly List<Type> DefaultExportExclusions = new List<Type>() {

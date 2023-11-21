@@ -69,8 +69,8 @@ namespace STF.Tools
 			EditorGUI.indentLevel++;
 			renderAsset(mainAsset, importer);
 			if(GUILayout.Button("Instantiate", GUILayout.ExpandWidth(false))) {
-				var asset = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(Path.Combine("Assets" + selectedUnpackLocation, mainAsset.assetName + ".Prefab"));
-				PrefabUtility.InstantiatePrefab(asset);
+				var assetObject = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(Path.Combine("Assets" + selectedUnpackLocation, mainAsset.assetName + ".Prefab"));
+				PrefabUtility.InstantiatePrefab(assetObject);
 			}
 			EditorGUI.indentLevel--;
 
@@ -84,6 +84,10 @@ namespace STF.Tools
 				{
 					EditorGUI.indentLevel++;
 					renderAsset(asset, importer);
+					if(GUILayout.Button("Instantiate", GUILayout.ExpandWidth(false))) {
+						var assetObject = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(Path.Combine("Assets" + selectedUnpackLocation, STFConstants.SecondaryAssetsDirectoryName, asset.assetName + ".Prefab"));
+						PrefabUtility.InstantiatePrefab(assetObject);
+					}
 					EditorGUI.indentLevel--;
 				}
 			}

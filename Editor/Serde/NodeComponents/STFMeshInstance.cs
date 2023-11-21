@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
@@ -39,10 +40,12 @@ namespace STF.Serde
 			if(meshInstance.ArmatureInstanceId != null && meshInstance.ArmatureInstanceId.Length > 0) ret.Add("armature_instance", meshInstance.ArmatureInstanceId);
 			else ret.Add("armature_instance", State.Nodes[c.rootBone.parent.gameObject].Key);
 
-			//ret.Add("materials", new JArray(c.sharedMaterials.Select(m => m != null ? State.Resources[m].Key : null)));
+			ret.Add("materials", new JArray(c.sharedMaterials.Select(m => m != null && State.Resources.ContainsKey(m) ? State.Resources[m].Key : null)));
 			ret.Add("morphtarget_values", new JArray(Enumerable.Range(0, c.sharedMesh.blendShapeCount).Select(i => c.GetBlendShapeWeight(i))));
-			
-			ret.Add("resources_used", new JArray(meshId, ret["armature_instance"])); // add materials
+
+			var resourcesUsed = new JArray(meshId, ret["armature_instance"]);
+			foreach(var m in ret["materials"]) if(m != null) resourcesUsed.Add(m);
+			ret.Add("resources_used", resourcesUsed);
 			return (meshInstance.Id, ret);
 		}
 	}
@@ -90,11 +93,15 @@ namespace STF.Serde
 				}
 			}
 
-			/*var materials = new Material[c.sharedMesh.subMeshCount];
+			var materials = new Material[c.sharedMesh.subMeshCount];
 			for(int i = 0; i < materials.Length; i++)
 			{
-				if(Json["materials"][i] != null) materials[i] = (Material)State.Resources[(string)Json["materials"][i]];
-			}*/
+				if((string)Json["materials"][i] != null)
+				{
+					var mtfMaterial = (MTF.Material)State.Resources[(string)Json["materials"][i]];
+					materials[i] = mtfMaterial?.ConvertedMaterial;
+				}
+			}
 			if(c.sharedMesh.blendShapeCount > 0 && Json["morphtarget_values"] != null)
 			{
 				for(int i = 0; i < c.sharedMesh.blendShapeCount; i++)
@@ -103,7 +110,7 @@ namespace STF.Serde
 				}
 
 			}
-			//c.sharedMaterials = materials;
+			c.sharedMaterials = materials;
 			c.localBounds = c.sharedMesh.bounds;
 		}
 	}
