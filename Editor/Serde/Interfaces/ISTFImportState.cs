@@ -33,6 +33,7 @@ namespace STF.Serde
 		void AddResource(UnityEngine.Object Resource, string Id);
 		void AddTrash(UnityEngine.Object Trash);
 
+		void SaveResource(UnityEngine.Object Resource, string FileExtension, string Id);
 		void SaveResource<T>(UnityEngine.Object Resource, string FileExtension, T Meta, string Id) where T: UnityEngine.Object, ISTFResource;
 		void SaveResource<T>(GameObject Resource, T Meta, string Id) where T: UnityEngine.Object, ISTFResource;
 		void SaveResource<T>(byte[] Resource, string FileExtension, T Meta, string Id) where T: UnityEngine.Object, ISTFResource;
@@ -82,6 +83,13 @@ namespace STF.Serde
 			this.Trash.Add(Trash);
 		}
 
+		public void SaveResource(UnityEngine.Object Resource, string FileExtension, string Id)
+		{
+			var location = Path.Combine(TargetLocation, STFConstants.ResourceDirectoryName, Resource.name + "_" + Id + "." + FileExtension);
+			AssetDatabase.CreateAsset(Resource, location);
+			AddResource(Resource, Id);
+			AssetDatabase.Refresh();
+		}
 		public void SaveResource<T>(UnityEngine.Object Resource, string FileExtension, T Meta, string Id) where T: UnityEngine.Object, ISTFResource
 		{
 			var location = Path.Combine(TargetLocation, STFConstants.ResourceDirectoryName, Meta.Name + "_" + Id + "." + FileExtension);

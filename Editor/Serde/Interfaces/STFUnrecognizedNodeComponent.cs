@@ -12,8 +12,9 @@ namespace STF.Serde
 		public string _TYPE;
 		public override string Type => _TYPE;
 
+		[TextArea]
 		public string PreservedJson;
-		public List<UnityEngine.Object> usedResources = new List<Object>();
+		public List<Object> usedResources = new List<Object>();
 		public List<(string, GameObject)> usedNodes = new List<(string, GameObject)>();
 	}
 

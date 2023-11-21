@@ -10,48 +10,43 @@ using System.Collections.Generic;
 
 namespace STF.Serde
 {
-	public class STFUnrecognizedResource : ScriptableObject
+	public class STFBuffer : ScriptableObject
 	{
-		public string id;
-		public string json;
-		public List<GameObject> referencedNodes;
-		//public List<STFBuffer> referencedBuffers;
-		public List<UnityEngine.Object> referencedResources;
+		public string Id;
+		[HideInInspector]
+		public byte[] Data;
 	}
 
-	/*public class STFUnrecognizedResourceImporter : ASTFResourceImporter
+	public class STFUnrecognizedResource : ScriptableObject
 	{
-		public static string _TYPE = "STF.texture_view";
+		public string Id;
+		public string PreservedJson;
+		public List<STFBuffer> ReferencedBuffers;
+		public List<UnityEngine.Object> ReferencedResources;
+		public List<GameObject> ReferencedNodes;
+	}
 
-		public override UnityEngine.Object ParseFromJson(ISTFImporter state, JToken json, string id, JObject jsonRoot)
-		{
-			var ret = ScriptableObject.CreateInstance<STFTextureView>();
-			ret.channel = (int)json["channel"];
-			ret.invert = (bool)json["invert"];
-			state.AddTask(new Task(() => {
-				ret.texture = (Texture2D)state.GetResource((string)json["texture"]);
-				ret.name = ret.texture.name + "_view_" + ret.channel;
-			}));
-			return ret;
-		}
-	}*/
-
-	/*public class STFUnrecognizedResourceExporter : ASTFResourceExporter
+	public class STFUnrecognizedResourceExporter
 	{
-		public static string _TYPE = "STF.texture_view";
-
-		public override UnityEngine.Object ParseFromJson(ISTFImporter state, JToken json, string id, JObject jsonRoot)
+		public static string SerializeToJson(ISTFExportState State, UnityEngine.Object Resource)
 		{
-			var ret = ScriptableObject.CreateInstance<STFTextureView>();
-			ret.channel = (int)json["channel"];
-			ret.invert = (bool)json["invert"];
-			state.AddTask(new Task(() => {
-				ret.texture = (Texture2D)state.GetResource((string)json["texture"]);
-				ret.name = ret.texture.name + "_view_" + ret.channel;
-			}));
-			return ret;
+			var r = ScriptableObject.CreateInstance<STFUnrecognizedResource>();
+			
+			return State.AddResource(r, null, r.Id);
 		}
-	}*/
+	}
+
+	public class STFUnrecognizedResourceImporter
+	{
+		public static void ParseFromJson(ISTFImportState State, JObject Json, string Id)
+		{
+			var ret = ScriptableObject.CreateInstance<STFUnrecognizedResource>();
+			ret.Id = Id;
+			ret.PreservedJson = Json.ToString();
+
+			State.SaveResource(ret, "Asset", Id);
+		}
+	}
 }
 
 #endif
