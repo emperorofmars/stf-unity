@@ -5,6 +5,7 @@ using System.Linq;
 using STF.IdComponents;
 using STF.Serde;
 using STF.Util;
+using UnityEditor;
 using UnityEditor.VersionControl;
 using UnityEngine;
 
@@ -13,8 +14,9 @@ namespace STF.Tools
 	// Utility to setup a non STF Unity scene into the STF Unity intermediary format. Adds uuid's to everything, determines armatures and places the appropriate STF components. Will be used by the default exporter automatically if the exported scene is not set up.
 	public static class STFSetup
 	{
-		public static void SetupStandaloneAssetInplace(GameObject root)
+		public static List<GameObject> SetupStandaloneAssetInplace(GameObject root)
 		{
+			var ret = new List<GameObject>();
 			// Setup main asset info
 			var asset = root.GetComponent<STFAsset>();
 			if(asset == null)
@@ -25,8 +27,11 @@ namespace STF.Tools
 				asset.assetInfo.assetName = root.name;
 				asset.assetInfo.assetVersion = "0.0.1";
 			}
-			asset.ResourceMeta = STFArmatureUtil.FindAndSetupArmaturesInplace(root);
+			var armatureResult = STFArmatureUtil.FindAndSetupArmaturesInplace(root);
+			asset.ResourceMeta = armatureResult.ResourceMeta;
+			ret.AddRange(armatureResult.CreatedGos);
 			SetupIds(root);
+			return ret;
 		}
 
 		/*public static List<UnityEngine.Object> SetupAddonAssetInplace(GameObject root)
@@ -90,9 +95,15 @@ namespace STF.Tools
 			}
 		}*/
 
-		public static Dictionary<UnityEngine.Object, UnityEngine.Object> FindAndSetupArmaturesInplace(GameObject Root)
+		public class Result
 		{
-			var resourceMeta = new Dictionary<UnityEngine.Object, UnityEngine.Object>();
+			public Dictionary<UnityEngine.Object, UnityEngine.Object> ResourceMeta = new Dictionary<UnityEngine.Object, UnityEngine.Object>();
+			public List<GameObject> CreatedGos = new List<GameObject>();
+		}
+
+		public static Result FindAndSetupArmaturesInplace(GameObject Root)
+		{
+			var ret = new Result();
 
 			var armatureInstancesToSetup = new List<STFArmatureInstanceNode>();
 			foreach(var smr in Root.GetComponentsInChildren<SkinnedMeshRenderer>())
@@ -102,6 +113,7 @@ namespace STF.Tools
 				if(meshInstance == null) meshInstance = smr.gameObject.AddComponent<STFMeshInstance>();
 				// Check if an armatureInstance exists
 				var armatureInstanceGo = smr.rootBone?.parent?.gameObject;
+				if(armatureInstanceGo == null) throw new Exception("Incorrectly setup SkinnedMeshRenderer: " + smr);
 				var armatureInstance = armatureInstanceGo.GetComponent<STFArmatureInstanceNode>();
 				if(armatureInstance == null) armatureInstance = armatureInstanceGo.AddComponent<STFArmatureInstanceNode>();
 				// Setup armatureInstance to the definetively correct values
@@ -112,22 +124,30 @@ namespace STF.Tools
 				if(armatureInstance.armature == null && !armatureInstancesToSetup.Contains(armatureInstance))
 				{
 					armatureInstancesToSetup.Add(armatureInstance);
-					SetupArmature(smr, armatureInstance);
+					ret.CreatedGos.Add(SetupArmature(smr, armatureInstance));
 				}
-
-				if(!resourceMeta.ContainsKey(smr.sharedMesh))
+				if(!ret.ResourceMeta.ContainsKey(smr.sharedMesh))
 				{
-					var stfMesh = ScriptableObject.CreateInstance<STFMesh>();
-					stfMesh.ArmatureId = armatureInstance.armature.Id;
-					resourceMeta.Add(smr.sharedMesh, stfMesh);
+					if(AssetDatabase.IsMainAsset(smr.sharedMesh))
+					{
+						var assetPath = AssetDatabase.GetAssetPath(smr.sharedMesh);
+						var metaPath = Path.ChangeExtension(assetPath, "Asset");
+						ret.ResourceMeta.Add(smr.sharedMesh, AssetDatabase.LoadAssetAtPath<STFMesh>(metaPath));
+					}
+					else
+					{
+						var stfMesh = ScriptableObject.CreateInstance<STFMesh>();
+						stfMesh.ArmatureId = armatureInstance.armature.Id;
+						ret.ResourceMeta.Add(smr.sharedMesh, stfMesh);
+					}
 				}
 			}
-			// TODO: compare bind poses to see if the same armature, or a subset of one, is used multiple times in the scene
+			// TODO: compare bind poses to see if the same armature is used multiple times in the scene
 
-			return resourceMeta;
+			return ret;
 		}
 
-		public static void SetupArmature(SkinnedMeshRenderer Smr, STFArmatureInstanceNode ArmatureInstance)
+		public static GameObject SetupArmature(SkinnedMeshRenderer Smr, STFArmatureInstanceNode ArmatureInstance)
 		{
 			var armatureGo = new GameObject();
 			var armatureResource = armatureGo.AddComponent<STFArmatureNodeInfo>();
@@ -209,6 +229,7 @@ namespace STF.Tools
 				armatureResource.transform.localRotation = new Quaternion(Smr.rootBone.parent.localRotation.x, Smr.rootBone.parent.localRotation.y, Smr.rootBone.parent.localRotation.z, Smr.rootBone.parent.localRotation.w);
 				armatureResource.transform.localScale = new Vector3(Smr.rootBone.parent.localScale.x, Smr.rootBone.parent.localScale.y, Smr.rootBone.parent.localScale.z);
 			}
+			return armatureGo;
 		}
 	}
 }

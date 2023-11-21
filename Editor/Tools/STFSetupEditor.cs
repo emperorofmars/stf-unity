@@ -19,6 +19,7 @@ namespace STF.Tools
 	{
 		private Vector2 scrollPos;
 		public GameObject root;
+		public bool duplicate = true;
 
 		[MenuItem("STF Tools/Setup")]
 		public static void Init()
@@ -44,24 +45,18 @@ namespace STF.Tools
 			);
 			if(root && (root.transform.parent != null || root.GetComponent<STFAsset>() != null || root.GetComponent<ISTFNode>() != null)) root = null; // only root nodes allowed
 			GUILayout.EndHorizontal();
+			duplicate = GUILayout.Toggle(duplicate, "Setup On Duplicate");
 
 			drawHLine();
 
 			if(root && GUILayout.Button("Setup as STF intermediary format", GUILayout.ExpandWidth(true)))
 			{
-				/*var path = EditorUtility.SaveFolderPanel("Setup Resources Folder", "Assets", "STF_Setup_Resources_" + root.name);
-
-				if(Directory.Exists(path))
+				var rootInstance = root;
+				if(duplicate)
 				{
-					AssetDatabase.DeleteAsset(path);
-					AssetDatabase.Refresh();
+					rootInstance = Instantiate(root);
+					rootInstance.name = root.name + "_STFSetup";
 				}
-
-				if (path.StartsWith(Application.dataPath)) path = "Assets" + path.Substring(Application.dataPath.Length);
-				AssetDatabase.CreateFolder(path.Substring(0, path.Length - Path.GetFileName(path).Length), Path.GetFileName(path));*/
-
-				var rootInstance = Instantiate(root);
-				rootInstance.name = root.name + "_STFSetup";
 
 				STFSetup.SetupStandaloneAssetInplace(rootInstance);
 				root = null;

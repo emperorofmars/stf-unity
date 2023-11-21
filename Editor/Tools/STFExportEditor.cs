@@ -1,6 +1,7 @@
 
 #if UNITY_EDITOR
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -14,17 +15,18 @@ namespace STF.Tools
 {
 	// UI to export STF-Unity intermediary scenes into STF. Apart from selecting the main asset, optionally multiple secondary assets can be included into the export.
 
-	public class STFUIExport : EditorWindow
+	public class STFExportEditor : EditorWindow
 	{
 		private Vector2 scrollPos;
-		public STFAsset mainExport;
+		public GameObject mainExport;
 		private List<STFAsset> exports = new List<STFAsset>() {};
+		private bool DebugExport = true;
 
 
 		[MenuItem("STF Tools/Export")]
 		public static void Init()
 		{
-			STFUIExport window = EditorWindow.GetWindow(typeof(STFUIExport)) as STFUIExport;
+			STFExportEditor window = EditorWindow.GetWindow(typeof(STFExportEditor)) as STFExportEditor;
 			window.titleContent = new GUIContent("Export STF");
 			window.minSize = new Vector2(600, 700);
 		}
@@ -38,9 +40,9 @@ namespace STF.Tools
 			
 			GUILayout.BeginHorizontal();
 			GUILayout.Label("Select Main Asset", EditorStyles.whiteLargeLabel, GUILayout.ExpandWidth(false));
-			mainExport = (STFAsset)EditorGUILayout.ObjectField(
+			mainExport = (GameObject)EditorGUILayout.ObjectField(
 				mainExport,
-				typeof(STFAsset),
+				typeof(GameObject),
 				true,
 				GUILayout.ExpandWidth(true)
 			);
@@ -74,12 +76,14 @@ namespace STF.Tools
 			}
 			GUILayout.EndHorizontal();
 
+			DebugExport = GUILayout.Toggle(DebugExport, "Save Json Definition Extra");
+
 			GUILayout.Space(10);
 			drawHLine();
 			if(mainExport && GUILayout.Button("Export", GUILayout.ExpandWidth(true))) {
 				var path = EditorUtility.SaveFilePanel("STF Export", "Assets", mainExport.name + "01" + ".stf", "stf");
 				if(path != null && path.Length > 0) {
-					SerializeAsSTFBinary(mainExport, exports, path);
+					SerializeAsSTFBinary(mainExport, exports, path, DebugExport);
 				}
 			}
 			
@@ -94,9 +98,31 @@ namespace STF.Tools
 			GUILayout.Space(10);
 		}
 
-		private void SerializeAsSTFBinary(STFAsset MainAsset, List<STFAsset> SecondaryAssets, string ExportPath)
+		private void SerializeAsSTFBinary(GameObject MainAsset, List<STFAsset> SecondaryAssets, string ExportPath, bool DebugExport = true)
 		{
-			var exporter = new STFExporter(MainAsset, SecondaryAssets, ExportPath, true);
+			var trash = new List<GameObject>();
+			try
+			{
+				var exportInstance = Instantiate(mainExport);
+				exportInstance.name = mainExport.name;
+				trash.Add(exportInstance);
+				trash.AddRange(STFSetup.SetupStandaloneAssetInplace(exportInstance));
+				var exporter = new STFExporter(exportInstance.GetComponent<STFAsset>(), SecondaryAssets, ExportPath, DebugExport);
+			}
+			catch(Exception e)
+			{
+				Debug.LogError(e);
+			}
+			finally
+			{
+				foreach(var trashObject in trash)
+				{
+					if(trashObject != null)
+					{
+						UnityEngine.Object.DestroyImmediate(trashObject);
+					}
+				}
+			}
 			return;
 		}
 	}
