@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 
@@ -11,6 +12,7 @@ namespace STF.Serde
 {
 	public class STFMeshInstance : ASTFNodeComponent
 	{
+		public static string _TYPE = "STF.mesh_instance";
 		public STFArmatureInstanceNode ArmatureInstance;
 		public string ArmatureInstanceId;
 	}
@@ -20,35 +22,35 @@ namespace STF.Serde
 		public override KeyValuePair<string, JObject> SerializeToJson(ISTFExportState State, Component component)
 		{
 			SkinnedMeshRenderer c = (SkinnedMeshRenderer)component;
-			var ret = new JObject();
-			/*ret.Add("type", "STF.mesh_instance");
-			ret.Add("mesh", state.GetResourceId(c.sharedMesh));
+			var meshId = STFSerdeUtil.SerializeResource(State, c.sharedMesh);
 
-			var smrAddon = c.gameObject.GetComponent<STFSkinnedMeshRendererAddon>();
-			if(smrAddon) ret.Add("armature_instance", smrAddon.ArmatureInstanceId);
-			else ret.Add("armature_instance", state.GetNodeId(c.rootBone.parent.gameObject));
+			var ret = new JObject {
+				{"type", STFMeshInstance._TYPE},
+				{"mesh", meshId}
+			};
 
-			ret.Add("materials", new JArray(c.sharedMaterials.Select(m => m != null ? state.GetResourceId(m) : null)));
+			var meshInstance = c.gameObject.GetComponent<STFMeshInstance>();
+			if(meshInstance.ArmatureInstanceId != null && meshInstance.ArmatureInstanceId.Length > 0) ret.Add("armature_instance", meshInstance.ArmatureInstanceId);
+			else ret.Add("armature_instance", State.Nodes[c.rootBone.parent.gameObject].Key);
+
+			//ret.Add("materials", new JArray(c.sharedMaterials.Select(m => m != null ? State.Resources[m].Key : null)));
 			ret.Add("morphtarget_values", new JArray(Enumerable.Range(0, c.sharedMesh.blendShapeCount).Select(i => c.GetBlendShapeWeight(i))));
 			
-			ret.Add("resources_used", new JArray(state.GetResourceId(c.sharedMesh), ret["armature_instance"]));
-			((JArray)ret["resources_used"]).Merge(ret["morphtarget_values"]);*/
-			return new KeyValuePair<string, JObject>("", ret);
+			ret.Add("resources_used", new JArray(meshId, ret["armature_instance"]));
+			((JArray)ret["resources_used"]).Merge(ret["morphtarget_values"]);
+				
+			return new KeyValuePair<string, JObject>(meshInstance.Id, ret);
 		}
 	}
 
 	public class STFMeshInstanceImporter : ASTFNodeComponentImporter
 	{
-		public static string _TYPE = "STF.mesh_instance";
-
 		public override void ParseFromJson(ISTFAssetImportState State, JObject Json, string Id, GameObject Go)
 		{
 			var c = Go.AddComponent<SkinnedMeshRenderer>();
 			var meshInstanceComponent = Go.AddComponent<STFMeshInstance>();
 			meshInstanceComponent.Id = Id;
 			State.AddComponent(meshInstanceComponent, Id);
-
-			Debug.Log(Json);
 
 			var meta = (STFMesh)State.Resources[(string)Json["mesh"]];
 			var resource = meta.Resource;

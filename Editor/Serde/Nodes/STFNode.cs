@@ -27,37 +27,8 @@ namespace STF.Serde
 				{"name", Go.name},
 				{"trs", TRSUtil.SerializeTRS(Go)},
 				{"children", STFSerdeUtil.SerializeChildren(State, Go)},
-				{"components", STFSerdeUtil.SerializeComponents(State, Go.GetComponents<Component>(), new List<Type> {typeof(Transform), typeof(ISTFNode), typeof(Animator), typeof(STFAsset)})}
+				{"components", STFSerdeUtil.SerializeComponents(State, Go.GetComponents<Component>(), new List<Type> {typeof(Transform), typeof(ISTFNode), typeof(STFNode), typeof(Animator), typeof(STFAsset)})}
 			};
-
-			/*var childIds = new JArray();
-			for(int childIdx = 0; childIdx < Go.transform.childCount; childIdx++)
-			{
-				var child = STFSerdeUtil.SerializeNode(State, Go.transform.GetChild(childIdx).gameObject);
-				if(child != null) childIds.Add(child);
-				else
-				{
-					Debug.LogWarning($"Skipping Unrecognized Unity Node: {Go.transform.GetChild(childIdx)}");
-				}
-			}
-			ret.Add("children", childIds);*/
-
-			/*var components = new JObject();
-			foreach(var component in Go.GetComponents<Component>())
-			{
-				if(component.GetType() == typeof(Transform)) continue;
-				if(component is ISTFNode) continue;
-				if(component.GetType() == typeof(Animator)) continue;
-				if(component.GetType() == typeof(STFAsset)) continue;
-
-				var serializedComponent = STFSerdeUtil.SerializeComponent(State, component);
-				if(serializedComponent.Key != null)	components.Add(serializedComponent.Key, serializedComponent.Value);
-				else
-				{
-					Debug.LogWarning($"Skipping Unrecognized Unity Component: {component}");
-				}
-			}
-			ret.Add("components", components);*/
 
 			return State.AddNode(Go, ret, node.NodeId);
 		}

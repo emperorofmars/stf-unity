@@ -47,13 +47,13 @@ namespace STF.Serde
 		};
 		// Also add node exporters. As they cannot be mapped to a Unity type, devise a way for them to determine wether to handle a node or not, perhaps with priorities or something
 		public static readonly Dictionary<string, ISTFNodeComponentImporter> DefaultNodeComponentImporters = new Dictionary<string, ISTFNodeComponentImporter>() {
-			{STFMeshInstanceImporter._TYPE, new STFMeshInstanceImporter()},
+			{STFMeshInstance._TYPE, new STFMeshInstanceImporter()},
 			//{STFTwistConstraintBack._TYPE, new STFTwistConstraintBackImporter()},
 			//{STFTwistConstraintForward._TYPE, new STFTwistConstraintForwardImporter()},
 			//{STFAnimationHolder._TYPE, new STFAnimationHolderImporter()}
 		};
 		public static readonly Dictionary<Type, ISTFNodeComponentExporter> DefaultNodeComponentExporters = new Dictionary<Type, ISTFNodeComponentExporter>() {
-			//{typeof(SkinnedMeshRenderer), new STFMeshInstanceExporter()},
+			{typeof(SkinnedMeshRenderer), new STFMeshInstanceExporter()},
 			//{typeof(STFTwistConstraintBack), new STFTwistConstraintBackExporter()},
 			//{typeof(STFTwistConstraintForward), new STFTwistConstraintForwardExporter()},
 			//{typeof(STFAnimationHolder), new STFAnimationHolderExporter()}
@@ -66,7 +66,7 @@ namespace STF.Serde
 			//{STFAnimationImporter._TYPE, new STFAnimationImporter()}
 		};
 		public static readonly Dictionary<Type, ISTFResourceExporter> DefaultResourceExporters = new Dictionary<Type, ISTFResourceExporter>() {
-			//{typeof(Mesh), new STFMeshExporter()},
+			{typeof(Mesh), new STFMeshExporter()},
 			{typeof(Texture2D), new STFTexture2dExporter()},
 			{typeof(STFTexture), new STFTextureMetaExporter()},
 			{typeof(STFArmature), new STFArmatureExporter()},

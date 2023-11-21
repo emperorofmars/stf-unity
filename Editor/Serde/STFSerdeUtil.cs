@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using Codice.Client.Common.TreeGrouper;
 using Newtonsoft.Json.Linq;
 using STF.Util;
@@ -73,6 +74,7 @@ namespace STF.Serde
 
 		public static string SerializeNode(ISTFExportState State, GameObject Go)
 		{
+			if(State.Nodes.ContainsKey(Go)) return State.Nodes[Go].Key;
 			var node = Go.GetComponent<ISTFNode>();
 			if(node != null && State.Context.NodeExporters.ContainsKey(node.Type))
 			{
@@ -109,7 +111,7 @@ namespace STF.Serde
 			}
 			else
 			{
-				Debug.LogWarning($"Unrecognized NodeComponent: {NodeComponent.GetType()}");
+				Debug.LogWarning($"Unrecognized Node Component: {NodeComponent.GetType()}");
 				// Unrecognized Asset
 				return new KeyValuePair<string, JObject>(null, null);
 			}
@@ -117,6 +119,7 @@ namespace STF.Serde
 
 		public static string SerializeResource(ISTFExportState State, UnityEngine.Object Resource)
 		{
+			if(State.Resources.ContainsKey(Resource)) return State.Resources[Resource].Key;
 			if(State.Context.ResourceExporters.ContainsKey(Resource.GetType()))
 			{
 				Debug.Log($"Serializing Resource: {Resource.GetType()}");

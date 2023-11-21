@@ -28,13 +28,24 @@ namespace STF.Serde
 		public string SerializeToJson(ISTFExportState State, GameObject Go)
 		{
 			var node = Go.GetComponent<STFArmatureInstanceNode>();
+			var armatureInstanceChildren = new JArray();
+			for(int childIdx = 0; childIdx < Go.transform.childCount; childIdx++)
+			{
+				var child = Go.transform.GetChild(childIdx);
+				if(child.GetComponent<STFBoneNode>() == null || child.GetComponent<STFBoneInstanceNode>() == null)
+				{
+					armatureInstanceChildren.Add(STFSerdeUtil.SerializeNode(State, child.gameObject));
+				}
+			}
 			var ret = new JObject
 			{
 				{"type", STFArmatureInstanceNode._TYPE},
 				{"name", Go.name},
 				{"trs", TRSUtil.SerializeTRS(Go)},
-				{"children", STFSerdeUtil.SerializeChildren(State, Go)},
-				{"components", STFSerdeUtil.SerializeComponents(State, Go.GetComponents<Component>(), new List<Type> {typeof(Transform), typeof(ISTFNode), typeof(Animator), typeof(STFAsset)})},
+				{"children", armatureInstanceChildren},
+				{"components", STFSerdeUtil.SerializeComponents(State, Go.GetComponents<Component>(), new List<Type> {
+						typeof(Transform), typeof(ISTFNode), typeof(Animator), typeof(STFAsset), typeof(STFNode), typeof(STFBoneNode), typeof(STFBoneInstanceNode), typeof(STFArmatureNodeInfo), typeof(STFArmatureInstanceNode)
+				})},
 				{"armature", STFSerdeUtil.SerializeResource(State, node.armature)},
 			};
 			var boneInstances = new JArray();
@@ -42,13 +53,22 @@ namespace STF.Serde
 			{
 				var bone = entry.GetComponent<STFBoneNode>();
 				var boneInstance = entry.GetComponent<STFBoneInstanceNode>();
+				var boneInstanceChildren = new JArray();
+				for(int childIdx = 0; childIdx < boneInstance.transform.childCount; childIdx++)
+				{
+					var child = boneInstance.transform.GetChild(childIdx);
+					if(child.GetComponent<STFBoneNode>() == null || child.GetComponent<STFBoneInstanceNode>() == null)
+					{
+						boneInstanceChildren.Add(STFSerdeUtil.SerializeNode(State, child.gameObject));
+					}
+				}
 				var boneInstanceJson = new JObject {
 					{"type", STFBoneInstanceNode._TYPE},
 					{"name", boneInstance.name},
 					{"bone", bone.NodeId},
 					{"trs", TRSUtil.SerializeTRS(boneInstance.gameObject)},
-					{"children", STFSerdeUtil.SerializeChildren(State, boneInstance.gameObject)},
-					{"components", STFSerdeUtil.SerializeComponents(State, boneInstance.GetComponents<Component>(), new List<Type> {typeof(Transform), typeof(ISTFNode), typeof(Animator), typeof(STFAsset)})},
+					{"children", boneInstanceChildren},
+					{"components", STFSerdeUtil.SerializeComponents(State, boneInstance.GetComponents<Component>(), new List<Type> {typeof(Transform), typeof(ISTFNode), typeof(Animator), typeof(STFAsset), typeof(STFNode), typeof(STFBoneNode), typeof(STFBoneInstanceNode)})},
 				};
 				boneInstances.Add(State.AddNode(boneInstance.gameObject, boneInstanceJson, boneInstance.NodeId));
 			}

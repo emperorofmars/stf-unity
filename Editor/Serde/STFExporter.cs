@@ -62,6 +62,7 @@ namespace STF.Serde
 						// Unrecognized Asset
 					}
 				}
+				_runTasks();
 
 				JObject Json = new JObject
 				{
@@ -102,6 +103,21 @@ namespace STF.Serde
 					}
 				}
 			}
+		}
+
+		private void _runTasks()
+		{
+			do
+			{
+				var currentTasks = state.Tasks;
+				state.Tasks = new List<Task>();
+				foreach(var task in currentTasks)
+				{
+					task.RunSynchronously();
+					if(task.Exception != null) throw task.Exception;
+				}
+			}
+			while(state.Tasks.Count > 0);
 		}
 	}
 }

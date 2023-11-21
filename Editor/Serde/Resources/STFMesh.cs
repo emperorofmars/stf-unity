@@ -32,7 +32,7 @@ namespace STF.Serde
 			var usedResources = new JArray();
 			
 			var assetPath = AssetDatabase.GetAssetPath(mesh);
-			var metaPath = Path.Combine(Path.GetDirectoryName(assetPath), Path.ChangeExtension(assetPath, "Asset"));
+			var metaPath = Path.ChangeExtension(assetPath, "Asset");
 			var meta = AssetDatabase.LoadAssetAtPath<STFMesh>(metaPath);
 
 			ret.Add("type", STFMeshImporter._TYPE);
