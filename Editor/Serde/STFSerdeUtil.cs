@@ -49,7 +49,6 @@ namespace STF.Serde
 				else
 				{
 					Debug.LogWarning($"Unrecognized Component: {type}");
-					//
 				}
 			}
 		}
@@ -89,12 +88,12 @@ namespace STF.Serde
 			}
 		}
 
-		public static JObject SerializeComponents(ISTFExportState State, Component[] NodeComponents, List<Type> Exclusions)
+		public static JObject SerializeComponents(ISTFExportState State, Component[] NodeComponents)
 		{
 			var ret = new JObject();
 			foreach(var component in NodeComponents)
 			{
-				if(Exclusions != null && Exclusions.Find(e => component.GetType().IsSubclassOf(e) || component.GetType() == e) != null) continue;
+				if(State.Context.ExportExclusions.Find(e => component.GetType().IsSubclassOf(e) || component.GetType() == e) != null) continue;
 				var serializedComponent = SerializeComponent(State, component);
 				if(serializedComponent.Key != null)	ret.Add(serializedComponent.Key, serializedComponent.Value);
 				else Debug.LogWarning($"Skipping Unrecognized Unity Component: {component}");

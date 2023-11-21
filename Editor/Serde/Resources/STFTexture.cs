@@ -23,16 +23,16 @@ namespace STF.Serde
 			throw new NotImplementedException();
 		}
 
-		public string SerializeToJson(ISTFExportState state, UnityEngine.Object resource)
+		public string SerializeToJson(ISTFExportState State, UnityEngine.Object Resource)
 		{
-			var texture = (Texture2D)resource;
-			var ret = new JObject();
-			ret.Add("type", STFTextureImporter._TYPE);
+			var texture = (Texture2D)Resource;
+			var ret = new JObject{
+				{"type", STFTextureImporter._TYPE}
+			};
 
 			var assetPath = AssetDatabase.GetAssetPath(texture);
 			var arrayBuffer = File.ReadAllBytes(assetPath);
-			var metaPath = Path.Combine(Path.GetDirectoryName(assetPath), Path.ChangeExtension(assetPath, "Asset"));
-			var meta = AssetDatabase.LoadAssetAtPath<STFTexture>(metaPath);
+			var meta = State.LoadMeta<STFMesh>(Resource);
 
 			ret.Add("name", meta.Name);
 			ret.Add("format", Path.GetExtension(assetPath));
@@ -40,42 +40,11 @@ namespace STF.Serde
 			ret.Add("height", texture.height);
 			if(texture.graphicsFormat.ToString().ToLower().EndsWith("unorm")) ret.Add("linear", true);
 
-			var bufferId = state.AddBuffer(arrayBuffer, meta?.OriginalBufferId);
+			var bufferId = State.AddBuffer(arrayBuffer, meta?.OriginalBufferId);
 			ret.Add("buffer", bufferId);
 
 			ret.Add("used_buffers", new JArray() {bufferId});
-
-			return state.AddResource(resource, ret, meta?.Id);
-		}
-	}
-
-	public class STFTextureMetaExporter : ISTFResourceExporter
-	{
-		public string ConvertPropertyPath(string UnityProperty)
-		{
-			throw new NotImplementedException();
-		}
-
-		public string SerializeToJson(ISTFExportState state, UnityEngine.Object resource)
-		{
-			var meta = (STFTexture)resource;
-			var ret = new JObject();
-			ret.Add("type", STFTextureImporter._TYPE);
-
-			var arrayBuffer = File.ReadAllBytes(meta.ResourceLocation);
-			var texture = AssetDatabase.LoadAssetAtPath<Texture2D>(meta.ResourceLocation);
-			
-			ret.Add("name", meta.Name);
-			ret.Add("format", Path.GetExtension(meta.ResourceLocation));
-			ret.Add("width", texture.width);
-			ret.Add("height", texture.height);
-			if(texture.graphicsFormat.ToString().ToLower().EndsWith("unorm")) ret.Add("linear", true);
-
-			var bufferId = state.AddBuffer(arrayBuffer, meta.OriginalBufferId);
-			ret.Add("buffer", bufferId);
-
-			ret.Add("used_buffers", new JArray() {bufferId});
-			return state.AddResource(resource, ret, meta?.Id);
+			return State.AddResource(Resource, ret, meta?.Id);
 		}
 	}
 

@@ -28,12 +28,9 @@ namespace STF.Serde
 		{
 			var ret = new JObject();
 			var mesh = (Mesh)Resource;
+			var meta = State.LoadMeta<STFMesh>(Resource);
 			
 			var usedResources = new JArray();
-			
-			var assetPath = AssetDatabase.GetAssetPath(mesh);
-			var metaPath = Path.ChangeExtension(assetPath, "Asset");
-			var meta = AssetDatabase.LoadAssetAtPath<STFMesh>(metaPath);
 
 			ret.Add("type", STFMeshImporter._TYPE);
 			ret.Add("name", mesh.name);

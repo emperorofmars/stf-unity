@@ -43,9 +43,7 @@ namespace STF.Serde
 				{"name", Go.name},
 				{"trs", TRSUtil.SerializeTRS(Go)},
 				{"children", armatureInstanceChildren},
-				{"components", STFSerdeUtil.SerializeComponents(State, Go.GetComponents<Component>(), new List<Type> {
-						typeof(Transform), typeof(ISTFNode), typeof(Animator), typeof(STFAsset), typeof(STFNode), typeof(STFBoneNode), typeof(STFBoneInstanceNode), typeof(STFArmatureNodeInfo), typeof(STFArmatureInstanceNode)
-				})},
+				{"components", STFSerdeUtil.SerializeComponents(State, Go.GetComponents<Component>())},
 				{"armature", STFSerdeUtil.SerializeResource(State, node.armature)},
 			};
 			var boneInstances = new JArray();
@@ -68,7 +66,7 @@ namespace STF.Serde
 					{"bone", bone.NodeId},
 					{"trs", TRSUtil.SerializeTRS(boneInstance.gameObject)},
 					{"children", boneInstanceChildren},
-					{"components", STFSerdeUtil.SerializeComponents(State, boneInstance.GetComponents<Component>(), new List<Type> {typeof(Transform), typeof(ISTFNode), typeof(Animator), typeof(STFAsset), typeof(STFNode), typeof(STFBoneNode), typeof(STFBoneInstanceNode)})},
+					{"components", STFSerdeUtil.SerializeComponents(State, boneInstance.GetComponents<Component>())},
 				};
 				boneInstances.Add(State.AddNode(boneInstance.gameObject, boneInstanceJson, boneInstance.NodeId));
 			}

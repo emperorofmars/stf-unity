@@ -27,7 +27,7 @@ namespace STF.Serde
 				{"name", Go.name},
 				{"trs", TRSUtil.SerializeTRS(Go)},
 				{"children", STFSerdeUtil.SerializeChildren(State, Go)},
-				{"components", STFSerdeUtil.SerializeComponents(State, Go.GetComponents<Component>(), new List<Type> {typeof(Transform), typeof(ISTFNode), typeof(STFNode), typeof(Animator), typeof(STFAsset)})}
+				{"components", STFSerdeUtil.SerializeComponents(State, Go.GetComponents<Component>())}
 			};
 
 			return State.AddNode(Go, ret, node.NodeId);

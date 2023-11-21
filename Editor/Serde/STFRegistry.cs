@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System;
 using UnityEngine;
+using STF.IdComponents;
+using System.Linq;
 
 namespace STF.Serde
 {
@@ -22,6 +24,7 @@ namespace STF.Serde
 		public Dictionary<Type, ISTFNodeComponentExporter> NodeComponentExporters = new Dictionary<Type, ISTFNodeComponentExporter>();
 		public Dictionary<Type, ISTFResourceExporter> ResourceExporters = new Dictionary<Type, ISTFResourceExporter>();
 		//public Dictionary<Type, ISTFResourceComponentExporter> ResourceComponentExporters = new Dictionary<Type, ISTFResourceComponentExporter>();
+		public List<Type> ExportExclusions = new List<Type>();
 	}
 
 	// Used to register STF object types. Default ones are included by default, additional ones can be added automatically.
@@ -68,10 +71,12 @@ namespace STF.Serde
 		public static readonly Dictionary<Type, ISTFResourceExporter> DefaultResourceExporters = new Dictionary<Type, ISTFResourceExporter>() {
 			{typeof(Mesh), new STFMeshExporter()},
 			{typeof(Texture2D), new STFTexture2dExporter()},
-			{typeof(STFTexture), new STFTextureMetaExporter()},
 			{typeof(STFArmature), new STFArmatureExporter()},
 			//{typeof(Material), new STFMaterialExporter()},
 			//{typeof(AnimationClip), new STFAnimationExporter()}
+		};
+		public static readonly List<Type> DefaultExportExclusions = new List<Type>() {
+			typeof(Transform), typeof(ISTFNode), typeof(Animator), typeof(STFAsset), typeof(STFNode), typeof(STFBoneNode), typeof(STFBoneInstanceNode), typeof(STFMeshInstance), typeof(STFArmatureInstanceNode), typeof(STFArmatureNodeInfo)
 		};
 
 		private static Dictionary<string, ISTFAssetImporter> RegisteredAssetImporters = new Dictionary<string, ISTFAssetImporter>();
@@ -86,6 +91,8 @@ namespace STF.Serde
 		private static Dictionary<string, ISTFResourceImporter> RegisteredResourceImporters = new Dictionary<string, ISTFResourceImporter>();
 		private static Dictionary<Type, ISTFResourceExporter> RegisteredResourceExporters = new Dictionary<Type, ISTFResourceExporter>();
 
+		private static readonly List<Type> RegisteredExportExclusions = new List<Type>();
+
 		public static void RegisterAssetImporter(string type, ISTFAssetImporter importer) { RegisteredAssetImporters.Add(type, importer); }
 		public static void RegisterAssetExporter(string type, ISTFAssetExporter exporter) { RegisteredAssetExporters.Add(type, exporter); }
 		public static void RegisterNodeImporter(string type, ISTFNodeImporter importer) { RegisteredNodeImporters.Add(type, importer); }
@@ -94,6 +101,7 @@ namespace STF.Serde
 		public static void RegisterNodeComponentExporter(Type type, ISTFNodeComponentExporter exporter) { RegisteredNodeComponentExporters.Add(type, exporter); }
 		public static void RegisterResourceImporter(string type, ISTFResourceImporter importer) { RegisteredResourceImporters.Add(type, importer); }
 		public static void RegisterResourceExporter(Type type, ISTFResourceExporter exporter) { RegisteredResourceExporters.Add(type, exporter); }
+		public static void RegisterExportExclusion(Type type) { RegisteredExportExclusions.Add(type); }
 
 		public static bool IsAssetImporterRegistered(string type) { return RegisteredAssetImporters.ContainsKey(type); }
 		public static bool IsAssetExporterRegistered(string type) { return RegisteredAssetExporters.ContainsKey(type); }
@@ -103,6 +111,7 @@ namespace STF.Serde
 		public static bool IsNodeComponentExporterRegistered(Type type) { return RegisteredNodeComponentExporters.ContainsKey(type); }
 		public static bool IsResourceImporterRegistered(string type) { return RegisteredResourceImporters.ContainsKey(type); }
 		public static bool IsResourceExporterRegistered(Type type) { return RegisteredResourceExporters.ContainsKey(type); }
+		public static bool IsExportExclusionRegistered(Type type) { return RegisteredExportExclusions.Contains(type); }
 
 		public static ISTFAssetImporter GetAssetImporter(string type) { return RegisteredAssetImporters[type]; }
 		public static ISTFAssetExporter GetAssetExporter(string type) { return RegisteredAssetExporters[type]; }
@@ -112,6 +121,7 @@ namespace STF.Serde
 		public static ISTFNodeComponentExporter GetNodeComponentExporter(Type type) { return RegisteredNodeComponentExporters[type]; }
 		public static ISTFResourceImporter GetResourceImporter(string type) { return RegisteredResourceImporters[type]; }
 		public static ISTFResourceExporter GetResourceExporter(Type type) { return RegisteredResourceExporters[type]; }
+		public static List<Type> GetExportExclusions() { return RegisteredExportExclusions; }
 
 		public static STFImportContext GetDefaultImportContext()
 		{
@@ -183,13 +193,16 @@ namespace STF.Serde
 				else resourceExporters.Add(e.Key, e.Value);
 			}
 
+			var exportExclusions = new List<Type>(DefaultExportExclusions.Union(RegisteredExportExclusions));
+
 			//ResourceComponents
 
 			return new STFExportContext() {
 				AssetExporters = assetExporters,
 				NodeExporters = nodeExporters,
 				NodeComponentExporters = componentExporters,
-				ResourceExporters = resourceExporters
+				ResourceExporters = resourceExporters,
+				ExportExclusions = exportExclusions
 			};
 		}
 	}

@@ -43,7 +43,6 @@ namespace STF.Serde
 			
 			ret.Add("resources_used", new JArray(meshId, ret["armature_instance"])); // add materials
 			//((JArray)ret["resources_used"]).Merge(ret["morphtarget_values"]);
-				
 			return new KeyValuePair<string, JObject>(meshInstance.Id, ret);
 		}
 	}

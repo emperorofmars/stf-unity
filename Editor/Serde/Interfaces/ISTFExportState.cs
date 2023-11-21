@@ -38,6 +38,8 @@ namespace STF.Serde
 		string AddResource(UnityEngine.Object Resource, JObject Serialized, string Id = null);
 		string AddBuffer(byte[] Data, string Id = null);
 		void AddTrash(UnityEngine.Object Trash);
+
+		T LoadMeta<T>(UnityEngine.Object Resource) where T: UnityEngine.Object;
 	}
 
 	public class STFExportState : ISTFExportState
@@ -118,6 +120,13 @@ namespace STF.Serde
 		public void AddTrash(UnityEngine.Object Trash)
 		{
 			this.Trash.Add(Trash);
+		}
+
+		public T LoadMeta<T>(UnityEngine.Object Resource) where T: UnityEngine.Object
+		{
+			var assetPath = AssetDatabase.GetAssetPath(Resource);
+			var metaPath = Path.ChangeExtension(assetPath, "Asset");
+			return AssetDatabase.LoadAssetAtPath<T>(metaPath);
 		}
 	}
 }
