@@ -59,8 +59,8 @@ namespace STF.Serde
 				state.AddNode(bone.gameObject, boneJson, boneId);
 			}
 			ret.Add("bones", new JArray(boneIds));
+			
 			ret.Add("used_nodes", new JArray(boneIds));
-
 			return state.AddResource(armature, ret, armature.ArmatureId);
 		}
 	}

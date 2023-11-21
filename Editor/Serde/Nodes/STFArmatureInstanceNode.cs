@@ -74,6 +74,8 @@ namespace STF.Serde
 			}
 			ret.Add("bone_instances", boneInstances);
 
+			ret.Add("used_resources", new JArray{ret["armature"]});
+			ret.Add("used_nodes", new JArray{ret["bone_instances"]});
 			return State.AddNode(Go, ret, node.NodeId);
 		}
 	}

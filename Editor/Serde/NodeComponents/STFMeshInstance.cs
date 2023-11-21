@@ -19,6 +19,11 @@ namespace STF.Serde
 
 	public class STFMeshInstanceExporter : ASTFNodeComponentExporter
 	{
+		public override string ConvertPropertyPath(string UnityProperty)
+		{
+			throw new NotImplementedException();
+		}
+
 		public override KeyValuePair<string, JObject> SerializeToJson(ISTFExportState State, Component component)
 		{
 			SkinnedMeshRenderer c = (SkinnedMeshRenderer)component;
@@ -36,8 +41,8 @@ namespace STF.Serde
 			//ret.Add("materials", new JArray(c.sharedMaterials.Select(m => m != null ? State.Resources[m].Key : null)));
 			ret.Add("morphtarget_values", new JArray(Enumerable.Range(0, c.sharedMesh.blendShapeCount).Select(i => c.GetBlendShapeWeight(i))));
 			
-			ret.Add("resources_used", new JArray(meshId, ret["armature_instance"]));
-			((JArray)ret["resources_used"]).Merge(ret["morphtarget_values"]);
+			ret.Add("resources_used", new JArray(meshId, ret["armature_instance"])); // add materials
+			//((JArray)ret["resources_used"]).Merge(ret["morphtarget_values"]);
 				
 			return new KeyValuePair<string, JObject>(meshInstance.Id, ret);
 		}
@@ -45,6 +50,11 @@ namespace STF.Serde
 
 	public class STFMeshInstanceImporter : ASTFNodeComponentImporter
 	{
+		public override string ConvertPropertyPath(string STFProperty)
+		{
+			throw new NotImplementedException();
+		}
+
 		public override void ParseFromJson(ISTFAssetImportState State, JObject Json, string Id, GameObject Go)
 		{
 			var c = Go.AddComponent<SkinnedMeshRenderer>();

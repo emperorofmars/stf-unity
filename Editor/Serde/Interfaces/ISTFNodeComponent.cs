@@ -31,16 +31,19 @@ namespace STF.Serde
 	
 	public interface ISTFNodeComponentExporter
 	{
+		string ConvertPropertyPath(string UnityProperty);
 		KeyValuePair<string, JObject> SerializeToJson(ISTFExportState State, Component Component);
 	}
 	
 	public interface ISTFNodeComponentImporter
 	{
+		string ConvertPropertyPath(string STFProperty);
 		void ParseFromJson(ISTFAssetImportState State, JObject Json, string Id, GameObject Go);
 	}
 	
 	public abstract class ASTFNodeComponentExporter : ISTFNodeComponentExporter
 	{
+		public abstract string ConvertPropertyPath(string UnityProperty);
 		abstract public KeyValuePair<string, JObject> SerializeToJson(ISTFExportState State, Component Component);
 
 		public static void SerializeRelationships(ISTFNodeComponent Component, JObject Json)
@@ -53,6 +56,7 @@ namespace STF.Serde
 	
 	public abstract class ASTFNodeComponentImporter : ISTFNodeComponentImporter
 	{
+		public abstract string ConvertPropertyPath(string STFProperty);
 		abstract public void ParseFromJson(ISTFAssetImportState State, JObject Json, string Id, GameObject Go);
 
 		public static void ParseRelationships(JObject Json, ISTFNodeComponent Component)

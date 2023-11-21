@@ -97,17 +97,6 @@ namespace STF.Tools
 		private void SerializeAsSTFBinary(STFAsset MainAsset, List<STFAsset> SecondaryAssets, string ExportPath)
 		{
 			var exporter = new STFExporter(MainAsset, SecondaryAssets, ExportPath, true);
-			/*var assets = new List<ISTFAssetExporter>() {CreateAssetExporter(mainExport)};
-			foreach(var export in secondaryExports)
-			{
-				assets.Add(CreateAssetExporter(export));
-			}
-			
-			var state = new STFExporter(assets);
-
-			File.WriteAllBytes(path, state.GetBinary());
-			File.WriteAllText(path + ".json", state.GetPrettyJson());*/
-
 			return;
 		}
 	}

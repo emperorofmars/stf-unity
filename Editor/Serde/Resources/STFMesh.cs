@@ -281,9 +281,8 @@ namespace STF.Serde
 			var bufferId = State.AddBuffer(byteArray, meta.OriginalBufferId);
 			ret.Add("buffer", bufferId);
 			
-			ret.Add("used_buffers", new JArray() {bufferId});
 			ret.Add("used_resources", usedResources);
-
+			ret.Add("used_buffers", new JArray() {bufferId});
 			return State.AddResource(mesh, ret, meta.Id);
 		}
 	}
