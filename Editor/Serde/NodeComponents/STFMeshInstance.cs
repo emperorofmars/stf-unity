@@ -106,7 +106,7 @@ namespace STF.Serde
 						materials[i] = mtfMaterial?.ConvertedMaterial;
 					}
 				}
-				catch(Exception e)
+				catch(Exception)
 				{
 					Debug.LogWarning("Material Import Error, Skipping.");
 				}

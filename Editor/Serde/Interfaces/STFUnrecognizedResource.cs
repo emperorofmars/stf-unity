@@ -33,8 +33,10 @@ namespace STF.Serde
 		public static string SerializeToJson(ISTFExportState State, UnityEngine.Object Resource)
 		{
 			var r = (STFUnrecognizedResource)Resource;
+			foreach(var resourceId in r.UsedResources) STFSerdeUtil.SerializeResource(State, resourceId);
+			foreach(var usedNode in r.UsedNodes) STFSerdeUtil.SerializeNode(State, usedNode.Item2);
+			foreach(var usedbuffer in r.UsedBuffers) State.AddBuffer(usedbuffer.Data, usedbuffer.Id);
 
-			//STFSerdeUtil.SerializeResource()
 			return State.AddResource(r, JObject.Parse(r.PreservedJson), r.Id);
 		}
 	}
