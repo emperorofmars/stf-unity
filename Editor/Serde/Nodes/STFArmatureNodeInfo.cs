@@ -16,7 +16,7 @@ namespace STF.Serde
 {
 	public class STFArmatureNodeInfo : MonoBehaviour
 	{
-		public string ArmatureId;
+		public string ArmatureId = Guid.NewGuid().ToString();
 		public string ArmatureName;
 		public GameObject Root;
 		public List<GameObject> Bones = new List<GameObject>();

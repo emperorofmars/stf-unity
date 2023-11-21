@@ -47,7 +47,7 @@ namespace STF.Serde
 					{"trs", TRSUtil.SerializeTRS(bone)},
 				};
 
-				var childIds = new String[bone.transform.childCount];
+				var childIds = new string[bone.transform.childCount];
 				for(int childIdx = 0; childIdx < bone.transform.childCount; childIdx++)
 				{
 					childIds[childIdx] = bone.transform.GetChild(childIdx).GetComponent<STFBoneNode>().NodeId;
@@ -80,12 +80,12 @@ namespace STF.Serde
 			State.AddTrash(go);
 			var armatureInfo = go.AddComponent<STFArmatureNodeInfo>();
 			
-			var ret = ScriptableObject.CreateInstance<STFArmature>();
-			ret.Id = Id;
-			ret.Name = (string)Json["name"];
+			var meta = ScriptableObject.CreateInstance<STFArmature>();
+			meta.Id = Id;
+			meta.Name = (string)Json["name"];
 
 			armatureInfo.ArmatureId = Id;
-			armatureInfo.ArmatureName = ret.Name;
+			armatureInfo.ArmatureName = meta.Name;
 
 			if(Json["trs"] != null) TRSUtil.ParseTRS(go, Json);
 
@@ -129,18 +129,18 @@ namespace STF.Serde
 				bindposes[i] = armatureInfo.Bones[i].transform.worldToLocalMatrix;
 			}
 
-			var ResourceLocation = Path.Combine(State.TargetLocation, STFConstants.ResourceDirectoryName, ret.Name + "_" + ret.Id + ".Prefab");
+			var ResourceLocation = Path.Combine(State.TargetLocation, STFConstants.ResourceDirectoryName, meta.Name + "_" + meta.Id + ".Prefab");
 			var saved = PrefabUtility.SaveAsPrefabAsset(go, ResourceLocation);
 
-			ret.ResourceLocation = ResourceLocation;
-			ret.Resource = saved;
-			ret.Bindposes = bindposes;
+			meta.ResourceLocation = ResourceLocation;
+			meta.Resource = saved;
+			meta.Bindposes = bindposes;
 			
-			State.AddResource(ret, Id);
-			AssetDatabase.CreateAsset(ret, Path.ChangeExtension(ret.ResourceLocation, "Asset"));
+			State.AddResource(meta, Id);
+			AssetDatabase.CreateAsset(meta, Path.ChangeExtension(meta.ResourceLocation, "Asset"));
 			AssetDatabase.Refresh();
 
-			return ret;
+			return meta;
 		}
 	}
 }

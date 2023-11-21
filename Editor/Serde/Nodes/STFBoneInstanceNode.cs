@@ -13,6 +13,7 @@ namespace STF.Serde
 	{
 		public static string _TYPE => "STF.bone_instance";
 		public override string Type => _TYPE;
+		public string BoneId;
 	}
 }
 

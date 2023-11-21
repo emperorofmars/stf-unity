@@ -49,7 +49,6 @@ namespace STF.Serde
 			var boneInstances = new JArray();
 			foreach(var entry in node.bones)
 			{
-				var bone = entry.GetComponent<STFBoneNode>();
 				var boneInstance = entry.GetComponent<STFBoneInstanceNode>();
 				var boneInstanceChildren = new JArray();
 				for(int childIdx = 0; childIdx < boneInstance.transform.childCount; childIdx++)
@@ -63,7 +62,7 @@ namespace STF.Serde
 				var boneInstanceJson = new JObject {
 					{"type", STFBoneInstanceNode._TYPE},
 					{"name", boneInstance.name},
-					{"bone", bone.NodeId},
+					{"bone", boneInstance.BoneId},
 					{"trs", TRSUtil.SerializeTRS(boneInstance.gameObject)},
 					{"children", boneInstanceChildren},
 					{"components", STFSerdeUtil.SerializeComponents(State, boneInstance.GetComponents<Component>())},
@@ -109,6 +108,7 @@ namespace STF.Serde
 				var bone = armatureInstance.GetComponentsInChildren<STFBoneNode>().First(bi => (string)boneInstanceJson["bone"] == bi.NodeId);
 				var boneInstance = bone.gameObject.AddComponent<STFBoneInstanceNode>();
 				boneInstance.NodeId = boneInstanceIds[i];
+				boneInstance.BoneId = bone.NodeId;
 				boneInstance.Origin = State.AssetInfo.assetId;
 				armatureInstance.bones[i] = boneInstance.gameObject;
 

@@ -16,8 +16,7 @@ using Newtonsoft.Json;
 
 namespace STF.Serde
 {
-	// The main star for import!
-	// Parses the Json and buffers based on the provided importers from the STFImportContext.
+	// The main star for export!
 	public class STFExporter
 	{
 		private STFExportState state;
