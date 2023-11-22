@@ -21,7 +21,7 @@ namespace MTF
 
 		public IPropertyValue ParseFromJson(IImportState State, JObject Json)
 		{
-			return new TexturePropertyValue { Texture = (Texture2D)State.GetResource((string)Json["value"]) };
+			return new TexturePropertyValue {Texture = (Texture2D)State.GetResource((string)Json["value"])};
 		}
 	}
 	public class TexturePropertyValueExporter : IPropertyValueExporter
@@ -44,6 +44,31 @@ namespace MTF
 		public string Type => _TYPE;
 		public Texture2D Texture;
 		public int Channel;
+	}
+	public class TextureChannelPropertyValueImporter : IPropertyValueImporter
+	{
+		public string ConvertPropertyPath(string STFProperty)
+		{
+			throw new NotImplementedException();
+		}
+
+		public IPropertyValue ParseFromJson(IImportState State, JObject Json)
+		{
+			return new TextureChannelPropertyValue {Texture = (Texture2D)State.GetResource((string)Json["texture"]), Channel = (int)Json["channel"]};
+		}
+	}
+	public class TextureChannelPropertyValueExporter : IPropertyValueExporter
+	{
+		public string ConvertPropertyPath(string UnityProperty)
+		{
+			throw new NotImplementedException();
+		}
+
+		public JObject SerializeToJson(IExportState State, IPropertyValue MTFProperty)
+		{
+			var p = (TextureChannelPropertyValue)MTFProperty;
+			return new JObject {{"type", TextureChannelPropertyValue._TYPE}, {"texture", State.AddResource(p.Texture)}, {"channel", p.Channel}};
+		}
 	}
 
 	[Serializable]

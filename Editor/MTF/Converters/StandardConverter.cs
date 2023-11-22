@@ -39,23 +39,34 @@ namespace MTF
 		}
 	}
 
-	public class MaterialParser : IMaterialParser
+	public class StandardParser : IMaterialParser
 	{
 		public string ShaderName {get => StandardConverter._SHADER_NAME;}
 		public Material ParseFromUnityMaterial(UnityEngine.Material UnityMaterial, Material ExistingMTFMaterial = null)
 		{
 			var ret = ExistingMTFMaterial != null ? ExistingMTFMaterial : ScriptableObject.CreateInstance<Material>();
+			ret.PreferedShaderPerTarget.Add(new Material.ShaderTarget{Platform = "unity3d", Shaders = new List<string>{StandardConverter._SHADER_NAME}});
+			ret.StyleHints.Add("realistic");
+			
 			if(UnityMaterial.GetTexture("_MainTex") != null)
 			{
 				var property = ret.Properties.FirstOrDefault(p => p.Type == "albedo");
-				if(property == null) property = new Material.Property();
+				if(property == null)
+				{
+					property = new Material.Property {Type = "albedo"};
+					ret.Properties.Add(property);
+				}
 				property.Values.Add(new TexturePropertyValue {Texture = (Texture2D)UnityMaterial.GetTexture("_MainTex")});
 			}
-			if(UnityMaterial.GetTexture("_Color") != null)
+			if(UnityMaterial.GetColor("_Color") != null)
 			{
 				var property = ret.Properties.FirstOrDefault(p => p.Type == "albedo");
-				if(property == null) property = new Material.Property();
-				property.Values.Add(new TexturePropertyValue {Texture = (Texture2D)UnityMaterial.GetTexture("_Color")});
+				if(property == null)
+				{
+					property = new Material.Property {Type = "albedo"};
+					ret.Properties.Add(property);
+				}
+				property.Values.Add(new ColorPropertyValue {Color = UnityMaterial.GetColor("_Color")});
 			}
 			return ret;
 		}

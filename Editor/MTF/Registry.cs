@@ -8,21 +8,23 @@ namespace MTF
 	{
 		public static readonly Dictionary<string, IPropertyValueImporter> DefaultPropertyValueImporters = new Dictionary<string, IPropertyValueImporter> {
 			{TexturePropertyValue._TYPE, new TexturePropertyValueImporter()},
-			{ColorPropertyValue._TYPE, new ColorPropertyValueImporter()}
+			{TextureChannelPropertyValue._TYPE, new TextureChannelPropertyValueImporter()},
+			{ColorPropertyValue._TYPE, new ColorPropertyValueImporter()},
 		};
 		public static readonly Dictionary<string, IPropertyValueExporter> DefaultPropertyValueExporters = new Dictionary<string, IPropertyValueExporter> {
 			{TexturePropertyValue._TYPE, new TexturePropertyValueExporter()},
-			{ColorPropertyValue._TYPE, new ColorPropertyValueExporter()}
+			{TextureChannelPropertyValue._TYPE, new TextureChannelPropertyValueExporter()},
+			{ColorPropertyValue._TYPE, new ColorPropertyValueExporter()},
 		};
 	}
-	
+
 	public class ShaderConverterRegistry
 	{
 		public static readonly Dictionary<string, IMaterialConverter> DefaultMaterialConverters = new Dictionary<string, IMaterialConverter> {
 			{StandardConverter._SHADER_NAME, new StandardConverter()},
 		};
 		public static readonly Dictionary<string, IMaterialParser> DefaultMaterialParsers = new Dictionary<string, IMaterialParser> {
-			{StandardConverter._SHADER_NAME, new MaterialParser()},
+			{StandardConverter._SHADER_NAME, new StandardParser()},
 		};
 	}
 }

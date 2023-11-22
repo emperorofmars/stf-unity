@@ -18,7 +18,7 @@ namespace STF.Serde
 		public override string Type => _TYPE;
 		public STFArmatureInstanceNode ArmatureInstance;
 		public string ArmatureInstanceId;
-		public List<MTF.Material> Materials;
+		public List<MTF.Material> Materials = new List<MTF.Material>();
 	}
 
 	public class STFMeshInstanceExporter : ASTFNodeComponentExporter
@@ -47,18 +47,17 @@ namespace STF.Serde
 			var materials = new JArray();
 			for(int matIdx = 0; matIdx < c.sharedMaterials.Length; matIdx++)
 			{
-				if(meshInstance.Materials.Count >= matIdx && meshInstance.Materials[matIdx] != null)
+				if(meshInstance.Materials.Count >= matIdx - 1 && meshInstance.Materials[matIdx] != null)
 				{
 					materials.Add(STFSerdeUtil.SerializeResource(State, meshInstance.Materials[matIdx]));
 				}
 				else
 				{
-					// convert to mtf material here
-					materials.Add(null);
+					materials.Add(STFSerdeUtil.SerializeResource(State, c.sharedMaterials[matIdx]));
 				}
 			}
 			
-			ret.Add("materials", new JArray(c.sharedMaterials.Select(m => m != null && State.Resources.ContainsKey(m) ? State.Resources[m].Key : null)));
+			ret.Add("materials", materials);
 			ret.Add("morphtarget_values", new JArray(Enumerable.Range(0, c.sharedMesh.blendShapeCount).Select(i => c.GetBlendShapeWeight(i))));
 
 			var resourcesUsed = new JArray(meshId, ret["armature_instance"]);
@@ -125,8 +124,10 @@ namespace STF.Serde
 					}
 					else
 					{
+						Debug.LogWarning("Material Import Error, Falling back to default material.");
 						var mtfMaterial = MTF.Material.CreateDefaultMaterial();
 						meshInstanceComponent.Materials[i] = mtfMaterial;
+						// actually convert
 						materials[i] = mtfMaterial?.ConvertedMaterial;
 					}
 				}

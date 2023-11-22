@@ -18,7 +18,7 @@ namespace MTF
 
 		public static Material CreateDefaultMaterial()
 		{
-			var ret = CreateInstance<MTF.Material>();
+			var ret = CreateInstance<Material>();
 			ret.PreferedShaderPerTarget.Add(new ShaderTarget{ Platform = "unity3d", Shaders = new List<string>{ "Standard" } });
 			ret.Properties.Add(new Property { Type = "Albedo", Values = new List<IPropertyValue> { new ColorPropertyValue{ Color = Color.white } } } );
 			return ret;

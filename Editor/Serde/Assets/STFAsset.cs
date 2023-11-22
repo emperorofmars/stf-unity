@@ -64,7 +64,6 @@ namespace STF.Serde
 
 				if(assetImportState.Context.NodeImporters.ContainsKey(type))
 				{
-					Debug.Log($"Parsing Node: {type}");
 					var rootGo = assetImportState.Context.NodeImporters[type].ParseFromJson(assetImportState, nodeJson, rootId);
 
 					var assetComponent = rootGo.AddComponent<STFAsset>();

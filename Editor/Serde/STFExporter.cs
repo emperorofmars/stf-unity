@@ -85,6 +85,7 @@ namespace STF.Serde
 			}
 			catch(Exception e)
 			{
+				Debug.LogError(e);
 				foreach(var node in state.Nodes.Keys)
 				{
 					if(node != null)

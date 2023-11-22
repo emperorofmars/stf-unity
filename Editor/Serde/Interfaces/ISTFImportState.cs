@@ -37,6 +37,7 @@ namespace STF.Serde
 		void SaveResource<T>(UnityEngine.Object Resource, string FileExtension, T Meta, string Id) where T: UnityEngine.Object, ISTFResource;
 		void SaveResource<T>(GameObject Resource, T Meta, string Id) where T: UnityEngine.Object, ISTFResource;
 		void SaveResource<T>(byte[] Resource, string FileExtension, T Meta, string Id) where T: UnityEngine.Object, ISTFResource;
+		void SaveResourceBelongingToId(UnityEngine.Object Resource, string FileExtension, string OwnerId);
 	}
 
 	public class STFImportState : ISTFImportState
@@ -117,6 +118,12 @@ namespace STF.Serde
 			Meta.ResourceLocation = location;
 			AssetDatabase.CreateAsset(Meta, Path.ChangeExtension(location, "Asset"));
 			AddResource(Meta, Id);
+			AssetDatabase.Refresh();
+		}
+		public void SaveResourceBelongingToId(UnityEngine.Object Resource, string FileExtension, string OwnerId)
+		{
+			var location = Path.Combine(TargetLocation, STFConstants.ResourceDirectoryName, Resource.name + "_" + OwnerId + "." + FileExtension);
+			AssetDatabase.CreateAsset(Resource, location);
 			AssetDatabase.Refresh();
 		}
 	}
