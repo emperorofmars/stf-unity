@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using MTF;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 
@@ -17,6 +18,7 @@ namespace STF.Serde
 		public override string Type => _TYPE;
 		public STFArmatureInstanceNode ArmatureInstance;
 		public string ArmatureInstanceId;
+		public List<MTF.Material> Materials;
 	}
 
 	public class STFMeshInstanceExporter : ASTFNodeComponentExporter
@@ -42,6 +44,20 @@ namespace STF.Serde
 			if(meshInstance.ArmatureInstanceId != null && meshInstance.ArmatureInstanceId.Length > 0) ret.Add("armature_instance", meshInstance.ArmatureInstanceId);
 			else ret.Add("armature_instance", State.Nodes[c.rootBone.parent.gameObject].Key);
 
+			var materials = new JArray();
+			for(int matIdx = 0; matIdx < c.sharedMaterials.Length; matIdx++)
+			{
+				if(meshInstance.Materials.Count >= matIdx && meshInstance.Materials[matIdx] != null)
+				{
+					materials.Add(STFSerdeUtil.SerializeResource(State, meshInstance.Materials[matIdx]));
+				}
+				else
+				{
+					// convert to mtf material here
+					materials.Add(null);
+				}
+			}
+			
 			ret.Add("materials", new JArray(c.sharedMaterials.Select(m => m != null && State.Resources.ContainsKey(m) ? State.Resources[m].Key : null)));
 			ret.Add("morphtarget_values", new JArray(Enumerable.Range(0, c.sharedMesh.blendShapeCount).Select(i => c.GetBlendShapeWeight(i))));
 
@@ -96,13 +112,21 @@ namespace STF.Serde
 				}
 			}
 
-			var materials = new Material[c.sharedMesh.subMeshCount];
+			var materials = new UnityEngine.Material[c.sharedMesh.subMeshCount];
+			meshInstanceComponent.Materials = new List<MTF.Material>(new MTF.Material[c.sharedMesh.subMeshCount]);
 			for(int i = 0; i < materials.Length; i++)
 			{
 				try{
 					if((string)Json["materials"][i] != null && State.Resources.ContainsKey((string)Json["materials"][i]))
 					{
 						var mtfMaterial = (MTF.Material)State.Resources[(string)Json["materials"][i]];
+						meshInstanceComponent.Materials[i] = mtfMaterial;
+						materials[i] = mtfMaterial?.ConvertedMaterial;
+					}
+					else
+					{
+						var mtfMaterial = MTF.Material.CreateDefaultMaterial();
+						meshInstanceComponent.Materials[i] = mtfMaterial;
 						materials[i] = mtfMaterial?.ConvertedMaterial;
 					}
 				}

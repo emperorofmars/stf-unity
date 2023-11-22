@@ -72,7 +72,8 @@ namespace STF.Serde
 			{typeof(Mesh), new STFMeshExporter()},
 			{typeof(Texture2D), new STFTexture2dExporter()},
 			{typeof(STFArmature), new STFArmatureExporter()},
-			{typeof(Material), new MTFMaterialExporter()},
+			{typeof(MTF.Material), new MTFMaterialExporter()},
+			{typeof(Material), new UnityMaterialExporter()},
 			//{typeof(AnimationClip), new STFAnimationExporter()}
 		};
 		public static readonly List<Type> DefaultExportExclusions = new List<Type>() {

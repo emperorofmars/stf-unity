@@ -26,7 +26,7 @@ namespace MTF
 	{
 		public static string _TYPE = "Color";
 		public string Type => _TYPE;
-		Color Texture;
+		public Color Color;
 	}
 
 	[Serializable]
