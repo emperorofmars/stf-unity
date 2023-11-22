@@ -14,6 +14,11 @@ namespace MTF
 	}
 	public class TexturePropertyValueImporter : IPropertyValueImporter
 	{
+		public string ConvertPropertyPath(string STFProperty)
+		{
+			throw new NotImplementedException();
+		}
+
 		public IPropertyValue ParseFromJson(IImportState State, JObject Json)
 		{
 			return new TexturePropertyValue { Texture = (Texture2D)State.GetResource((string)Json["value"]) };
@@ -21,20 +26,25 @@ namespace MTF
 	}
 	public class TexturePropertyValueExporter : IPropertyValueExporter
 	{
+		public string ConvertPropertyPath(string UnityProperty)
+		{
+			throw new NotImplementedException();
+		}
+
 		public JObject SerializeToJson(IExportState State, IPropertyValue MTFProperty)
 		{
 			return new JObject {{"type", TexturePropertyValue._TYPE}, {"value", State.AddResource(((TexturePropertyValue)MTFProperty).Texture)}};
 		}
 	}
 
-	/*[Serializable]
+	[Serializable]
 	public class TextureChannelPropertyValue : IPropertyValue
 	{
 		public static string _TYPE = "MTF.texture_channel";
 		public string Type => _TYPE;
 		public Texture2D Texture;
 		public int Channel;
-	}*/
+	}
 
 	[Serializable]
 	public class ColorPropertyValue : IPropertyValue
@@ -45,6 +55,11 @@ namespace MTF
 	}
 	public class ColorPropertyValueImporter : IPropertyValueImporter
 	{
+		public string ConvertPropertyPath(string STFProperty)
+		{
+			throw new NotImplementedException();
+		}
+
 		public IPropertyValue ParseFromJson(IImportState State, JObject Json)
 		{
 			return new ColorPropertyValue {Color = new Color((float)Json["value"][0], (float)Json["value"][1], (float)Json["value"][2])};
@@ -52,6 +67,11 @@ namespace MTF
 	}
 	public class ColorPropertyValueExporter : IPropertyValueExporter
 	{
+		public string ConvertPropertyPath(string UnityProperty)
+		{
+			throw new NotImplementedException();
+		}
+
 		public JObject SerializeToJson(IExportState State, IPropertyValue MTFProperty)
 		{
 			var v = (ColorPropertyValue)MTFProperty;

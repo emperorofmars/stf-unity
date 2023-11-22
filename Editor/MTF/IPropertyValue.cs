@@ -12,11 +12,13 @@ namespace MTF
 
 	public interface IPropertyValueExporter
 	{
+		string ConvertPropertyPath(string UnityProperty);
 		JObject SerializeToJson(IExportState State, IPropertyValue MTFProperty);
 	}
 
 	public interface IPropertyValueImporter
 	{
+		string ConvertPropertyPath(string STFProperty);
 		IPropertyValue ParseFromJson(IImportState State, JObject Json);
 	}
 }

@@ -98,6 +98,7 @@ namespace STF.Serde
 				mat.PreferedShaderPerTarget.Add(new MTF.Material.ShaderTarget{Platform = entry.Key, Shaders = entry.Value.ToObject<List<string>>()});
 			}
 			mat.StyleHints = Json["hints"].ToObject<List<string>>();
+			
 			var mtfImportState = new STFMTFImportState(State);
 			foreach(var propertyJson in (JObject)Json["properties"])
 			{
