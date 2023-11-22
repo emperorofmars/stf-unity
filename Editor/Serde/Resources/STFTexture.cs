@@ -34,7 +34,7 @@ namespace STF.Serde
 			ret.Add("format", Path.GetExtension(fileName));
 			ret.Add("width", texture.width);
 			ret.Add("height", texture.height);
-			if(texture.graphicsFormat.ToString().ToLower().EndsWith("unorm")) ret.Add("linear", true);
+			ret.Add("linear", texture.graphicsFormat.ToString().ToLower().EndsWith("unorm"));
 
 			var bufferId = State.AddBuffer(arrayBuffer, meta?.OriginalBufferId);
 			ret.Add("buffer", bufferId);
@@ -59,7 +59,7 @@ namespace STF.Serde
 			meta.Id = Id;
 			meta.Name = (string)Json["name"];
 			meta.ResourceLocation = Path.Combine(State.TargetLocation, STFConstants.ResourceDirectoryName, meta.Name + "_" + Id + "." + (string)Json["format"]);
-			meta.Linear = (bool)Json["linear"];
+			meta.Linear = Json["linear"] != null ? (bool)Json["linear"] : false;
 			meta.OriginalBufferId = (string)Json["buffer"];
 			
 			var arrayBuffer = State.Buffers[meta.OriginalBufferId];
