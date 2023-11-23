@@ -33,11 +33,17 @@ namespace MTF
 			{TexturePropertyValue._TYPE, new TexturePropertyValueImporter()},
 			{TextureChannelPropertyValue._TYPE, new TextureChannelPropertyValueImporter()},
 			{ColorPropertyValue._TYPE, new ColorPropertyValueImporter()},
+			{IntPropertyValue._TYPE, new IntPropertyValueImporter()},
+			{FloatPropertyValue._TYPE, new FloatPropertyValueImporter()},
+			{StringPropertyValue._TYPE, new StringPropertyValueImporter()},
 		};
 		public static readonly Dictionary<string, IPropertyValueExporter> DefaultPropertyValueExporters = new Dictionary<string, IPropertyValueExporter> {
 			{TexturePropertyValue._TYPE, new TexturePropertyValueExporter()},
 			{TextureChannelPropertyValue._TYPE, new TextureChannelPropertyValueExporter()},
 			{ColorPropertyValue._TYPE, new ColorPropertyValueExporter()},
+			{IntPropertyValue._TYPE, new IntPropertyValueExporter()},
+			{FloatPropertyValue._TYPE, new FloatPropertyValueExporter()},
+			{StringPropertyValue._TYPE, new StringPropertyValueExporter()},
 		};
 		
 		private static Dictionary<string, IPropertyValueImporter> RegisteredPropertyValueImporters = new Dictionary<string, IPropertyValueImporter>();
