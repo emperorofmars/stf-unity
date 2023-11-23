@@ -1,7 +1,12 @@
+
+#if UNITY_EDITOR
+
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Microsoft.Win32;
+using UnityEditor;
 using UnityEngine;
 
 namespace MTF
@@ -19,6 +24,27 @@ namespace MTF
 			MaterialConverterUtil.SetColorProperty(MTFMaterial, ret, "albedo", "_Color");
 
 			MaterialConverterUtil.SetTextureProperty(MTFMaterial, ret, "normal", "_BumpMap");
+
+			{
+				var textureChannels = new List<(List<IPropertyValue>, bool)>();
+
+				var metallicValue = MaterialConverterUtil.FindPropertyValues(MTFMaterial, "metallic");
+				if(metallicValue != null) textureChannels.Add((metallicValue, false));
+				else textureChannels.Add((null, false));
+
+				textureChannels.Add((null, false));
+				textureChannels.Add((null, false));
+
+				var smoothnessValue = MaterialConverterUtil.FindPropertyValues(MTFMaterial, "smoothness");
+				var roughnessValue = MaterialConverterUtil.FindPropertyValues(MTFMaterial, "roughness");
+				if(smoothnessValue != null) textureChannels.Add((smoothnessValue, false));
+				else if(roughnessValue != null) textureChannels.Add((roughnessValue, true));
+				else textureChannels.Add((null, false));
+
+				var assetPath = AssetDatabase.GetAssetPath(MTFMaterial);
+				var savePath = Path.Combine(Path.GetDirectoryName(assetPath), Path.GetFileNameWithoutExtension(assetPath) + "_MetallicGlossMap");
+				MaterialConverterUtil.AssembleTextureChannels(textureChannels, ret, "_MetallicGlossMap", savePath);
+			}
 
 			MaterialConverterUtil.SetFloatProperty(MTFMaterial, ret, "specular", "_SpecularHighlights");
 			return ret;
@@ -40,8 +66,12 @@ namespace MTF
 			
 			MaterialParserUtil.ParseTextureProperty(UnityMaterial, ret, "normal", "_BumpMap");
 			
+			MaterialParserUtil.ParseTextureChannelProperty(UnityMaterial, ret, "metallic", 0, "_MetallicGlossMap");
+			MaterialParserUtil.ParseTextureChannelProperty(UnityMaterial, ret, "smoothness", 4, "_MetallicGlossMap");
 			MaterialParserUtil.ParseFloatProperty(UnityMaterial, ret, "specular", "_SpecularHighlights");
 			return ret;
 		}
 	}
 }
+
+#endif
