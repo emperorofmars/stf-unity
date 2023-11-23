@@ -7,6 +7,29 @@ using System.Linq;
 
 namespace STF.Serde
 {
+	static class CollectionUtil
+	{
+		public static Dictionary<A, B> Combine<A, B>(Dictionary<A, B> Base, Dictionary<A, B> ToBeMerged)
+		{
+			var ret = new Dictionary<A, B>(Base);
+			foreach(var e in ToBeMerged)
+			{
+				if(ret.ContainsKey(e.Key)) ret[e.Key] = e.Value;
+				else ret.Add(e.Key, e.Value);
+			}
+			return ret;
+		}
+		public static List<A> Combine<A>(List<A> Base, List<A> ToBeMerged)
+		{
+			var ret = new List<A>(Base);
+			foreach(var e in ToBeMerged)
+			{
+				if(!ret.Contains(e)) ret.Add(e);
+			}
+			return ret;
+		}
+	}
+
 	// Context's to pass into an importer and exporter respectively. Default ones are created automatically, construct these manually only for specific use cases.
 	public class STFImportContext
 	{
@@ -94,6 +117,20 @@ namespace STF.Serde
 
 		private static readonly List<Type> RegisteredExportExclusions = new List<Type>();
 
+		public static Dictionary<string, ISTFAssetImporter> AssetImporters {get => CollectionUtil.Combine(DefaultAssetImporters, RegisteredAssetImporters);}
+		public static Dictionary<string, ISTFAssetExporter> AssetExporters {get => CollectionUtil.Combine(DefaultAssetExporters, RegisteredAssetExporters);}
+
+		public static Dictionary<string, ISTFNodeImporter> NodeImporters {get => CollectionUtil.Combine(DefaultNodeImporters, RegisteredNodeImporters);}
+		public static Dictionary<string, ISTFNodeExporter> NodeExporters {get => CollectionUtil.Combine(DefaultNodeExporters, RegisteredNodeExporters);}
+
+		public static Dictionary<string, ISTFNodeComponentImporter> NodeComponentImporters {get => CollectionUtil.Combine(DefaultNodeComponentImporters, RegisteredNodeComponentImporters);}
+		public static Dictionary<Type, ISTFNodeComponentExporter> NodeComponentExporters {get => CollectionUtil.Combine(DefaultNodeComponentExporters, RegisteredNodeComponentExporters);}
+
+		public static Dictionary<string, ISTFResourceImporter> ResourceImporters {get => CollectionUtil.Combine(DefaultResourceImporters, RegisteredResourceImporters);}
+		public static Dictionary<Type, ISTFResourceExporter> ResourceExporters {get => CollectionUtil.Combine(DefaultResourceExporters, RegisteredResourceExporters);}
+
+		public static List<Type> ExportExclusions {get => CollectionUtil.Combine(DefaultExportExclusions, RegisteredExportExclusions);}
+
 		public static void RegisterAssetImporter(string type, ISTFAssetImporter importer) { RegisteredAssetImporters.Add(type, importer); }
 		public static void RegisterAssetExporter(string type, ISTFAssetExporter exporter) { RegisteredAssetExporters.Add(type, exporter); }
 		public static void RegisterNodeImporter(string type, ISTFNodeImporter importer) { RegisteredNodeImporters.Add(type, importer); }
@@ -104,106 +141,28 @@ namespace STF.Serde
 		public static void RegisterResourceExporter(Type type, ISTFResourceExporter exporter) { RegisteredResourceExporters.Add(type, exporter); }
 		public static void RegisterExportExclusion(Type type) { RegisteredExportExclusions.Add(type); }
 
-		public static bool IsAssetImporterRegistered(string type) { return RegisteredAssetImporters.ContainsKey(type); }
-		public static bool IsAssetExporterRegistered(string type) { return RegisteredAssetExporters.ContainsKey(type); }
-		public static bool IsNodeImporterRegistered(string type) { return RegisteredNodeImporters.ContainsKey(type); }
-		public static bool IsNodeExporterRegistered(string type) { return RegisteredNodeExporters.ContainsKey(type); }
-		public static bool IsNodeComponentImporterRegistered(string type) { return RegisteredNodeComponentImporters.ContainsKey(type); }
-		public static bool IsNodeComponentExporterRegistered(Type type) { return RegisteredNodeComponentExporters.ContainsKey(type); }
-		public static bool IsResourceImporterRegistered(string type) { return RegisteredResourceImporters.ContainsKey(type); }
-		public static bool IsResourceExporterRegistered(Type type) { return RegisteredResourceExporters.ContainsKey(type); }
-		public static bool IsExportExclusionRegistered(Type type) { return RegisteredExportExclusions.Contains(type); }
-
-		public static ISTFAssetImporter GetAssetImporter(string type) { return RegisteredAssetImporters[type]; }
-		public static ISTFAssetExporter GetAssetExporter(string type) { return RegisteredAssetExporters[type]; }
-		public static ISTFNodeImporter GetNodeImporter(string type) { return RegisteredNodeImporters[type]; }
-		public static ISTFNodeExporter GetNodeExporter(string type) { return RegisteredNodeExporters[type]; }
-		public static ISTFNodeComponentImporter GetNodeComponentImporter(string type) { return RegisteredNodeComponentImporters[type]; }
-		public static ISTFNodeComponentExporter GetNodeComponentExporter(Type type) { return RegisteredNodeComponentExporters[type]; }
-		public static ISTFResourceImporter GetResourceImporter(string type) { return RegisteredResourceImporters[type]; }
-		public static ISTFResourceExporter GetResourceExporter(Type type) { return RegisteredResourceExporters[type]; }
-		public static List<Type> GetExportExclusions() { return RegisteredExportExclusions; }
-
 		public static STFImportContext GetDefaultImportContext()
 		{
-			var assetImporters = new Dictionary<string, ISTFAssetImporter>(DefaultAssetImporters);
-			foreach(var e in RegisteredAssetImporters)
-			{
-				if(assetImporters.ContainsKey(e.Key)) assetImporters[e.Key] = e.Value;
-				else assetImporters.Add(e.Key, e.Value);
-			}
-
-			var nodeImporters = new Dictionary<string, ISTFNodeImporter>(DefaultNodeImporters);
-			foreach(var e in RegisteredNodeImporters)
-			{
-				if(nodeImporters.ContainsKey(e.Key)) nodeImporters[e.Key] = e.Value;
-				else nodeImporters.Add(e.Key, e.Value);
-			}
-
-			var componentImporters = new Dictionary<string, ISTFNodeComponentImporter>(DefaultNodeComponentImporters);
-			foreach(var e in RegisteredNodeComponentImporters)
-			{
-				if(componentImporters.ContainsKey(e.Key)) componentImporters[e.Key] = e.Value;
-				else componentImporters.Add(e.Key, e.Value);
-			}
-
-			var resourceImporters = new Dictionary<string, ISTFResourceImporter>(DefaultResourceImporters);
-			foreach(var e in RegisteredResourceImporters)
-			{
-				if(resourceImporters.ContainsKey(e.Key)) resourceImporters[e.Key] = e.Value;
-				else resourceImporters.Add(e.Key, e.Value);
-			}
-
 			//ResourceComponents
 
 			return new STFImportContext() {
-				AssetImporters = assetImporters,
-				NodeImporters = nodeImporters,
-				NodeComponentImporters = componentImporters,
-				ResourceImporters = resourceImporters
+				AssetImporters = AssetImporters,
+				NodeImporters = NodeImporters,
+				NodeComponentImporters = NodeComponentImporters,
+				ResourceImporters = ResourceImporters
 			};
 		}
 
 		public static STFExportContext GetDefaultExportContext()
 		{
-			var assetExporters = new Dictionary<string, ISTFAssetExporter>(DefaultAssetExporters);
-			foreach(var e in RegisteredAssetExporters)
-			{
-				if(assetExporters.ContainsKey(e.Key)) assetExporters[e.Key] = e.Value;
-				else assetExporters.Add(e.Key, e.Value);
-			}
-
-			var nodeExporters = new Dictionary<string, ISTFNodeExporter>(DefaultNodeExporters);
-			foreach(var e in RegisteredNodeExporters)
-			{
-				if(nodeExporters.ContainsKey(e.Key)) nodeExporters[e.Key] = e.Value;
-				else nodeExporters.Add(e.Key, e.Value);
-			}
-
-			var componentExporters = new Dictionary<Type, ISTFNodeComponentExporter>(DefaultNodeComponentExporters);
-			foreach(var e in RegisteredNodeComponentExporters)
-			{
-				if(componentExporters.ContainsKey(e.Key)) componentExporters[e.Key] = e.Value;
-				else componentExporters.Add(e.Key, e.Value);
-			}
-
-			var resourceExporters = new Dictionary<Type, ISTFResourceExporter>(DefaultResourceExporters);
-			foreach(var e in RegisteredResourceExporters)
-			{
-				if(resourceExporters.ContainsKey(e.Key)) resourceExporters[e.Key] = e.Value;
-				else resourceExporters.Add(e.Key, e.Value);
-			}
-
-			var exportExclusions = new List<Type>(DefaultExportExclusions.Union(RegisteredExportExclusions));
-
 			//ResourceComponents
 
 			return new STFExportContext() {
-				AssetExporters = assetExporters,
-				NodeExporters = nodeExporters,
-				NodeComponentExporters = componentExporters,
-				ResourceExporters = resourceExporters,
-				ExportExclusions = exportExclusions
+				AssetExporters = AssetExporters,
+				NodeExporters = NodeExporters,
+				NodeComponentExporters = NodeComponentExporters,
+				ResourceExporters = ResourceExporters,
+				ExportExclusions = ExportExclusions
 			};
 		}
 	}

@@ -59,13 +59,13 @@ namespace STF.Serde
 			// Convert to MTF.Material
 			if(MTF.ShaderConverterRegistry.DefaultMaterialParsers.ContainsKey(mat.shader.name))
 			{
-				var mtfMaterial = MTF.ShaderConverterRegistry.DefaultMaterialParsers[mat.shader.name].ParseFromUnityMaterial(mat);
+				var mtfMaterial = MTF.ShaderConverterRegistry.MaterialParsers[mat.shader.name].ParseFromUnityMaterial(mat);
 				return STFSerdeUtil.SerializeResource(State, mtfMaterial);
 			}
 			else
 			{
 				Debug.LogWarning("Material Converter Not registered for shader: " + mat.shader.name + ", falling back.");
-				var mtfMaterial = MTF.ShaderConverterRegistry.DefaultMaterialParsers[MTF.StandardConverter._SHADER_NAME].ParseFromUnityMaterial(mat);
+				var mtfMaterial = MTF.ShaderConverterRegistry.MaterialParsers[MTF.StandardConverter._SHADER_NAME].ParseFromUnityMaterial(mat);
 				return STFSerdeUtil.SerializeResource(State, mtfMaterial);
 			}
 		}
@@ -95,7 +95,7 @@ namespace STF.Serde
 				foreach(var value in property.Values)
 				{
 					// improve this, not just default ones & fall back to unrecognized
-					valuesJson.Add(MTF.PropertyValueRegistry.DefaultPropertyValueExporters[value.Type].SerializeToJson(mtfExportState, value));
+					valuesJson.Add(MTF.PropertyValueRegistry.PropertyValueExporters[value.Type].SerializeToJson(mtfExportState, value));
 				}
 				propertiesJson.Add(property.Type, valuesJson);
 			}
@@ -133,7 +133,7 @@ namespace STF.Serde
 				foreach (var valueJson in propertyJson.Value)
 				{
 					// improve this, not just default ones & fall back to unrecognized
-					mtfProperty.Values.Add(MTF.PropertyValueRegistry.DefaultPropertyValueImporters[(string)valueJson["type"]].ParseFromJson(mtfImportState, (JObject)valueJson));
+					mtfProperty.Values.Add(MTF.PropertyValueRegistry.PropertyValueImporters[(string)valueJson["type"]].ParseFromJson(mtfImportState, (JObject)valueJson));
 				}
 				mat.Properties.Add(mtfProperty);
 			}
