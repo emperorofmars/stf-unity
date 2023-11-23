@@ -57,7 +57,7 @@ namespace STF.Serde
 		{
 			var mat = (Material)Resource;
 			// Convert to MTF.Material
-			if(MTF.ShaderConverterRegistry.DefaultMaterialParsers.ContainsKey(mat.shader.name))
+			if(MTF.ShaderConverterRegistry.MaterialParsers.ContainsKey(mat.shader.name))
 			{
 				var mtfMaterial = MTF.ShaderConverterRegistry.MaterialParsers[mat.shader.name].ParseFromUnityMaterial(mat);
 				return STFSerdeUtil.SerializeResource(State, mtfMaterial);
@@ -140,12 +140,12 @@ namespace STF.Serde
 
 			// Convert to MTF.Material
 			var shaderTargets = mat.PreferedShaderPerTarget.Find(t => t.Platform == "unity3d");
-			MTF.IMaterialConverter converter = MTF.ShaderConverterRegistry.DefaultMaterialConverters[MTF.StandardConverter._SHADER_NAME];
+			MTF.IMaterialConverter converter = MTF.ShaderConverterRegistry.MaterialConverters[MTF.StandardConverter._SHADER_NAME];
 			if(shaderTargets != null) foreach(var shaderTarget in shaderTargets.Shaders)
 			{
-				if(MTF.ShaderConverterRegistry.DefaultMaterialConverters.ContainsKey(shaderTarget))
+				if(MTF.ShaderConverterRegistry.MaterialConverters.ContainsKey(shaderTarget))
 				{
-					converter = MTF.ShaderConverterRegistry.DefaultMaterialConverters[shaderTarget];
+					converter = MTF.ShaderConverterRegistry.MaterialConverters[shaderTarget];
 					break;
 				}
 			}

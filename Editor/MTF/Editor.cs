@@ -7,7 +7,7 @@ using UnityEditor;
 
 namespace MTF
 {
-	[CustomEditor(typeof(Material))]
+	/*[CustomEditor(typeof(Material))]
 	public class MaterialInspector : Editor
 	{
 		public override void OnInspectorGUI()
@@ -25,7 +25,7 @@ namespace MTF
 			GUILayout.Button("Copy");
 			EditorGUILayout.EndHorizontal();
 		}
-	}
+	}*/
 }
 
 #endif
