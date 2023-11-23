@@ -150,6 +150,7 @@ namespace STF.Serde
 				}
 			}
 			var unityMaterial = converter.ConvertToUnityMaterial(mat);
+			unityMaterial.name = mat.name + "_Converted";
 			mat.ConvertedMaterial = unityMaterial;
 			State.SaveResourceBelongingToId(unityMaterial, "Asset", Id);
 			State.SaveResource(mat, "Asset", Id);

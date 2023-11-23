@@ -17,27 +17,12 @@ namespace MTF.Addons
 		public UnityEngine.Material ConvertToUnityMaterial(Material MTFMaterial, UnityEngine.Material ExistingUnityMaterial = null)
 		{
 			var ret = ExistingUnityMaterial != null ? ExistingUnityMaterial : new UnityEngine.Material(Shader.Find(ShaderName));
-			{
-				var property = MTFMaterial.Properties.Find(p => p.Type == "albedo");
-				if(property != null) foreach(var value in property.Values)
-				{
-					switch(value.Type)
-					{
-						case TexturePropertyValue._TYPE: ret.SetTexture("_MainTex", ((TexturePropertyValue)value).Texture); break;
-						case ColorPropertyValue._TYPE: ret.SetColor("_Color", ((ColorPropertyValue)value).Color); break;
-					}
-				}
-			}
-			{
-				var property = MTFMaterial.Properties.Find(p => p.Type == "normal");
-				if(property != null) foreach(var value in property.Values)
-				{
-					switch(value.Type)
-					{
-						case TexturePropertyValue._TYPE: ret.SetTexture("_BumpMap", ((TexturePropertyValue)value).Texture); break;
-					}
-				}
-			}
+			ret.name = ExistingUnityMaterial != null ? ExistingUnityMaterial.name : MTFMaterial.name;
+
+			MaterialConverterUtil.SetTextureProperty(MTFMaterial, ret, "albedo", "_MainTex");
+			MaterialConverterUtil.SetColorProperty(MTFMaterial, ret, "albedo", "_Color");
+			MaterialConverterUtil.SetTextureProperty(MTFMaterial, ret, "normal", "_BumpMap");
+
 			var pbrChannels = new List<TextureChannelPropertyValue>();
 			{
 				var property = MTFMaterial.Properties.Find(p => p.Type == "metallic");
@@ -84,6 +69,8 @@ namespace MTF.Addons
 			{
 				//var assembledTexture = new Texture2D();
 				//ret.SetTexture("_BumpMap", assembledTexture);
+				ret.SetFloat("_MochieBRDF", 1);
+				ret.SetFloat("_MochieMetallicMultiplier", 1);
 			}
 			return ret;
 		}
@@ -95,47 +82,18 @@ namespace MTF.Addons
 		public Material ParseFromUnityMaterial(UnityEngine.Material UnityMaterial, Material ExistingMTFMaterial = null)
 		{
 			var ret = ExistingMTFMaterial != null ? ExistingMTFMaterial : ScriptableObject.CreateInstance<Material>();
+			ret.name = ExistingMTFMaterial != null ? ExistingMTFMaterial.name : UnityMaterial.name;
 			ret.PreferedShaderPerTarget.Add(new Material.ShaderTarget{Platform = "unity3d", Shaders = new List<string>{ShaderName}});
 			//ret.StyleHints.Add("realistic");
 			
-			{
-				var values = new List<IPropertyValue> {
-						UnityMaterial.HasProperty("_MainTex") ? new TexturePropertyValue{Texture = (Texture2D)UnityMaterial.GetTexture("_MainTex")} : null,
-						UnityMaterial.HasProperty("_Color") ? new ColorPropertyValue{Color = (Color)UnityMaterial.GetColor("_Color")} : null,
-				}.FindAll(e => e != null);
-				if(values.Count > 0) ret.Properties.Add(new Material.Property { Type = "albedo", Values = values});
-			}
-			{
-				var values = new List<IPropertyValue> {
-						UnityMaterial.HasProperty("_BumpMap") ? new TexturePropertyValue{Texture = (Texture2D)UnityMaterial.GetTexture("_BumpMap")} : null,
-				}.FindAll(e => e != null);
-				if(values.Count > 0) ret.Properties.Add(new Material.Property { Type = "normal", Values = values});
-			}
+			MaterialParserUtil.ParseTextureProperty(UnityMaterial, ret, "albedo", "_MainTex");
+			MaterialParserUtil.ParseColorProperty(UnityMaterial, ret, "albedo", "_Color");
+			MaterialParserUtil.ParseTextureProperty(UnityMaterial, ret, "normal", "_BumpMap");
 
-			{
-				var values = new List<IPropertyValue> {
-						UnityMaterial.HasProperty("_MochieMetallicMaps") ? new TextureChannelPropertyValue{Texture = (Texture2D)UnityMaterial.GetTexture("_MochieMetallicMaps"), Channel = 0} : null,
-				}.FindAll(e => e != null);
-				if(values.Count > 0) ret.Properties.Add(new Material.Property { Type = "metallic", Values = values});
-			}
-			{
-				var values = new List<IPropertyValue> {
-						UnityMaterial.HasProperty("_MochieMetallicMaps") ? new TextureChannelPropertyValue{Texture = (Texture2D)UnityMaterial.GetTexture("_MochieMetallicMaps"), Channel = 1} : null,
-				}.FindAll(e => e != null);
-				if(values.Count > 0) ret.Properties.Add(new Material.Property { Type = "smoothness", Values = values});
-			}
-			{
-				var values = new List<IPropertyValue> {
-						UnityMaterial.HasProperty("_MochieMetallicMaps") ? new TextureChannelPropertyValue{Texture = (Texture2D)UnityMaterial.GetTexture("_MochieMetallicMaps"), Channel = 2} : null,
-				}.FindAll(e => e != null);
-				if(values.Count > 0) ret.Properties.Add(new Material.Property { Type = "reflection", Values = values});
-			}
-			{
-				var values = new List<IPropertyValue> {
-						UnityMaterial.HasProperty("_MochieMetallicMaps") ? new TextureChannelPropertyValue{Texture = (Texture2D)UnityMaterial.GetTexture("_MochieMetallicMaps"), Channel = 3} : null,
-				}.FindAll(e => e != null);
-				if(values.Count > 0) ret.Properties.Add(new Material.Property { Type = "specular", Values = values});
-			}
+			MaterialParserUtil.ParseTextureChannelProperty(UnityMaterial, ret, "metallic", 0, "_MochieMetallicMaps");
+			MaterialParserUtil.ParseTextureChannelProperty(UnityMaterial, ret, "smoothness", 1, "_MochieMetallicMaps");
+			MaterialParserUtil.ParseTextureChannelProperty(UnityMaterial, ret, "reflection", 2, "_MochieMetallicMaps");
+			MaterialParserUtil.ParseTextureChannelProperty(UnityMaterial, ret, "specular", 3, "_MochieMetallicMaps");
 			return ret;
 		}
 	}

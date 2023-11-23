@@ -13,38 +13,14 @@ namespace MTF
 		public UnityEngine.Material ConvertToUnityMaterial(Material MTFMaterial, UnityEngine.Material ExistingUnityMaterial = null)
 		{
 			var ret = ExistingUnityMaterial != null ? ExistingUnityMaterial : new UnityEngine.Material(Shader.Find(ShaderName));
+			ret.name = ExistingUnityMaterial != null ? ExistingUnityMaterial.name : MTFMaterial.name;
 
-			{
-				var property = MTFMaterial.Properties.Find(p => p.Type == "albedo");
-				if(property != null) foreach(var value in property.Values)
-				{
-					switch(value.Type)
-					{
-						case TexturePropertyValue._TYPE: ret.SetTexture("_MainTex", ((TexturePropertyValue)value).Texture); break;
-						case ColorPropertyValue._TYPE: ret.SetColor("_Color", ((ColorPropertyValue)value).Color); break;
-					}
-				}
-			}
-			{
-				var property = MTFMaterial.Properties.Find(p => p.Type == "normal");
-				if(property != null) foreach(var value in property.Values)
-				{
-					switch(value.Type)
-					{
-						case TexturePropertyValue._TYPE: ret.SetTexture("_BumpMap", ((TexturePropertyValue)value).Texture); break;
-					}
-				}
-			}
-			{
-				var property = MTFMaterial.Properties.Find(p => p.Type == "specular");
-				if(property != null) foreach(var value in property.Values)
-				{
-					switch(value.Type)
-					{
-						case FloatPropertyValue._TYPE: ret.SetFloat("_SpecularHighlights", ((FloatPropertyValue)value).Value); break;
-					}
-				}
-			}
+			MaterialConverterUtil.SetTextureProperty(MTFMaterial, ret, "albedo", "_MainTex");
+			MaterialConverterUtil.SetColorProperty(MTFMaterial, ret, "albedo", "_Color");
+
+			MaterialConverterUtil.SetTextureProperty(MTFMaterial, ret, "normal", "_BumpMap");
+
+			MaterialConverterUtil.SetFloatProperty(MTFMaterial, ret, "specular", "_SpecularHighlights");
 			return ret;
 		}
 	}
@@ -55,28 +31,16 @@ namespace MTF
 		public Material ParseFromUnityMaterial(UnityEngine.Material UnityMaterial, Material ExistingMTFMaterial = null)
 		{
 			var ret = ExistingMTFMaterial != null ? ExistingMTFMaterial : ScriptableObject.CreateInstance<Material>();
+			ret.name = ExistingMTFMaterial != null ? ExistingMTFMaterial.name : UnityMaterial.name;
 			ret.PreferedShaderPerTarget.Add(new Material.ShaderTarget{Platform = "unity3d", Shaders = new List<string>{ShaderName}});
 			ret.StyleHints.Add("realistic");
 
-			{
-				var values = new List<IPropertyValue> {
-						UnityMaterial.HasProperty("_MainTex") ? new TexturePropertyValue{Texture = (Texture2D)UnityMaterial.GetTexture("_MainTex")} : null,
-						UnityMaterial.HasProperty("_Color") ? new ColorPropertyValue{Color = (Color)UnityMaterial.GetColor("_Color")} : null,
-				}.FindAll(e => e != null);
-				if(values.Count > 0) ret.Properties.Add(new Material.Property { Type = "albedo", Values = values});
-			}
-			{
-				var values = new List<IPropertyValue> {
-						UnityMaterial.HasProperty("_BumpMap") ? new TexturePropertyValue{Texture = (Texture2D)UnityMaterial.GetTexture("_BumpMap")} : null,
-				}.FindAll(e => e != null);
-				if(values.Count > 0) ret.Properties.Add(new Material.Property { Type = "normal", Values = values});
-			}
-			{
-				var values = new List<IPropertyValue> {
-						UnityMaterial.HasProperty("_SpecularHighlights") ? new FloatPropertyValue{Value = (float)UnityMaterial.GetFloat("_SpecularHighlights")} : null,
-				}.FindAll(e => e != null);
-				if(values.Count > 0) ret.Properties.Add(new Material.Property { Type = "specular", Values = values});
-			}
+			MaterialParserUtil.ParseTextureProperty(UnityMaterial, ret, "albedo", "_MainTex");
+			MaterialParserUtil.ParseColorProperty(UnityMaterial, ret, "albedo", "_Color");
+			
+			MaterialParserUtil.ParseTextureProperty(UnityMaterial, ret, "normal", "_BumpMap");
+			
+			MaterialParserUtil.ParseFloatProperty(UnityMaterial, ret, "specular", "_SpecularHighlights");
 			return ret;
 		}
 	}
