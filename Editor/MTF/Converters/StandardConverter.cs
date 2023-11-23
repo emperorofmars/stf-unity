@@ -8,16 +8,18 @@ namespace MTF
 {
 	public class MaterialConverterUtil
 	{
-		public static bool ConvertValue(UnityEngine.Material UnityMaterial, IPropertyValue Value, string UnityPropertyName, string UnityPropertyType = null)
+		public static bool ConvertValue(UnityEngine.Material UnityMaterial, object Value, string UnityPropertyName, string UnityPropertyType)
 		{
-			var UsedUnityPropertyType = UnityPropertyType != null ? UnityPropertyType : Value.Type;
-			switch(UsedUnityPropertyType)
+			switch(UnityPropertyType)
 			{
 				case TexturePropertyValue._TYPE:
-					UnityMaterial.SetTexture(UnityPropertyName, ((TexturePropertyValue)Value).Texture);
+					UnityMaterial.SetTexture(UnityPropertyName, (Texture2D)Value);
 					return true;
 				case ColorPropertyValue._TYPE:
-					UnityMaterial.SetColor(UnityPropertyName, ((ColorPropertyValue)Value).Color);
+					UnityMaterial.SetColor(UnityPropertyName, (Color)Value);
+					return true;
+				case FloatPropertyValue._TYPE:
+					UnityMaterial.SetFloat(UnityPropertyName, (float)Value);
 					return true;
 			}
 			return false;
@@ -34,10 +36,12 @@ namespace MTF
 					var value = property.Values.Find(v => v.Type == valueMapping.Item1);
 					if(value != null)
 					{
+						var UsedUnityPropertyType = valueMapping.Item3 != null ? valueMapping.Item3 : value.Type;
 						switch(value.Type)
 						{
-							case TexturePropertyValue._TYPE: if(ConvertValue(UnityMaterial, value, valueMapping.Item2, valueMapping.Item3)) {return;} else {break;}
-							case ColorPropertyValue._TYPE: if(ConvertValue(UnityMaterial, value, valueMapping.Item2, valueMapping.Item3)) {return;} else {break;}
+							case TexturePropertyValue._TYPE: if(ConvertValue(UnityMaterial, ((TexturePropertyValue)value).Texture, valueMapping.Item2, UsedUnityPropertyType)) {return;} else {break;}
+							case ColorPropertyValue._TYPE: if(ConvertValue(UnityMaterial, ((ColorPropertyValue)value).Color, valueMapping.Item2, UsedUnityPropertyType)) {return;} else {break;}
+							case FloatPropertyValue._TYPE: if(ConvertValue(UnityMaterial, ((FloatPropertyValue)value).Value, valueMapping.Item2, UsedUnityPropertyType)) {return;} else {break;}
 						}
 					}
 				}
@@ -52,22 +56,10 @@ namespace MTF
 					return UnityMaterial.GetTexture(UnityPropertyName);
 				case ColorPropertyValue._TYPE:
 					return UnityMaterial.GetColor(UnityPropertyName);
+				case FloatPropertyValue._TYPE:
+					return UnityMaterial.GetFloat(UnityPropertyName);
 			}
 			return default;
-		}
-		
-		public static void ParseValue(UnityEngine.Material UnityMaterial, Material.Property MTFProperty, string MTFValueType, string UnityPropertyName, string UnityPropertyType = null)
-		{
-			var UsedUnityPropertyType = UnityPropertyType != null ? UnityPropertyType : MTFValueType;
-			switch(MTFValueType)
-			{
-				case TexturePropertyValue._TYPE:
-					MTFProperty.Values.Add(new TexturePropertyValue {Texture = (Texture2D)RetrieveValue(UnityMaterial, UnityPropertyName, UsedUnityPropertyType)});
-					break;
-				case ColorPropertyValue._TYPE:
-					MTFProperty.Values.Add(new ColorPropertyValue {Color = (Color)RetrieveValue(UnityMaterial, UnityPropertyName, UsedUnityPropertyType)});
-					break;
-			}
 		}
 
 		/* ValueOrder: List<(MTF value-type, Unity property-name, Optional Override Unity Property Type)> */
@@ -81,22 +73,23 @@ namespace MTF
 			}
 			foreach(var valueMapping in ValueOrder)
 			{
-				var MTFValueType = valueMapping.Item1;
-				var UnityPropertyName = valueMapping.Item2;
-				var UnityPropertyType = valueMapping.Item3;
-				
-				var UsedUnityPropertyType = UnityPropertyType != null ? UnityPropertyType : MTFValueType;
-				switch(MTFValueType)
+				var UsedUnityPropertyType = valueMapping.Item3 != null ? valueMapping.Item3 : valueMapping.Item1;
+				if(UnityMaterial.HasProperty(valueMapping.Item2))
 				{
-					case TexturePropertyValue._TYPE:
-						var texture = (Texture2D)RetrieveValue(UnityMaterial, UnityPropertyName, UsedUnityPropertyType);
-						if(texture != null) property.Values.Add(new TexturePropertyValue {Texture = texture});
-						break;
-					case ColorPropertyValue._TYPE:
-						property.Values.Add(new ColorPropertyValue {Color = (Color)RetrieveValue(UnityMaterial, UnityPropertyName, UsedUnityPropertyType)});
-						var color = (Color)RetrieveValue(UnityMaterial, UnityPropertyName, UsedUnityPropertyType);
-						if(color != null) property.Values.Add(new ColorPropertyValue {Color = color});
-						break;
+					switch(valueMapping.Item1)
+					{
+						case TexturePropertyValue._TYPE:
+							var texture = (Texture2D)RetrieveValue(UnityMaterial, valueMapping.Item2, UsedUnityPropertyType);
+							if(texture != null) property.Values.Add(new TexturePropertyValue {Texture = texture});
+							break;
+						case ColorPropertyValue._TYPE:
+							var color = (Color)RetrieveValue(UnityMaterial, valueMapping.Item2, UsedUnityPropertyType);
+							if(color != null) property.Values.Add(new ColorPropertyValue {Color = color});
+							break;
+						case FloatPropertyValue._TYPE:
+							property.Values.Add(new FloatPropertyValue {Value = (float)RetrieveValue(UnityMaterial, valueMapping.Item2, UsedUnityPropertyType)});
+							break;
+					}
 				}
 			}
 		}
@@ -114,6 +107,12 @@ namespace MTF
 				(TexturePropertyValue._TYPE, "_MainTex", null),
 				(ColorPropertyValue._TYPE, "_Color", null),
 			});
+			MaterialConverterUtil.ConvertProperty(MTFMaterial, ret, "normal", new List<(string, string, string)> {
+				(TexturePropertyValue._TYPE, "_BumpMap", null),
+			});
+			MaterialConverterUtil.ConvertProperty(MTFMaterial, ret, "specular", new List<(string, string, string)> {
+				(FloatPropertyValue._TYPE, "_SpecularHighlights", null)
+			});
 			return ret;
 		}
 	}
@@ -130,6 +129,13 @@ namespace MTF
 			MaterialConverterUtil.ParseProperty(UnityMaterial, ret, "albedo", new List<(string, string, string)> {
 				(TexturePropertyValue._TYPE, "_MainTex", null),
 				(ColorPropertyValue._TYPE, "_Color", null),
+				(FloatPropertyValue._TYPE, "_SpecularHighlights", null)
+			});
+			MaterialConverterUtil.ParseProperty(UnityMaterial, ret, "normal", new List<(string, string, string)> {
+				(TexturePropertyValue._TYPE, "_BumpMap", null),
+			});
+			MaterialConverterUtil.ParseProperty(UnityMaterial, ret, "specular", new List<(string, string, string)> {
+				(FloatPropertyValue._TYPE, "_SpecularHighlights", null)
 			});
 			return ret;
 		}
