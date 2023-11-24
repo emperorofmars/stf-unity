@@ -42,7 +42,7 @@ namespace MTF
 				else textureChannels.Add((null, false));
 
 				//var assetPath = AssetDatabase.GetAssetPath(MTFMaterial);
-				var assetPath = "Assets/STF Imports/TMP/fuck";
+				var assetPath = "Assets/STF Imports/TMP/" + MTFMaterial.name + "_" + MTFMaterial.Id;
 				var savePath = Path.Combine(Path.GetDirectoryName(assetPath), Path.GetFileNameWithoutExtension(assetPath) + "_MetallicGlossMap");
 				MaterialConverterUtil.AssembleTextureChannels(textureChannels, ret, "_MetallicGlossMap", savePath);
 			}

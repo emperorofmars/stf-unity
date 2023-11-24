@@ -53,7 +53,7 @@ namespace MTF.Addons
 				textureChannels.Add((null, false));
 
 				//var assetPath = AssetDatabase.GetAssetPath(MTFMaterial);
-				var assetPath = "Assets/STF Imports/TMP/fuck" + MTFMaterial.name + "_" + MTFMaterial.Id;
+				var assetPath = "Assets/STF Imports/TMP/" + MTFMaterial.name + "_" + MTFMaterial.Id;
 				var savePath = Path.Combine(Path.GetDirectoryName(assetPath), Path.GetFileNameWithoutExtension(assetPath) + "_MochieMetallicMaps");
 				if(MaterialConverterUtil.AssembleTextureChannels(textureChannels, ret, "_MochieMetallicMaps", savePath))
 				{
