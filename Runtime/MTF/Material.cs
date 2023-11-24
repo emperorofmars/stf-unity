@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace MTF
@@ -24,17 +23,5 @@ namespace MTF
 			ret.Properties.Add(new Property { Type = "Albedo", Values = new List<IPropertyValue> { new ColorPropertyValue{ Color = Color.white } } } );
 			return ret;
 		}
-	}
-
-	public interface IMaterialConverter
-	{
-		string ShaderName {get;}
-		UnityEngine.Material ConvertToUnityMaterial(Material MTFMaterial, UnityEngine.Material ExistingUnityMaterial = null);
-	}
-
-	public interface IMaterialParser
-	{
-		string ShaderName {get;}
-		Material ParseFromUnityMaterial(UnityEngine.Material UnityMaterial, Material ExistingMTFMaterial = null);
 	}
 }

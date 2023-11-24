@@ -15,7 +15,7 @@ namespace MTF
 	{
 		public const string _SHADER_NAME = "Standard";
 		public string ShaderName {get => _SHADER_NAME;}
-		public UnityEngine.Material ConvertToUnityMaterial(Material MTFMaterial, UnityEngine.Material ExistingUnityMaterial = null)
+		public UnityEngine.Material ConvertToUnityMaterial(IMaterialConvertState State, Material MTFMaterial, UnityEngine.Material ExistingUnityMaterial = null)
 		{
 			var ret = ExistingUnityMaterial != null ? ExistingUnityMaterial : new UnityEngine.Material(Shader.Find(ShaderName));
 			ret.name = ExistingUnityMaterial != null ? ExistingUnityMaterial.name : MTFMaterial.name;
@@ -41,10 +41,7 @@ namespace MTF
 				else if(roughnessValue != null) textureChannels.Add((roughnessValue, true));
 				else textureChannels.Add((null, false));
 
-				//var assetPath = AssetDatabase.GetAssetPath(MTFMaterial);
-				var assetPath = "Assets/STF Imports/TMP/" + MTFMaterial.name + "_" + MTFMaterial.Id;
-				var savePath = Path.Combine(Path.GetDirectoryName(assetPath), Path.GetFileNameWithoutExtension(assetPath) + "_MetallicGlossMap");
-				MaterialConverterUtil.AssembleTextureChannels(textureChannels, ret, "_MetallicGlossMap", savePath);
+				MaterialConverterUtil.AssembleTextureChannels(State, textureChannels, ret, "_MetallicGlossMap");
 			}
 
 			MaterialConverterUtil.SetFloatProperty(MTFMaterial, ret, "specular", "_SpecularHighlights");
@@ -55,7 +52,7 @@ namespace MTF
 	public class StandardParser : IMaterialParser
 	{
 		public string ShaderName {get => StandardConverter._SHADER_NAME;}
-		public Material ParseFromUnityMaterial(UnityEngine.Material UnityMaterial, Material ExistingMTFMaterial = null)
+		public Material ParseFromUnityMaterial(IMaterialParseState State, UnityEngine.Material UnityMaterial, Material ExistingMTFMaterial = null)
 		{
 			var ret = ExistingMTFMaterial != null ? ExistingMTFMaterial : ScriptableObject.CreateInstance<Material>();
 			ret.name = ExistingMTFMaterial != null ? ExistingMTFMaterial.name : UnityMaterial.name;
@@ -66,16 +63,6 @@ namespace MTF
 			MaterialParserUtil.ParseColorProperty(UnityMaterial, ret, "albedo", "_Color");
 			
 			MaterialParserUtil.ParseTextureProperty(UnityMaterial, ret, "normal", "_BumpMap");
-
-			/*var assetPath = AssetDatabase.GetAssetPath(UnityMaterial);
-			{
-				var savePath = Path.Combine(Path.GetDirectoryName(assetPath), Path.GetFileNameWithoutExtension(assetPath) + "_MetallicGlossMap");
-				MaterialParserUtil.ParsoIntoSingleChannelTexture(UnityMaterial, ret, "metallic", "_MetallicGlossMap", 0, savePath);
-			}
-			{
-				var savePath = Path.Combine(Path.GetDirectoryName(assetPath), Path.GetFileNameWithoutExtension(assetPath) + "_MetallicGlossMap");
-				MaterialParserUtil.ParsoIntoSingleChannelTexture(UnityMaterial, ret, "smoothness", "_MetallicGlossMap", 4, savePath);
-			}*/
 			
 			MaterialParserUtil.ParseTextureChannelProperty(UnityMaterial, ret, "metallic", 0, "_MetallicGlossMap");
 			MaterialParserUtil.ParseTextureChannelProperty(UnityMaterial, ret, "smoothness", 4, "_MetallicGlossMap");

@@ -1,11 +1,6 @@
 
-#if UNITY_EDITOR
-
-using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Runtime.InteropServices;
-using UnityEditor;
 using UnityEngine;
 
 namespace MTF
@@ -30,22 +25,6 @@ namespace MTF
 				if(value.Type == MTFValueType) return value;
 			}
 			return null;
-		}
-
-		public static bool SetProperty(Material MTFMaterial, UnityEngine.Material UnityMaterial, string MTFPropertyType, string MTFValueType, string UnityPropertyName)
-		{
-			var property = MTFMaterial.Properties.Find(p => p.Type == MTFPropertyType);
-			if(property != null) foreach(var value in property.Values)
-			{
-				if(value.Type != MTFValueType) continue;
-				switch(MTFValueType)
-				{
-					case TexturePropertyValue._TYPE: UnityMaterial.SetTexture(UnityPropertyName, ((TexturePropertyValue)value).Texture); return true;
-					case ColorPropertyValue._TYPE: UnityMaterial.SetColor(UnityPropertyName, ((ColorPropertyValue)value).Color); return true;
-					case FloatPropertyValue._TYPE: UnityMaterial.SetFloat(UnityPropertyName, ((FloatPropertyValue)value).Value); return true;
-				}
-			}
-			return false;
 		}
 
 		public static bool SetTextureProperty(Material MTFMaterial, UnityEngine.Material UnityMaterial, string MTFPropertyType, string UnityPropertyName)
@@ -81,7 +60,7 @@ namespace MTF
 
 		// This is very ugly, slow and error prone, TODO: unfuck this, use a proper lib
 		/* Channels: List of Property-values, invert; 4 channels hard required */
-		public static bool AssembleTextureChannels(List<(List<IPropertyValue>, bool)> Channels, UnityEngine.Material UnityMaterial, string UnityPropertyName, string SavePath)
+		public static bool AssembleTextureChannels(IMaterialConvertState State, List<(List<IPropertyValue>, bool)> Channels, UnityEngine.Material UnityMaterial, string UnityPropertyName)
 		{
 			// check if these are texture channel property values pointing to the same texture
 			var isSameTexture = true;
@@ -116,15 +95,15 @@ namespace MTF
 							case TexturePropertyValue._TYPE:
 								var textureProperty = (TexturePropertyValue)propertyValue;
 								// TODO: check if asset exists in filesystem, otherwise take from buffer
-								var texturePropertyPath = AssetDatabase.GetAssetPath(textureProperty.Texture);
-								parsedChannels.Add((new Bitmap(texturePropertyPath), -1, channel.Item2));
+								var bitmapTexture = State.LoadTextureAsBitmap(textureProperty.Texture);
+								parsedChannels.Add((bitmapTexture, -1, channel.Item2));
 								parsed = true;
 								break;
 							case TextureChannelPropertyValue._TYPE:
 								var textureChannelProperty = (TextureChannelPropertyValue)propertyValue;
 								// TODO: check if asset exists in filesystem, otherwise take from buffer
-								var textureChannelPropertyPath = AssetDatabase.GetAssetPath(textureChannelProperty.Texture);
-								parsedChannels.Add((new Bitmap(textureChannelPropertyPath), textureChannelProperty.Channel, channel.Item2));
+								var bitmapTextureChanne = State.LoadTextureAsBitmap(textureChannelProperty.Texture);
+								parsedChannels.Add((bitmapTextureChanne, -1, channel.Item2));
 								parsed = true;
 								break;
 							// also handle color and other property types
@@ -163,9 +142,7 @@ namespace MTF
 					ret.SetPixel(x, y, System.Drawing.Color.FromArgb(color[0], color[1], color[2], color[3]));
 				}
 			}
-			ret.Save(SavePath + ".png", System.Drawing.Imaging.ImageFormat.Png);
-			AssetDatabase.Refresh();
-			var finalTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(SavePath + ".png");
+			var finalTexture = State.SaveBitmapTexture(ret, UnityPropertyName);
 			UnityMaterial.SetTexture(UnityPropertyName, finalTexture);
 			return true;
 		}
@@ -192,21 +169,6 @@ namespace MTF
 				MTFMaterial.Properties.Add(property);
 			}
 			return property;
-		}
-
-		public static bool ParseProperty(UnityEngine.Material UnityMaterial, Material MTFMaterial, string MTFPropertyType, string MTFValueType, string UnityPropertyName)
-		{
-			if(UnityMaterial.HasProperty(UnityPropertyName))
-			{
-				var property = _EnsureProperty(MTFMaterial, MTFPropertyType);
-				switch(MTFValueType)
-				{
-					case TexturePropertyValue._TYPE: property.Values.Add(new TexturePropertyValue{Texture = (Texture2D)UnityMaterial.GetTexture(UnityPropertyName)}); return true;
-					case ColorPropertyValue._TYPE: property.Values.Add(new ColorPropertyValue{Color = UnityMaterial.GetColor(UnityPropertyName)}); return true;
-					case FloatPropertyValue._TYPE: property.Values.Add(new FloatPropertyValue{Value = UnityMaterial.GetFloat(UnityPropertyName)}); return true;
-				}
-			}
-			return false;
 		}
 
 		public static bool ParseTextureProperty(UnityEngine.Material UnityMaterial, Material MTFMaterial, string MTFPropertyType, string UnityPropertyName)
@@ -248,44 +210,5 @@ namespace MTF
 			}
 			return false;
 		}
-
-		/*public static Bitmap GetSingleChannelTexture(Texture OriginalTexture, int Channel)
-		{
-			var assetPath = AssetDatabase.GetAssetPath(OriginalTexture);
-			var bitmap = new Bitmap(assetPath);
-			Debug.Log("AAA: " + bitmap.Width + " : " + bitmap.Height);
-			var ret = new Bitmap(bitmap.Width, bitmap.Height, System.Drawing.Imaging.PixelFormat.Format8bppIndexed);
-			//var ret = new Bitmap(bitmap.Width, bitmap.Height, System.Drawing.Imaging.PixelFormat.Format8bppIndexed);
-			//var ret = new Bitmap(bitmap.Width, bitmap.Height, System.Drawing.Imaging.PixelFormat.Alpha);
-			for(int x = 0; x < bitmap.Width; x++)
-			{
-				for(int y = 0; y < bitmap.Height; y++)
-				{
-					int color = 0;
-					if(Channel == 0) color = bitmap.GetPixel(x, y).A;
-					if(Channel == 1) color = bitmap.GetPixel(x, y).R;
-					if(Channel == 2) color = bitmap.GetPixel(x, y).G;
-					if(Channel == 3) color = bitmap.GetPixel(x, y).B;
-					ret.SetPixel(x, y, System.Drawing.Color.FromArgb(color, color, color, color));
-				}
-			}
-			return ret;
-		}
-
-		public static bool ParsoIntoSingleChannelTexture(UnityEngine.Material UnityMaterial, Material MTFMaterial, string MTFPropertyType, string UnityPropertyName, int Channel, string SavePath)
-		{
-			if(UnityMaterial.HasProperty(UnityPropertyName))
-			{
-				var tex = GetSingleChannelTexture(UnityMaterial.GetTexture(UnityPropertyName), Channel);
-				tex.Save(SavePath + ".png", System.Drawing.Imaging.ImageFormat.Png);
-				AssetDatabase.Refresh();
-				var processedTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(SavePath + ".png");
-				_EnsureProperty(MTFMaterial, MTFPropertyType).Values.Add(new TexturePropertyValue{Texture = processedTexture });
-				return true;
-			}
-			return false;
-		}*/
 	}
 }
-
-#endif

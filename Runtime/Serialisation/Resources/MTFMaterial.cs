@@ -4,34 +4,14 @@ using Newtonsoft.Json.Linq;
 using UnityEngine;
 using System.Linq;
 using System.Collections.Generic;
-using UnityEditor;
 
 namespace STF.Serialisation
 {
-	public class STFMTFImportState : MTF.IImportState
-	{
-		ISTFImportState State;
-		public STFMTFImportState(ISTFImportState State)
-		{
-			this.State = State;
-		}
-
-		public UnityEngine.Object GetResource(string Id)
-		{
-			var r = State.Resources[Id];
-			if(r is ISTFResource)
-			{
-				if(((ISTFResource)r).Resource != null) return ((ISTFResource)r).Resource;
-				else return AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(((ISTFResource)r).ResourceLocation);
-			}
-			return State.Resources[Id];
-		}
-	}
-	public class STFMTFExportState : MTF.IExportState
+	public class MTFPropertyValueExportState : MTF.IPropertyValueExportState
 	{
 		ISTFExportState State;
 		public List<string> UsedResources = new List<string>();
-		public STFMTFExportState(ISTFExportState State)
+		public MTFPropertyValueExportState(ISTFExportState State)
 		{
 			this.State = State;
 		}
@@ -41,6 +21,10 @@ namespace STF.Serialisation
 			UsedResources.Add(id);
 			return id;
 		}
+	}
+	public class MTFMaterialParseState : MTF.IMaterialParseState
+	{
+
 	}
 
 	public class UnityMaterialExporter : ISTFResourceExporter
@@ -54,15 +38,16 @@ namespace STF.Serialisation
 		{
 			var mat = (Material)Resource;
 			// Convert to MTF.Material
+			var mtfExportState = new MTFMaterialParseState();
 			if(MTF.ShaderConverterRegistry.MaterialParsers.ContainsKey(mat.shader.name))
 			{
-				var mtfMaterial = MTF.ShaderConverterRegistry.MaterialParsers[mat.shader.name].ParseFromUnityMaterial(mat);
+				var mtfMaterial = MTF.ShaderConverterRegistry.MaterialParsers[mat.shader.name].ParseFromUnityMaterial(mtfExportState, mat);
 				return SerdeUtil.SerializeResource(State, mtfMaterial);
 			}
 			else
 			{
 				Debug.LogWarning("Material Converter Not registered for shader: " + mat.shader.name + ", falling back.");
-				var mtfMaterial = MTF.ShaderConverterRegistry.MaterialParsers[MTF.StandardConverter._SHADER_NAME].ParseFromUnityMaterial(mat);
+				var mtfMaterial = MTF.ShaderConverterRegistry.MaterialParsers[MTF.StandardConverter._SHADER_NAME].ParseFromUnityMaterial(mtfExportState, mat);
 				return SerdeUtil.SerializeResource(State, mtfMaterial);
 			}
 		}
@@ -84,7 +69,7 @@ namespace STF.Serialisation
 				{"targets", new JObject(mat.PreferedShaderPerTarget.Select(e => new JProperty(e.Platform, new JArray(e.Shaders))))},
 				{"hints", new JArray(mat.StyleHints)}
 			};
-			var mtfExportState = new STFMTFExportState(State);
+			var mtfExportState = new MTFPropertyValueExportState(State);
 			var propertiesJson = new JObject();
 			foreach(var property in mat.Properties)
 			{
@@ -123,14 +108,14 @@ namespace STF.Serialisation
 			}
 			mat.StyleHints = Json["hints"].ToObject<List<string>>();
 			
-			var mtfImportState = new STFMTFImportState(State);
+			//var mtfImportState = new MTFPropertyValueImportState(State);
 			foreach(var propertyJson in (JObject)Json["properties"])
 			{
 				var mtfProperty = new MTF.Material.Property { Type = propertyJson.Key };
 				foreach (var valueJson in propertyJson.Value)
 				{
 					// improve this, not just default ones & fall back to unrecognized
-					mtfProperty.Values.Add(MTF.PropertyValueRegistry.PropertyValueImporters[(string)valueJson["type"]].ParseFromJson(mtfImportState, (JObject)valueJson));
+					mtfProperty.Values.Add(MTF.PropertyValueRegistry.PropertyValueImporters[(string)valueJson["type"]].ParseFromJson(State.MTFPropertyValueImportState, (JObject)valueJson));
 				}
 				mat.Properties.Add(mtfProperty);
 			}
@@ -146,7 +131,8 @@ namespace STF.Serialisation
 					break;
 				}
 			}
-			var unityMaterial = converter.ConvertToUnityMaterial(mat);
+			//var mtfConvertState = new MTFMaterialConvertState();
+			var unityMaterial = converter.ConvertToUnityMaterial(State.MTFMaterialConvertState, mat);
 			unityMaterial.name = mat.name + "_Converted";
 			mat.ConvertedMaterial = unityMaterial;
 			State.SaveResourceBelongingToId(unityMaterial, "Asset", Id);

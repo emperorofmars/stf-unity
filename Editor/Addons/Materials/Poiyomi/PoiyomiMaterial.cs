@@ -15,7 +15,7 @@ namespace MTF.Addons
 	{
 		public const string _SHADER_NAME = ".poiyomi/Poiyomi 8.1/Poiyomi Toon";
 		public string ShaderName {get => _SHADER_NAME;}
-		public UnityEngine.Material ConvertToUnityMaterial(Material MTFMaterial, UnityEngine.Material ExistingUnityMaterial = null)
+		public UnityEngine.Material ConvertToUnityMaterial(IMaterialConvertState State, Material MTFMaterial, UnityEngine.Material ExistingUnityMaterial = null)
 		{
 			var ret = ExistingUnityMaterial != null ? ExistingUnityMaterial : new UnityEngine.Material(Shader.Find(ShaderName));
 			ret.name = ExistingUnityMaterial != null ? ExistingUnityMaterial.name : MTFMaterial.name;
@@ -23,7 +23,6 @@ namespace MTF.Addons
 			MaterialConverterUtil.SetTextureProperty(MTFMaterial, ret, "albedo", "_MainTex");
 			MaterialConverterUtil.SetColorProperty(MTFMaterial, ret, "albedo", "_Color");
 			MaterialConverterUtil.SetTextureProperty(MTFMaterial, ret, "normal", "_BumpMap");
-
 
 			{
 				var textureChannels = new List<(List<IPropertyValue>, bool)>();
@@ -48,14 +47,8 @@ namespace MTF.Addons
 				else if(smoothnessValue != null) textureChannels.Add((smoothnessValue, true));
 				else if(roughnessValue != null) textureChannels.Add((roughnessValue, true));
 				else textureChannels.Add((null, false));
-				
 
-				textureChannels.Add((null, false));
-
-				//var assetPath = AssetDatabase.GetAssetPath(MTFMaterial);
-				var assetPath = "Assets/STF Imports/TMP/" + MTFMaterial.name + "_" + MTFMaterial.Id;
-				var savePath = Path.Combine(Path.GetDirectoryName(assetPath), Path.GetFileNameWithoutExtension(assetPath) + "_MochieMetallicMaps");
-				if(MaterialConverterUtil.AssembleTextureChannels(textureChannels, ret, "_MochieMetallicMaps", savePath))
+				if(MaterialConverterUtil.AssembleTextureChannels(State, textureChannels, ret, "_MochieMetallicMaps"))
 				{
 					ret.SetFloat("_MochieBRDF", 1);
 					ret.SetFloat("_MochieMetallicMultiplier", 1);
@@ -68,7 +61,7 @@ namespace MTF.Addons
 	public class PoiyomiParser : IMaterialParser
 	{
 		public string ShaderName {get => PoiyomiConverter._SHADER_NAME;}
-		public Material ParseFromUnityMaterial(UnityEngine.Material UnityMaterial, Material ExistingMTFMaterial = null)
+		public Material ParseFromUnityMaterial(IMaterialParseState State, UnityEngine.Material UnityMaterial, Material ExistingMTFMaterial = null)
 		{
 			var ret = ExistingMTFMaterial != null ? ExistingMTFMaterial : ScriptableObject.CreateInstance<Material>();
 			ret.name = ExistingMTFMaterial != null ? ExistingMTFMaterial.name : UnityMaterial.name;

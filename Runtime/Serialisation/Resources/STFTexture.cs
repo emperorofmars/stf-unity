@@ -56,7 +56,6 @@ namespace STF.Serialisation
 			var meta = ScriptableObject.CreateInstance<STFTexture>();
 			meta.Id = Id;
 			meta.Name = (string)Json["name"];
-			meta.ResourceLocation = Path.Combine(State.TargetLocation, STFConstants.ResourceDirectoryName, meta.Name + "_" + Id + "." + (string)Json["format"]);
 			meta.Linear = Json["linear"] != null ? (bool)Json["linear"] : false;
 			meta.OriginalBufferId = (string)Json["buffer"];
 			

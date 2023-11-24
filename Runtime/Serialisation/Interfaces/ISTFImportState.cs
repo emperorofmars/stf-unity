@@ -16,6 +16,8 @@ namespace STF.Serialisation
 		string TargetLocation {get;}
 		string MainAssetId {get;}
 		JObject JsonRoot {get;}
+		MTF.IPropertyValueImportState MTFPropertyValueImportState {get;}
+		MTF.IMaterialConvertState MTFMaterialConvertState {get;}
 
 		// id -> asset
 		Dictionary<string, STFAsset> Assets {get;}
@@ -36,6 +38,7 @@ namespace STF.Serialisation
 		void SaveResource<T>(byte[] Resource, string FileExtension, T Meta, string Id) where T: UnityEngine.Object, ISTFResource;
 		void SaveResourceBelongingToId(UnityEngine.Object Resource, string FileExtension, string OwnerId);
 
+		UnityEngine.Object LoadResource(ISTFResource Resource);
 		UnityEngine.Object Instantiate(UnityEngine.Object Resource);
 
 		void SaveAsset(GameObject Root, string Name, bool Main = false);
