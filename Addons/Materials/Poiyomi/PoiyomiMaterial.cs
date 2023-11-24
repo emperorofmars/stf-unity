@@ -7,6 +7,7 @@ using System.Linq;
 using Microsoft.Win32;
 using UnityEngine;
 using UnityEditor;
+using System.IO;
 
 namespace MTF.Addons
 {
@@ -23,54 +24,42 @@ namespace MTF.Addons
 			MaterialConverterUtil.SetColorProperty(MTFMaterial, ret, "albedo", "_Color");
 			MaterialConverterUtil.SetTextureProperty(MTFMaterial, ret, "normal", "_BumpMap");
 
-			var pbrChannels = new List<TextureChannelPropertyValue>();
+
 			{
-				var property = MTFMaterial.Properties.Find(p => p.Type == "metallic");
-				if(property != null) foreach(var value in property.Values)
+				var textureChannels = new List<(List<IPropertyValue>, bool)>();
+
+				var metallicValue = MaterialConverterUtil.FindPropertyValues(MTFMaterial, "metallic");
+				if(metallicValue != null) textureChannels.Add((metallicValue, false));
+				else textureChannels.Add((null, false));
+
+				var smoothnessValue = MaterialConverterUtil.FindPropertyValues(MTFMaterial, "smoothness");
+				var roughnessValue = MaterialConverterUtil.FindPropertyValues(MTFMaterial, "roughness");
+				if(smoothnessValue != null) textureChannels.Add((smoothnessValue, false));
+				else if(roughnessValue != null) textureChannels.Add((roughnessValue, true));
+				else textureChannels.Add((null, false));
+
+				var reflectionValue = MaterialConverterUtil.FindPropertyValues(MTFMaterial, "reflection");
+				if(reflectionValue != null) textureChannels.Add((reflectionValue, false));
+				else if(metallicValue != null) textureChannels.Add((metallicValue, false));
+				else textureChannels.Add((null, false));
+
+				var specularValue = MaterialConverterUtil.FindPropertyValues(MTFMaterial, "specular");
+				if(specularValue != null) textureChannels.Add((specularValue, false));
+				else if(smoothnessValue != null) textureChannels.Add((smoothnessValue, true));
+				else if(roughnessValue != null) textureChannels.Add((roughnessValue, true));
+				else textureChannels.Add((null, false));
+				
+
+				textureChannels.Add((null, false));
+
+				//var assetPath = AssetDatabase.GetAssetPath(MTFMaterial);
+				var assetPath = "Assets/STF Imports/TMP/fuck" + MTFMaterial.name + "_" + MTFMaterial.Id;
+				var savePath = Path.Combine(Path.GetDirectoryName(assetPath), Path.GetFileNameWithoutExtension(assetPath) + "_MochieMetallicMaps");
+				if(MaterialConverterUtil.AssembleTextureChannels(textureChannels, ret, "_MochieMetallicMaps", savePath))
 				{
-					switch(value.Type)
-					{
-						case TextureChannelPropertyValue._TYPE: pbrChannels.Add((TextureChannelPropertyValue)value); break;
-					}
+					ret.SetFloat("_MochieBRDF", 1);
+					ret.SetFloat("_MochieMetallicMultiplier", 1);
 				}
-			}
-			{
-				var property = MTFMaterial.Properties.Find(p => p.Type == "smoothness");
-				if(property != null) foreach(var value in property.Values)
-				{
-					switch(value.Type)
-					{
-						case TextureChannelPropertyValue._TYPE: pbrChannels.Add((TextureChannelPropertyValue)value); break;
-					}
-				}
-			}
-			{
-				var property = MTFMaterial.Properties.Find(p => p.Type == "reflection");
-				if(property != null) foreach(var value in property.Values)
-				{
-					switch(value.Type)
-					{
-						case TextureChannelPropertyValue._TYPE: pbrChannels.Add((TextureChannelPropertyValue)value); break;
-					}
-				}
-			}
-			{
-				var property = MTFMaterial.Properties.Find(p => p.Type == "specular");
-				if(property != null) foreach(var value in property.Values)
-				{
-					switch(value.Type)
-					{
-						case TextureChannelPropertyValue._TYPE: pbrChannels.Add((TextureChannelPropertyValue)value); break;
-					}
-				}
-			}
-			// assemble texture
-			if(pbrChannels.Count > 0)
-			{
-				//var assembledTexture = new Texture2D();
-				//ret.SetTexture("_BumpMap", assembledTexture);
-				ret.SetFloat("_MochieBRDF", 1);
-				ret.SetFloat("_MochieMetallicMultiplier", 1);
 			}
 			return ret;
 		}

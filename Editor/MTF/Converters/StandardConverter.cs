@@ -41,7 +41,8 @@ namespace MTF
 				else if(roughnessValue != null) textureChannels.Add((roughnessValue, true));
 				else textureChannels.Add((null, false));
 
-				var assetPath = AssetDatabase.GetAssetPath(MTFMaterial);
+				//var assetPath = AssetDatabase.GetAssetPath(MTFMaterial);
+				var assetPath = "Assets/STF Imports/TMP/fuck";
 				var savePath = Path.Combine(Path.GetDirectoryName(assetPath), Path.GetFileNameWithoutExtension(assetPath) + "_MetallicGlossMap");
 				MaterialConverterUtil.AssembleTextureChannels(textureChannels, ret, "_MetallicGlossMap", savePath);
 			}
@@ -65,6 +66,16 @@ namespace MTF
 			MaterialParserUtil.ParseColorProperty(UnityMaterial, ret, "albedo", "_Color");
 			
 			MaterialParserUtil.ParseTextureProperty(UnityMaterial, ret, "normal", "_BumpMap");
+
+			/*var assetPath = AssetDatabase.GetAssetPath(UnityMaterial);
+			{
+				var savePath = Path.Combine(Path.GetDirectoryName(assetPath), Path.GetFileNameWithoutExtension(assetPath) + "_MetallicGlossMap");
+				MaterialParserUtil.ParsoIntoSingleChannelTexture(UnityMaterial, ret, "metallic", "_MetallicGlossMap", 0, savePath);
+			}
+			{
+				var savePath = Path.Combine(Path.GetDirectoryName(assetPath), Path.GetFileNameWithoutExtension(assetPath) + "_MetallicGlossMap");
+				MaterialParserUtil.ParsoIntoSingleChannelTexture(UnityMaterial, ret, "smoothness", "_MetallicGlossMap", 4, savePath);
+			}*/
 			
 			MaterialParserUtil.ParseTextureChannelProperty(UnityMaterial, ret, "metallic", 0, "_MetallicGlossMap");
 			MaterialParserUtil.ParseTextureChannelProperty(UnityMaterial, ret, "smoothness", 4, "_MetallicGlossMap");
