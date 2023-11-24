@@ -1,6 +1,8 @@
 {
     "name": "stf_unity",
-    "references": [],
+    "references": [
+        "GUID:11853eced9b5f854cafb7778375e3229"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": true,

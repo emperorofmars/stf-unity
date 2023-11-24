@@ -7,7 +7,7 @@ using UnityEditor;
 using UnityEditor.Experimental.AssetImporters;
 using UnityEngine;
 using STF.IdComponents;
-using STF.Serde;
+using STF.Serialisation;
 using static STF.Tools.STFScriptedImporter;
 using System;
 

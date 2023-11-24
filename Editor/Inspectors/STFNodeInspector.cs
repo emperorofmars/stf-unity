@@ -2,11 +2,7 @@
 #if UNITY_EDITOR
 
 using System;
-using System.Collections.Generic;
-using Newtonsoft.Json.Linq;
-using STF.IdComponents;
-using STF.Serde;
-using STF.Util;
+using STF.Serialisation;
 using UnityEditor;
 using UnityEngine;
 

@@ -1,14 +1,10 @@
 
 #if UNITY_EDITOR
 
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
 using STF.IdComponents;
-using STF.Serde;
+using STF.Serialisation;
 using UnityEditor;
 using UnityEngine;
-
 
 namespace STF.Tools
 {
