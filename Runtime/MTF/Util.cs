@@ -58,103 +58,31 @@ namespace MTF
 			return false;
 		}
 
-		// This is very ugly, slow and error prone, TODO: unfuck this, use a proper lib
-		/* Channels: List of Property-values, invert; 4 channels hard required */
-		public static bool AssembleTextureChannels(IMaterialConvertState State, List<(List<IPropertyValue>, bool)> Channels, UnityEngine.Material UnityMaterial, string UnityPropertyName)
+		public static bool AssembleTextureChannels(IMaterialConvertState State, ImageChannelSetup Channels, UnityEngine.Material UnityMaterial, string UnityPropertyName)
 		{
 			// check if these are texture channel property values pointing to the same texture
 			var isSameTexture = true;
 			Texture2D originalTexture = null;
-			for(int i = 0; i < Channels.Count; i++)
+			for(int i = 0; i < 4; i++)
 			{
-				if(Channels[i].Item1 == null) { isSameTexture = false; break; }
-				else if(Channels[i].Item1.Count == 0) { isSameTexture = false; break; }
-				else if(Channels[i].Item1[0].Type != TextureChannelPropertyValue._TYPE) { isSameTexture = false; break; }
-				else if(((TextureChannelPropertyValue)Channels[i].Item1[0]).Channel != i) { isSameTexture = false; break; }
-				else if(originalTexture == null) originalTexture = ((TextureChannelPropertyValue)Channels[i].Item1[0]).Texture;
-				else if(originalTexture != ((TextureChannelPropertyValue)Channels[i].Item1[0]).Texture) { isSameTexture = false; break; }
+				if(Channels[i].Source == null) { isSameTexture = false; break; }
+				else if(Channels[i].Source.Type != TextureChannelPropertyValue._TYPE) { isSameTexture = false; break; }
+				else if(((TextureChannelPropertyValue)Channels[i].Source).Channel != i) { isSameTexture = false; break; }
+				else if(originalTexture == null) originalTexture = ((TextureChannelPropertyValue)Channels[i].Source).Texture;
+				else if(originalTexture != ((TextureChannelPropertyValue)Channels[i].Source).Texture) { isSameTexture = false; break; }
 			}
 			if(isSameTexture)
 			{
-				Debug.Log("SAME TEXTURE");
 				UnityMaterial.SetTexture(UnityPropertyName, originalTexture);
 				return true;
 			}
 
-			// assemble combined texture
-			var parsedChannels = new List<(Bitmap, int, bool)>();
-			foreach(var channel in Channels)
-			{
-				if(channel.Item1 != null)
-				{
-					foreach(var propertyValue in channel.Item1)
-					{
-						var parsed = false;
-						switch(propertyValue.Type)
-						{
-							case TexturePropertyValue._TYPE:
-								var textureProperty = (TexturePropertyValue)propertyValue;
-								// TODO: check if asset exists in filesystem, otherwise take from buffer
-								var bitmapTexture = State.LoadTextureAsBitmap(textureProperty.Texture);
-								parsedChannels.Add((bitmapTexture, -1, channel.Item2));
-								parsed = true;
-								break;
-							case TextureChannelPropertyValue._TYPE:
-								var textureChannelProperty = (TextureChannelPropertyValue)propertyValue;
-								// TODO: check if asset exists in filesystem, otherwise take from buffer
-								var bitmapTextureChanne = State.LoadTextureAsBitmap(textureChannelProperty.Texture);
-								parsedChannels.Add((bitmapTextureChanne, -1, channel.Item2));
-								parsed = true;
-								break;
-							// also handle color and other property types
-						}
-						if(parsed) break;
-					}
-				}
-			}
-			var largestResolution = new Size();
-			foreach(var channel in parsedChannels)
-			{
-				if(channel.Item1 != null)
-				{
-					if(channel.Item1.Width > largestResolution.Width) largestResolution.Width = channel.Item1.Width;
-					if(channel.Item1.Height > largestResolution.Height) largestResolution.Height = channel.Item1.Height;
-				}
-			}
-			var convertedChannels = new List<(Bitmap, int, bool)>();
-			// convert to the largest size
-			foreach(var channel in parsedChannels)
-			{
-				if(channel.Item1 != null) convertedChannels.Add((new Bitmap(channel.Item1, largestResolution), channel.Item2, channel.Item3));
-				else convertedChannels.Add((null, -1, false));
-			}
-			var ret = new Bitmap(largestResolution.Width, largestResolution.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-			for(int x = 0; x < largestResolution.Width; x++)
-			{
-				for(int y = 0; y < largestResolution.Height; y++)
-				{
-					var color = new int[4];
-					for(int c = 0; c < convertedChannels.Count; c++)
-					{
-						if(convertedChannels[c].Item1 != null) color[c] = GetColorChannel(convertedChannels[c].Item1.GetPixel(x, y), convertedChannels[c].Item2, convertedChannels[c].Item3);
-						else color[c] = 0;
-					}
-					ret.SetPixel(x, y, System.Drawing.Color.FromArgb(color[0], color[1], color[2], color[3]));
-				}
-			}
-			var finalTexture = State.SaveBitmapTexture(ret, UnityPropertyName);
+			var finalTexture = ImageUtil.AssembleTextureChannels(Channels);
+			// actually store more properly
+			finalTexture.name = UnityPropertyName;
+			State.SaveResource(finalTexture, "asset");
 			UnityMaterial.SetTexture(UnityPropertyName, finalTexture);
 			return true;
-		}
-
-		private static int GetColorChannel(System.Drawing.Color color, int channel, bool inverted)
-		{
-			int ret = 0;
-			if(channel == 0) ret = color.A;
-			else if(channel == 1) ret = color.R;
-			else if(channel == 2) ret = color.G;
-			else if(channel == 3) ret = color.B;
-			return inverted ? 255 - ret : ret;
 		}
 	}
 

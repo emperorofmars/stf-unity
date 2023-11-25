@@ -13,47 +13,6 @@ using System.Drawing;
 
 namespace STF.Serialisation
 {
-	// Temporary fix for bitmap bullshit
-	public class MTFPropertyValueImportState : MTF.IPropertyValueImportState
-	{
-		ISTFImportState State;
-		public MTFPropertyValueImportState(ISTFImportState State)
-		{
-			this.State = State;
-		}
-
-		public UnityEngine.Object GetResource(string Id)
-		{
-			var r = State.Resources[Id];
-			if(r is ISTFResource resource)
-			{
-				return State.LoadResource(resource);
-			}
-			return r;
-		}
-	}
-	public class MTFMaterialConvertState : MTF.IMaterialConvertState
-	{
-		ISTFImportState State;
-		public MTFMaterialConvertState(ISTFImportState State)
-		{
-			this.State = State;
-		}
-		public Bitmap LoadTextureAsBitmap(Texture2D Texture)
-		{
-			var texturePropertyPath = AssetDatabase.GetAssetPath(Texture);
-			return new Bitmap(texturePropertyPath);
-		}
-
-		public Texture2D SaveBitmapTexture(Bitmap Bitmap, string Name)
-		{
-			var savePath = Path.Combine(State.TargetLocation, STFConstants.ResourceDirectoryName, Path.GetFileNameWithoutExtension(Name));
-			Bitmap.Save(savePath + ".png", System.Drawing.Imaging.ImageFormat.Png);
-			AssetDatabase.Refresh();
-			return AssetDatabase.LoadAssetAtPath<Texture2D>(savePath + ".png");
-		}
-	}
-
 	public class STFImportState : ISTFImportState
 	{
 		STFImportContext _Context;
@@ -70,10 +29,6 @@ namespace STF.Serialisation
 		public Dictionary<string, UnityEngine.Object> Resources {get => _Resources;}
 		Dictionary<string, byte[]> _Buffers = new Dictionary<string, byte[]>();
 		public Dictionary<string, byte[]> Buffers {get => _Buffers;}
-
-		public IPropertyValueImportState MTFPropertyValueImportState => new MTFPropertyValueImportState(this);
-
-		public IMaterialConvertState MTFMaterialConvertState => new MTFMaterialConvertState(this);
 
 		// stuff to delete before the import finishes
 		public List<UnityEngine.Object> Trash = new List<UnityEngine.Object>();
@@ -145,6 +100,13 @@ namespace STF.Serialisation
 		{
 			if(!FileExtension.StartsWith(".")) FileExtension = "." + FileExtension;
 			var location = Path.Combine(TargetLocation, STFConstants.ResourceDirectoryName, Resource.name + "_" + OwnerId + FileExtension);
+			AssetDatabase.CreateAsset(Resource, location);
+			AssetDatabase.Refresh();
+		}
+		public void SaveGeneratedResource(UnityEngine.Object Resource, string FileExtension)
+		{
+			if(!FileExtension.StartsWith(".")) FileExtension = "." + FileExtension;
+			var location = Path.Combine(TargetLocation, STFConstants.ResourceDirectoryName, Resource.name + FileExtension);
 			AssetDatabase.CreateAsset(Resource, location);
 			AssetDatabase.Refresh();
 		}

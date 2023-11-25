@@ -26,6 +26,38 @@ namespace STF.Serialisation
 	{
 
 	}
+	
+	public class MTFPropertyValueImportState : MTF.IPropertyValueImportState
+	{
+		ISTFImportState State;
+		public MTFPropertyValueImportState(ISTFImportState State)
+		{
+			this.State = State;
+		}
+
+		public UnityEngine.Object GetResource(string Id)
+		{
+			var r = State.Resources[Id];
+			if(r is ISTFResource resource)
+			{
+				return State.LoadResource(resource);
+			}
+			return r;
+		}
+	}
+	public class MTFMaterialConvertState : MTF.IMaterialConvertState
+	{
+		ISTFImportState State;
+		public MTFMaterialConvertState(ISTFImportState State)
+		{
+			this.State = State;
+		}
+		
+		public void SaveResource(UnityEngine.Object Resource, string FileExtension)
+		{
+			State.SaveGeneratedResource(Resource, FileExtension);
+		}
+	}
 
 	public class UnityMaterialExporter : ISTFResourceExporter
 	{
@@ -108,14 +140,14 @@ namespace STF.Serialisation
 			}
 			mat.StyleHints = Json["hints"].ToObject<List<string>>();
 			
-			//var mtfImportState = new MTFPropertyValueImportState(State);
+			var mtfImportState = new MTFPropertyValueImportState(State);
 			foreach(var propertyJson in (JObject)Json["properties"])
 			{
 				var mtfProperty = new MTF.Material.Property { Type = propertyJson.Key };
 				foreach (var valueJson in propertyJson.Value)
 				{
 					// improve this, not just default ones & fall back to unrecognized
-					mtfProperty.Values.Add(MTF.PropertyValueRegistry.PropertyValueImporters[(string)valueJson["type"]].ParseFromJson(State.MTFPropertyValueImportState, (JObject)valueJson));
+					mtfProperty.Values.Add(MTF.PropertyValueRegistry.PropertyValueImporters[(string)valueJson["type"]].ParseFromJson(mtfImportState, (JObject)valueJson));
 				}
 				mat.Properties.Add(mtfProperty);
 			}
@@ -131,8 +163,8 @@ namespace STF.Serialisation
 					break;
 				}
 			}
-			//var mtfConvertState = new MTFMaterialConvertState();
-			var unityMaterial = converter.ConvertToUnityMaterial(State.MTFMaterialConvertState, mat);
+			var mtfConvertState = new MTFMaterialConvertState(State);
+			var unityMaterial = converter.ConvertToUnityMaterial(mtfConvertState, mat);
 			unityMaterial.name = mat.name + "_Converted";
 			mat.ConvertedMaterial = unityMaterial;
 			State.SaveResourceBelongingToId(unityMaterial, "Asset", Id);

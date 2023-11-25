@@ -26,22 +26,23 @@ namespace MTF
 			MaterialConverterUtil.SetTextureProperty(MTFMaterial, ret, "normal", "_BumpMap");
 
 			{
-				var textureChannels = new List<(List<IPropertyValue>, bool)>();
-
+				var channelMetallic = ImageChannelSetup.ImageChannel.Empty();
 				var metallicValue = MaterialConverterUtil.FindPropertyValues(MTFMaterial, "metallic");
-				if(metallicValue != null) textureChannels.Add((metallicValue, false));
-				else textureChannels.Add((null, false));
+				if(metallicValue != null) channelMetallic = new ImageChannelSetup.ImageChannel(metallicValue[0], false);
 
-				textureChannels.Add((null, false));
-				textureChannels.Add((null, false));
-
+				var channelSmoothnes = ImageChannelSetup.ImageChannel.Empty();
 				var smoothnessValue = MaterialConverterUtil.FindPropertyValues(MTFMaterial, "smoothness");
 				var roughnessValue = MaterialConverterUtil.FindPropertyValues(MTFMaterial, "roughness");
-				if(smoothnessValue != null) textureChannels.Add((smoothnessValue, false));
-				else if(roughnessValue != null) textureChannels.Add((roughnessValue, true));
-				else textureChannels.Add((null, false));
+				if(smoothnessValue != null) channelSmoothnes = new ImageChannelSetup.ImageChannel(smoothnessValue[0], false);
+				else if(roughnessValue != null) channelSmoothnes = new ImageChannelSetup.ImageChannel(roughnessValue[0], true);
 
-				MaterialConverterUtil.AssembleTextureChannels(State, textureChannels, ret, "_MetallicGlossMap");
+				var imageChannels = new ImageChannelSetup(
+					channelMetallic,
+					ImageChannelSetup.ImageChannel.Empty(),
+					ImageChannelSetup.ImageChannel.Empty(),
+					channelSmoothnes
+				);
+				MaterialConverterUtil.AssembleTextureChannels(State, imageChannels, ret, "_MetallicGlossMap");
 			}
 
 			MaterialConverterUtil.SetFloatProperty(MTFMaterial, ret, "specular", "_SpecularHighlights");
