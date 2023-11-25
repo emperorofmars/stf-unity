@@ -48,9 +48,11 @@ namespace STF.Serialisation
 	public class MTFMaterialConvertState : MTF.IMaterialConvertState
 	{
 		ISTFImportState State;
-		public MTFMaterialConvertState(ISTFImportState State)
+		string Name;
+		public MTFMaterialConvertState(ISTFImportState State, string Name)
 		{
 			this.State = State;
+			this.Name = Name;
 		}
 		
 		public void SaveResource(UnityEngine.Object Resource, string FileExtension)
@@ -59,7 +61,7 @@ namespace STF.Serialisation
 		}
 		public Texture2D SaveImageResource(byte[] Bytes, string Name, string Extension)
 		{
-			return State.SaveAndLoadResource<Texture2D>(Bytes, Name, Extension);
+			return State.SaveAndLoadResource<Texture2D>(Bytes, this.Name + Name, Extension);
 		}
 	}
 
@@ -167,7 +169,7 @@ namespace STF.Serialisation
 					break;
 				}
 			}
-			var mtfConvertState = new MTFMaterialConvertState(State);
+			var mtfConvertState = new MTFMaterialConvertState(State, mat.name + Id);
 			var unityMaterial = converter.ConvertToUnityMaterial(mtfConvertState, mat);
 			unityMaterial.name = mat.name + "_Converted";
 			mat.ConvertedMaterial = unityMaterial;

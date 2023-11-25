@@ -26,13 +26,13 @@ namespace MTF
 			MaterialConverterUtil.SetTextureProperty(MTFMaterial, ret, "normal", "_BumpMap");
 
 			{
-				var channelMetallic = ImageChannelSetup.ImageChannel.Empty();
 				var metallicValue = MaterialConverterUtil.FindPropertyValues(MTFMaterial, "metallic");
-				if(metallicValue != null) channelMetallic = new ImageChannelSetup.ImageChannel(metallicValue[0], false);
-
-				var channelSmoothnes = ImageChannelSetup.ImageChannel.Empty();
 				var smoothnessValue = MaterialConverterUtil.FindPropertyValues(MTFMaterial, "smoothness");
 				var roughnessValue = MaterialConverterUtil.FindPropertyValues(MTFMaterial, "roughness");
+
+				var channelMetallic = metallicValue != null ? new ImageChannelSetup.ImageChannel(metallicValue[0], false) : ImageChannelSetup.ImageChannel.Empty();
+
+				var channelSmoothnes = ImageChannelSetup.ImageChannel.Empty();
 				if(smoothnessValue != null) channelSmoothnes = new ImageChannelSetup.ImageChannel(smoothnessValue[0], false);
 				else if(roughnessValue != null) channelSmoothnes = new ImageChannelSetup.ImageChannel(roughnessValue[0], true);
 

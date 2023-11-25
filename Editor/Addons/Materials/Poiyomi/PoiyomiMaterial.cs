@@ -25,23 +25,23 @@ namespace MTF.Addons
 			MaterialConverterUtil.SetTextureProperty(MTFMaterial, ret, "normal", "_BumpMap");
 
 			{
-				var channelMetallic = ImageChannelSetup.ImageChannel.Empty();
 				var metallicValue = MaterialConverterUtil.FindPropertyValues(MTFMaterial, "metallic");
-				if(metallicValue != null) channelMetallic = new ImageChannelSetup.ImageChannel(metallicValue[0], false);
-
-				var channelSmoothness = ImageChannelSetup.ImageChannel.Empty();
 				var smoothnessValue = MaterialConverterUtil.FindPropertyValues(MTFMaterial, "smoothness");
 				var roughnessValue = MaterialConverterUtil.FindPropertyValues(MTFMaterial, "roughness");
+				var reflectionValue = MaterialConverterUtil.FindPropertyValues(MTFMaterial, "reflection");
+				var specularValue = MaterialConverterUtil.FindPropertyValues(MTFMaterial, "specular");
+
+				var channelMetallic = metallicValue != null ? new ImageChannelSetup.ImageChannel(metallicValue[0], false) : ImageChannelSetup.ImageChannel.Empty();
+
+				var channelSmoothness = ImageChannelSetup.ImageChannel.Empty();
 				if(smoothnessValue != null) channelSmoothness = new ImageChannelSetup.ImageChannel(smoothnessValue[0], false);
 				else if(roughnessValue != null) channelSmoothness = new ImageChannelSetup.ImageChannel(roughnessValue[0], true);
 
 				var channelReflection = ImageChannelSetup.ImageChannel.Empty();
-				var reflectionValue = MaterialConverterUtil.FindPropertyValues(MTFMaterial, "reflection");
 				if(reflectionValue != null) channelReflection = new ImageChannelSetup.ImageChannel(reflectionValue[0], false);
 				else if(metallicValue != null) channelReflection = new ImageChannelSetup.ImageChannel(metallicValue[0], false);
 
 				var channelSpecular = ImageChannelSetup.ImageChannel.Empty();
-				var specularValue = MaterialConverterUtil.FindPropertyValues(MTFMaterial, "specular");
 				if(specularValue != null) channelSpecular = new ImageChannelSetup.ImageChannel(specularValue[0], false);
 				else if(smoothnessValue != null) channelSpecular = new ImageChannelSetup.ImageChannel(smoothnessValue[0], false);
 				else if(roughnessValue != null) channelSpecular = new ImageChannelSetup.ImageChannel(roughnessValue[0], true);
