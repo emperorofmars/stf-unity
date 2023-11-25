@@ -6,7 +6,8 @@ namespace MTF
 {
 	public interface IMaterialConvertState
 	{
-		void SaveResource(Object Bitmap, string Name);
+		void SaveResource(Object Resource, string Name);
+		Texture2D SaveImageResource(byte[] Bytes, string Name, string Extension);
 	}
 	public interface IMaterialParseState
 	{

@@ -34,6 +34,7 @@ namespace STF.Serialisation
 		void SaveResource<T>(UnityEngine.Object Resource, string FileExtension, T Meta, string Id) where T: UnityEngine.Object, ISTFResource;
 		void SaveResource<T>(GameObject Resource, T Meta, string Id) where T: UnityEngine.Object, ISTFResource;
 		void SaveResource<T>(byte[] Resource, string FileExtension, T Meta, string Id) where T: UnityEngine.Object, ISTFResource;
+		T SaveAndLoadResource<T>(byte[] Resource, string Name, string FileExtension) where T: UnityEngine.Object;
 		void SaveResourceBelongingToId(UnityEngine.Object Resource, string FileExtension, string OwnerId);
 		void SaveGeneratedResource(UnityEngine.Object Resource, string FileExtension);
 

@@ -78,9 +78,8 @@ namespace MTF
 			}
 
 			var finalTexture = ImageUtil.AssembleTextureChannels(Channels);
-			// actually store more properly
 			finalTexture.name = UnityPropertyName;
-			State.SaveResource(finalTexture, "asset");
+			finalTexture = State.SaveImageResource(finalTexture.EncodeToPNG(), UnityPropertyName, "png");
 			UnityMaterial.SetTexture(UnityPropertyName, finalTexture);
 			return true;
 		}

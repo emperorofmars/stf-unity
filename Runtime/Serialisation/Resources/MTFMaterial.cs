@@ -57,6 +57,10 @@ namespace STF.Serialisation
 		{
 			State.SaveGeneratedResource(Resource, FileExtension);
 		}
+		public Texture2D SaveImageResource(byte[] Bytes, string Name, string Extension)
+		{
+			return State.SaveAndLoadResource<Texture2D>(Bytes, Name, Extension);
+		}
 	}
 
 	public class UnityMaterialExporter : ISTFResourceExporter
