@@ -1,7 +1,7 @@
 {
-    "name": "stf-unity-runtime",
+    "name": "mtf-materials",
     "references": [
-        "GUID:3d1fb76a17114c9469f4f41657963541"
+        "GUID:f6e45c355aca57346b2551ce3fb43d6e"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
