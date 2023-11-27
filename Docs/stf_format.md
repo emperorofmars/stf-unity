@@ -19,6 +19,8 @@ A file cannot be changed automatically between import and export, unless explici
 - [Addons](#addons)
 - [Material Format](#material-format)
 - [Current Status and Considerations](#current-status-and-considerations)
+- [Some Background and Motivation](#some-background-and-motivation)
+- [GLTF 2.0 Issues](#gltf-20-issues)
 
 ## JSON Definition
 The JSON definition has 6 properties in the root object.
@@ -34,14 +36,15 @@ Example:
 
 	{
 		"meta": {
-			"author" : "Emperor of Mars"
+			"generator" : "stf-unity"
 		},
 		"main": "dc96ec16-17c2-4ac2-bd27-21f4c9a34bba",
 		"assets": {
 			"dc96ec16-17c2-4ac2-bd27-21f4c9a34bba": {
 				"name": "Test",
 				"type": "STF.asset",
-				"root": "4147da6b-e4ca-42db-826e-46a5dda9322f"
+				"root": "4147da6b-e4ca-42db-826e-46a5dda9322f",
+				"author": "Emperor of Mars"
 			}
 		},
 		"nodes": {
@@ -118,11 +121,7 @@ It is possible to create assets of the type `STF.addon`. These provide a list of
 
 That way it becomes trivial for a third party to create assets like a set of clothing for a base character model. The STF importer scans the Unity project for STF addons targeting the selected asset and presents the user with a simple checkbox to apply it.
 
-<<<<<<<< HEAD:Docs/stf_format.md
 ![Screenshot of an STF file's inspector in Unity, containing a list of detected addons, with a checkbox to apply it to the current model.](./Images/import_settings_addons.png)
-========
-![Screenshot of an STF file's inspector in Unity, containing a list of detected addons, with a checkbox to apply it to the current model.](./Images/img/import_settings_addons.png)
->>>>>>>> 366ae69 (started rewrite):Documentation/stf_format.md
 
 ## Material Format
 As part of creating this format, I created the beginning of a universal material format, preliminarily called: MTF - Material Transfer Format.
@@ -181,11 +180,54 @@ Even if a perfect conversion is not possible, the hope is that at least the best
 Such a material format could have use beyond just STF and should probably become its own project, which STF would merely make use of.
 
 # Current Status and Considerations
-- Due to Unity limitatins, importing a STF file fully through the Scripted Importer won't work. Encoded images can't be imported that way for example. STF will be rewritten to import models into Assets, while still using the Scripted Importer Inspector get an overview and easily instantiate the STF assets.
-- Animation paths import in the STF representation into Unity (prefix + UUID + property path). They only get resolved during a second stage's process. To make animations easier to work with for authoring, they should convert into the authoring format, targeting STF specific components with valid Unity paths.
-Component and Resource Converters should get a 'convert property path' method for this purpose.
-- Assets should have a single representation, that being a component on the root object of an imported prefab.
-This component should offer a nice to use UI to apply addons and to convert to a target format. This would replace the current second stage system.
 - Create more addon applier classes. For example one to set specific blendshapes on the target asset or one to merge meshes together.
 - Generally refine the entire user experience of using STF. Build better inspectors for components and resources.
 - Significantly expand the material system. Build a proper UI for it. It should make it easy to add properties and generate Unity materials for whatever shader is selected. Maybe make MTF its own exportable file-format as well!
+
+# Some Background and Motivation
+VR Avatars are currently distributed as packages for game-engines, specifically Unity. This is an issue as end users have a hard time using professional tools. Additionally, Unity is not a character-editor, it's a tool with which a character-editor application can be created.
+
+I wanted to create a universal character-editor application aimed at end users wishing to adapt their VR Avatar models but without the technical knowledge to do so in a game-engine.
+Therefore, I needed a file format that this character-editor-application could parse. This is where my descend into madness began.
+
+Initially I wanted to create a format based on GLTF 2.0 to represent VR & V-Tubing avatars in a single file, agnostic of any target application, but with support for 100% of the features of each.
+
+*VRM is a format also in the form of a GLTF extension, which also represents VR & V-Tubing avatars. However, it only supports a small subset of features, supports only a small number of hard-coded materials and doesn't support animations at all.*
+
+I didn't think it would be too complicated to create something better than VRM, however I encountered countless issues with the GLTF 2.0 specification itself as well its implementations.
+I wanted to avoid having to create my own format, but after 4 months of trying, I saw no way to make this work with glTF 2.0.
+
+After 4 more months, I have created this STF format prototype and the AVA proof of concept set of extensions. STF puts extensibility first, and supports most of everything that GLTF does, and makes it trivial to implement anything beside that.
+STF was created with consideration of how most applications like Blender, Unity, Godot or Unreal Engine represent models and scenes. As such, most headaches from GLTF should have been solved here, hopefully.
+
+# glTF 2.0 Issues
+- Material references and morphtarget values sit on the mesh, not its instances.
+  https://github.com/KhronosGroup/glTF/issues/1249
+  https://github.com/KhronosGroup/glTF/issues/1036
+- In GLTF everything is addressed by index. Indices are very likely to break between import and export. (If an extension is not supported by an application and gets stored as raw JSON, that references other objects by index, it will break. Addon assets like supported by STF would also break.)
+- Limited animation support. Only transforms and morphtarget values (per mesh, not per mesh-instance) can be animated.
+  The [KHR_animation_pointer](https://github.com/KhronosGroup/glTF/pull/2147) extension proposal would fix that partially.
+- There is weirdness with multiple meshes sharing the same armature.
+  https://github.com/KhronosGroup/glTF/issues/1285
+- Morphtarget names are not supported by the specification. Sometimes these are stored on the 'extras' field of the mesh, sometimes on the first mesh primitive. The Blender GLTF implementation does the first, the UnityGLTF implementation does the latter.
+- GLTF itself is supremely extensible, however to implement additional extensions in most GLTF libraries, they have to be forked and modified at the core. When an GLTF implementation has support for loading additional extensions, like the Godot 4 engine, it is often accompanied by significant issues.
+- GLTF only supports specific hard-coded materials.
+
+## Issues in glTF 2.0 implementations I've tried to work with
+- Blender
+	- The Blender implementation exports insanely large files.
+  https://github.com/KhronosGroup/glTF-Blender-IO/issues/1346
+  Godot does this as well.
+  A file being 95% larger and consisting of 95% zeros in the case of my Fox VR Avatar Base (thanks to about 200 morphtargets) is just not serious.
+- Godot
+	- Godot also exports ridiculously large files like Blender.
+	- glTF import and export scene handling: https://github.com/godotengine/godot-proposals/discussions/6588
+	- glTF export exclusions: https://github.com/godotengine/godot-proposals/discussions/6587
+	- ImporterMeshInstance3D metadata lost in glTF import process: https://github.com/godotengine/godot-proposals/discussions/6586
+- Unity
+	- Hardcoded extensions in both UnityGLTF and the new in developement GLTFast implementation.
+
+To fix most of the issues, breaking changes would be needed for the GLTF specification.
+Most of this has been known for a long time, and there has been no change, only a silent absence of general GLTF use, sadly.
+
+My hope is that I was able to account for all issues with STF and create something that can be extended further to fit in any use case for a 3d file format, while being extremely easy to work with.
