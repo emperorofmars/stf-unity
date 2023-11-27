@@ -24,12 +24,13 @@ A file cannot be changed automatically between import and export, unless explici
 
 ## JSON Definition
 The JSON definition has 6 properties in the root object.
-- `meta` Information about the author, copyright, etc...
+- `meta` Information about the file.
 - `main` UUID of the main asset.
-- `assets` A dict of UUID → assets pairs. Assets can list node UUID's and resource UUID's, depending on the asset type.
+- `assets` A dict of UUID → asset pairs. Assets can list node UUID's and resource UUID's, depending on the asset type.
 - `nodes` A dict of UUID → node pairs. Nodes can have a list of components and child-node UUID's. Specific node types can reference resources, other nodes and assets. (assets for example for a prefab instance, alternatively these could be done as components)
 	- `components` A node's components describe additional information and behavior. For example mesh-instances or rotation constraints. Components can reference other nodes, resources and assets.
 - `resources` A list of UUID → resource pairs. Resources can be referenced by nodes, components and assets. Resources can reference nodes, other resources and buffers. A resource's importer/exporter is responsible for dealing with any referenced buffer.
+	- `components` A resource's components describe additional information and behavior. For example humanoid definitions for armatures or LOD's for meshes.
 - `buffers` A list of buffer UUID's in the order of the binary chunks. The index of the buffer UUID corresponds to the index of the buffer in the STF file + 1. (The JSON definition is at the first index)
 
 Example:

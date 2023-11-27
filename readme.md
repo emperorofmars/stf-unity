@@ -17,7 +17,7 @@ Unlike glTF, there are no hard definitions of specific resource types. Instead, 
 
 A STF setup in Unity can be further processed into specific target applications formats by `Second Stage Converters`. For example, an application agnostic VR-Avatar definition implemented in STF can be converted into an VRChat avatar setup that is ready to be uploaded by the VRChat SDK.
 
-## [Read up on how STF works in detail here.](./Docs/stf_format.md)
+### [Read up on how STF works in detail here.](./Docs/stf_format.md)
 
 # How to Use
 - Ensure you have the Newtonsoft JSON package imported in Unity. If you set up your Unity project with the VRC Creator Companion, it will be already imported. If not, install the official package in UPM.
