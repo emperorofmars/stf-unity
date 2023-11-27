@@ -22,11 +22,69 @@ namespace STF.Serialisation
 
 	public interface ISTFNodeExporter
 	{
+		string ConvertPropertyPath(string UnityProperty);
 		string SerializeToJson(ISTFExportState State, GameObject Go);
 	}
 
 	public interface ISTFNodeImporter
 	{
+		string ConvertPropertyPath(string STFProperty);
 		GameObject ParseFromJson(ISTFAssetImportState State, JObject JsonAsset, string Id);
+	}
+
+	public abstract class ASTFNodeExporter : ISTFNodeExporter
+	{
+		public string ConvertPropertyPath(string UnityProperty)
+		{
+			if(UnityProperty.StartsWith("m_LocalPosition"))
+			{
+				if(UnityProperty.EndsWith("x")) return "translation.x";
+				if(UnityProperty.EndsWith("y")) return "translation.y";
+				if(UnityProperty.EndsWith("z")) return "translation.z";
+			}
+			else if(UnityProperty.StartsWith("m_LocalRotation"))
+			{
+				if(UnityProperty.EndsWith("x")) return "rotation.x";
+				if(UnityProperty.EndsWith("y")) return "rotation.y";
+				if(UnityProperty.EndsWith("z")) return "rotation.z";
+				if(UnityProperty.EndsWith("w")) return "rotation.w";
+			}
+			else if(UnityProperty.StartsWith("m_LocalScale"))
+			{
+				if(UnityProperty.EndsWith("x")) return "scale.x";
+				if(UnityProperty.EndsWith("y")) return "scale.y";
+				if(UnityProperty.EndsWith("z")) return "scale.z";
+			}
+			throw new Exception("Unrecognized animation property: " + UnityProperty);
+		}
+		public abstract string SerializeToJson(ISTFExportState State, GameObject Go);
+	}
+
+	public abstract class ASTFNodeImporter : ISTFNodeImporter
+	{
+		public string ConvertPropertyPath(string STFProperty)
+		{
+			if(STFProperty.StartsWith("translation"))
+			{
+				if(STFProperty.EndsWith("x")) return "m_LocalPosition.x";
+				if(STFProperty.EndsWith("y")) return "m_LocalPosition.y";
+				if(STFProperty.EndsWith("z")) return "m_LocalPosition.z";
+			}
+			else if(STFProperty.StartsWith("rotation"))
+			{
+				if(STFProperty.EndsWith("x")) return "m_LocalRotation.x";
+				if(STFProperty.EndsWith("y")) return "m_LocalRotation.y";
+				if(STFProperty.EndsWith("z")) return "m_LocalRotation.z";
+				if(STFProperty.EndsWith("w")) return "m_LocalRotation.w";
+			}
+			else if(STFProperty.StartsWith("scale"))
+			{
+				if(STFProperty.EndsWith("x")) return "m_LocalScale.x";
+				if(STFProperty.EndsWith("y")) return "m_LocalScale.y";
+				if(STFProperty.EndsWith("z")) return "m_LocalScale.z";
+			}
+			throw new Exception("Unrecognized animation property: " + STFProperty);
+		}
+		public abstract GameObject ParseFromJson(ISTFAssetImportState State, JObject JsonAsset, string Id);
 	}
 }

@@ -17,9 +17,9 @@ namespace STF.Serialisation
 		public List<GameObject> bones;
 	}
 
-	public class STFArmatureInstanceExporter : ISTFNodeExporter
+	public class STFArmatureInstanceExporter : ASTFNodeExporter
 	{
-		public string SerializeToJson(ISTFExportState State, GameObject Go)
+		public override string SerializeToJson(ISTFExportState State, GameObject Go)
 		{
 			var node = Go.GetComponent<STFArmatureInstanceNode>();
 			var armatureInstanceChildren = new JArray();
@@ -71,9 +71,9 @@ namespace STF.Serialisation
 		}
 	}
 
-	public class STFArmatureInstanceImporter : ISTFNodeImporter
+	public class STFArmatureInstanceImporter : ASTFNodeImporter
 	{
-		public GameObject ParseFromJson(ISTFAssetImportState State, JObject JsonAsset, string Id)
+		public override GameObject ParseFromJson(ISTFAssetImportState State, JObject JsonAsset, string Id)
 		{
 			var armatureResource = (STFArmature)State.Resources[(string)JsonAsset["armature"]];
 			var go = (GameObject)State.Instantiate(armatureResource._Resource);

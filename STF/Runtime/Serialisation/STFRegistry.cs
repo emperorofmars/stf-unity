@@ -63,25 +63,28 @@ namespace STF.Serialisation
 		public static readonly Dictionary<string, ISTFNodeImporter> DefaultNodeImporters = new Dictionary<string, ISTFNodeImporter>() {
 			{STFNode._TYPE, new STFNodeImporter()},
 			{STFArmatureInstanceNode._TYPE, new STFArmatureInstanceImporter()},
+			{STFBoneNode._TYPE, new DontInvokeNodeImporter()},
+			{STFBoneInstanceNode._TYPE, new DontInvokeNodeImporter()},
 			//{STFAppendageNodeImporter._TYPE, new STFAppendageNodeImporter()},
 			//{STFPatchNodeImporter._TYPE, new STFPatchNodeImporter()}
 		};
 		public static readonly Dictionary<string, ISTFNodeExporter> DefaultNodeExporters = new Dictionary<string, ISTFNodeExporter>() {
 			{STFNode._TYPE, new STFNodeExporter()},
 			{STFArmatureInstanceNode._TYPE, new STFArmatureInstanceExporter()},
+			{STFBoneNode._TYPE, new DontInvokeNodeExporter()},
+			{STFBoneInstanceNode._TYPE, new DontInvokeNodeExporter()},
 		};
-		// Also add node exporters. As they cannot be mapped to a Unity type, devise a way for them to determine wether to handle a node or not, perhaps with priorities or something
 		public static readonly Dictionary<string, ISTFNodeComponentImporter> DefaultNodeComponentImporters = new Dictionary<string, ISTFNodeComponentImporter>() {
 			{STFMeshInstance._TYPE, new STFMeshInstanceImporter()},
 			{STFTwistConstraintBack._TYPE, new STFTwistConstraintBackImporter()},
+			{STFResourceHolder._TYPE, new STFResourceHolderImporter()}
 			//{STFTwistConstraintForward._TYPE, new STFTwistConstraintForwardImporter()},
-			//{STFAnimationHolder._TYPE, new STFAnimationHolderImporter()}
 		};
 		public static readonly Dictionary<Type, ISTFNodeComponentExporter> DefaultNodeComponentExporters = new Dictionary<Type, ISTFNodeComponentExporter>() {
 			{typeof(SkinnedMeshRenderer), new STFMeshInstanceExporter()},
 			{typeof(STFTwistConstraintBack), new STFTwistConstraintBackExporter()},
+			{typeof(STFResourceHolder), new STFResourceHolderExporter()}
 			//{typeof(STFTwistConstraintForward), new STFTwistConstraintForwardExporter()},
-			//{typeof(STFAnimationHolder), new STFAnimationHolderExporter()}
 		};
 		public static readonly Dictionary<string, ISTFResourceImporter> DefaultResourceImporters = new Dictionary<string, ISTFResourceImporter>() {
 			{STFMeshImporter._TYPE, new STFMeshImporter()},

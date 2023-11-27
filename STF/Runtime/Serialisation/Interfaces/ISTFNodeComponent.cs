@@ -10,6 +10,7 @@ namespace STF.Serialisation
 	{
 		string Id {get; set;}
 		string Type {get;}
+		string ParentNodeId {get; set;}
 		List<string> Extends {get; set;}
 		List<string> Overrides {get; set;}
 		List<string> Targets {get; set;}
@@ -17,9 +18,11 @@ namespace STF.Serialisation
 
 	public abstract class ASTFNodeComponent : MonoBehaviour, ISTFNodeComponent
 	{
-		public string _id = Guid.NewGuid().ToString();
-		public string Id {get => _id; set => _id = value;}
+		public string _Id = Guid.NewGuid().ToString();
+		public string Id {get => _Id; set => _Id = value;}
 		public abstract string Type { get; }
+		public string _ParentNodeId;
+		public string ParentNodeId {get => _ParentNodeId; set => _ParentNodeId = value;}
 
 		public List<string> _extends = new List<string>();
 		public List<string> Extends {get => _extends; set => _extends = value;}

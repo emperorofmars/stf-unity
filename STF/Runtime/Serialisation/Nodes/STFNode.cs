@@ -12,9 +12,9 @@ namespace STF.Serialisation
 		public override string Type => _TYPE;
 	}
 
-	public class STFNodeExporter : ISTFNodeExporter
+	public class STFNodeExporter : ASTFNodeExporter
 	{
-		public string SerializeToJson(ISTFExportState State, GameObject Go)
+		public override string SerializeToJson(ISTFExportState State, GameObject Go)
 		{
 			var node = Go.GetComponent<STFNode>();
 			var ret = new JObject
@@ -30,9 +30,10 @@ namespace STF.Serialisation
 		}
 	}
 
-	public class STFNodeImporter : ISTFNodeImporter
+	public class STFNodeImporter : ASTFNodeImporter
 	{
-		public GameObject ParseFromJson(ISTFAssetImportState State, JObject JsonAsset, string Id)
+
+		public override GameObject ParseFromJson(ISTFAssetImportState State, JObject JsonAsset, string Id)
 		{
 			var ret = new GameObject();
 			State.AddNode(ret, Id);
