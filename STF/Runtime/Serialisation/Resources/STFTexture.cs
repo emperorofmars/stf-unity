@@ -3,6 +3,7 @@ using System;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 using System.IO;
+using System.Collections.Generic;
 
 namespace STF.Serialisation
 {
@@ -19,7 +20,7 @@ namespace STF.Serialisation
 			throw new NotImplementedException();
 		}
 
-		public string SerializeToJson(ISTFExportState State, UnityEngine.Object Resource)
+		public string SerializeToJson(ISTFExportState State, UnityEngine.Object Resource, UnityEngine.Object Context = null)
 		{
 			var texture = (Texture2D)Resource;
 			var ret = new JObject{

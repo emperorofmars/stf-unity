@@ -76,7 +76,7 @@ namespace STF.Serialisation
 		public override GameObject ParseFromJson(ISTFAssetImportState State, JObject JsonAsset, string Id)
 		{
 			var armatureResource = (STFArmature)State.Resources[(string)JsonAsset["armature"]];
-			var go = (GameObject)State.Instantiate(armatureResource._Resource);
+			var go = (GameObject)State.Instantiate(armatureResource.Resource);
 			State.AddNode(go, Id);
 			var armatureInfo = go.GetComponent<STFArmatureNodeInfo>();
 
@@ -100,6 +100,8 @@ namespace STF.Serialisation
 			for(int i = 0; i < boneInstanceIds.Count; i++)
 			{
 				var boneInstanceJson = (JObject)State.JsonRoot["nodes"][boneInstanceIds[i]];
+				Debug.Log((string)boneInstanceJson["bone"]);
+				Debug.Log(armatureInstance.GetComponentsInChildren<STFBoneNode>().Length);
 				var bone = armatureInstance.GetComponentsInChildren<STFBoneNode>().First(bi => (string)boneInstanceJson["bone"] == bi.Id);
 				var boneInstance = bone.gameObject.AddComponent<STFBoneInstanceNode>();
 				boneInstance.Id = boneInstanceIds[i];

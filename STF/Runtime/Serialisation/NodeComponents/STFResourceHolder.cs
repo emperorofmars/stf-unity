@@ -25,7 +25,7 @@ namespace STF.Serialisation
 			var c = (STFResourceHolder)Component;
 			var ret = new JObject {
 				{"type", c.Type},
-				{"resources_used", new JArray(c.Resources.Select(r => SerdeUtil.SerializeResource(State, r)).ToList())}
+				{"resources_used", new JArray(c.Resources.Select(r => SerdeUtil.SerializeResource(State, r, r is AnimationClip ? c.gameObject : null)).ToList())},
 			};
 			SerializeRelationships(c, ret);
 			return (c.Id, ret);

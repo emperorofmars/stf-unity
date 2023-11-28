@@ -34,7 +34,7 @@ namespace STF.Serialisation
 
 	public interface ISTFResourceExporter
 	{
-		string SerializeToJson(ISTFExportState State, Object Resource);
+		string SerializeToJson(ISTFExportState State, Object Resource, Object Context = null);
 		string ConvertPropertyPath(string UnityProperty);
 	}
 

@@ -20,7 +20,7 @@ namespace STF.Serialisation
 			throw new NotImplementedException();
 		}
 
-		public string SerializeToJson(ISTFExportState state, UnityEngine.Object resource)
+		public string SerializeToJson(ISTFExportState state, UnityEngine.Object resource, UnityEngine.Object Context = null)
 		{
 			var meta = (STFArmature)resource;
 			var armatureGo = (GameObject)meta.Resource;

@@ -72,7 +72,7 @@ namespace STF.Serialisation
 			throw new NotImplementedException();
 		}
 
-		public string SerializeToJson(ISTFExportState State, UnityEngine.Object Resource)
+		public string SerializeToJson(ISTFExportState State, UnityEngine.Object Resource, UnityEngine.Object Context = null)
 		{
 			var mat = (Material)Resource;
 			// Convert to MTF.Material
@@ -98,7 +98,7 @@ namespace STF.Serialisation
 			throw new NotImplementedException();
 		}
 
-		public string SerializeToJson(ISTFExportState State, UnityEngine.Object Resource)
+		public string SerializeToJson(ISTFExportState State, UnityEngine.Object Resource, UnityEngine.Object Context = null)
 		{
 			var mat = (MTF.Material)Resource;
 			var ret = new JObject{

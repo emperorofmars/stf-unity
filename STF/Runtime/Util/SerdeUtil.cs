@@ -1,4 +1,5 @@
 
+using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 
@@ -102,12 +103,12 @@ namespace STF.Serialisation
 			}
 		}
 
-		public static string SerializeResource(ISTFExportState State, UnityEngine.Object Resource)
+		public static string SerializeResource(ISTFExportState State, UnityEngine.Object Resource, UnityEngine.Object Context = null)
 		{
 			if(State.Resources.ContainsKey(Resource)) return State.Resources[Resource].Key;
 			if(State.Context.ResourceExporters.ContainsKey(Resource.GetType()))
 			{
-				return State.Context.ResourceExporters[Resource.GetType()].SerializeToJson(State, Resource);
+				return State.Context.ResourceExporters[Resource.GetType()].SerializeToJson(State, Resource, Context);
 			}
 			else
 			{

@@ -6,13 +6,14 @@ using System.IO;
 using System.Threading.Tasks;
 using UnityEditor;
 using STF.Util;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace STF.Serialisation
 {
 	public class STFAnimation : ASTFResource
 	{
 		public const string _TYPE = "STF.animation";
-		public GameObject TMPRoot;
 	}
 
 	public class STFAnimationExporter : ISTFResourceExporter
@@ -22,8 +23,10 @@ namespace STF.Serialisation
 			throw new NotImplementedException();
 		}
 
-		public string SerializeToJson(ISTFExportState State, UnityEngine.Object Resource)
+		public string SerializeToJson(ISTFExportState State, UnityEngine.Object Resource, UnityEngine.Object Context = null)
 		{
+			if(!(Context is GameObject)) throw new Exception("AnimationClip requires Context!");
+
 			var clip = (AnimationClip)Resource;
 			var ret = new JObject{
 				{"type", STFAnimation._TYPE},
@@ -39,14 +42,12 @@ namespace STF.Serialisation
 			var curvesJson = new JArray();
 			ret.Add("tracks", curvesJson);
 
-			var (_, meta, fileName) = State.LoadAsset<STFAnimation>(clip);
+			var meta = State.LoadMeta<STFAnimation>(clip);
 			
 			State.AddTask(new Task(() => {
-				curvesJson.Merge(convertCurves(State, AnimationUtility.GetCurveBindings(clip), clip, meta.TMPRoot));
-				curvesJson.Merge(convertCurves(State, AnimationUtility.GetObjectReferenceCurveBindings(clip), clip, meta.TMPRoot));
+				curvesJson.Merge(convertCurves(State, AnimationUtility.GetCurveBindings(clip), clip, (GameObject)Context));
+				curvesJson.Merge(convertCurves(State, AnimationUtility.GetObjectReferenceCurveBindings(clip), clip, (GameObject)Context));
 			}));
-
-			ret.Add("name", meta != null ? meta.Name : Path.GetFileNameWithoutExtension(fileName));
 			return State.AddResource(Resource, ret, meta ? meta.Id : Guid.NewGuid().ToString());
 		}
 
@@ -60,20 +61,22 @@ namespace STF.Serialisation
 				curvesJson.Add(curveJson);
 
 				var curveTarget = AnimationUtility.GetAnimatedObject(root, c);
-				if(curveTarget.GetType() == typeof(GameObject) || curveTarget.GetType() == typeof(Transform))
+				if(curveTarget is GameObject || curveTarget is Transform)
 				{
+					var nodes = curveTarget is GameObject ? ((GameObject)curveTarget).GetComponents<ISTFNode>() : ((Transform)curveTarget).GetComponents<ISTFNode>();
+					var stfNode = nodes?.OrderBy(k => k.PrefabHirarchy).FirstOrDefault();
 					// get components instead and select the one with the lowest prefab hirarchy
-					var stfNode = curveTarget.GetType() == typeof(GameObject) ? ((GameObject)curveTarget).GetComponent<STFNode>() : ((Transform)curveTarget).GetComponent<STFNode>();
+					//var stfNode = curveTarget is GameObject ? ((GameObject)curveTarget).GetComponent<STFNode>() : ((Transform)curveTarget).GetComponent<STFNode>();
 					
 					curveJson.Add("target_id", stfNode.Id);
 					curveJson.Add("property", State.Context.NodeExporters[stfNode.Type].ConvertPropertyPath(c.propertyName));
 				}
-				// TODO: move curve data into a binary buffer
 
 				if(!c.isDiscreteCurve && !c.isPPtrCurve) curveJson.Add("type", "interpolated");
 				else if(c.isDiscreteCurve && !c.isPPtrCurve) curveJson.Add("type", "discrete");
 				else if(c.isPPtrCurve) curveJson.Add("type", "reference");
 
+				// TODO: move curve data into a binary buffer
 				var keysJson = new JArray();
 				curveJson.Add("keys", keysJson);
 
@@ -239,7 +242,18 @@ namespace STF.Serialisation
 					}
 				}));
 			}
+			State.SaveResource(ret, "anim", meta, Id);
 			return;
+		}
+	}
+
+	[InitializeOnLoad]
+	public class Register_STFAnimation
+	{
+		static Register_STFAnimation()
+		{
+			STFRegistry.RegisterResourceImporter(STFAnimation._TYPE, new STFAnimationImporter());
+			STFRegistry.RegisterResourceExporter(typeof(AnimationClip), new STFAnimationExporter());
 		}
 	}
 }

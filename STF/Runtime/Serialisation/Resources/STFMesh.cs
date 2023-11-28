@@ -23,7 +23,7 @@ namespace STF.Serialisation
 			throw new NotImplementedException();
 		}
 
-		public string SerializeToJson(ISTFExportState State, UnityEngine.Object Resource)
+		public string SerializeToJson(ISTFExportState State, UnityEngine.Object Resource, UnityEngine.Object Context = null)
 		{
 			var ret = new JObject();
 			var mesh = (Mesh)Resource;
