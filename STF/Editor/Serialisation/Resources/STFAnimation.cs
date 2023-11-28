@@ -62,6 +62,7 @@ namespace STF.Serialisation
 				var curveTarget = AnimationUtility.GetAnimatedObject(root, c);
 				if(curveTarget.GetType() == typeof(GameObject) || curveTarget.GetType() == typeof(Transform))
 				{
+					// get components instead and select the one with the lowest prefab hirarchy
 					var stfNode = curveTarget.GetType() == typeof(GameObject) ? ((GameObject)curveTarget).GetComponent<STFNode>() : ((Transform)curveTarget).GetComponent<STFNode>();
 					
 					curveJson.Add("target_id", stfNode.Id);

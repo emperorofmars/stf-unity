@@ -85,6 +85,7 @@ namespace STF.Serialisation
 			var armatureInstance = go.AddComponent<STFArmatureInstanceNode>();
 			armatureInstance.Id = Id;
 			armatureInstance.name = (string)JsonAsset["name"];
+			armatureInstance.PrefabHirarchy = 1;
 			armatureInstance.Origin = State.AssetInfo.assetId;
 			
 			TRSUtil.ParseTRS(go, JsonAsset);
@@ -103,6 +104,7 @@ namespace STF.Serialisation
 				var boneInstance = bone.gameObject.AddComponent<STFBoneInstanceNode>();
 				boneInstance.Id = boneInstanceIds[i];
 				boneInstance.BoneId = bone.Id;
+				boneInstance.PrefabHirarchy = 1;
 				boneInstance.Origin = State.AssetInfo.assetId;
 				armatureInstance.bones[i] = boneInstance.gameObject;
 
