@@ -29,7 +29,7 @@ namespace STF.Serialisation
 			var ret = new JObject {
 				{"type", STFArmatureImporter._TYPE},
 				{"name", armature.ArmatureName},
-				{"root", armature.Root.GetComponent<STFBoneNode>().NodeId}
+				{"root", armature.Root.GetComponent<STFBoneNode>().Id}
 			};
 
 			var boneIds = new List<string>();
@@ -45,11 +45,11 @@ namespace STF.Serialisation
 				var childIds = new string[bone.transform.childCount];
 				for(int childIdx = 0; childIdx < bone.transform.childCount; childIdx++)
 				{
-					childIds[childIdx] = bone.transform.GetChild(childIdx).GetComponent<STFBoneNode>().NodeId;
+					childIds[childIdx] = bone.transform.GetChild(childIdx).GetComponent<STFBoneNode>().Id;
 				}
 				boneJson.Add("children", new JArray(childIds));
 
-				var boneId = bone.GetComponent<STFBoneNode>().NodeId;
+				var boneId = bone.GetComponent<STFBoneNode>().Id;
 				boneIds.Add(boneId);
 				state.AddNode(bone.gameObject, boneJson, boneId);
 			}
@@ -95,7 +95,7 @@ namespace STF.Serialisation
 				State.AddTrash(boneGO);
 
 				var bone = boneGO.AddComponent<STFBoneNode>();
-				bone.NodeId = boneIds[i];
+				bone.Id = boneIds[i];
 				bone.name = (string)boneNodeJson["name"];
 				bone.Origin = Id;
 				TRSUtil.ParseTRS(bone.gameObject, boneNodeJson);
@@ -105,7 +105,7 @@ namespace STF.Serialisation
 				foreach(string childId in boneNodeJson["children"]?.ToObject<List<string>>())
 				{
 					tasks.Add(new Task(() => {
-						var childBone = armatureInfo.Bones.Find(b => b.GetComponent<STFBoneNode>().NodeId == childId);
+						var childBone = armatureInfo.Bones.Find(b => b.GetComponent<STFBoneNode>().Id == childId);
 						childBone.transform.SetParent(bone.transform, false);
 					}));
 				}
@@ -115,7 +115,7 @@ namespace STF.Serialisation
 				task.RunSynchronously();
 				if(task.Exception != null) throw task.Exception;
 			}
-			var root = armatureInfo.Bones.Find(b => b.GetComponent<STFBoneNode>().NodeId == (string)Json["root"]);
+			var root = armatureInfo.Bones.Find(b => b.GetComponent<STFBoneNode>().Id == (string)Json["root"]);
 			root.transform.SetParent(go.transform, false);
 			armatureInfo.Root = root;
 

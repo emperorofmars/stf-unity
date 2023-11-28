@@ -26,7 +26,7 @@ namespace STF.Serialisation
 				{"components", SerdeUtil.SerializeComponents(State, Go.GetComponents<Component>())}
 			};
 
-			return State.AddNode(Go, ret, node.NodeId);
+			return State.AddNode(Go, ret, node.Id);
 		}
 	}
 
@@ -39,7 +39,7 @@ namespace STF.Serialisation
 			State.AddNode(ret, Id);
 			
 			var node = ret.AddComponent<STFNode>();
-			node.NodeId = Id;
+			node.Id = Id;
 			node.name = (String)JsonAsset["name"];
 			node.Origin = State.AssetInfo.assetId;
 

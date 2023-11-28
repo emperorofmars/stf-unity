@@ -8,14 +8,17 @@ namespace STF.Serialisation
 	public interface ISTFNode
 	{
 		string Type {get;}
-		string NodeId {get; set;}
+		string Id {get; set;}
+		int PrefabHirarchy {get; set;} // Zero if its not an instance of an prefab. If its a prefab instance, this value is +1 of the prefabs own ISTFNode component.
 		string Origin {get; set;}
 	}
 	public abstract class ASTFNode : MonoBehaviour, ISTFNode
 	{
 		public abstract string Type { get; }
-		public string _NodeId = Guid.NewGuid().ToString();
-		public string NodeId {get => _NodeId; set => _NodeId = value;}
+		public string _Id = Guid.NewGuid().ToString();
+		public string Id {get => _Id; set => _Id = value;}
+		public int _PrefabHirarchy = 0;
+		public int PrefabHirarchy {get => _PrefabHirarchy; set => _PrefabHirarchy = value;}
 		public string _Origin;
 		public string Origin {get => _Origin; set => _Origin = value;}
 	}

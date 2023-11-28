@@ -64,7 +64,7 @@ namespace STF.Serialisation
 				{
 					var stfNode = curveTarget.GetType() == typeof(GameObject) ? ((GameObject)curveTarget).GetComponent<STFNode>() : ((Transform)curveTarget).GetComponent<STFNode>();
 					
-					curveJson.Add("target_id", stfNode.NodeId);
+					curveJson.Add("target_id", stfNode.Id);
 					curveJson.Add("property", State.Context.NodeExporters[stfNode.Type].ConvertPropertyPath(c.propertyName));
 				}
 				// TODO: move curve data into a binary buffer

@@ -23,8 +23,8 @@ namespace STF.Inspectors
 
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.PrefixLabel("Id");
-			EditorGUILayout.LabelField(node.NodeId);
-			if(GUILayout.Button("Copy")) GUIUtility.systemCopyBuffer = node.NodeId;
+			EditorGUILayout.LabelField(node.Id);
+			if(GUILayout.Button("Copy")) GUIUtility.systemCopyBuffer = node.Id;
 			EditorGUILayout.EndHorizontal();
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.Separator();
@@ -33,12 +33,12 @@ namespace STF.Inspectors
 			if(_editId)
 			{
 				EditorGUILayout.BeginHorizontal();
-				node.NodeId = EditorGUILayout.TextField(node.NodeId);
+				node.Id = EditorGUILayout.TextField(node.Id);
 				if(GUILayout.Button("Paste"))
 				{
-					if(Guid.TryParse(GUIUtility.systemCopyBuffer, out var ret)) node.NodeId = ret.ToString();
+					if(Guid.TryParse(GUIUtility.systemCopyBuffer, out var ret)) node.Id = ret.ToString();
 				}
-				if(GUILayout.Button("Generate New")) node.NodeId = Guid.NewGuid().ToString();
+				if(GUILayout.Button("Generate New")) node.Id = Guid.NewGuid().ToString();
 				EditorGUILayout.EndHorizontal();
 			}
 			EditorGUILayout.Separator();
@@ -50,7 +50,7 @@ namespace STF.Inspectors
 			EditorGUILayout.EndHorizontal();
 			EditorGUILayout.Separator();
 
-			DrawPropertiesExcluding(serializedObject, new string[] {"Type", "_NodeId", "_Origin", "m_Script"});
+			DrawPropertiesExcluding(serializedObject, new string[] {"Type", "_Id", "_Origin", "m_Script"});
 			if(EditorGUI.EndChangeCheck()) EditorUtility.SetDirty(target);
 		}
 	}

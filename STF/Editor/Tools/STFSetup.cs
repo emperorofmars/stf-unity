@@ -164,7 +164,7 @@ namespace STF.Tools
 				// Create Go's for the armature prefab
 				var boneGo = new GameObject();
 				var bone = boneGo.AddComponent<STFBoneNode>();
-				bone.NodeId = Guid.NewGuid().ToString();
+				bone.Id = Guid.NewGuid().ToString();
 				bone.name = Smr.bones[i].name;
 				armatureResource.Bones.Add(boneGo);
 				if(Smr.bones[i] == Smr.rootBone)
@@ -176,7 +176,7 @@ namespace STF.Tools
 				// Set reference from the bone instance to the bone
 				var boneInstance = Smr.bones[i].GetComponent<STFBoneInstanceNode>();
 				if(boneInstance == null) boneInstance = Smr.bones[i].gameObject.AddComponent<STFBoneInstanceNode>();
-				boneInstance.BoneId = bone.NodeId;
+				boneInstance.BoneId = bone.Id;
 
 				// calculate trs from bindposes
 				if(Smr.bones[i].parent != null)

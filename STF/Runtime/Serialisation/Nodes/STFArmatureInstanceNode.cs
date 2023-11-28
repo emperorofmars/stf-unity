@@ -61,13 +61,13 @@ namespace STF.Serialisation
 					{"children", boneInstanceChildren},
 					{"components", SerdeUtil.SerializeComponents(State, boneInstance.GetComponents<Component>())},
 				};
-				boneInstances.Add(State.AddNode(boneInstance.gameObject, boneInstanceJson, boneInstance.NodeId));
+				boneInstances.Add(State.AddNode(boneInstance.gameObject, boneInstanceJson, boneInstance.Id));
 			}
 			ret.Add("bone_instances", boneInstances);
 
 			ret.Add("used_resources", new JArray{ret["armature"]});
 			ret.Add("used_nodes", new JArray{ret["bone_instances"]});
-			return State.AddNode(Go, ret, node.NodeId);
+			return State.AddNode(Go, ret, node.Id);
 		}
 	}
 
@@ -83,7 +83,7 @@ namespace STF.Serialisation
 			go.name = (string)JsonAsset["name"];
 
 			var armatureInstance = go.AddComponent<STFArmatureInstanceNode>();
-			armatureInstance.NodeId = Id;
+			armatureInstance.Id = Id;
 			armatureInstance.name = (string)JsonAsset["name"];
 			armatureInstance.Origin = State.AssetInfo.assetId;
 			
@@ -99,15 +99,15 @@ namespace STF.Serialisation
 			for(int i = 0; i < boneInstanceIds.Count; i++)
 			{
 				var boneInstanceJson = (JObject)State.JsonRoot["nodes"][boneInstanceIds[i]];
-				var bone = armatureInstance.GetComponentsInChildren<STFBoneNode>().First(bi => (string)boneInstanceJson["bone"] == bi.NodeId);
+				var bone = armatureInstance.GetComponentsInChildren<STFBoneNode>().First(bi => (string)boneInstanceJson["bone"] == bi.Id);
 				var boneInstance = bone.gameObject.AddComponent<STFBoneInstanceNode>();
-				boneInstance.NodeId = boneInstanceIds[i];
-				boneInstance.BoneId = bone.NodeId;
+				boneInstance.Id = boneInstanceIds[i];
+				boneInstance.BoneId = bone.Id;
 				boneInstance.Origin = State.AssetInfo.assetId;
 				armatureInstance.bones[i] = boneInstance.gameObject;
 
 				TRSUtil.ParseTRS(boneInstance.gameObject, boneInstanceJson);
-				State.AddNode(boneInstance.gameObject, boneInstance.NodeId);
+				State.AddNode(boneInstance.gameObject, boneInstance.Id);
 
 				SerdeUtil.ParseNode(State, boneInstance.gameObject, boneInstanceJson);
 			}
