@@ -60,16 +60,30 @@ namespace STF.Serialisation
 				var curveJson = new JObject();
 				curvesJson.Add(curveJson);
 
-				var curveTarget = AnimationUtility.GetAnimatedObject(root, c);
-				if(curveTarget is GameObject || curveTarget is Transform)
+				if(c.type == typeof(GameObject) || c.type == typeof(Transform))
 				{
-					var nodes = curveTarget is GameObject ? ((GameObject)curveTarget).GetComponents<ISTFNode>() : ((Transform)curveTarget).GetComponents<ISTFNode>();
-					var stfNode = nodes?.OrderBy(k => k.PrefabHirarchy).FirstOrDefault();
-					// get components instead and select the one with the lowest prefab hirarchy
-					//var stfNode = curveTarget is GameObject ? ((GameObject)curveTarget).GetComponent<STFNode>() : ((Transform)curveTarget).GetComponent<STFNode>();
-					
-					curveJson.Add("target_id", stfNode.Id);
-					curveJson.Add("property", State.Context.NodeExporters[stfNode.Type].ConvertPropertyPath(c.propertyName));
+					if(c.path.StartsWith("STF_NODE"))
+					{
+						var pathSplit = c.path.Split(':');
+						var objectId = pathSplit[1];
+						var curveTarget = root.GetComponentsInChildren<ISTFNode>().FirstOrDefault(n => n.Id == objectId);
+						curveJson.Add("target_id", objectId);
+						curveJson.Add("property", State.Context.NodeExporters[curveTarget.Type].ConvertPropertyPath(c.propertyName));
+					}
+					else
+					{
+						var curveTarget = AnimationUtility.GetAnimatedObject(root, c);
+						var nodes = curveTarget is GameObject ? ((GameObject)curveTarget).GetComponents<ISTFNode>() : ((Transform)curveTarget).GetComponents<ISTFNode>();
+						var stfNode = nodes?.OrderBy(k => k.PrefabHirarchy).FirstOrDefault();
+						
+						curveJson.Add("target_id", stfNode.Id);
+						curveJson.Add("property", State.Context.NodeExporters[stfNode.Type].ConvertPropertyPath(c.propertyName));
+					}
+				}
+				else
+				{
+					curveJson.Add("target_id", c.path);
+					curveJson.Add("property", c.propertyName);
 				}
 
 				if(!c.isDiscreteCurve && !c.isPPtrCurve) curveJson.Add("type", "interpolated");

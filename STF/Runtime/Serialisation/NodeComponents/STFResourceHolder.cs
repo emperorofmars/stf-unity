@@ -46,7 +46,8 @@ namespace STF.Serialisation
 			c.Id = Id;
 			foreach(string r in Json["resources_used"])
 			{
-				c.Resources.Add(State.Resources[r]);
+				var resource = State.Resources[r];
+				c.Resources.Add(resource is ISTFResource ? ((ISTFResource)resource).Resource : resource);
 			}
 		}
 	}
