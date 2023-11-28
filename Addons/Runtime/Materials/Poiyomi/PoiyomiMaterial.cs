@@ -53,6 +53,8 @@ namespace MTF.Addons
 					channelSpecular
 				);
 				MaterialConverterUtil.AssembleTextureChannels(State, imageChannels, ret, "_MochieMetallicMaps");
+				ret.SetFloat("_MochieBRDF", 1);
+				ret.SetFloat("_MochieMetallicMultiplier", 1);
 			}
 			return ret;
 		}
