@@ -17,16 +17,16 @@ namespace STF.Serialisation
 		string MainAssetId {get;}
 
 		// Unity Asset -> Json Asset
-		Dictionary<STFAsset, KeyValuePair<string, JObject>> Assets {get;}
+		Dictionary<STFAsset, (string Id, JObject JsonAsset)> Assets {get;}
 
 		// Unity Resource -> Json Resource
-		Dictionary<UnityEngine.Object, KeyValuePair<string, JObject>> Resources {get;}
+		Dictionary<UnityEngine.Object, (string Id, JObject JsonResource)> Resources {get;}
 
 		// Unity GameObject -> STF Json Node
-		Dictionary<GameObject, KeyValuePair<string, JObject>> Nodes {get;}
+		Dictionary<GameObject, (string Id, JObject JsonNode)> Nodes {get;}
 
 		// Unity Component -> STF Json Component
-		Dictionary<Component, KeyValuePair<string, JObject>> Components {get;}
+		Dictionary<Component, (string Id, JObject JsonComponent)> Components {get;}
 
 		void AddTask(Task task);
 		string AddAsset(STFAsset Asset, JObject Serialized, string Id = null);
@@ -37,6 +37,6 @@ namespace STF.Serialisation
 		void AddTrash(UnityEngine.Object Trash);
 
 		T LoadMeta<T>(UnityEngine.Object Resource) where T: UnityEngine.Object, ISTFResource;
-		(byte[], T, string) LoadAsset<T>(UnityEngine.Object Resource) where T: UnityEngine.Object, ISTFResource;
+		(byte[] Data, T Meta, string Path) LoadAsset<T>(UnityEngine.Object Resource) where T: UnityEngine.Object, ISTFResource;
 	}
 }

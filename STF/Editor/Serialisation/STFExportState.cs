@@ -21,18 +21,18 @@ namespace STF.Serialisation
 		public string _MainAssetId;
 		public string MainAssetId {get => _MainAssetId;}
 
-		public Dictionary<STFAsset, KeyValuePair<string, JObject>> _Assets = new Dictionary<STFAsset, KeyValuePair<string, JObject>>();
-		public Dictionary<STFAsset, KeyValuePair<string, JObject>> Assets {get => _Assets;}
+		public Dictionary<STFAsset, (string Id, JObject JsonAsset)> _Assets = new Dictionary<STFAsset, (string Id, JObject JsonAsset)>();
+		public Dictionary<STFAsset, (string Id, JObject JsonAsset)> Assets {get => _Assets;}
 
 
-		public Dictionary<GameObject, KeyValuePair<string, JObject>> _Nodes = new Dictionary<GameObject, KeyValuePair<string, JObject>>();
-		public Dictionary<GameObject, KeyValuePair<string, JObject>> Nodes {get => _Nodes;}
+		public Dictionary<GameObject, (string Id, JObject JsonNode)> _Nodes = new Dictionary<GameObject, (string Id, JObject JsonNode)>();
+		public Dictionary<GameObject, (string Id, JObject JsonNode)> Nodes {get => _Nodes;}
 
-		public Dictionary<UnityEngine.Object, KeyValuePair<string, JObject>> _Resources = new Dictionary<UnityEngine.Object, KeyValuePair<string, JObject>>();
-		public Dictionary<UnityEngine.Object, KeyValuePair<string, JObject>> Resources {get => _Resources;}
+		public Dictionary<UnityEngine.Object, (string Id, JObject JsonResource)> _Resources = new Dictionary<UnityEngine.Object, (string Id, JObject JsonResource)>();
+		public Dictionary<UnityEngine.Object, (string Id, JObject JsonResource)> Resources {get => _Resources;}
 
-		public Dictionary<Component, KeyValuePair<string, JObject>> _Components = new Dictionary<Component, KeyValuePair<string, JObject>>();
-		public Dictionary<Component, KeyValuePair<string, JObject>> Components {get => _Components;}
+		public Dictionary<Component, (string Id, JObject JsonComponent)> _Components = new Dictionary<Component, (string Id, JObject JsonComponent)>();
+		public Dictionary<Component, (string Id, JObject JsonComponent)> Components {get => _Components;}
 
 		// id -> buffer
 		public Dictionary<string, byte[]> Buffers = new Dictionary<string, byte[]>();
@@ -58,28 +58,28 @@ namespace STF.Serialisation
 		public string AddAsset(STFAsset Asset, JObject Serialized, string Id = null)
 		{
 			if(Id == null || Id.Length == 0) Id = Guid.NewGuid().ToString();
-			Assets.Add(Asset, new KeyValuePair<string, JObject>(Id, Serialized));
+			Assets.Add(Asset, (Id, Serialized));
 			return Id;
 		}
 
 		public string AddNode(GameObject Go, JObject Serialized, string Id = null)
 		{
 			if(Id == null || Id.Length == 0) Id = Guid.NewGuid().ToString();
-			Nodes.Add(Go, new KeyValuePair<string, JObject>(Id, Serialized));
+			Nodes.Add(Go, (Id, Serialized));
 			return Id;
 		}
 
 		public string AddComponent(Component Component, JObject Serialized, string Id = null)
 		{
 			if(Id == null || Id.Length == 0) Id = Guid.NewGuid().ToString();
-			Components.Add(Component, new KeyValuePair<string, JObject>(Id, Serialized));
+			Components.Add(Component, (Id, Serialized));
 			return Id;
 		}
 
 		public string AddResource(UnityEngine.Object Resource, JObject Serialized, string Id = null)
 		{
 			if(Id == null || Id.Length == 0) Id = Guid.NewGuid().ToString();
-			Resources.Add(Resource, new KeyValuePair<string, JObject>(Id, Serialized));
+			Resources.Add(Resource, (Id, Serialized));
 			return Id;
 		}
 

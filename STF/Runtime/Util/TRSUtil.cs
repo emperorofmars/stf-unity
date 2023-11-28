@@ -11,6 +11,10 @@ namespace STF.Util
 		{
 			return new Vector3((float)Json["trs"][0][0], (float)Json["trs"][0][1], (float)Json["trs"][0][2]);
 		}
+		public static Vector3 ParseLocation(JArray Json)
+		{
+			return new Vector3((float)Json[0], (float)Json[1], (float)Json[2]);
+		}
 		public static Quaternion ParseRotation(JObject Json)
 		{
 			return new Quaternion((float)Json["trs"][1][0], (float)Json["trs"][1][1], (float)Json["trs"][1][2], (float)Json["trs"][1][3]);

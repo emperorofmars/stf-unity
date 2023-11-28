@@ -70,9 +70,9 @@ namespace STF.Serialisation
 						{"timestamp", DateTime.Now.ToString()},
 					}},
 					{"main", state.MainAssetId},
-					{"assets", new JObject(state.Assets.Select(entry => new JProperty(entry.Value.Key, entry.Value.Value)))},
-					{"nodes", new JObject(state.Nodes.Select(entry => new JProperty(entry.Value.Key, entry.Value.Value)))},
-					{"resources", new JObject(state.Resources.Select(entry => new JProperty(entry.Value.Key, entry.Value.Value)))},
+					{"assets", new JObject(state.Assets.Select(entry => new JProperty(entry.Value.Id, entry.Value.JsonAsset)))},
+					{"nodes", new JObject(state.Nodes.Select(entry => new JProperty(entry.Value.Id, entry.Value.JsonNode)))},
+					{"resources", new JObject(state.Resources.Select(entry => new JProperty(entry.Value.Id, entry.Value.JsonResource)))},
 					{"buffers", new JArray(state.Buffers.Select(entry => entry.Key))}
 				};
 				

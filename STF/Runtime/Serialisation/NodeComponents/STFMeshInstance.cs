@@ -37,7 +37,7 @@ namespace STF.Serialisation
 			SerializeRelationships(meshInstance, ret);
 			
 			if(meshInstance.ArmatureInstanceId != null && meshInstance.ArmatureInstanceId.Length > 0) ret.Add("armature_instance", meshInstance.ArmatureInstanceId);
-			else ret.Add("armature_instance", State.Nodes[c.rootBone.parent.gameObject].Key);
+			else ret.Add("armature_instance", State.Nodes[c.rootBone.parent.gameObject].Id);
 
 			var materials = new JArray();
 			for(int matIdx = 0; matIdx < c.sharedMaterials.Length; matIdx++)

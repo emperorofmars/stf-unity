@@ -65,7 +65,7 @@ namespace STF.Serialisation
 
 		public static string SerializeNode(ISTFExportState State, GameObject Go)
 		{
-			if(State.Nodes.ContainsKey(Go)) return State.Nodes[Go].Key;
+			if(State.Nodes.ContainsKey(Go)) return State.Nodes[Go].Id;
 			var node = Go.GetComponent<ISTFNode>();
 			if(node != null && State.Context.NodeExporters.ContainsKey(node.Type))
 			{
@@ -105,7 +105,7 @@ namespace STF.Serialisation
 
 		public static string SerializeResource(ISTFExportState State, UnityEngine.Object Resource, UnityEngine.Object Context = null)
 		{
-			if(State.Resources.ContainsKey(Resource)) return State.Resources[Resource].Key;
+			if(State.Resources.ContainsKey(Resource)) return State.Resources[Resource].Id;
 			if(State.Context.ResourceExporters.ContainsKey(Resource.GetType()))
 			{
 				return State.Context.ResourceExporters[Resource.GetType()].SerializeToJson(State, Resource, Context);
