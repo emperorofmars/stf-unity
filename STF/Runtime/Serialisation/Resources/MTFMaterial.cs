@@ -173,6 +173,7 @@ namespace STF.Serialisation
 			var unityMaterial = converter.ConvertToUnityMaterial(mtfConvertState, mat);
 			unityMaterial.name = mat.name + "_Converted";
 			mat.ConvertedMaterial = unityMaterial;
+			mat.OnBeforeSerialize();
 			State.SaveResourceBelongingToId(unityMaterial, "Asset", Id);
 			State.SaveResource(mat, "Asset", Id);
 			return;
