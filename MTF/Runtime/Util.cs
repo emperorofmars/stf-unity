@@ -100,7 +100,7 @@ namespace MTF
 
 		public static bool ParseTextureProperty(UnityEngine.Material UnityMaterial, Material MTFMaterial, string MTFPropertyType, string UnityPropertyName)
 		{
-			if(UnityMaterial.HasProperty(UnityPropertyName))
+			if(UnityMaterial.HasProperty(UnityPropertyName) && UnityMaterial.GetTexture(UnityPropertyName) != null)
 			{
 				_EnsureProperty(MTFMaterial, MTFPropertyType).Values.Add(new TexturePropertyValue{Texture = (Texture2D)UnityMaterial.GetTexture(UnityPropertyName)});
 				return true;
@@ -110,7 +110,7 @@ namespace MTF
 
 		public static bool ParseTextureChannelProperty(UnityEngine.Material UnityMaterial, Material MTFMaterial, string MTFPropertyType, int Channel, string UnityPropertyName)
 		{
-			if(UnityMaterial.HasProperty(UnityPropertyName))
+			if(UnityMaterial.HasProperty(UnityPropertyName) && UnityMaterial.GetTexture(UnityPropertyName) != null)
 			{
 				_EnsureProperty(MTFMaterial, MTFPropertyType).Values.Add(new TextureChannelPropertyValue{Texture = (Texture2D)UnityMaterial.GetTexture(UnityPropertyName), Channel = Channel });
 				return true;
@@ -120,7 +120,7 @@ namespace MTF
 		
 		public static bool ParseColorProperty(UnityEngine.Material UnityMaterial, Material MTFMaterial, string MTFPropertyType, string UnityPropertyName)
 		{
-			if(UnityMaterial.HasProperty(UnityPropertyName))
+			if(UnityMaterial.HasProperty(UnityPropertyName) && UnityMaterial.GetColor(UnityPropertyName) != null)
 			{
 				_EnsureProperty(MTFMaterial, MTFPropertyType).Values.Add(new ColorPropertyValue{Color = UnityMaterial.GetColor(UnityPropertyName)});
 				return true;

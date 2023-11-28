@@ -114,7 +114,7 @@ namespace STF.Serialisation
 				var valuesJson = new JArray();
 				foreach(var value in property.Values)
 				{
-					// improve this, not just default ones & fall back to unrecognized
+					// improve this, fall back to unrecognized
 					valuesJson.Add(MTF.PropertyValueRegistry.PropertyValueExporters[value.Type].SerializeToJson(mtfExportState, value));
 				}
 				propertiesJson.Add(property.Type, valuesJson);

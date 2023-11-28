@@ -42,7 +42,7 @@ namespace STF.Serialisation
 			var materials = new JArray();
 			for(int matIdx = 0; matIdx < c.sharedMaterials.Length; matIdx++)
 			{
-				if(meshInstance.Materials.Count >= matIdx - 1 && meshInstance.Materials[matIdx] != null)
+				if(meshInstance.Materials.Count > matIdx && meshInstance.Materials[matIdx] != null)
 				{
 					materials.Add(SerdeUtil.SerializeResource(State, meshInstance.Materials[matIdx]));
 				}
