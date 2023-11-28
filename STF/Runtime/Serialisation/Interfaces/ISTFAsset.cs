@@ -18,7 +18,7 @@ namespace STF.Serialisation
 		STFAssetInfo AssetInfo {get;}
 		JObject JsonRoot {get;}
 		// id -> asset
-		Dictionary<string, STFAsset> Assets {get;}
+		//Dictionary<string, STFAsset> Assets {get;}
 
 		// id -> resource
 		Dictionary<string, UnityEngine.Object> Resources  {get;}

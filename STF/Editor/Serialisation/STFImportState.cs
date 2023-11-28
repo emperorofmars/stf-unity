@@ -8,8 +8,6 @@ using STF.IdComponents;
 using UnityEditor;
 using System.Threading.Tasks;
 using System.IO;
-using MTF;
-using System.Drawing;
 
 namespace STF.Serialisation
 {
@@ -23,8 +21,8 @@ namespace STF.Serialisation
 		public string MainAssetId {get => _MainAssetId;}
 		JObject _JsonRoot;
 		public JObject JsonRoot {get => _JsonRoot;}
-		Dictionary<string, STFAsset> _Assets = new Dictionary<string, STFAsset>();
-		public Dictionary<string, STFAsset> Assets {get => _Assets;}
+		//Dictionary<string, STFAsset> _Assets = new Dictionary<string, STFAsset>();
+		//public Dictionary<string, STFAsset> Assets {get => _Assets;}
 		Dictionary<string, UnityEngine.Object> _Resources = new Dictionary<string, UnityEngine.Object>();
 		public Dictionary<string, UnityEngine.Object> Resources {get => _Resources;}
 		Dictionary<string, byte[]> _Buffers = new Dictionary<string, byte[]>();
@@ -33,6 +31,8 @@ namespace STF.Serialisation
 		// stuff to delete before the import finishes
 		public List<UnityEngine.Object> Trash = new List<UnityEngine.Object>();
 		public List<Task> Tasks = new List<Task>();
+
+		public List<(GameObject Asset, string Name, bool Main)> AssetsToSave = new List<(GameObject Asset, string Name, bool Main)>();
 
 		public STFImportState(STFImportContext Context, string TargetLocation, JObject JsonRoot)
 		{
@@ -133,8 +133,7 @@ namespace STF.Serialisation
 		
 		public void SaveAsset(GameObject Root, string Name, bool Main = false)
 		{
-			var path = Main ? Path.Combine(TargetLocation, Name + ".Prefab") : Path.Combine(TargetLocation, STFConstants.SecondaryAssetsDirectoryName, Name + ".Prefab");
-			PrefabUtility.SaveAsPrefabAsset(Root, path);
+			this.AssetsToSave.Add((Root, Name, Main));
 		}
 	}
 }

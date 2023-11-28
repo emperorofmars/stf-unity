@@ -23,9 +23,8 @@ namespace STF.Serialisation
 		Dictionary<string, Component> _Components = new Dictionary<string, Component>();
 		public Dictionary<string, Component> Components {get => _Components;}
 
-		public Dictionary<string, STFAsset> Assets {get => State.Assets;}
+		//public Dictionary<string, STFAsset> Assets {get => State.Assets;}
 		public Dictionary<string, UnityEngine.Object> Resources {get => State.Resources;}
-		public List<Task> Tasks = new List<Task>();
 
 		public STFAssetImportState(STFAssetInfo AssetInfo, ISTFImportState State, STFImportContext Context)
 		{
@@ -36,7 +35,7 @@ namespace STF.Serialisation
 
 		public void AddTask(Task task)
 		{
-			Tasks.Add(task);
+			State.AddTask(task);
 		}
 
 		public void AddNode(GameObject Node, string Id)

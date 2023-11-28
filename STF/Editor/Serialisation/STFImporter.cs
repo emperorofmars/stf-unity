@@ -1,4 +1,3 @@
-
 #if UNITY_EDITOR
 
 using UnityEngine;
@@ -42,6 +41,12 @@ namespace STF.Serialisation
 				_runTasks();
 				ParseAssets();
 				_runTasks();
+				
+				foreach(var asset in state.AssetsToSave)
+				{
+					var path = asset.Main ? System.IO.Path.Combine(TargetLocation, asset.Name + ".Prefab") : System.IO.Path.Combine(TargetLocation, STFConstants.SecondaryAssetsDirectoryName, asset.Name + ".Prefab");
+					PrefabUtility.SaveAsPrefabAsset(asset.Asset, path);
+				}
 			}
 			catch(Exception e)
 			{

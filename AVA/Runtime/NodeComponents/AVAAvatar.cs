@@ -4,6 +4,8 @@ using UnityEngine;
 using System.Threading.Tasks;
 using STF.Serialisation;
 using STF.Util;
+using VRC;
+
 
 
 #if UNITY_EDITOR
