@@ -86,12 +86,14 @@ namespace STF.Serialisation
 			AddResource(Meta, Id);
 			AssetDatabase.Refresh();
 		}
-		public void SaveResource<T>(byte[] Resource, string FileExtension, T Meta, string Id) where T: UnityEngine.Object, ISTFResource
+		public void SaveResource<M, R>(byte[] Resource, string FileExtension, M Meta, string Id) where M: UnityEngine.Object, ISTFResource where R: UnityEngine.Object
 		{
 			if(!FileExtension.StartsWith(".")) FileExtension = "." + FileExtension;
 			var location = Path.Combine(TargetLocation, STFConstants.ResourceDirectoryName, Meta.Name + "_" + Id + FileExtension);
 			File.WriteAllBytes(location, Resource);
 			Meta.ResourceLocation = location;
+			AssetDatabase.Refresh();
+			Meta.Resource = AssetDatabase.LoadAssetAtPath<R>(location);
 			AssetDatabase.CreateAsset(Meta, Path.ChangeExtension(location, "Asset"));
 			AddResource(Meta, Id);
 			AssetDatabase.Refresh();

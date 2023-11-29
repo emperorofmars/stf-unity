@@ -61,7 +61,7 @@ namespace STF.Serialisation
 			meta.OriginalBufferId = (string)Json["buffer"];
 			
 			var arrayBuffer = State.Buffers[meta.OriginalBufferId];
-			State.SaveResource(arrayBuffer, (string)Json["format"], meta, Id);
+			State.SaveResource<STFTexture, Texture2D>(arrayBuffer, (string)Json["format"], meta, Id);
 			return;
 		}
 	}
