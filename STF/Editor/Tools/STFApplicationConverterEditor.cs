@@ -61,24 +61,11 @@ namespace STF.Tools
 			drawHLine();
 
 			if(Asset && GUILayout.Button("Convert", GUILayout.ExpandWidth(true))) {
-				//var path = EditorUtility.SaveFilePanel("STF Export", "Assets", Asset.assetInfo?.assetName + "_converted" + ".stf", "stf");
 				if(path != null && path.Length > 0) {
 					var c = new STFUnityConverter();
-					var state = new STFApplicationConvertState {
-						_RelMat = new STFRelationshipMatrix(Asset.gameObject, new List<string> {"unity3d"}, new List<Type>{typeof(STFTwistConstraint)}),
-						_Root = Asset.gameObject,
-						_TargetPath = path,
-					};
-					c.Convert(state, Asset);
+					c.Convert(new STFApplicationConvertStorageContext(path), Asset);
 				}
 			}
-
-			/*if(Asset && GUILayout.Button("Convert", GUILayout.ExpandWidth(true))) {
-				var path = EditorUtility.SaveFilePanel("STF Export", "Assets", mainExport.name + "01" + ".stf", "stf");
-				if(path != null && path.Length > 0) {
-					SerializeAsSTFBinary(mainExport, exports, path, DebugExport);
-				}
-			}*/
 			
 			GUILayout.EndScrollView();
 			drawHLine();

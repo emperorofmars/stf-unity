@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using STF.IdComponents;
 using STF.Serialisation;
-using STF.Util;
 using UnityEngine;
 using UnityEngine.Animations;
 
@@ -26,22 +25,25 @@ namespace STF.ApplicationConversion
 			return Asset.assetInfo?.assetType == STFAssetImporter._TYPE;
 		}
 
-		public GameObject Convert(ISTFApplicationConvertStateInternal State, STFAsset Asset)
+		public GameObject Convert(ISTFApplicationConvertStorageContext StorageContext, STFAsset Asset)
 		{
 			GameObject ret = null;
+			STFApplicationConvertState state = null;
 			try
 			{
 				ret = UnityEngine.Object.Instantiate(Asset.gameObject);
 				ret.name = Asset.gameObject.name;
 
+				state = new STFApplicationConvertState(StorageContext, ret, TargetName, new List<string>{TargetName}, Converters.Keys.ToList());
+
 				foreach(var component in ret.GetComponentsInChildren<Component>())
 				{
 					if(Converters.ContainsKey(component.GetType()))
 					{
-						Converters[component.GetType()].Convert(State, component);
+						Converters[component.GetType()].Convert(state, component);
 					}
 				}
-				State.RunTasks();
+				state.RunTasks();
 
 				foreach(var component in ret.GetComponentsInChildren<Component>())
 				{
@@ -62,7 +64,7 @@ namespace STF.ApplicationConversion
 			}
 			finally
 			{
-				State.DeleteTrash();
+				state?.DeleteTrash();
 			}
 		}
 	}

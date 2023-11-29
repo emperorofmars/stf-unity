@@ -9,6 +9,6 @@ namespace STF.ApplicationConversion
 	{
 		string TargetName {get;}
 		bool CanConvert(STFAsset Asset);
-		GameObject Convert(ISTFApplicationConvertStateInternal State, STFAsset Asset);
+		GameObject Convert(ISTFApplicationConvertStorageContext StorageContext, STFAsset Asset);
 	}
 }

@@ -18,10 +18,11 @@ namespace STF.ApplicationConversion
 		void AddTask(Task Task);
 		void AddTrash(UnityEngine.Object Trash);
 	}
-	public interface ISTFApplicationConvertStateInternal : ISTFApplicationConvertState
+	
+	public interface ISTFApplicationConvertStorageContext
 	{
 		string TargetPath {get;}
-		void RunTasks();
-		void DeleteTrash();
+
+		void SaveGeneratedResource(UnityEngine.Object Resource, string fileExtension);
 	}
 }
