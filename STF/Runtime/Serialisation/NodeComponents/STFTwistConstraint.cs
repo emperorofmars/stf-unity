@@ -19,7 +19,7 @@ namespace STF.Serialisation
 	{
 		public override string ConvertPropertyPath(string UnityProperty)
 		{
-			throw new NotImplementedException();
+			return UnityProperty;
 		}
 
 		public override (string, JObject) SerializeToJson(ISTFExportState State, Component Component)
@@ -41,7 +41,7 @@ namespace STF.Serialisation
 	{
 		public override string ConvertPropertyPath(string STFProperty)
 		{
-			throw new NotImplementedException();
+			return STFProperty;
 		}
 
 		public override void ParseFromJson(ISTFAssetImportState State, JObject Json, string Id, GameObject Go)
