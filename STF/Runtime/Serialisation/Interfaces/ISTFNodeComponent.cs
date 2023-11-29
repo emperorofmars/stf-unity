@@ -14,6 +14,7 @@ namespace STF.Serialisation
 		List<string> Extends {get; set;}
 		List<string> Overrides {get; set;}
 		List<string> Targets {get; set;}
+		Component OwnedUnityComponent {get; set;}
 	}
 
 	public abstract class ASTFNodeComponent : MonoBehaviour, ISTFNodeComponent
@@ -32,6 +33,9 @@ namespace STF.Serialisation
 
 		public List<string> _targets = new List<string>();
 		public List<string> Targets {get => _targets; set => _targets = value;}
+		
+		public Component _OwnedUnityComponent;
+		public Component OwnedUnityComponent {get => _OwnedUnityComponent; set => _OwnedUnityComponent = value;}
 	}
 	
 	public interface ISTFNodeComponentExporter

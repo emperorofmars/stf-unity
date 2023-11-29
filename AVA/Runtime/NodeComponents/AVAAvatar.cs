@@ -20,6 +20,7 @@ namespace AVA.Serialisation
 		public override string Type => _TYPE;
 		public GameObject viewport_parent;
 		public Vector3 viewport_position;
+		public SkinnedMeshRenderer MainMesh;
 	}
 
 	public class AVAAvatarExporter : ASTFNodeComponentExporter

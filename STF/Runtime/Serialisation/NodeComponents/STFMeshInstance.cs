@@ -75,19 +75,20 @@ namespace STF.Serialisation
 			var meshInstanceComponent = Go.AddComponent<STFMeshInstance>();
 			ParseRelationships(Json, meshInstanceComponent);
 			meshInstanceComponent.Id = Id;
+			meshInstanceComponent.OwnedUnityComponent = c;
 			State.AddComponent(meshInstanceComponent, Id);
 
 			var meta = (STFMesh)State.Resources[(string)Json["mesh"]];
 			var resource = meta.Resource;
-			if(resource.GetType() == typeof(Mesh))
-			{
+			//if(resource.GetType() == typeof(Mesh))
+			//{
 				c.sharedMesh = (Mesh)resource;
-			}
-			else if(resource.GetType() == typeof(GameObject))
-			{
-				var renderer = ((GameObject)resource).GetComponent<SkinnedMeshRenderer>();
-				c.sharedMesh = renderer.sharedMesh;
-			}
+			//}
+			//else if(resource.GetType() == typeof(GameObject))
+			//{
+			//	var renderer = ((GameObject)resource).GetComponent<SkinnedMeshRenderer>();
+			//	c.sharedMesh = renderer.sharedMesh;
+			//}
 
 			if((string)Json["armature_instance"] != null)
 			{

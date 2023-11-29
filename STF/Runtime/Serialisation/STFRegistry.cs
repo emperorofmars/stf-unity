@@ -36,7 +36,7 @@ namespace STF.Serialisation
 		public Dictionary<string, ISTFNodeImporter> NodeImporters = new Dictionary<string, ISTFNodeImporter>();
 		public Dictionary<string, ISTFNodeComponentImporter> NodeComponentImporters = new Dictionary<string, ISTFNodeComponentImporter>();
 		public Dictionary<string, ISTFResourceImporter> ResourceImporters = new Dictionary<string, ISTFResourceImporter>();
-		//public Dictionary<Type, ISTFResourceComponentImporter> ResourceComponentImporters = new Dictionary<Type, ISTFResourceComponentImporter>();
+		public Dictionary<string, ISTFResourceComponentImporter> ResourceComponentImporters = new Dictionary<string, ISTFResourceComponentImporter>();
 	}
 
 	public class STFExportContext
@@ -45,7 +45,7 @@ namespace STF.Serialisation
 		public Dictionary<string, ISTFNodeExporter> NodeExporters = new Dictionary<string, ISTFNodeExporter>();
 		public Dictionary<Type, ISTFNodeComponentExporter> NodeComponentExporters = new Dictionary<Type, ISTFNodeComponentExporter>();
 		public Dictionary<Type, ISTFResourceExporter> ResourceExporters = new Dictionary<Type, ISTFResourceExporter>();
-		//public Dictionary<Type, ISTFResourceComponentExporter> ResourceComponentExporters = new Dictionary<Type, ISTFResourceComponentExporter>();
+		public Dictionary<Type, ISTFResourceComponentExporter> ResourceComponentExporters = new Dictionary<Type, ISTFResourceComponentExporter>();
 		public List<Type> ExportExclusions = new List<Type>();
 	}
 
@@ -89,7 +89,6 @@ namespace STF.Serialisation
 			{STFTextureImporter._TYPE, new STFTextureImporter()},
 			{STFArmatureImporter._TYPE, new STFArmatureImporter()},
 			{MTFMaterialImporter._TYPE, new MTFMaterialImporter()},
-			//{STFAnimationImporter._TYPE, new STFAnimationImporter()}
 		};
 		public static readonly Dictionary<Type, ISTFResourceExporter> DefaultResourceExporters = new Dictionary<Type, ISTFResourceExporter>() {
 			{typeof(Mesh), new STFMeshExporter()},
@@ -97,7 +96,12 @@ namespace STF.Serialisation
 			{typeof(STFArmature), new STFArmatureExporter()},
 			{typeof(MTF.Material), new MTFMaterialExporter()},
 			{typeof(Material), new UnityMaterialExporter()},
-			//{typeof(AnimationClip), new STFAnimationExporter()}
+		};
+		public static readonly Dictionary<string, ISTFResourceComponentImporter> DefaultResourceComponentImporters = new Dictionary<string, ISTFResourceComponentImporter>() {
+			{STFTextureDownscalePriority._TYPE, new STFTextureDownscalePriorityImporter()},
+		};
+		public static readonly Dictionary<Type, ISTFResourceComponentExporter> DefaultResourceComponentExporters = new Dictionary<Type, ISTFResourceComponentExporter>() {
+			{typeof(STFTextureDownscalePriority), new STFTextureDownscalePriorityExporter()},
 		};
 		public static readonly List<Type> DefaultExportExclusions = new List<Type>() {
 			typeof(Transform), typeof(ISTFNode), typeof(Animator), typeof(STFAsset), typeof(STFNode), typeof(STFBoneNode), typeof(STFBoneInstanceNode), typeof(STFMeshInstance), typeof(STFArmatureInstanceNode), typeof(STFArmatureNodeInfo)
@@ -115,6 +119,9 @@ namespace STF.Serialisation
 		private static Dictionary<string, ISTFResourceImporter> RegisteredResourceImporters = new Dictionary<string, ISTFResourceImporter>();
 		private static Dictionary<Type, ISTFResourceExporter> RegisteredResourceExporters = new Dictionary<Type, ISTFResourceExporter>();
 
+		private static Dictionary<string, ISTFResourceComponentImporter> RegisteredResourceComponentImporters = new Dictionary<string, ISTFResourceComponentImporter>();
+		private static Dictionary<Type, ISTFResourceComponentExporter> RegisteredResourceComponentExporters = new Dictionary<Type, ISTFResourceComponentExporter>();
+
 		private static readonly List<Type> RegisteredExportExclusions = new List<Type>();
 
 		public static Dictionary<string, ISTFAssetImporter> AssetImporters {get => CollectionUtil.Combine(DefaultAssetImporters, RegisteredAssetImporters);}
@@ -129,6 +136,9 @@ namespace STF.Serialisation
 		public static Dictionary<string, ISTFResourceImporter> ResourceImporters {get => CollectionUtil.Combine(DefaultResourceImporters, RegisteredResourceImporters);}
 		public static Dictionary<Type, ISTFResourceExporter> ResourceExporters {get => CollectionUtil.Combine(DefaultResourceExporters, RegisteredResourceExporters);}
 
+		public static Dictionary<string, ISTFResourceComponentImporter> ResourceComponentImporters {get => CollectionUtil.Combine(DefaultResourceComponentImporters, RegisteredResourceComponentImporters);}
+		public static Dictionary<Type, ISTFResourceComponentExporter> ResourceComponentExporters {get => CollectionUtil.Combine(DefaultResourceComponentExporters, RegisteredResourceComponentExporters);}
+
 		public static List<Type> ExportExclusions {get => CollectionUtil.Combine(DefaultExportExclusions, RegisteredExportExclusions);}
 
 		public static void RegisterAssetImporter(string type, ISTFAssetImporter importer) { RegisteredAssetImporters.Add(type, importer); }
@@ -139,6 +149,8 @@ namespace STF.Serialisation
 		public static void RegisterNodeComponentExporter(Type type, ISTFNodeComponentExporter exporter) { RegisteredNodeComponentExporters.Add(type, exporter); }
 		public static void RegisterResourceImporter(string type, ISTFResourceImporter importer) { RegisteredResourceImporters.Add(type, importer); }
 		public static void RegisterResourceExporter(Type type, ISTFResourceExporter exporter) { RegisteredResourceExporters.Add(type, exporter); }
+		public static void RegisterResourceComponentImporter(string type, ISTFResourceComponentImporter importer) { RegisteredResourceComponentImporters.Add(type, importer); }
+		public static void RegisterResourceComponentExporter(Type type, ISTFResourceComponentExporter exporter) { RegisteredResourceComponentExporters.Add(type, exporter); }
 		public static void RegisterExportExclusion(Type type) { RegisteredExportExclusions.Add(type); }
 
 		public static STFImportContext GetDefaultImportContext()
@@ -149,7 +161,8 @@ namespace STF.Serialisation
 				AssetImporters = AssetImporters,
 				NodeImporters = NodeImporters,
 				NodeComponentImporters = NodeComponentImporters,
-				ResourceImporters = ResourceImporters
+				ResourceImporters = ResourceImporters,
+				ResourceComponentImporters = ResourceComponentImporters
 			};
 		}
 
@@ -162,6 +175,7 @@ namespace STF.Serialisation
 				NodeExporters = NodeExporters,
 				NodeComponentExporters = NodeComponentExporters,
 				ResourceExporters = ResourceExporters,
+				ResourceComponentExporters = ResourceComponentExporters,
 				ExportExclusions = ExportExclusions
 			};
 		}
