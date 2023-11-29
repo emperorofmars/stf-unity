@@ -59,7 +59,7 @@ namespace STF.ApplicationConversion
 			}
 			catch(Exception e)
 			{
-				throw new Exception("Error during STF conversion: ", e);
+				throw new Exception($"Error during STF conversion to application: {TargetName}", e);
 			}
 			finally
 			{

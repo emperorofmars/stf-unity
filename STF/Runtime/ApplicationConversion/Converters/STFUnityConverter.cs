@@ -10,7 +10,8 @@ namespace STF.ApplicationConversion
 {
 	public class STFUnityConverter : ASTFApplicationConverter
 	{
-		public override string TargetName => "unity3d";
+		public const string _TARGET_NAME = "unity3d";
+		public override string TargetName => _TARGET_NAME;
 
 		public override Dictionary<Type, ISTFNodeComponentApplicationConverter> Converters => new Dictionary<Type, ISTFNodeComponentApplicationConverter>() {
 			{typeof(STFTwistConstraint), new STFTwistConstraintConverter()},
