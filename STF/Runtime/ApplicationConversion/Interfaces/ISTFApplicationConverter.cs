@@ -37,7 +37,7 @@ namespace STF.ApplicationConversion
 
 				foreach(var component in ret.GetComponentsInChildren<Component>())
 				{
-					if(Converters.ContainsKey(component.GetType()))
+					if(state.RelMat.IsMatched(component) && Converters.ContainsKey(component.GetType()))
 					{
 						Converters[component.GetType()].Convert(state, component);
 					}
