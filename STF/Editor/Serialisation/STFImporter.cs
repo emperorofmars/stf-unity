@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using UnityEditor;
+using STF.Util;
 
 namespace STF.Serialisation
 {
@@ -38,9 +39,9 @@ namespace STF.Serialisation
 
 				ParseBuffers(buffers);
 				ParseResources();
-				_runTasks();
+				Utils.RunTasks(state.Tasks);
 				ParseAssets();
-				_runTasks();
+				Utils.RunTasks(state.Tasks);
 				
 				foreach(var asset in state.AssetsToSave)
 				{
@@ -118,26 +119,6 @@ namespace STF.Serialisation
 					// Unrecognized Asset
 				}
 			}
-		}
-
-		private void WriteToAssets()
-		{
-			
-		}
-
-		private void _runTasks()
-		{
-			do
-			{
-				var currentTasks = state.Tasks;
-				state.Tasks = new List<Task>();
-				foreach(var task in currentTasks)
-				{
-					task.RunSynchronously();
-					if(task.Exception != null) throw task.Exception;
-				}
-			}
-			while(state.Tasks.Count > 0);
 		}
 	}
 }

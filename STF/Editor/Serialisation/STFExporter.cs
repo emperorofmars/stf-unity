@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using STF.IdComponents;
 using Newtonsoft.Json;
+using STF.Util;
 
 namespace STF.Serialisation
 {
@@ -61,7 +62,7 @@ namespace STF.Serialisation
 						// Unrecognized Asset
 					}
 				}
-				_runTasks();
+				Utils.RunTasks(state.Tasks);
 
 				JObject Json = new JObject
 				{
@@ -102,21 +103,6 @@ namespace STF.Serialisation
 					}
 				}
 			}
-		}
-
-		private void _runTasks()
-		{
-			do
-			{
-				var currentTasks = state.Tasks;
-				state.Tasks = new List<Task>();
-				foreach(var task in currentTasks)
-				{
-					task.RunSynchronously();
-					if(task.Exception != null) throw task.Exception;
-				}
-			}
-			while(state.Tasks.Count > 0);
 		}
 	}
 }

@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using STF.Serialisation;
 using UnityEngine;
 
@@ -36,6 +38,23 @@ namespace STF.Util
 				parent = transform.parent;
 			}
 			return transform;
+		}
+
+		public static void RunTasks(List<Task> Tasks)
+		{
+			var originalTasks = Tasks;
+			do
+			{
+				var currentTasks = Tasks;
+				Tasks = new List<Task>();
+				foreach(var task in currentTasks)
+				{
+					task.RunSynchronously();
+					if(task.Exception != null) throw task.Exception;
+				}
+			}
+			while(Tasks.Count > 0);
+			originalTasks.Clear();
 		}
 	}
 }

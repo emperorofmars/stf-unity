@@ -76,15 +76,13 @@ namespace STF.Serialisation
 		};
 		public static readonly Dictionary<string, ISTFNodeComponentImporter> DefaultNodeComponentImporters = new Dictionary<string, ISTFNodeComponentImporter>() {
 			{STFMeshInstance._TYPE, new STFMeshInstanceImporter()},
-			{STFTwistConstraintBack._TYPE, new STFTwistConstraintBackImporter()},
+			{STFTwistConstraint._TYPE, new STFTwistConstraintImporter()},
 			{STFResourceHolder._TYPE, new STFResourceHolderImporter()}
-			//{STFTwistConstraintForward._TYPE, new STFTwistConstraintForwardImporter()},
 		};
 		public static readonly Dictionary<Type, ISTFNodeComponentExporter> DefaultNodeComponentExporters = new Dictionary<Type, ISTFNodeComponentExporter>() {
 			{typeof(SkinnedMeshRenderer), new STFMeshInstanceExporter()},
-			{typeof(STFTwistConstraintBack), new STFTwistConstraintBackExporter()},
+			{typeof(STFTwistConstraint), new STFTwistConstraintExporter()},
 			{typeof(STFResourceHolder), new STFResourceHolderExporter()}
-			//{typeof(STFTwistConstraintForward), new STFTwistConstraintForwardExporter()},
 		};
 		public static readonly Dictionary<string, ISTFResourceImporter> DefaultResourceImporters = new Dictionary<string, ISTFResourceImporter>() {
 			{STFMeshImporter._TYPE, new STFMeshImporter()},
