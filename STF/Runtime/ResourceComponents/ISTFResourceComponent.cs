@@ -12,6 +12,7 @@ namespace STF.Serialisation
 		string Id {get; set;}
 		string Type {get;}
 		List<string> Targets {get; set;}
+		UnityEngine.Object Resource {get;}
 	}
 
 	public abstract class ASTFResourceComponent : ScriptableObject, ISTFResourceComponent
@@ -19,17 +20,11 @@ namespace STF.Serialisation
 		public string _Id = Guid.NewGuid().ToString();
 		public string Id {get => _Id; set => _Id = value;}
 		public abstract string Type { get; }
-		public string _ParentNodeId;
-		public string ParentNodeId {get => _ParentNodeId; set => _ParentNodeId = value;}
-
-		public List<string> _extends = new List<string>();
-		public List<string> Extends {get => _extends; set => _extends = value;}
-
-		public List<string> _overrides = new List<string>();
-		public List<string> Overrides {get => _overrides; set => _overrides = value;}
 
 		public List<string> _targets = new List<string>();
 		public List<string> Targets {get => _targets; set => _targets = value;}
+
+		public abstract UnityEngine.Object Resource {get;}
 	}
 	
 	public interface ISTFResourceComponentExporter

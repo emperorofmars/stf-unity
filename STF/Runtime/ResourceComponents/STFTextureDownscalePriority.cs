@@ -8,6 +8,10 @@ namespace STF.Serialisation
 	{
 		public const string _TYPE = "STF.texture.downscale_priprity";
 		public override string Type => _TYPE;
+
+		public STFTexture _Resource;
+		public override Object Resource => _Resource;
+
 		public int DownscalePriority = 0;
 	}
 	
