@@ -1,9 +1,6 @@
 
 using System;
-using UnityEngine;
 using Newtonsoft.Json.Linq;
-using STF.IdComponents;
-using System.IO;
 using System.Collections.Generic;
 
 namespace STF.Serialisation

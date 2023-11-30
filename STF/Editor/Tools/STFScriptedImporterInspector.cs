@@ -2,14 +2,9 @@
 #if UNITY_EDITOR
 
 using System.IO;
-using System.Linq;
 using UnityEditor;
-using UnityEditor.Experimental.AssetImporters;
 using UnityEngine;
-using STF.IdComponents;
 using STF.Serialisation;
-using static STF.Tools.STFScriptedImporter;
-using System;
 
 namespace STF.Tools
 {

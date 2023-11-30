@@ -4,11 +4,26 @@
 using UnityEngine;
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
-using STF.IdComponents;
 using STF.Serialisation;
+using System;
 
 namespace STF.Tools
 {
+	[Serializable]
+	public class STFAssetInfo
+	{
+		public string assetName;
+		public string assetVersion = "0.0.1";
+		public string assetAuthor;
+		public string assetURL;
+		public string assetLicense;
+		public string assetLicenseLink;
+		public Texture2D assetPreview;
+
+		public string assetId = Guid.NewGuid().ToString();
+		public string assetType = "STF.asset";
+	}
+	
 	public class STFImportInfo : ScriptableObject
 	{
 		public string MainAssetId;

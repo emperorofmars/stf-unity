@@ -1,7 +1,6 @@
 
 #if UNITY_EDITOR
 
-using STF.IdComponents;
 using STF.Serialisation;
 using UnityEditor;
 using UnityEngine;

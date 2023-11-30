@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using STF.IdComponents;
 using STF.Serialisation;
 using UnityEditor;
 using UnityEngine;

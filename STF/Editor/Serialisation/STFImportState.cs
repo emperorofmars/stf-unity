@@ -4,7 +4,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Newtonsoft.Json.Linq;
-using STF.IdComponents;
 using UnityEditor;
 using System.Threading.Tasks;
 using System.IO;
