@@ -21,6 +21,9 @@ namespace STF.Serialisation
 		// Unity Resource -> Json Resource
 		Dictionary<UnityEngine.Object, (string Id, JObject JsonResource)> Resources {get;}
 
+		// Unity ResourceComponent -> Json ResourceComponent
+		Dictionary<ISTFResourceComponent, (string Id, JObject JsonResourceComponent)> ResourceComponents {get;}
+
 		// Unity GameObject -> STF Json Node
 		Dictionary<GameObject, (string Id, JObject JsonNode)> Nodes {get;}
 
@@ -32,6 +35,7 @@ namespace STF.Serialisation
 		string AddNode(GameObject Go, JObject Serialized, string Id = null);
 		string AddComponent(Component Component, JObject Serialized, string Id = null);
 		string AddResource(UnityEngine.Object Resource, JObject Serialized, string Id = null);
+		string AddResourceComponent(ISTFResourceComponent ResourceComponent, JObject Serialized, string Id = null);
 		string AddBuffer(byte[] Data, string Id = null);
 		void AddTrash(UnityEngine.Object Trash);
 

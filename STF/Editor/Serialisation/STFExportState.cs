@@ -23,7 +23,6 @@ namespace STF.Serialisation
 		public Dictionary<ISTFAsset, (string Id, JObject JsonAsset)> _Assets = new Dictionary<ISTFAsset, (string Id, JObject JsonAsset)>();
 		public Dictionary<ISTFAsset, (string Id, JObject JsonAsset)> Assets {get => _Assets;}
 
-
 		public Dictionary<GameObject, (string Id, JObject JsonNode)> _Nodes = new Dictionary<GameObject, (string Id, JObject JsonNode)>();
 		public Dictionary<GameObject, (string Id, JObject JsonNode)> Nodes {get => _Nodes;}
 
@@ -32,6 +31,9 @@ namespace STF.Serialisation
 
 		public Dictionary<Component, (string Id, JObject JsonComponent)> _Components = new Dictionary<Component, (string Id, JObject JsonComponent)>();
 		public Dictionary<Component, (string Id, JObject JsonComponent)> Components {get => _Components;}
+
+		public Dictionary<ISTFResourceComponent, (string Id, JObject JsonResourceComponent)> _ResourceComponents = new Dictionary<ISTFResourceComponent, (string Id, JObject JsonResourceComponent)>();
+		public Dictionary<ISTFResourceComponent, (string Id, JObject JsonResourceComponent)> ResourceComponents => _ResourceComponents;
 
 		// id -> buffer
 		public Dictionary<string, byte[]> Buffers = new Dictionary<string, byte[]>();
@@ -108,6 +110,11 @@ namespace STF.Serialisation
 			var arrayBuffer = File.ReadAllBytes(assetPath);
 			var meta = AssetDatabase.LoadAssetAtPath<T>(Path.ChangeExtension(assetPath, "Asset"));
 			return (arrayBuffer, meta, Path.GetFileName(assetPath));
+		}
+
+		public string AddResourceComponent(ISTFResourceComponent ResourceComponent, JObject Serialized, string Id = null)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

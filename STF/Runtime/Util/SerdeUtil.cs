@@ -116,5 +116,18 @@ namespace STF.Serialisation
 				return null;
 			}
 		}
+
+		public static (string, JObject) SerializeResourceComponent(ISTFExportState State, ISTFResourceComponent ResourceComponent)
+		{
+			if(State.Context.ResourceComponentExporters.ContainsKey(ResourceComponent.Type))
+			{
+				return State.Context.ResourceComponentExporters[ResourceComponent.Type].SerializeToJson(State, ResourceComponent);
+			}
+			else
+			{
+				Debug.LogWarning($"Unrecognized Resource: {ResourceComponent.Type}");
+				return (null, null);
+			}
+		}
 	}
 }

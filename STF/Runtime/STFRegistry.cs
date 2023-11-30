@@ -154,8 +154,6 @@ namespace STF.Serialisation
 
 		public static STFImportContext GetDefaultImportContext()
 		{
-			//ResourceComponents
-
 			return new STFImportContext() {
 				AssetImporters = AssetImporters,
 				NodeImporters = NodeImporters,
@@ -167,8 +165,6 @@ namespace STF.Serialisation
 
 		public static STFExportContext GetDefaultExportContext()
 		{
-			//ResourceComponents
-
 			return new STFExportContext() {
 				AssetExporters = AssetExporters,
 				NodeExporters = NodeExporters,
