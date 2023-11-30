@@ -15,7 +15,8 @@ namespace STF.Serialisation
 		UnityEngine.Object Resource {get;}
 	}
 
-	public abstract class ASTFResourceComponent : ScriptableObject, ISTFResourceComponent
+	[Serializable]
+	public abstract class ASTFResourceComponent : ISTFResourceComponent
 	{
 		public string _Id = Guid.NewGuid().ToString();
 		public string Id {get => _Id; set => _Id = value;}
@@ -38,7 +39,8 @@ namespace STF.Serialisation
 	public interface ISTFResourceComponentImporter
 	{
 		string ConvertPropertyPath(string STFProperty);
-		void ParseFromJson(ISTFAssetImportState State, JObject Json, string Id, ISTFResource Resource);
-		ISTFResourceComponent DeserializeForUnity(string Json, List<ResourceIdPair> ResourceReferences);
+		void ParseFromJson(ISTFImportState State, JObject Json, string Id, ISTFResource Resource);
+
+		ISTFResourceComponent DeserializeForUnity(string Json, string Id, List<ResourceIdPair> ResourceReferences);
 	}
 }

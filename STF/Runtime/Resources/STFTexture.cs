@@ -38,6 +38,10 @@ namespace STF.Serialisation
 			var bufferId = State.AddBuffer(arrayBuffer, meta?.OriginalBufferId);
 			ret.Add("buffer", bufferId);
 
+			// serialize resource components
+
+			SerdeUtil.SerializeResourceComponents(State, meta);
+
 			ret.Add("used_buffers", new JArray() {bufferId});
 			return State.AddResource(Resource, ret, meta ? meta.Id : Guid.NewGuid().ToString());
 		}
@@ -61,6 +65,9 @@ namespace STF.Serialisation
 			meta.OriginalBufferId = (string)Json["buffer"];
 			
 			var arrayBuffer = State.Buffers[meta.OriginalBufferId];
+
+			SerdeUtil.ParseResourceComponents(State, meta, Json);
+
 			State.SaveResource<STFTexture, Texture2D>(arrayBuffer, (string)Json["format"], meta, Id);
 			return;
 		}

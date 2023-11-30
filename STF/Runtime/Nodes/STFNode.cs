@@ -23,7 +23,7 @@ namespace STF.Serialisation
 				{"name", Go.name},
 				{"trs", TRSUtil.SerializeTRS(Go)},
 				{"children", SerdeUtil.SerializeChildren(State, Go)},
-				{"components", SerdeUtil.SerializeComponents(State, Go.GetComponents<Component>())}
+				{"components", SerdeUtil.SerializeNodeComponents(State, Go.GetComponents<Component>())}
 			};
 
 			return State.AddNode(Go, ret, node.Id);

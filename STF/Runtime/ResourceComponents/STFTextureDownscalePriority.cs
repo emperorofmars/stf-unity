@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace STF.Serialisation
 {
+	[System.Serializable]
 	public class STFTextureDownscalePriority : ASTFResourceComponent
 	{
 		public const string _TYPE = "STF.texture.downscale_priprity";
@@ -34,7 +35,6 @@ namespace STF.Serialisation
 		public (string Json, List<ResourceIdPair> ResourceReferences) SerializeForUnity(ISTFResourceComponent Component)
 		{
 			return(new JObject {
-				{"id", Component.Id},
 				{"type", STFTextureDownscalePriority._TYPE},
 				{"downscale_priority", ((STFTextureDownscalePriority)Component).DownscalePriority}
 			}.ToString(), null);
@@ -48,18 +48,18 @@ namespace STF.Serialisation
 			throw new System.NotImplementedException();
 		}
 
-		public void ParseFromJson(ISTFAssetImportState State, JObject Json, string Id, ISTFResource Resource)
+		public void ParseFromJson(ISTFImportState State, JObject Json, string Id, ISTFResource Resource)
 		{
-			var ret = ScriptableObject.CreateInstance<STFTextureDownscalePriority>();
+			var ret = new STFTextureDownscalePriority();
 			ret.Id = Id;
 			ret.DownscalePriority = (int)Json["downscale_priority"];
 			Resource.Components.Add(ret);
 		}
 
-		public ISTFResourceComponent DeserializeForUnity(string Json, List<ResourceIdPair> ResourceReferences)
+		public ISTFResourceComponent DeserializeForUnity(string Json, string Id, List<ResourceIdPair> ResourceReferences)
 		{
 			var parsedJson = JObject.Parse(Json);
-			return new STFTextureDownscalePriority{_Id = (string)parsedJson["id"], DownscalePriority = (int)parsedJson["downscale_priority"]};
+			return new STFTextureDownscalePriority{_Id = Id, DownscalePriority = (int)parsedJson["downscale_priority"]};
 		}
 	}
 }

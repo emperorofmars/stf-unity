@@ -51,6 +51,25 @@ namespace STF.Serialisation
 			ParseNodeComponents(State, Go, JsonAsset);
 		}
 
+		public static void ParseResourceComponents(ISTFImportState State, ISTFResource Resource, JObject JsonResource)
+		{
+			if(JsonResource["components"] == null) return;
+			foreach(var entry in (JObject)JsonResource["components"])
+			{
+				var type = (string)entry.Value["type"];
+				if(type == null || type.Length == 0) type = STFNode._TYPE;
+				if(State.Context.ResourceComponentImporters.ContainsKey(type))
+				{
+					State.Context.ResourceComponentImporters[type].ParseFromJson(State, (JObject)entry.Value, entry.Key, Resource);
+				}
+				else
+				{
+					Debug.LogWarning($"Unrecognized Component: {type}");
+					//STFUnrecognizedResourceComponentImporter.ParseFromJson(State, (JObject)entry.Value, entry.Key, Resource);
+				}
+			}
+		}
+
 		public static JArray SerializeChildren(ISTFExportState State, GameObject Go)
 		{
 			var ret = new JArray();
@@ -78,20 +97,20 @@ namespace STF.Serialisation
 			}
 		}
 
-		public static JObject SerializeComponents(ISTFExportState State, Component[] NodeComponents)
+		public static JObject SerializeNodeComponents(ISTFExportState State, Component[] NodeComponents)
 		{
 			var ret = new JObject();
 			foreach(var component in NodeComponents)
 			{
 				if(State.Context.ExportExclusions.Find(e => component.GetType().IsSubclassOf(e) || component.GetType() == e) != null) continue;
-				var serializedComponent = SerializeComponent(State, component);
+				var serializedComponent = SerializeNodeComponent(State, component);
 				if(serializedComponent.Item1 != null) ret.Add(serializedComponent.Item1, serializedComponent.Item2);
 				else Debug.LogWarning($"Skipping Unrecognized Unity Component: {component}");
 			}
 			return ret;
 		}
 
-		public static (string, JObject) SerializeComponent(ISTFExportState State, Component NodeComponent)
+		public static (string, JObject) SerializeNodeComponent(ISTFExportState State, Component NodeComponent)
 		{
 			if(State.Context.NodeComponentExporters.ContainsKey(NodeComponent.GetType()))
 			{
@@ -115,6 +134,18 @@ namespace STF.Serialisation
 				Debug.LogWarning($"Unrecognized Resource: {Resource.GetType()}");
 				return null;
 			}
+		}
+
+		public static JObject SerializeResourceComponents(ISTFExportState State, ISTFResource Resource)
+		{
+			var ret = new JObject();
+			foreach(var component in Resource.Components)
+			{
+				var serializedComponent = SerializeResourceComponent(State, component);
+				if(serializedComponent.Item1 != null) ret.Add(serializedComponent.Item1, serializedComponent.Item2);
+				else Debug.LogWarning($"Skipping Unrecognized Resource Component: {component}");
+			}
+			return ret;
 		}
 
 		public static (string, JObject) SerializeResourceComponent(ISTFExportState State, ISTFResourceComponent ResourceComponent)

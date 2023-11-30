@@ -37,7 +37,7 @@ namespace STF.Serialisation
 				{"name", Go.name},
 				{"trs", TRSUtil.SerializeTRS(Go)},
 				{"children", armatureInstanceChildren},
-				{"components", SerdeUtil.SerializeComponents(State, Go.GetComponents<Component>())},
+				{"components", SerdeUtil.SerializeNodeComponents(State, Go.GetComponents<Component>())},
 				{"armature", SerdeUtil.SerializeResource(State, node.armature)},
 			};
 			var boneInstances = new JArray();
@@ -59,7 +59,7 @@ namespace STF.Serialisation
 					{"bone", boneInstance.BoneId},
 					{"trs", TRSUtil.SerializeTRS(boneInstance.gameObject)},
 					{"children", boneInstanceChildren},
-					{"components", SerdeUtil.SerializeComponents(State, boneInstance.GetComponents<Component>())},
+					{"components", SerdeUtil.SerializeNodeComponents(State, boneInstance.GetComponents<Component>())},
 				};
 				boneInstances.Add(State.AddNode(boneInstance.gameObject, boneInstanceJson, boneInstance.Id));
 			}

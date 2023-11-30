@@ -18,7 +18,7 @@ namespace STF.Serialisation
 	public abstract class ASTFResource : ScriptableObject, ISTFResource, ISerializationCallbackReceiver
 	{
 		[Serializable] public class SerializedResourceComponent {
-			public string Id = System.Guid.NewGuid().ToString();
+			public string Id;
 			public string Type;
 			public string Json;
 			public List<ResourceIdPair> Resources = new List<ResourceIdPair>();
@@ -46,20 +46,29 @@ namespace STF.Serialisation
 			SerializedResourceComponents.Clear();
 			foreach(var resourceComponent in Components)
 			{
-				var serialized = STFRegistry.ResourceComponentExporters[resourceComponent.Type].SerializeForUnity(resourceComponent);
-				SerializedResourceComponents.Add(new SerializedResourceComponent {
-					Id = resourceComponent.Id,
-					Type = resourceComponent.Type,
-					Json = serialized.Json,
-					Resources = serialized.ResourceReferences
-				});
+				if(resourceComponent != null && resourceComponent.Type != null)
+				{
+					var serialized = STFRegistry.ResourceComponentExporters.ContainsKey(resourceComponent.Type)
+						? STFRegistry.ResourceComponentExporters[resourceComponent.Type].SerializeForUnity(resourceComponent)
+						: new STFUnrecognizedResourceComponentExporter().SerializeForUnity(resourceComponent);
+
+					SerializedResourceComponents.Add(new SerializedResourceComponent {
+						Id = resourceComponent.Id,
+						Type = resourceComponent.Type,
+						Json = serialized.Json,
+						Resources = serialized.ResourceReferences
+					});
+				}
 			}
 		}
 		public void OnAfterDeserialize()
 		{
 			foreach(var serializedResourceComponent in SerializedResourceComponents)
 			{
-				_Components.Add(STFRegistry.ResourceComponentImporters[serializedResourceComponent.Type].DeserializeForUnity(serializedResourceComponent.Json, serializedResourceComponent.Resources));
+				if(STFRegistry.ResourceComponentImporters.ContainsKey(serializedResourceComponent.Type))
+					_Components.Add(STFRegistry.ResourceComponentImporters[serializedResourceComponent.Type].DeserializeForUnity(serializedResourceComponent.Id, serializedResourceComponent.Json, serializedResourceComponent.Resources));
+				else
+					_Components.Add(new STFUnrecognizedResourceComponentImporter().DeserializeForUnity(serializedResourceComponent.Id, serializedResourceComponent.Json, serializedResourceComponent.Resources));
 			}
 		}
 	}
