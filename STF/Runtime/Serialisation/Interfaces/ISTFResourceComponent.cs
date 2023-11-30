@@ -6,6 +6,7 @@ using UnityEngine;
 
 namespace STF.Serialisation
 {
+	public class ResourceIdPair { public string Id; public UnityEngine.Object Resource;}
 	public interface ISTFResourceComponent
 	{
 		string Id {get; set;}
@@ -35,11 +36,14 @@ namespace STF.Serialisation
 	{
 		string ConvertPropertyPath(string UnityProperty);
 		(string Id, JObject JsonComponent) SerializeToJson(ISTFExportState State, ISTFResourceComponent Component);
+		
+		(string Json, List<ResourceIdPair> ResourceReferences) SerializeForUnity(ISTFResourceComponent Component);
 	}
 	
 	public interface ISTFResourceComponentImporter
 	{
 		string ConvertPropertyPath(string STFProperty);
 		void ParseFromJson(ISTFAssetImportState State, JObject Json, string Id, ISTFResource Resource);
+		ISTFResourceComponent DeserializeForUnity(string Json, List<ResourceIdPair> ResourceReferences);
 	}
 }

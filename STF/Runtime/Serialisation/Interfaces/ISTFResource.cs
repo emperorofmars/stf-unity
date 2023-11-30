@@ -1,7 +1,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
+using STF.IdComponents;
 using UnityEngine;
 
 namespace STF.Serialisation
@@ -17,7 +19,6 @@ namespace STF.Serialisation
 
 	public abstract class ASTFResource : ScriptableObject, ISTFResource, ISerializationCallbackReceiver
 	{
-		[Serializable] public class ResourceIdPair {public string Id; public UnityEngine.Object Resource;}
 		[Serializable] public class SerializedResourceComponent {
 			public string Id = System.Guid.NewGuid().ToString();
 			public string Type;
@@ -44,22 +45,23 @@ namespace STF.Serialisation
 
 		public void OnBeforeSerialize()
 		{
+			SerializedResourceComponents.Clear();
 			foreach(var resourceComponent in Components)
 			{
-				/*var state = new MaterialPropertyValueExportState();
-				property.SerializedValues.Add(new SerializedProperty {
-					Type = propertyValue.Type,
-					Json = PropertyValueRegistry.PropertyValueExporters[propertyValue.Type].SerializeToJson(state, propertyValue).ToString(),
-					Resources = state.Resources,
-				});*/
+				var serialized = STFRegistry.ResourceComponentExporters[resourceComponent.Type].SerializeForUnity(resourceComponent);
+				SerializedResourceComponents.Add(new SerializedResourceComponent {
+					Id = resourceComponent.Id,
+					Type = resourceComponent.Type,
+					Json = serialized.Json,
+					Resources = serialized.ResourceReferences
+				});
 			}
 		}
 		public void OnAfterDeserialize()
 		{
 			foreach(var serializedResourceComponent in SerializedResourceComponents)
 			{
-				//var state = new MaterialPropertyValueImportState {Resources = serializedPropertyValue.Resources};
-				//property.Values.Add(PropertyValueRegistry.DefaultPropertyValueImporters[serializedPropertyValue.Type].ParseFromJson(state, JObject.Parse(serializedPropertyValue.Json)));
+				_Components.Add(STFRegistry.ResourceComponentImporters[serializedResourceComponent.Type].DeserializeForUnity(serializedResourceComponent.Json, serializedResourceComponent.Resources));
 			}
 		}
 	}

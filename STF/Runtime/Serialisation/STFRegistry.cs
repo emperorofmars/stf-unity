@@ -45,7 +45,7 @@ namespace STF.Serialisation
 		public Dictionary<string, ISTFNodeExporter> NodeExporters = new Dictionary<string, ISTFNodeExporter>();
 		public Dictionary<Type, ISTFNodeComponentExporter> NodeComponentExporters = new Dictionary<Type, ISTFNodeComponentExporter>();
 		public Dictionary<Type, ISTFResourceExporter> ResourceExporters = new Dictionary<Type, ISTFResourceExporter>();
-		public Dictionary<Type, ISTFResourceComponentExporter> ResourceComponentExporters = new Dictionary<Type, ISTFResourceComponentExporter>();
+		public Dictionary<string, ISTFResourceComponentExporter> ResourceComponentExporters = new Dictionary<string, ISTFResourceComponentExporter>();
 		public List<Type> ExportExclusions = new List<Type>();
 	}
 
@@ -100,8 +100,8 @@ namespace STF.Serialisation
 		public static readonly Dictionary<string, ISTFResourceComponentImporter> DefaultResourceComponentImporters = new Dictionary<string, ISTFResourceComponentImporter>() {
 			{STFTextureDownscalePriority._TYPE, new STFTextureDownscalePriorityImporter()},
 		};
-		public static readonly Dictionary<Type, ISTFResourceComponentExporter> DefaultResourceComponentExporters = new Dictionary<Type, ISTFResourceComponentExporter>() {
-			{typeof(STFTextureDownscalePriority), new STFTextureDownscalePriorityExporter()},
+		public static readonly Dictionary<string, ISTFResourceComponentExporter> DefaultResourceComponentExporters = new Dictionary<string, ISTFResourceComponentExporter>() {
+			{STFTextureDownscalePriority._TYPE, new STFTextureDownscalePriorityExporter()},
 		};
 		public static readonly List<Type> DefaultExportExclusions = new List<Type>() {
 			typeof(Transform), typeof(ISTFNode), typeof(Animator), typeof(STFAsset), typeof(STFNode), typeof(STFBoneNode), typeof(STFBoneInstanceNode), typeof(STFMeshInstance), typeof(STFArmatureInstanceNode), typeof(STFArmatureNodeInfo)
@@ -120,7 +120,7 @@ namespace STF.Serialisation
 		private static Dictionary<Type, ISTFResourceExporter> RegisteredResourceExporters = new Dictionary<Type, ISTFResourceExporter>();
 
 		private static Dictionary<string, ISTFResourceComponentImporter> RegisteredResourceComponentImporters = new Dictionary<string, ISTFResourceComponentImporter>();
-		private static Dictionary<Type, ISTFResourceComponentExporter> RegisteredResourceComponentExporters = new Dictionary<Type, ISTFResourceComponentExporter>();
+		private static Dictionary<string, ISTFResourceComponentExporter> RegisteredResourceComponentExporters = new Dictionary<string, ISTFResourceComponentExporter>();
 
 		private static readonly List<Type> RegisteredExportExclusions = new List<Type>();
 
@@ -137,7 +137,7 @@ namespace STF.Serialisation
 		public static Dictionary<Type, ISTFResourceExporter> ResourceExporters {get => CollectionUtil.Combine(DefaultResourceExporters, RegisteredResourceExporters);}
 
 		public static Dictionary<string, ISTFResourceComponentImporter> ResourceComponentImporters {get => CollectionUtil.Combine(DefaultResourceComponentImporters, RegisteredResourceComponentImporters);}
-		public static Dictionary<Type, ISTFResourceComponentExporter> ResourceComponentExporters {get => CollectionUtil.Combine(DefaultResourceComponentExporters, RegisteredResourceComponentExporters);}
+		public static Dictionary<string, ISTFResourceComponentExporter> ResourceComponentExporters {get => CollectionUtil.Combine(DefaultResourceComponentExporters, RegisteredResourceComponentExporters);}
 
 		public static List<Type> ExportExclusions {get => CollectionUtil.Combine(DefaultExportExclusions, RegisteredExportExclusions);}
 
@@ -150,7 +150,7 @@ namespace STF.Serialisation
 		public static void RegisterResourceImporter(string type, ISTFResourceImporter importer) { RegisteredResourceImporters.Add(type, importer); }
 		public static void RegisterResourceExporter(Type type, ISTFResourceExporter exporter) { RegisteredResourceExporters.Add(type, exporter); }
 		public static void RegisterResourceComponentImporter(string type, ISTFResourceComponentImporter importer) { RegisteredResourceComponentImporters.Add(type, importer); }
-		public static void RegisterResourceComponentExporter(Type type, ISTFResourceComponentExporter exporter) { RegisteredResourceComponentExporters.Add(type, exporter); }
+		public static void RegisterResourceComponentExporter(string type, ISTFResourceComponentExporter exporter) { RegisteredResourceComponentExporters.Add(type, exporter); }
 		public static void RegisterExportExclusion(Type type) { RegisteredExportExclusions.Add(type); }
 
 		public static STFImportContext GetDefaultImportContext()

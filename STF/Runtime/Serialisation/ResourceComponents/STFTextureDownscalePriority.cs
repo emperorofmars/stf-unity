@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 
@@ -25,6 +26,15 @@ namespace STF.Serialisation
 			};
 			return (Component.Id, ret);
 		}
+
+		public (string Json, List<ResourceIdPair> ResourceReferences) SerializeForUnity(ISTFResourceComponent Component)
+		{
+			return(new JObject {
+				{"id", Component.Id},
+				{"type", STFTextureDownscalePriority._TYPE},
+				{"downscale_priority", ((STFTextureDownscalePriority)Component).DownscalePriority}
+			}.ToString(), null);
+		}
 	}
 	
 	public class STFTextureDownscalePriorityImporter : ISTFResourceComponentImporter
@@ -40,6 +50,12 @@ namespace STF.Serialisation
 			ret.Id = Id;
 			ret.DownscalePriority = (int)Json["downscale_priority"];
 			Resource.Components.Add(ret);
+		}
+
+		public ISTFResourceComponent DeserializeForUnity(string Json, List<ResourceIdPair> ResourceReferences)
+		{
+			var parsedJson = JObject.Parse(Json);
+			return new STFTextureDownscalePriority{_Id = (string)parsedJson["id"], DownscalePriority = (int)parsedJson["downscale_priority"]};
 		}
 	}
 }
