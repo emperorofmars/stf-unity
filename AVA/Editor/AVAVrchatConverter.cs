@@ -1,12 +1,15 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using STF.ApplicationConversion;
+using STF.IdComponents;
 using STF.Serialisation;
 using UnityEngine;
 using UnityEngine.Animations;
 
-namespace STF.ApplicationConversion
+namespace AVA.ApplicationConversion
 {
-	public class STFUnityConverter : ASTFApplicationConverter
+	public class AVAVrchatConverter : ASTFApplicationConverter
 	{
 		public const string _TARGET_NAME = "unity3d";
 		public override string TargetName => _TARGET_NAME;

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using STF.IdComponents;
 using STF.Serialisation;
 using UnityEditor;
 using UnityEngine;
@@ -12,24 +11,21 @@ namespace STF.Tools
 	// Utility to setup a non STF Unity scene into the STF Unity intermediary format. Adds uuid's to everything, determines armatures and places the appropriate STF components. Will be used by the default exporter automatically if the exported scene is not set up.
 	public static class STFSetup
 	{
-		public static List<GameObject> SetupStandaloneAssetInplace(GameObject root)
+		public static (List<GameObject> CreatedGos, Dictionary<UnityEngine.Object, UnityEngine.Object> ResourceMeta) SetupStandaloneAssetInplace(GameObject root)
 		{
-			var ret = new List<GameObject>();
+			var CreatedGos = new List<GameObject>();
 			// Setup main asset info
 			var asset = root.GetComponent<STFAsset>();
 			if(asset == null)
 			{
 				asset = root.AddComponent<STFAsset>();
-				asset.assetInfo.assetId = Guid.NewGuid().ToString();
-				asset.assetInfo.assetType = STFAssetImporter._TYPE;
-				asset.assetInfo.assetName = root.name;
-				asset.assetInfo.assetVersion = "0.0.1";
+				asset.Name = root.name;
+				asset.Version = "0.0.1";
 			}
 			var armatureResult = STFArmatureUtil.FindAndSetupArmaturesInplace(root);
-			asset.ResourceMeta = armatureResult.ResourceMeta;
-			ret.AddRange(armatureResult.CreatedGos);
+			CreatedGos.AddRange(armatureResult.CreatedGos);
 			SetupIds(root);
-			return ret;
+			return (CreatedGos, armatureResult.ResourceMeta);
 		}
 
 		/*public static List<UnityEngine.Object> SetupAddonAssetInplace(GameObject root)

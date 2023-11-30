@@ -3,7 +3,6 @@ using Newtonsoft.Json.Linq;
 using UnityEngine;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using STF.IdComponents;
 
 namespace STF.Serialisation
 {
@@ -60,8 +59,7 @@ namespace STF.Serialisation
 					ret.UsedResources.Add(State.Resources[resourceId]);
 				}));
 			}
-			var tmpAssetInfo = new STFAssetInfo();
-			var assetImportState = new STFAssetImportState(tmpAssetInfo, State, State.Context);
+			var assetImportState = new STFAssetImportState(Id, State, State.Context);
 			if(Json["used_nodes"] != null) foreach(string nodeId in Json["used_nodes"])
 			{
 				var type = (string)State.JsonRoot["nodes"][nodeId]["type"];

@@ -6,9 +6,7 @@ using System.Collections.Generic;
 using System;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
-using STF.IdComponents;
 using Newtonsoft.Json;
 using STF.Util;
 
@@ -19,46 +17,43 @@ namespace STF.Serialisation
 	{
 		private STFExportState state;
 
-		public STFExporter(STFAsset MainAsset, List<STFAsset> SecondaryAssets, string ExportPath, bool DebugExport = false)
+		public STFExporter(ISTFAsset MainAsset, List<ISTFAsset> SecondaryAssets, string ExportPath, Dictionary<UnityEngine.Object, UnityEngine.Object> ResourceMeta = null, bool DebugExport = false)
 		{
-			export(STFRegistry.GetDefaultExportContext(), MainAsset, SecondaryAssets, ExportPath, DebugExport);
+			export(STFRegistry.GetDefaultExportContext(), MainAsset, SecondaryAssets, ExportPath, ResourceMeta, DebugExport);
 		}
 
-		public STFExporter(STFExportContext Context, STFAsset MainAsset, List<STFAsset> SecondaryAssets, string ExportPath, bool DebugExport = false)
+		public STFExporter(STFExportContext Context, ISTFAsset MainAsset, List<ISTFAsset> SecondaryAssets, string ExportPath, Dictionary<UnityEngine.Object, UnityEngine.Object> ResourceMeta = null, bool DebugExport = false)
 		{
-			export(Context, MainAsset, SecondaryAssets, ExportPath, DebugExport);
+			export(Context, MainAsset, SecondaryAssets, ExportPath, ResourceMeta, DebugExport);
 		}
 
-		private void export(STFExportContext Context, STFAsset MainAsset, List<STFAsset> SecondaryAssets, string ExportPath, bool DebugExport = false)
+		private void export(STFExportContext Context, ISTFAsset MainAsset, List<ISTFAsset> SecondaryAssets, string ExportPath, Dictionary<UnityEngine.Object, UnityEngine.Object> ResourceMeta = null, bool DebugExport = false)
 		{
 			try
 			{
-				var resourceMeta = MainAsset.ResourceMeta;
-				foreach(var secondaryAsset in SecondaryAssets) foreach(var entry in secondaryAsset.ResourceMeta) if(!resourceMeta.ContainsKey(entry.Key)) resourceMeta.Add(entry.Key, entry.Value);
+				state = new STFExportState(Context, ExportPath, ResourceMeta);
+				state._MainAssetId = MainAsset.Id;
 
-				state = new STFExportState(Context, ExportPath, resourceMeta);
-				state._MainAssetId = MainAsset.assetInfo.assetId;
-
-				if(state.Context.AssetExporters.ContainsKey(MainAsset.assetInfo.assetType))
+				if(state.Context.AssetExporters.ContainsKey(MainAsset.Type))
 				{
-					Debug.Log($"Serializing Main Asset: {MainAsset.assetInfo.assetType}");
-					state.Context.AssetExporters[MainAsset.assetInfo.assetType].SerializeToJson(state, MainAsset);
+					Debug.Log($"Serializing Main Asset: {MainAsset.Type}");
+					state.Context.AssetExporters[MainAsset.Type].SerializeToJson(state, MainAsset);
 				}
 				else
 				{
-					Debug.LogWarning($"Unrecognized Main Asset: {MainAsset.assetInfo.assetType}");
+					Debug.LogWarning($"Unrecognized Main Asset: {MainAsset.Type}");
 					// Unrecognized Asset
 				}
 				foreach(var secondaryAsset in SecondaryAssets)
 				{
-					if(state.Context.AssetExporters.ContainsKey(secondaryAsset.assetInfo.assetType))
+					if(state.Context.AssetExporters.ContainsKey(secondaryAsset.Type))
 					{
-						Debug.Log($"Serializing Secondary Asset: {secondaryAsset.assetInfo.assetType}");
-						state.Context.AssetExporters[secondaryAsset.assetInfo.assetType].SerializeToJson(state, secondaryAsset);
+						Debug.Log($"Serializing Secondary Asset: {secondaryAsset.Type}");
+						state.Context.AssetExporters[secondaryAsset.Type].SerializeToJson(state, secondaryAsset);
 					}
 					else
 					{
-						Debug.LogWarning($"Unrecognized Secondary Asset: {secondaryAsset.assetInfo.assetType}");
+						Debug.LogWarning($"Unrecognized Secondary Asset: {secondaryAsset.Type}");
 						// Unrecognized Asset
 					}
 				}

@@ -2,7 +2,7 @@
 #if UNITY_EDITOR
 
 using System.IO;
-using STF.IdComponents;
+using STF.Serialisation;
 using UnityEditor;
 using UnityEngine;
 
@@ -12,7 +12,7 @@ namespace STF.ApplicationConversion.Editors
 	{
 		private const string DefaultUnpackFolder = "STF Application Converts";
 
-		public STFAsset Asset;
+		public ISTFAsset Asset;
 		private Vector2 scrollPos;
 		private string path;
 
@@ -32,9 +32,9 @@ namespace STF.ApplicationConversion.Editors
 
 			GUILayout.BeginHorizontal();
 			GUILayout.Label("Select Asset", EditorStyles.whiteLargeLabel, GUILayout.ExpandWidth(false));
-			Asset = (STFAsset)EditorGUILayout.ObjectField(
+			Asset = (ISTFAsset)EditorGUILayout.ObjectField(
 				Asset,
-				typeof(STFAsset),
+				typeof(ISTFAsset),
 				true,
 				GUILayout.ExpandWidth(true)
 			);
@@ -48,7 +48,7 @@ namespace STF.ApplicationConversion.Editors
 
 			if(path == null && Asset != null)
 			{
-				path = Path.Combine("Assets", DefaultUnpackFolder, Asset.assetInfo.assetName, STFUnityConverter._TARGET_NAME);
+				path = Path.Combine("Assets", DefaultUnpackFolder, Asset.Name, STFUnityConverter._TARGET_NAME);
 
 
 				if(!Directory.Exists("Assets/" + DefaultUnpackFolder))
@@ -56,14 +56,14 @@ namespace STF.ApplicationConversion.Editors
 					AssetDatabase.CreateFolder("Assets", DefaultUnpackFolder);
 					AssetDatabase.Refresh();
 				}
-				if(!Directory.Exists(Path.Combine("Assets", DefaultUnpackFolder, Asset.assetInfo.assetName)))
+				if(!Directory.Exists(Path.Combine("Assets", DefaultUnpackFolder, Asset.Name)))
 				{
-					AssetDatabase.CreateFolder(Path.Combine("Assets", DefaultUnpackFolder), Asset.assetInfo.assetName);
+					AssetDatabase.CreateFolder(Path.Combine("Assets", DefaultUnpackFolder), Asset.Name);
 					AssetDatabase.Refresh();
 				}
-				if(!Directory.Exists(Path.Combine("Assets", DefaultUnpackFolder, Asset.assetInfo.assetName, STFUnityConverter._TARGET_NAME)))
+				if(!Directory.Exists(Path.Combine("Assets", DefaultUnpackFolder, Asset.Name, STFUnityConverter._TARGET_NAME)))
 				{
-					AssetDatabase.CreateFolder(Path.Combine("Assets", DefaultUnpackFolder, Asset.assetInfo.assetName), STFUnityConverter._TARGET_NAME);
+					AssetDatabase.CreateFolder(Path.Combine("Assets", DefaultUnpackFolder, Asset.Name), STFUnityConverter._TARGET_NAME);
 					AssetDatabase.Refresh();
 				}
 			}

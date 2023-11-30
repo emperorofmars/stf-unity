@@ -19,11 +19,4 @@ namespace STF.IdComponents
 		public string assetId = Guid.NewGuid().ToString();
 		public string assetType = "STF.asset";
 	}
-
-	public class STFAsset : MonoBehaviour
-	{
-		public STFAssetInfo assetInfo = new STFAssetInfo();
-		public List<string> appliedAddonIds = new List<string>();
-		public Dictionary<UnityEngine.Object, UnityEngine.Object> ResourceMeta = new Dictionary<UnityEngine.Object, UnityEngine.Object>();
-	}
 }

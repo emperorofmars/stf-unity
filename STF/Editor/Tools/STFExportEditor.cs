@@ -16,7 +16,7 @@ namespace STF.Tools
 	{
 		private Vector2 scrollPos;
 		public GameObject mainExport;
-		private List<STFAsset> exports = new List<STFAsset>() {};
+		private List<ISTFAsset> exports = new List<ISTFAsset>() {};
 		private bool DebugExport = true;
 
 
@@ -50,12 +50,12 @@ namespace STF.Tools
 			{
 				GUILayout.BeginHorizontal();
 				GUILayout.Label("Select Secondary Asset", GUILayout.ExpandWidth(false));
-				exports[i] = ((STFAsset)EditorGUILayout.ObjectField(
+				exports[i] = (ISTFAsset)EditorGUILayout.ObjectField(
 					exports[i],
-					typeof(STFAsset),
+					typeof(ISTFAsset),
 					true,
 					GUILayout.ExpandWidth(true)
-				));
+				);
 				
 				if(GUILayout.Button("Remove", GUILayout.ExpandWidth(false)))
 				{
@@ -95,7 +95,7 @@ namespace STF.Tools
 			GUILayout.Space(10);
 		}
 
-		private void SerializeAsSTFBinary(GameObject MainAsset, List<STFAsset> SecondaryAssets, string ExportPath, bool DebugExport = true)
+		private void SerializeAsSTFBinary(GameObject MainAsset, List<ISTFAsset> SecondaryAssets, string ExportPath, bool DebugExport = true)
 		{
 			var trash = new List<GameObject>();
 			try
@@ -103,8 +103,9 @@ namespace STF.Tools
 				var exportInstance = Instantiate(mainExport);
 				exportInstance.name = mainExport.name;
 				trash.Add(exportInstance);
-				trash.AddRange(STFSetup.SetupStandaloneAssetInplace(exportInstance));
-				var exporter = new STFExporter(exportInstance.GetComponent<STFAsset>(), SecondaryAssets, ExportPath, DebugExport);
+				var setupAsset = STFSetup.SetupStandaloneAssetInplace(exportInstance);
+				trash.AddRange(setupAsset.CreatedGos);
+				var exporter = new STFExporter(exportInstance.GetComponent<STFAsset>(), SecondaryAssets, ExportPath, setupAsset.ResourceMeta, DebugExport);
 			}
 			catch(Exception e)
 			{

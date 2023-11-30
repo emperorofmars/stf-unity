@@ -12,10 +12,26 @@ using System.IO;
 
 namespace STF.Serialisation
 {
+	public abstract class ISTFAsset : MonoBehaviour
+	{
+		public string _Id = Guid.NewGuid().ToString();
+		public string Id {get => _Id; set => _Id = value;}
+		public abstract string Type { get; }
+		public string Name { get; set; }
+		public string Version { get; set; }
+		public string Author { get; set; }
+		public string URL { get; set; }
+		public string License { get; set; }
+		public string LicenseLink { get; set; }
+		public Texture2D Preview { get; set; }
+	}
+	
 	public interface ISTFAssetImportState
 	{
+		string AssetId {get;}
+
 		STFImportContext Context {get;}
-		STFAssetInfo AssetInfo {get;}
+		//ISTFAsset Asset {get;}
 		JObject JsonRoot {get;}
 		// id -> asset
 		//Dictionary<string, STFAsset> Assets {get;}
@@ -38,7 +54,7 @@ namespace STF.Serialisation
 	
 	public interface ISTFAssetExporter
 	{
-		string SerializeToJson(ISTFExportState State, STFAsset Asset);
+		string SerializeToJson(ISTFExportState State, ISTFAsset Asset);
 	}
 	
 	public interface ISTFAssetImporter

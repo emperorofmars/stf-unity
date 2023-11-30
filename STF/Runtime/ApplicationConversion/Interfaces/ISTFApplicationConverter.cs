@@ -1,16 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using STF.IdComponents;
+using STF.Serialisation;
 using UnityEngine;
 
 namespace STF.ApplicationConversion
 {
 	public interface ISTFApplicationConverter
 	{
-		bool CanConvert(STFAsset Asset);
-		GameObject Convert(ISTFApplicationConvertStorageContext StorageContext, STFAsset Asset);
+		bool CanConvert(ISTFAsset Asset);
+		GameObject Convert(ISTFApplicationConvertStorageContext StorageContext, ISTFAsset Asset);
 	}
 	
 
@@ -22,9 +21,9 @@ namespace STF.ApplicationConversion
 		public abstract string TargetName {get;}
 		public abstract List<string> Targets {get;}
 
-		public abstract bool CanConvert(STFAsset Asset);
+		public abstract bool CanConvert(ISTFAsset Asset);
 
-		public GameObject Convert(ISTFApplicationConvertStorageContext StorageContext, STFAsset Asset)
+		public GameObject Convert(ISTFApplicationConvertStorageContext StorageContext, ISTFAsset Asset)
 		{
 			GameObject ret = null;
 			STFApplicationConvertState state = null;

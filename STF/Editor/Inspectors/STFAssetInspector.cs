@@ -2,13 +2,13 @@
 #if UNITY_EDITOR
 
 using System;
-using STF.IdComponents;
+using STF.Serialisation;
 using UnityEditor;
 using UnityEngine;
 
 namespace STF.Inspectors
 {
-	[CustomEditor(typeof(STFAsset))]
+	[CustomEditor(typeof(ISTFAsset))]
 	public class STFAssetInspector : Editor
 	{
 		private bool _editId = false;
@@ -19,13 +19,13 @@ namespace STF.Inspectors
 			
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.PrefixLabel("Type");
-			EditorGUILayout.LabelField(asset.assetInfo.assetType);
+			EditorGUILayout.LabelField(asset.Type);
 			EditorGUILayout.EndHorizontal();
 
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.PrefixLabel("Id");
-			EditorGUILayout.LabelField(asset.assetInfo.assetId);
-			if(GUILayout.Button("Copy")) GUIUtility.systemCopyBuffer = asset.assetInfo.assetId;
+			EditorGUILayout.LabelField(asset.Id);
+			if(GUILayout.Button("Copy")) GUIUtility.systemCopyBuffer = asset.Id;
 			EditorGUILayout.EndHorizontal();
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.Separator();
@@ -34,44 +34,44 @@ namespace STF.Inspectors
 			if(_editId)
 			{
 				EditorGUILayout.BeginHorizontal();
-				asset.assetInfo.assetId = EditorGUILayout.TextField(asset.assetInfo.assetId);
+				asset.Id = EditorGUILayout.TextField(asset.Id);
 				if(GUILayout.Button("Paste"))
 				{
-					if(Guid.TryParse(GUIUtility.systemCopyBuffer, out var ret)) asset.assetInfo.assetId = ret.ToString();
+					if(Guid.TryParse(GUIUtility.systemCopyBuffer, out var ret)) asset.Id = ret.ToString();
 				}
-				if(GUILayout.Button("Generate New")) asset.assetInfo.assetId = Guid.NewGuid().ToString();
+				if(GUILayout.Button("Generate New")) asset.Id = Guid.NewGuid().ToString();
 				EditorGUILayout.EndHorizontal();
 			}
 			EditorGUILayout.Separator();
 
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.PrefixLabel("Name");
-			asset.assetInfo.assetName = EditorGUILayout.TextField(asset.assetInfo.assetName);
+			asset.Name = EditorGUILayout.TextField(asset.Name);
 			EditorGUILayout.EndHorizontal();
 
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.PrefixLabel("Version");
-			asset.assetInfo.assetVersion = EditorGUILayout.TextField(asset.assetInfo.assetVersion);
+			asset.Version = EditorGUILayout.TextField(asset.Version);
 			EditorGUILayout.EndHorizontal();
 
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.PrefixLabel("Author");
-			asset.assetInfo.assetAuthor = EditorGUILayout.TextField(asset.assetInfo.assetAuthor);
+			asset.Author = EditorGUILayout.TextField(asset.Author);
 			EditorGUILayout.EndHorizontal();
 
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.PrefixLabel("URL");
-			asset.assetInfo.assetURL = EditorGUILayout.TextField(asset.assetInfo.assetURL);
+			asset.URL = EditorGUILayout.TextField(asset.URL);
 			EditorGUILayout.EndHorizontal();
 
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.PrefixLabel("License");
-			asset.assetInfo.assetLicense = EditorGUILayout.TextField(asset.assetInfo.assetLicense);
+			asset.License = EditorGUILayout.TextField(asset.License);
 			EditorGUILayout.EndHorizontal();
 
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.PrefixLabel("License Link");
-			asset.assetInfo.assetLicenseLink = EditorGUILayout.TextField(asset.assetInfo.assetLicenseLink);
+			asset.LicenseLink = EditorGUILayout.TextField(asset.LicenseLink);
 			EditorGUILayout.EndHorizontal();
 
 			if(EditorGUI.EndChangeCheck()) EditorUtility.SetDirty(target);

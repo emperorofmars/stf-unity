@@ -1,7 +1,6 @@
 
 using System.Collections.Generic;
 using System;
-using STF.IdComponents;
 using UnityEngine;
 
 namespace STF.Serialisation
@@ -53,11 +52,11 @@ namespace STF.Serialisation
 	public static class STFRegistry
 	{
 		public static readonly Dictionary<string, ISTFAssetExporter> DefaultAssetExporters = new Dictionary<string, ISTFAssetExporter>() {
-			{STFAssetImporter._TYPE, new STFAssetExporter()},
+			{STFAsset._TYPE, new STFAssetExporter()},
 			//{STFAddonAssetExporter._TYPE, new STFAddonAssetExporter()}
 		};
 		public static readonly Dictionary<string, ISTFAssetImporter> DefaultAssetImporters = new Dictionary<string, ISTFAssetImporter>() {
-			{STFAssetImporter._TYPE, new STFAssetImporter()},
+			{STFAsset._TYPE, new STFAssetImporter()},
 			//{STFAddonAssetImporter._TYPE, new STFAddonAssetImporter()}
 		};
 		public static readonly Dictionary<string, ISTFNodeImporter> DefaultNodeImporters = new Dictionary<string, ISTFNodeImporter>() {

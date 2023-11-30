@@ -4,31 +4,30 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Newtonsoft.Json.Linq;
-using STF.IdComponents;
 using System.Threading.Tasks;
 
 namespace STF.Serialisation
 {
 	public class STFAssetImportState : ISTFAssetImportState
 	{
+		private string _AssetId;
+		public string AssetId => _AssetId;
 		private ISTFImportState State;
 		STFImportContext _Context;
 		public STFImportContext Context {get =>_Context;}
-		STFAssetInfo _AssetInfo;
-		public STFAssetInfo AssetInfo {get =>_AssetInfo;}
+		//ISTFAsset _Asset;
+		//public ISTFAsset Asset {get =>_Asset;}
 		public JObject JsonRoot {get => State.JsonRoot;}
 
 		Dictionary<string, GameObject> _Nodes = new Dictionary<string, GameObject>();
 		public Dictionary<string, GameObject> Nodes {get => _Nodes;}
 		Dictionary<string, Component> _Components = new Dictionary<string, Component>();
 		public Dictionary<string, Component> Components {get => _Components;}
-
-		//public Dictionary<string, STFAsset> Assets {get => State.Assets;}
 		public Dictionary<string, UnityEngine.Object> Resources {get => State.Resources;}
 
-		public STFAssetImportState(STFAssetInfo AssetInfo, ISTFImportState State, STFImportContext Context)
+		public STFAssetImportState(string AssetId, ISTFImportState State, STFImportContext Context)
 		{
-			this._AssetInfo = AssetInfo;
+			this._AssetId = AssetId;
 			this.State = State;
 			this._Context = Context;
 		}
