@@ -1,7 +1,8 @@
 {
     "name": "mtf-unity-runtime",
     "references": [
-        "TexturePacker.Runtime"
+        "TexturePacker.Runtime",
+        "stf-unity-util-runtime"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

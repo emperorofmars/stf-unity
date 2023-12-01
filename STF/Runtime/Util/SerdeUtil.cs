@@ -65,7 +65,7 @@ namespace STF.Serialisation
 				else
 				{
 					Debug.LogWarning($"Unrecognized Component: {type}");
-					//STFUnrecognizedResourceComponentImporter.ParseFromJson(State, (JObject)entry.Value, entry.Key, Resource);
+					STFUnrecognizedResourceComponentImporter.ParseFromJson(State, (JObject)entry.Value, entry.Key, Resource);
 				}
 			}
 		}
@@ -157,7 +157,7 @@ namespace STF.Serialisation
 			else
 			{
 				Debug.LogWarning($"Unrecognized Resource: {ResourceComponent.Type}");
-				return (null, null);
+				return STFUnrecognizedResourceComponentExporter.SerializeToJson(State, ResourceComponent);
 			}
 		}
 	}

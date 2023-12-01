@@ -1,7 +1,8 @@
 {
     "name": "mtf-unity-editor",
     "references": [
-        "GUID:f6e45c355aca57346b2551ce3fb43d6e"
+        "GUID:f6e45c355aca57346b2551ce3fb43d6e",
+        "GUID:e387ecb8ef6c42c4fa7c5d0e76bd6011"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

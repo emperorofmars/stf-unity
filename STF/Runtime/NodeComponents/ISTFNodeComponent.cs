@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
+using STF_Util;
 using UnityEngine;
 
 namespace STF.Serialisation
@@ -19,7 +20,7 @@ namespace STF.Serialisation
 
 	public abstract class ASTFNodeComponent : MonoBehaviour, ISTFNodeComponent
 	{
-		public string _Id = Guid.NewGuid().ToString();
+		[Id] public string _Id = Guid.NewGuid().ToString();
 		public string Id {get => _Id; set => _Id = value;}
 		public abstract string Type { get; }
 		public string _ParentNodeId;

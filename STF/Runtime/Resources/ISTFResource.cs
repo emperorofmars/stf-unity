@@ -18,7 +18,7 @@ namespace STF.Serialisation
 	public abstract class ASTFResource : ScriptableObject, ISTFResource, ISerializationCallbackReceiver
 	{
 		[Serializable] public class SerializedResourceComponent {
-			public string Id;
+			public string Id = System.Guid.NewGuid().ToString();
 			public string Type;
 			public string Json;
 			public List<ResourceIdPair> Resources = new List<ResourceIdPair>();
@@ -46,11 +46,11 @@ namespace STF.Serialisation
 			SerializedResourceComponents.Clear();
 			foreach(var resourceComponent in Components)
 			{
-				if(resourceComponent != null && resourceComponent.Type != null)
+				if(resourceComponent != null)
 				{
-					var serialized = STFRegistry.ResourceComponentExporters.ContainsKey(resourceComponent.Type)
+					var serialized = resourceComponent.Type != null && STFRegistry.ResourceComponentExporters.ContainsKey(resourceComponent.Type)
 						? STFRegistry.ResourceComponentExporters[resourceComponent.Type].SerializeForUnity(resourceComponent)
-						: new STFUnrecognizedResourceComponentExporter().SerializeForUnity(resourceComponent);
+						: STFUnrecognizedResourceComponentExporter.SerializeForUnity(resourceComponent);
 
 					SerializedResourceComponents.Add(new SerializedResourceComponent {
 						Id = resourceComponent.Id,
@@ -68,7 +68,7 @@ namespace STF.Serialisation
 				if(STFRegistry.ResourceComponentImporters.ContainsKey(serializedResourceComponent.Type))
 					_Components.Add(STFRegistry.ResourceComponentImporters[serializedResourceComponent.Type].DeserializeForUnity(serializedResourceComponent.Id, serializedResourceComponent.Json, serializedResourceComponent.Resources));
 				else
-					_Components.Add(new STFUnrecognizedResourceComponentImporter().DeserializeForUnity(serializedResourceComponent.Id, serializedResourceComponent.Json, serializedResourceComponent.Resources));
+					_Components.Add(STFUnrecognizedResourceComponentImporter.DeserializeForUnity(serializedResourceComponent.Id, serializedResourceComponent.Json, serializedResourceComponent.Resources));
 			}
 		}
 	}

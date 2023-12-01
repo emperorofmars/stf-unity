@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
+using STF_Util;
 
 namespace MTF
 {
@@ -33,7 +34,9 @@ namespace MTF
 		[Serializable] public class SerializedProperty { public string Type; public string Json; public List<IdResourcePair> Resources = new List<IdResourcePair>(); }
 		[Serializable] public class Property { public string Type; public List<IPropertyValue> Values = new List<IPropertyValue>(); public List<SerializedProperty> SerializedValues = new List<SerializedProperty>(); }
 
+		[Id]
 		public string Id = Guid.NewGuid().ToString();
+		public string MaterialName;
 		public UnityEngine.Material ConvertedMaterial;
 		public List<ShaderTarget> PreferedShaderPerTarget = new List<ShaderTarget>();
 		public List<string> StyleHints = new List<string>();

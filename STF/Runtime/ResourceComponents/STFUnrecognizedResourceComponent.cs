@@ -18,33 +18,33 @@ namespace STF.Serialisation
 		public List<Object> UsedResources = new List<Object>();
 	}
 	
-	public class STFUnrecognizedResourceComponentExporter : ISTFResourceComponentExporter
+	public static class STFUnrecognizedResourceComponentExporter
 	{
-		public string ConvertPropertyPath(string UnityProperty)
+		public static string ConvertPropertyPath(string UnityProperty)
 		{
-			throw new System.NotImplementedException();
+			return UnityProperty;
 		}
 
-		public (string Id, JObject JsonComponent) SerializeToJson(ISTFExportState State, ISTFResourceComponent Component)
+		public static (string Id, JObject JsonComponent) SerializeToJson(ISTFExportState State, ISTFResourceComponent Component)
 		{
 			// handle resources
 			return (Component.Id, JObject.Parse(((STFUnrecognizedResourceComponent)Component).Json));
 		}
 
-		public (string Json, List<ResourceIdPair> ResourceReferences) SerializeForUnity(ISTFResourceComponent Component)
+		public static (string Json, List<ResourceIdPair> ResourceReferences) SerializeForUnity(ISTFResourceComponent Component)
 		{
 			return(((STFUnrecognizedResourceComponent)Component).Json, ((STFUnrecognizedResourceComponent)Component).UsedResources.Select(r => new ResourceIdPair{Id=null, Resource = r}).ToList());
 		}
 	}
 	
-	public class STFUnrecognizedResourceComponentImporter : ISTFResourceComponentImporter
+	public static class STFUnrecognizedResourceComponentImporter
 	{
-		public string ConvertPropertyPath(string STFProperty)
+		public static string ConvertPropertyPath(string STFProperty)
 		{
-			throw new System.NotImplementedException();
+			return STFProperty;
 		}
 
-		public void ParseFromJson(ISTFImportState State, JObject Json, string Id, ISTFResource Resource)
+		public static void ParseFromJson(ISTFImportState State, JObject Json, string Id, ISTFResource Resource)
 		{
 			var ret = new STFUnrecognizedResourceComponent();
 			ret.Id = Id;
@@ -53,7 +53,7 @@ namespace STF.Serialisation
 			Resource.Components.Add(ret);
 		}
 
-		public ISTFResourceComponent DeserializeForUnity(string Json, string Id, List<ResourceIdPair> ResourceReferences)
+		public static ISTFResourceComponent DeserializeForUnity(string Json, string Id, List<ResourceIdPair> ResourceReferences)
 		{
 			var ret = new STFUnrecognizedResourceComponent();
 			ret.Id = Id;

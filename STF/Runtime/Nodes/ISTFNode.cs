@@ -2,6 +2,7 @@
 using System;
 using UnityEngine;
 using Newtonsoft.Json.Linq;
+using STF_Util;
 
 namespace STF.Serialisation
 {
@@ -15,7 +16,7 @@ namespace STF.Serialisation
 	public abstract class ASTFNode : MonoBehaviour, ISTFNode
 	{
 		public abstract string Type { get; }
-		public string _Id = Guid.NewGuid().ToString();
+		[Id] public string _Id = Guid.NewGuid().ToString();
 		public string Id {get => _Id; set => _Id = value;}
 		public int _PrefabHirarchy = 0;
 		public int PrefabHirarchy {get => _PrefabHirarchy; set => _PrefabHirarchy = value;}

@@ -8,21 +8,22 @@ using System.Linq;
 using Newtonsoft.Json.Linq;
 using System.Threading.Tasks;
 using System.IO;
+using STF_Util;
 
 namespace STF.Serialisation
 {
 	public abstract class ISTFAsset : MonoBehaviour
 	{
-		public string _Id = Guid.NewGuid().ToString();
+		[Id] public string _Id = Guid.NewGuid().ToString();
 		public string Id {get => _Id; set => _Id = value;}
 		public abstract string Type { get; }
-		public string Name { get; set; }
-		public string Version { get; set; }
-		public string Author { get; set; }
-		public string URL { get; set; }
-		public string License { get; set; }
-		public string LicenseLink { get; set; }
-		public Texture2D Preview { get; set; }
+		public string Name;
+		public string Version;
+		public string Author;
+		public string URL;
+		public string License;
+		public string LicenseLink;
+		public Texture2D Preview;
 	}
 	
 	public interface ISTFAssetImportState

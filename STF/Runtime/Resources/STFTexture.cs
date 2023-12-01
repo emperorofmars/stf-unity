@@ -3,7 +3,6 @@ using System;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 using System.IO;
-using System.Collections.Generic;
 
 namespace STF.Serialisation
 {
@@ -39,8 +38,7 @@ namespace STF.Serialisation
 			ret.Add("buffer", bufferId);
 
 			// serialize resource components
-
-			SerdeUtil.SerializeResourceComponents(State, meta);
+			ret.Add("components", SerdeUtil.SerializeResourceComponents(State, meta));
 
 			ret.Add("used_buffers", new JArray() {bufferId});
 			return State.AddResource(Resource, ret, meta ? meta.Id : Guid.NewGuid().ToString());
