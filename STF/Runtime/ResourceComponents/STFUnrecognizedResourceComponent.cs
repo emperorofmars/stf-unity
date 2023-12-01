@@ -11,9 +11,6 @@ namespace STF.Serialisation
 		public string _Type;
 		public override string Type => _Type;
 
-		public Object _Resource;
-		public override Object Resource => _Resource;
-
 		public string Json;
 		public List<Object> UsedResources = new List<Object>();
 	}

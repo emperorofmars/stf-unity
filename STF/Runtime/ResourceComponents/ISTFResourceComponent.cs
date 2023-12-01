@@ -17,7 +17,7 @@ namespace STF.Serialisation
 		public List<string> _targets = new List<string>();
 		public List<string> Targets {get => _targets; set => _targets = value;}
 
-		public abstract UnityEngine.Object Resource {get;}
+		[HideInInspector] public UnityEngine.Object Resource;
 	}
 	
 	public interface ISTFResourceComponentExporter

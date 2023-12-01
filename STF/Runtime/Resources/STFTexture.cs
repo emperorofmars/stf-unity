@@ -28,6 +28,8 @@ namespace STF.Serialisation
 
 			var (arrayBuffer, meta, fileName) = State.LoadAsset<STFTexture>(texture);
 
+			Debug.Log(meta);
+
 			ret.Add("name", meta != null ? meta.Name : Path.GetFileNameWithoutExtension(fileName));
 			ret.Add("format", Path.GetExtension(fileName));
 			ret.Add("width", texture.width);

@@ -9,6 +9,7 @@ namespace STF.Serialisation
 	{
 		public static void ParseNodeChildren(ISTFAssetImportState State, GameObject Go, JObject JsonAsset)
 		{
+			if(JsonAsset["children"] == null || JsonAsset["children"].Type == JTokenType.Null) return;
 			foreach(string childId in JsonAsset["children"])
 			{
 				var childJson = (JObject)State.JsonRoot["nodes"][childId];
@@ -28,12 +29,11 @@ namespace STF.Serialisation
 
 		public static void ParseNodeComponents(ISTFAssetImportState State, GameObject Go, JObject JsonAsset)
 		{
-			if(JsonAsset["components"] == null) return;
+			if(JsonAsset["components"] == null || JsonAsset["components"].Type == JTokenType.Null) return;
 			foreach(var entry in (JObject)JsonAsset["components"])
 			{
 				var type = (string)entry.Value["type"];
-				if(type == null || type.Length == 0) type = STFNode._TYPE;
-				if(State.Context.NodeComponentImporters.ContainsKey(type))
+				if(type != null && State.Context.NodeComponentImporters.ContainsKey(type))
 				{
 					State.Context.NodeComponentImporters[type].ParseFromJson(State, (JObject)entry.Value, entry.Key, Go);
 				}
@@ -53,12 +53,11 @@ namespace STF.Serialisation
 
 		public static void ParseResourceComponents(ISTFImportState State, ISTFResource Resource, JObject JsonResource)
 		{
-			if(JsonResource["components"] == null) return;
+			if(JsonResource["components"] == null || JsonResource["components"].Type == JTokenType.Null) return;
 			foreach(var entry in (JObject)JsonResource["components"])
 			{
 				var type = (string)entry.Value["type"];
-				if(type == null || type.Length == 0) type = STFNode._TYPE;
-				if(State.Context.ResourceComponentImporters.ContainsKey(type))
+				if(type != null && State.Context.ResourceComponentImporters.ContainsKey(type))
 				{
 					State.Context.ResourceComponentImporters[type].ParseFromJson(State, (JObject)entry.Value, entry.Key, Resource);
 				}
@@ -139,7 +138,7 @@ namespace STF.Serialisation
 		public static JObject SerializeResourceComponents(ISTFExportState State, ISTFResource Resource)
 		{
 			var ret = new JObject();
-			foreach(var component in Resource.Components)
+			if(Resource?.Components != null) foreach(var component in Resource.Components)
 			{
 				var serializedComponent = SerializeResourceComponent(State, component);
 				if(serializedComponent.Item1 != null) ret.Add(serializedComponent.Item1, serializedComponent.Item2);
@@ -156,7 +155,7 @@ namespace STF.Serialisation
 			}
 			else
 			{
-				Debug.LogWarning($"Unrecognized Resource: {ResourceComponent.Type}");
+				Debug.LogWarning($"Unrecognized Resource Component: {ResourceComponent.Type}");
 				return STFUnrecognizedResourceComponentExporter.SerializeToJson(State, ResourceComponent);
 			}
 		}

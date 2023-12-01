@@ -49,7 +49,7 @@ namespace STF_Util
 
 		public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
 		{
-			return EditorGUIUtility.singleLineHeight * 2;
+			return EditorGUIUtility.singleLineHeight * 2 + 5;
 		}
 	}
 }

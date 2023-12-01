@@ -5,7 +5,6 @@ using UnityEngine;
 
 namespace MTF
 {
-	[Serializable]
 	public class TexturePropertyValue : IPropertyValue
 	{
 		public const string _TYPE = "MTF.texture";
@@ -21,7 +20,9 @@ namespace MTF
 
 		public IPropertyValue ParseFromJson(IPropertyValueImportState State, JObject Json)
 		{
-			return new TexturePropertyValue {Texture = (Texture2D)State.GetResource((string)Json["value"])};
+			var prop = ScriptableObject.CreateInstance<TexturePropertyValue>();
+			prop.Texture = (Texture2D)State.GetResource((string)Json["texture"]);
+			return prop;
 		}
 	}
 	public class TexturePropertyValueExporter : IPropertyValueExporter
@@ -33,11 +34,10 @@ namespace MTF
 
 		public JObject SerializeToJson(IPropertyValueExportState State, IPropertyValue MTFProperty)
 		{
-			return new JObject {{"type", TexturePropertyValue._TYPE}, {"value", State.AddResource(((TexturePropertyValue)MTFProperty).Texture)}};
+			return new JObject {{"type", TexturePropertyValue._TYPE}, {"texture", State.AddResource(((TexturePropertyValue)MTFProperty).Texture)}};
 		}
 	}
 
-	[Serializable]
 	public class TextureChannelPropertyValue : IPropertyValue
 	{
 		public const string _TYPE = "MTF.texture_channel";
@@ -54,7 +54,10 @@ namespace MTF
 
 		public IPropertyValue ParseFromJson(IPropertyValueImportState State, JObject Json)
 		{
-			return new TextureChannelPropertyValue {Texture = (Texture2D)State.GetResource((string)Json["texture"]), Channel = (int)Json["channel"]};
+			var prop = ScriptableObject.CreateInstance<TextureChannelPropertyValue>();
+			prop.Texture = (Texture2D)State.GetResource((string)Json["texture"]);
+			prop.Channel = (int)Json["channel"];
+			return prop;
 		}
 	}
 	public class TextureChannelPropertyValueExporter : IPropertyValueExporter
@@ -71,7 +74,6 @@ namespace MTF
 		}
 	}
 
-	[Serializable]
 	public class ColorPropertyValue : IPropertyValue
 	{
 		public const string _TYPE = "MTF.color";
@@ -87,7 +89,9 @@ namespace MTF
 
 		public IPropertyValue ParseFromJson(IPropertyValueImportState State, JObject Json)
 		{
-			return new ColorPropertyValue {Color = new Color((float)Json["value"][0], (float)Json["value"][1], (float)Json["value"][2])};
+			var prop = ScriptableObject.CreateInstance<ColorPropertyValue>();
+			prop.Color = new Color((float)Json["value"][0], (float)Json["value"][1], (float)Json["value"][2]);
+			return prop;
 		}
 	}
 	public class ColorPropertyValueExporter : IPropertyValueExporter
@@ -104,7 +108,6 @@ namespace MTF
 		}
 	}
 
-	[Serializable]
 	public class IntPropertyValue : IPropertyValue
 	{
 		public const string _TYPE = "MTF.int";
@@ -120,7 +123,9 @@ namespace MTF
 
 		public IPropertyValue ParseFromJson(IPropertyValueImportState State, JObject Json)
 		{
-			return new IntPropertyValue {Value = (int)Json["value"]};
+			var prop = ScriptableObject.CreateInstance<IntPropertyValue>();
+			prop.Value = (int)Json["value"];
+			return prop;
 		}
 	}
 	public class IntPropertyValueExporter : IPropertyValueExporter
@@ -137,7 +142,6 @@ namespace MTF
 		}
 	}
 
-	[Serializable]
 	public class FloatPropertyValue : IPropertyValue
 	{
 		public const string _TYPE = "MTF.float";
@@ -153,7 +157,9 @@ namespace MTF
 
 		public IPropertyValue ParseFromJson(IPropertyValueImportState State, JObject Json)
 		{
-			return new FloatPropertyValue {Value = (float)Json["value"]};
+			var prop = ScriptableObject.CreateInstance<FloatPropertyValue>();
+			prop.Value = (float)Json["value"];
+			return prop;
 		}
 	}
 	public class FloatPropertyValueExporter : IPropertyValueExporter
@@ -170,7 +176,6 @@ namespace MTF
 		}
 	}
 
-	[Serializable]
 	public class StringPropertyValue : IPropertyValue
 	{
 		public const string _TYPE = "MTF.string";
@@ -186,7 +191,9 @@ namespace MTF
 
 		public IPropertyValue ParseFromJson(IPropertyValueImportState State, JObject Json)
 		{
-			return new StringPropertyValue {Value = (string)Json["value"]};
+			var prop = ScriptableObject.CreateInstance<StringPropertyValue>();
+			prop.Value = (string)Json["value"];
+			return prop;
 		}
 	}
 	public class StringPropertyValueExporter : IPropertyValueExporter

@@ -86,7 +86,7 @@ namespace STF.Serialisation
 						UnityEngine.Object.DestroyImmediate(node);
 					}
 				}
-				throw new Exception("Error during STF import: ", e);
+				throw new Exception("Error during STF export: ", e);
 			}
 			finally
 			{

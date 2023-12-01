@@ -102,7 +102,9 @@ namespace MTF
 		{
 			if(UnityMaterial.HasProperty(UnityPropertyName) && UnityMaterial.GetTexture(UnityPropertyName) != null)
 			{
-				_EnsureProperty(MTFMaterial, MTFPropertyType).Values.Add(new TexturePropertyValue{Texture = (Texture2D)UnityMaterial.GetTexture(UnityPropertyName)});
+				var prop = ScriptableObject.CreateInstance<TexturePropertyValue>();
+				prop.Texture = (Texture2D)UnityMaterial.GetTexture(UnityPropertyName);
+				_EnsureProperty(MTFMaterial, MTFPropertyType).Values.Add(prop);
 				return true;
 			}
 			return false;
@@ -112,7 +114,10 @@ namespace MTF
 		{
 			if(UnityMaterial.HasProperty(UnityPropertyName) && UnityMaterial.GetTexture(UnityPropertyName) != null)
 			{
-				_EnsureProperty(MTFMaterial, MTFPropertyType).Values.Add(new TextureChannelPropertyValue{Texture = (Texture2D)UnityMaterial.GetTexture(UnityPropertyName), Channel = Channel });
+				var prop = ScriptableObject.CreateInstance<TextureChannelPropertyValue>();
+				prop.Texture = (Texture2D)UnityMaterial.GetTexture(UnityPropertyName);
+				prop.Channel = Channel;
+				_EnsureProperty(MTFMaterial, MTFPropertyType).Values.Add(prop);
 				return true;
 			}
 			return false;
@@ -122,7 +127,9 @@ namespace MTF
 		{
 			if(UnityMaterial.HasProperty(UnityPropertyName) && UnityMaterial.GetColor(UnityPropertyName) != null)
 			{
-				_EnsureProperty(MTFMaterial, MTFPropertyType).Values.Add(new ColorPropertyValue{Color = UnityMaterial.GetColor(UnityPropertyName)});
+				var prop = ScriptableObject.CreateInstance<ColorPropertyValue>();
+				prop.Color = UnityMaterial.GetColor(UnityPropertyName);
+				_EnsureProperty(MTFMaterial, MTFPropertyType).Values.Add(prop);
 				return true;
 			}
 			return false;
@@ -132,7 +139,9 @@ namespace MTF
 		{
 			if(UnityMaterial.HasProperty(UnityPropertyName))
 			{
-				_EnsureProperty(MTFMaterial, MTFPropertyType).Values.Add(new FloatPropertyValue{Value = UnityMaterial.GetFloat(UnityPropertyName)});
+				var prop = ScriptableObject.CreateInstance<FloatPropertyValue>();
+				prop.Value = UnityMaterial.GetFloat(UnityPropertyName);
+				_EnsureProperty(MTFMaterial, MTFPropertyType).Values.Add(prop);
 				return true;
 			}
 			return false;
