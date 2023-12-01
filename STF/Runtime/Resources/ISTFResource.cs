@@ -63,6 +63,7 @@ namespace STF.Serialisation
 		}
 		public void OnAfterDeserialize()
 		{
+			_Components.Clear();
 			foreach(var serializedResourceComponent in SerializedResourceComponents)
 			{
 				if(STFRegistry.ResourceComponentImporters.ContainsKey(serializedResourceComponent.Type))
