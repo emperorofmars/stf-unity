@@ -8,21 +8,10 @@ namespace STF.Serialisation
 {
 	public class STFHumanoidArmature : ISTFResourceComponent
 	{
-		[System.Serializable]
-		public class BoneMappingPair
-		{
-			public BoneMappingPair(string humanoidName, GameObject bone)
-			{
-				this.humanoidName = humanoidName;
-				this.bone = bone;
-			}
-
-			public string humanoidName;
-			public GameObject bone;
-		}
-
 		public const string _TYPE = "STF.armature.humanoid";
 		public override string Type => _TYPE;
+
+		[Serializable] public class BoneMappingPair { public BoneMappingPair(string humanoidName, GameObject bone) { this.humanoidName = humanoidName; this.bone = bone; } public string humanoidName; public GameObject bone; }
 
 		public static readonly Dictionary<string, string> _Translations = new Dictionary<string, string> {
 			{"Hip", HumanBodyBones.Hips.ToString()},
@@ -291,18 +280,26 @@ namespace STF.Serialisation
 
 		public void ParseFromJson(ISTFImportState State, JObject Json, string Id, ISTFResource Resource)
 		{
-			var ret = new STFHumanoidArmature {
-				Id = Id,
-				LocomotionType = (string)Json["locomotion_type"]
-			};
-			var armature = (STFArmatureNodeInfo)Resource.Resource;
-			
+			var ret = ScriptableObject.CreateInstance<STFHumanoidArmature>();
+			ret.Id = Id;
+			ret.LocomotionType = (string)Json["locomotion_type"];
+
+			var armatureRoot = (GameObject)Resource.Resource;
+			var armature = armatureRoot.GetComponent<STFArmatureNodeInfo>();
+
 			foreach(var entry in (JObject)Json["mappings"])
 			{
-				ret.Mappings.Add(new STFHumanoidArmature.BoneMappingPair(entry.Key, ((ASTFNode)armature.Root.GetComponentsInChildren<ISTFNode>().FirstOrDefault(c => c.Id == (string)entry.Value)).gameObject));
+				if(entry.Value != null)
+				{
+					Debug.Log(armature);
+					Debug.Log(armature.Root);
+					var go = ((ASTFNode)armature.Root.GetComponentsInChildren<ISTFNode>()?.FirstOrDefault(c => c.Id == (string)entry.Value))?.gameObject;
+					Debug.Log(go);
+				}
+				ret.Mappings.Add(new STFHumanoidArmature.BoneMappingPair(entry.Key, ((ASTFNode)armature.Root.GetComponentsInChildren<ISTFNode>()?.FirstOrDefault(c => c.Id == (string)entry.Value))?.gameObject));
 			}
 			var avatar = STFHumanoidArmature.GenerateAvatar(ret, armature);
-			State.SaveGeneratedResource(avatar, "avatar");
+			State.SaveGeneratedResource(avatar, "asset");
 			ret.GeneratedAvatar = avatar;
 			Resource.Components.Add(ret);
 		}

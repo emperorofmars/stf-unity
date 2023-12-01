@@ -98,9 +98,11 @@ namespace STF.Serialisation
 		};
 		public static readonly Dictionary<string, ISTFResourceComponentImporter> DefaultResourceComponentImporters = new Dictionary<string, ISTFResourceComponentImporter>() {
 			{STFTextureDownscalePriority._TYPE, new STFTextureDownscalePriorityImporter()},
+			{STFHumanoidArmature._TYPE, new STFHumanoidArmatureImporter()},
 		};
 		public static readonly Dictionary<string, ISTFResourceComponentExporter> DefaultResourceComponentExporters = new Dictionary<string, ISTFResourceComponentExporter>() {
 			{STFTextureDownscalePriority._TYPE, new STFTextureDownscalePriorityExporter()},
+			{STFHumanoidArmature._TYPE, new STFHumanoidArmatureExporter()},
 		};
 		public static readonly List<Type> DefaultExportExclusions = new List<Type>() {
 			typeof(Transform), typeof(ISTFNode), typeof(Animator), typeof(STFAsset), typeof(STFNode), typeof(STFBoneNode), typeof(STFBoneInstanceNode), typeof(STFMeshInstance), typeof(STFArmatureInstanceNode), typeof(STFArmatureNodeInfo)

@@ -127,8 +127,8 @@ namespace STF.Serialisation
 			}
 			meta.Bindposes = bindposes;
 
-			SerdeUtil.ParseResourceComponents(State, meta, Json);
 			State.SaveResource(go, meta, Id);
+			SerdeUtil.ParseResourceComponents(State, meta, Json);
 			return;
 		}
 	}
