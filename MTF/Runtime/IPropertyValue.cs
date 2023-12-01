@@ -1,10 +1,11 @@
 using Newtonsoft.Json.Linq;
+using UnityEngine;
 
 namespace MTF
 {
-	public interface IPropertyValue
+	public abstract class IPropertyValue : ScriptableObject
 	{
-		string Type {get;}
+		public abstract string Type {get;}
 	}
 	public interface IPropertyValueImportState
 	{

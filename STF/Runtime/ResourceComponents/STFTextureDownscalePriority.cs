@@ -5,7 +5,7 @@ using UnityEngine;
 namespace STF.Serialisation
 {
 	[System.Serializable]
-	public class STFTextureDownscalePriority : ASTFResourceComponent
+	public class STFTextureDownscalePriority : ISTFResourceComponent
 	{
 		public const string _TYPE = "STF.texture.downscale_priprity";
 		public override string Type => _TYPE;
@@ -50,9 +50,10 @@ namespace STF.Serialisation
 
 		public void ParseFromJson(ISTFImportState State, JObject Json, string Id, ISTFResource Resource)
 		{
-			var ret = new STFTextureDownscalePriority();
-			ret.Id = Id;
-			ret.DownscalePriority = (int)Json["downscale_priority"];
+			var ret = new STFTextureDownscalePriority {
+				Id = Id,
+				DownscalePriority = (int)Json["downscale_priority"]
+			};
 			Resource.Components.Add(ret);
 		}
 

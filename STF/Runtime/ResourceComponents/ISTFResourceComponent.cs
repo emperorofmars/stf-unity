@@ -7,16 +7,8 @@ using UnityEngine;
 namespace STF.Serialisation
 {
 	public class ResourceIdPair { public string Id; public UnityEngine.Object Resource;}
-	public interface ISTFResourceComponent
-	{
-		string Id {get; set;}
-		string Type {get;}
-		List<string> Targets {get; set;}
-		UnityEngine.Object Resource {get;}
-	}
 
-	[Serializable]
-	public abstract class ASTFResourceComponent : ISTFResourceComponent
+	public abstract class ISTFResourceComponent : ScriptableObject
 	{
 		public string _Id = Guid.NewGuid().ToString();
 		public string Id {get => _Id; set => _Id = value;}

@@ -9,7 +9,7 @@ namespace MTF
 	public class TexturePropertyValue : IPropertyValue
 	{
 		public const string _TYPE = "MTF.texture";
-		public string Type => _TYPE;
+		public override string Type => _TYPE;
 		public Texture2D Texture;
 	}
 	public class TexturePropertyValueImporter : IPropertyValueImporter
@@ -41,7 +41,7 @@ namespace MTF
 	public class TextureChannelPropertyValue : IPropertyValue
 	{
 		public const string _TYPE = "MTF.texture_channel";
-		public string Type => _TYPE;
+		public override string Type => _TYPE;
 		public Texture2D Texture;
 		public int Channel;
 	}
@@ -75,7 +75,7 @@ namespace MTF
 	public class ColorPropertyValue : IPropertyValue
 	{
 		public const string _TYPE = "MTF.color";
-		public string Type => _TYPE;
+		public override string Type => _TYPE;
 		public Color Color;
 	}
 	public class ColorPropertyValueImporter : IPropertyValueImporter
@@ -108,7 +108,7 @@ namespace MTF
 	public class IntPropertyValue : IPropertyValue
 	{
 		public const string _TYPE = "MTF.int";
-		public string Type => _TYPE;
+		public override string Type => _TYPE;
 		public int Value;
 	}
 	public class IntPropertyValueImporter : IPropertyValueImporter
@@ -141,7 +141,7 @@ namespace MTF
 	public class FloatPropertyValue : IPropertyValue
 	{
 		public const string _TYPE = "MTF.float";
-		public string Type => _TYPE;
+		public override string Type => _TYPE;
 		public float Value;
 	}
 	public class FloatPropertyValueImporter : IPropertyValueImporter
@@ -174,7 +174,7 @@ namespace MTF
 	public class StringPropertyValue : IPropertyValue
 	{
 		public const string _TYPE = "MTF.string";
-		public string Type => _TYPE;
+		public override string Type => _TYPE;
 		public string Value;
 	}
 	public class StringPropertyValueImporter : IPropertyValueImporter

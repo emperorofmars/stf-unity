@@ -2,7 +2,9 @@
 using System;
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
+using STF_Util;
 using UnityEngine;
+using UnityExtensions;
 
 namespace STF.Serialisation
 {
@@ -15,7 +17,7 @@ namespace STF.Serialisation
 		List<ISTFResourceComponent> Components {get; set;}
 	}
 
-	public abstract class ASTFResource : ScriptableObject, ISTFResource, ISerializationCallbackReceiver
+	public abstract class ASTFResource : ScriptableObject, ISTFResource
 	{
 		[Serializable] public class SerializedResourceComponent {
 			public string Id = System.Guid.NewGuid().ToString();
@@ -24,7 +26,7 @@ namespace STF.Serialisation
 			public List<ResourceIdPair> Resources = new List<ResourceIdPair>();
 		}
 
-		public string _Id = System.Guid.NewGuid().ToString();
+		[Id] public string _Id = System.Guid.NewGuid().ToString();
 		public string Id {get => _Id; set => _Id = value;}
 
 		public string _Name;
@@ -35,43 +37,10 @@ namespace STF.Serialisation
 
 		public string _ResourceLocation;
 		public string ResourceLocation {get => _ResourceLocation; set => _ResourceLocation = value;}
+		
+		[ReorderableList(elementsAreSubassets = true)] public List<ISTFResourceComponent> _Components = new List<ISTFResourceComponent>();
+		public List<ISTFResourceComponent> Components { get => _Components; set => _Components = value; }
 
-		public List<ISTFResourceComponent> _Components = new List<ISTFResourceComponent>();
-		public List<ISTFResourceComponent> Components {get => _Components; set => _Components = value;}
-
-		public List<SerializedResourceComponent> SerializedResourceComponents = new List<SerializedResourceComponent>();
-
-		public void OnBeforeSerialize()
-		{
-			SerializedResourceComponents.Clear();
-			foreach(var resourceComponent in Components)
-			{
-				if(resourceComponent != null)
-				{
-					var serialized = resourceComponent.Type != null && STFRegistry.ResourceComponentExporters.ContainsKey(resourceComponent.Type)
-						? STFRegistry.ResourceComponentExporters[resourceComponent.Type].SerializeForUnity(resourceComponent)
-						: STFUnrecognizedResourceComponentExporter.SerializeForUnity(resourceComponent);
-
-					SerializedResourceComponents.Add(new SerializedResourceComponent {
-						Id = resourceComponent.Id,
-						Type = resourceComponent.Type,
-						Json = serialized.Json,
-						Resources = serialized.ResourceReferences
-					});
-				}
-			}
-		}
-		public void OnAfterDeserialize()
-		{
-			_Components.Clear();
-			foreach(var serializedResourceComponent in SerializedResourceComponents)
-			{
-				if(STFRegistry.ResourceComponentImporters.ContainsKey(serializedResourceComponent.Type))
-					_Components.Add(STFRegistry.ResourceComponentImporters[serializedResourceComponent.Type].DeserializeForUnity(serializedResourceComponent.Id, serializedResourceComponent.Json, serializedResourceComponent.Resources));
-				else
-					_Components.Add(STFUnrecognizedResourceComponentImporter.DeserializeForUnity(serializedResourceComponent.Id, serializedResourceComponent.Json, serializedResourceComponent.Resources));
-			}
-		}
 	}
 
 	public interface ISTFResourceExporter

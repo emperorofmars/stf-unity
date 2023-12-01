@@ -4,13 +4,14 @@ using System.Linq;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 using STF_Util;
+using UnityExtensions;
 
 namespace MTF
 {
 	[CreateAssetMenu(fileName = "MTF Material", menuName = "MTF/Material", order = 1)]
-	public class Material : ScriptableObject, ISerializationCallbackReceiver
+	public class Material : ScriptableObject//, ISerializationCallbackReceiver
 	{
-		private class MaterialPropertyValueExportState : IPropertyValueExportState
+		/*private class MaterialPropertyValueExportState : IPropertyValueExportState
 		{
 			public List<IdResourcePair> Resources = new List<IdResourcePair>();
 			public string AddResource(UnityEngine.Object Resource)
@@ -27,20 +28,20 @@ namespace MTF
 			{
 				return Resources.FirstOrDefault(r => r.Id == Id)?.Resource;
 			}
-		}
+		}*/
 
 		[Serializable] public class ShaderTarget { public string Platform; public List<string> Shaders = new List<string>(); }
-		[Serializable] public class IdResourcePair { public string Id; public UnityEngine.Object Resource; }
-		[Serializable] public class SerializedProperty { public string Type; public string Json; public List<IdResourcePair> Resources = new List<IdResourcePair>(); }
-		[Serializable] public class Property { public string Type; public List<IPropertyValue> Values = new List<IPropertyValue>(); public List<SerializedProperty> SerializedValues = new List<SerializedProperty>(); }
+		//[Serializable] public class IdResourcePair { public string Id; public UnityEngine.Object Resource; }
+		//[Serializable] public class SerializedProperty { public string Type; public string Json; public List<IdResourcePair> Resources = new List<IdResourcePair>(); }
+		[Serializable] public class Property { public string Type; [ReorderableList(elementsAreSubassets = true)] public List<IPropertyValue> Values = new List<IPropertyValue>(); /*public List<SerializedProperty> SerializedValues = new List<SerializedProperty>();*/ }
 
 		[Id]
 		public string Id = Guid.NewGuid().ToString();
 		public string MaterialName;
 		public UnityEngine.Material ConvertedMaterial;
-		public List<ShaderTarget> PreferedShaderPerTarget = new List<ShaderTarget>();
+		[ReorderableList()] public List<ShaderTarget> PreferedShaderPerTarget = new List<ShaderTarget>();
 		public List<string> StyleHints = new List<string>();
-		public List<Property> Properties = new List<Property>();
+		[ReorderableList()] public List<Property> Properties = new List<Property>();
 
 		public static Material CreateDefaultMaterial()
 		{
@@ -50,7 +51,7 @@ namespace MTF
 			return ret;
 		}
 
-		public void OnBeforeSerialize()
+		/*public void OnBeforeSerialize()
 		{
 			foreach(var property in Properties)
 			{
@@ -77,6 +78,6 @@ namespace MTF
 					property.Values.Add(PropertyValueRegistry.DefaultPropertyValueImporters[serializedPropertyValue.Type].ParseFromJson(state, JObject.Parse(serializedPropertyValue.Json)));
 				}
 			}
-		}
+		}*/
 	}
 }

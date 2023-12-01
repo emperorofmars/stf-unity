@@ -6,7 +6,7 @@ using UnityEngine;
 namespace STF.Serialisation
 {
 	[System.Serializable]
-	public class STFUnrecognizedResourceComponent : ASTFResourceComponent
+	public class STFUnrecognizedResourceComponent : ISTFResourceComponent
 	{
 		public string _Type;
 		public override string Type => _Type;

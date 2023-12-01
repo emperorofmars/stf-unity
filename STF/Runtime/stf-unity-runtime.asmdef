@@ -2,7 +2,8 @@
     "name": "stf-unity-runtime",
     "references": [
         "GUID:f6e45c355aca57346b2551ce3fb43d6e",
-        "GUID:147638a07a86a2c49aea697f9a772570"
+        "GUID:147638a07a86a2c49aea697f9a772570",
+        "GUID:67592da157ce245788747b2f1ec0f455"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
