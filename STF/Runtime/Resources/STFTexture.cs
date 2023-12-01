@@ -28,8 +28,6 @@ namespace STF.Serialisation
 
 			var (arrayBuffer, meta, fileName) = State.LoadAsset<STFTexture>(texture);
 
-			Debug.Log(meta);
-
 			ret.Add("name", meta != null ? meta.Name : Path.GetFileNameWithoutExtension(fileName));
 			ret.Add("format", Path.GetExtension(fileName));
 			ret.Add("width", texture.width);
@@ -67,7 +65,6 @@ namespace STF.Serialisation
 			var arrayBuffer = State.Buffers[meta.OriginalBufferId];
 
 			SerdeUtil.ParseResourceComponents(State, meta, Json);
-
 			State.SaveResource<STFTexture, Texture2D>(arrayBuffer, (string)Json["format"], meta, Id);
 			return;
 		}

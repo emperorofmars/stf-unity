@@ -276,6 +276,8 @@ namespace STF.Serialisation
 
 			var bufferId = State.AddBuffer(byteArray, meta.OriginalBufferId);
 			ret.Add("buffer", bufferId);
+
+			ret.Add("components", SerdeUtil.SerializeResourceComponents(State, meta));
 			
 			ret.Add("used_resources", usedResources);
 			ret.Add("used_buffers", new JArray() {bufferId});
@@ -482,6 +484,7 @@ namespace STF.Serialisation
 			mesh.UploadMeshData(false);
 			mesh.RecalculateBounds();
 
+			SerdeUtil.ParseResourceComponents(State, meta, Json);
 			State.SaveResource(mesh, "mesh", meta, Id);
 			return;
 		}

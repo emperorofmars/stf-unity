@@ -20,9 +20,9 @@ namespace STF.Serialisation
 			throw new NotImplementedException();
 		}
 
-		public string SerializeToJson(ISTFExportState state, UnityEngine.Object resource, UnityEngine.Object Context = null)
+		public string SerializeToJson(ISTFExportState State, UnityEngine.Object Resource, UnityEngine.Object Context = null)
 		{
-			var meta = (STFArmature)resource;
+			var meta = (STFArmature)Resource;
 			var armatureGo = (GameObject)meta.Resource;
 			var armature = armatureGo.GetComponent<STFArmatureNodeInfo>();
 			
@@ -51,12 +51,13 @@ namespace STF.Serialisation
 
 				var boneId = bone.GetComponent<STFBoneNode>().Id;
 				boneIds.Add(boneId);
-				state.AddNode(bone.gameObject, boneJson, boneId);
+				State.AddNode(bone.gameObject, boneJson, boneId);
 			}
 			ret.Add("bones", new JArray(boneIds));
 			
+			ret.Add("components", SerdeUtil.SerializeResourceComponents(State, meta));
 			ret.Add("used_nodes", new JArray(boneIds));
-			return state.AddResource(armature, ret, armature.ArmatureId);
+			return State.AddResource(armature, ret, armature.ArmatureId);
 		}
 	}
 
@@ -126,6 +127,7 @@ namespace STF.Serialisation
 			}
 			meta.Bindposes = bindposes;
 
+			SerdeUtil.ParseResourceComponents(State, meta, Json);
 			State.SaveResource(go, meta, Id);
 			return;
 		}
