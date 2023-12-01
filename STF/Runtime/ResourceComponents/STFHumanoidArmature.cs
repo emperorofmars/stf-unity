@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Remoting.Messaging;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 
@@ -211,7 +210,7 @@ namespace STF.Serialisation
 			this.Mappings = tmpMappings.Select(m => new BoneMappingPair(m.Key, m.Value)).ToList();
 		}
 
-		public static Avatar GenerateAvatar(STFHumanoidArmature stfComponent, GameObject root)
+		public static Avatar GenerateAvatar(STFHumanoidArmature stfComponent, STFArmatureNodeInfo Armature)
 		{
 			var mappings = stfComponent.Mappings
 					.FindAll(mapping => !String.IsNullOrWhiteSpace(mapping.humanoidName) && mapping.bone != null)
@@ -228,7 +227,7 @@ namespace STF.Serialisation
 				lowerLegTwist = 0.5f,
 				upperArmTwist = 0.5f,
 				upperLegTwist = 0.5f,
-				skeleton = (new List<Transform>(root.GetComponentsInChildren<Transform>())).Select(t => {
+				skeleton = Armature.GetComponentsInChildren<Transform>().Select(t => {
 					return new SkeletonBone()
 					{
 						name = t.name,
@@ -248,8 +247,8 @@ namespace STF.Serialisation
 				}).ToArray()
 			};
 
-			var avatar = AvatarBuilder.BuildHumanAvatar(root, humanDescription);
-			avatar.name = root.name + "Avatar";
+			var avatar = AvatarBuilder.BuildHumanAvatar(Armature.gameObject, humanDescription);
+			avatar.name = Armature.name + "Avatar";
 
 			if (!avatar.isValid)
 			{
@@ -296,13 +295,13 @@ namespace STF.Serialisation
 				Id = Id,
 				LocomotionType = (string)Json["locomotion_type"]
 			};
-			var armatureRoot = (GameObject)Resource.Resource;
+			var armature = (STFArmatureNodeInfo)Resource.Resource;
 			
 			foreach(var entry in (JObject)Json["mappings"])
 			{
-				ret.Mappings.Add(new STFHumanoidArmature.BoneMappingPair(entry.Key, ((ASTFNode)armatureRoot.GetComponentsInChildren<ISTFNode>().FirstOrDefault(c => c.Id == (string)entry.Value)).gameObject));
+				ret.Mappings.Add(new STFHumanoidArmature.BoneMappingPair(entry.Key, ((ASTFNode)armature.Root.GetComponentsInChildren<ISTFNode>().FirstOrDefault(c => c.Id == (string)entry.Value)).gameObject));
 			}
-			var avatar = STFHumanoidArmature.GenerateAvatar(ret, armatureRoot);
+			var avatar = STFHumanoidArmature.GenerateAvatar(ret, armature);
 			State.SaveGeneratedResource(avatar, "avatar");
 			ret.GeneratedAvatar = avatar;
 			Resource.Components.Add(ret);
