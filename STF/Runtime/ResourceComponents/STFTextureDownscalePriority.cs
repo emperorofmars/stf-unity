@@ -28,14 +28,6 @@ namespace STF.Serialisation
 			};
 			return (Component.Id, ret);
 		}
-
-		public (string Json, List<ResourceIdPair> ResourceReferences) SerializeForUnity(ISTFResourceComponent Component)
-		{
-			return(new JObject {
-				{"type", STFTextureDownscalePriority._TYPE},
-				{"downscale_priority", ((STFTextureDownscalePriority)Component).DownscalePriority}
-			}.ToString(), null);
-		}
 	}
 	
 	public class STFTextureDownscalePriorityImporter : ISTFResourceComponentImporter
@@ -52,12 +44,6 @@ namespace STF.Serialisation
 				DownscalePriority = (int)Json["downscale_priority"]
 			};
 			Resource.Components.Add(ret);
-		}
-
-		public ISTFResourceComponent DeserializeForUnity(string Json, string Id, List<ResourceIdPair> ResourceReferences)
-		{
-			var parsedJson = JObject.Parse(Json);
-			return new STFTextureDownscalePriority{_Id = Id, DownscalePriority = (int)parsedJson["downscale_priority"]};
 		}
 	}
 }

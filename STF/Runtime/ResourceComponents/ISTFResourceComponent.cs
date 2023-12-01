@@ -24,15 +24,11 @@ namespace STF.Serialisation
 	{
 		string ConvertPropertyPath(string UnityProperty);
 		(string Id, JObject JsonComponent) SerializeToJson(ISTFExportState State, ISTFResourceComponent Component);
-		
-		(string Json, List<ResourceIdPair> ResourceReferences) SerializeForUnity(ISTFResourceComponent Component);
 	}
 	
 	public interface ISTFResourceComponentImporter
 	{
 		string ConvertPropertyPath(string STFProperty);
 		void ParseFromJson(ISTFImportState State, JObject Json, string Id, ISTFResource Resource);
-
-		ISTFResourceComponent DeserializeForUnity(string Json, string Id, List<ResourceIdPair> ResourceReferences);
 	}
 }

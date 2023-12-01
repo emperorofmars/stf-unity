@@ -24,13 +24,7 @@ namespace STF.Serialisation
 
 		public static (string Id, JObject JsonComponent) SerializeToJson(ISTFExportState State, ISTFResourceComponent Component)
 		{
-			// handle resources
 			return (Component.Id, JObject.Parse(((STFUnrecognizedResourceComponent)Component).Json));
-		}
-
-		public static (string Json, List<ResourceIdPair> ResourceReferences) SerializeForUnity(ISTFResourceComponent Component)
-		{
-			return(((STFUnrecognizedResourceComponent)Component).Json, ((STFUnrecognizedResourceComponent)Component).UsedResources.Select(r => new ResourceIdPair{Id=null, Resource = r}).ToList());
 		}
 	}
 	
@@ -43,20 +37,12 @@ namespace STF.Serialisation
 
 		public static void ParseFromJson(ISTFImportState State, JObject Json, string Id, ISTFResource Resource)
 		{
-			var ret = new STFUnrecognizedResourceComponent();
+			var ret = ScriptableObject.CreateInstance<STFUnrecognizedResourceComponent>();
 			ret.Id = Id;
 			ret.Json = Json.ToString();
 			ret.UsedResources = Json["used_resources"].ToObject<List<string>>().Select((string rid) => State.Resources[rid]).ToList();
+			ret.Resource = (UnityEngine.Object)Resource;
 			Resource.Components.Add(ret);
-		}
-
-		public static ISTFResourceComponent DeserializeForUnity(string Json, string Id, List<ResourceIdPair> ResourceReferences)
-		{
-			var ret = new STFUnrecognizedResourceComponent();
-			ret.Id = Id;
-			ret.Json = Json;
-			ret.UsedResources = ResourceReferences.Select(r => r.Resource).ToList();
-			return ret;
 		}
 	}
 }
