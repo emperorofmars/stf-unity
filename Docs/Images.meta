@@ -1,5 +1,9 @@
 fileFormatVersion: 2
-guid: e8494150ed8161242be70fba16228ac4
+<<<<<<<< HEAD:Docs/Images.meta
+guid: 93221a0b1dd93694592fabf12f96171f
+========
+guid: 7a3631d8787b54445949edafb022d52f
+>>>>>>>> 366ae69 (started rewrite):Editor/Serde/Assets.meta
 folderAsset: yes
 DefaultImporter:
   externalObjects: {}

@@ -1,0 +1,17 @@
+{
+    "name": "mtf-unity-runtime",
+    "references": [
+        "TexturePacker.Runtime",
+        "stf-unity-util-runtime",
+        "UnityExtensions.ArrayDrawer"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
