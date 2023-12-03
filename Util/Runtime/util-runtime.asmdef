@@ -1,8 +1,6 @@
 {
-    "name": "stf-unity-util-editor",
-    "references": [
-        "GUID:147638a07a86a2c49aea697f9a772570"
-    ],
+    "name": "util-runtime",
+    "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

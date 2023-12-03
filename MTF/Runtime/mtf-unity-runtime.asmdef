@@ -1,9 +1,9 @@
 {
     "name": "mtf-unity-runtime",
     "references": [
-        "TexturePacker.Runtime",
-        "stf-unity-util-runtime",
-        "UnityExtensions.ArrayDrawer"
+        "GUID:3d1fb76a17114c9469f4f41657963541",
+        "GUID:67592da157ce245788747b2f1ec0f455",
+        "GUID:147638a07a86a2c49aea697f9a772570"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
