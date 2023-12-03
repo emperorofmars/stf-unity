@@ -24,12 +24,13 @@ namespace STF.Serialisation
 
 		void AddTask(Task task);
 		void AddResource(UnityEngine.Object Resource, string Id);
+		void AddResourceComponent(ISTFResourceComponent Component, ISTFResource ResourceMeta, string Id);
 		void AddTrash(UnityEngine.Object Trash);
 
 		void SaveResource(UnityEngine.Object Resource, string FileExtension, string Id);
-		void SaveResource<T>(UnityEngine.Object Resource, string FileExtension, T Meta, string Id) where T: UnityEngine.Object, ISTFResource;
-		void SaveResource<T>(GameObject Resource, T Meta, string Id) where T: UnityEngine.Object, ISTFResource;
-		void SaveResource<M, R>(byte[] Resource, string FileExtension, M Meta, string Id) where M: UnityEngine.Object, ISTFResource where R: UnityEngine.Object;
+		void SaveResource<T>(UnityEngine.Object Resource, string FileExtension, T Meta, string Id) where T: ISTFResource;
+		void SaveResource<T>(GameObject Resource, T Meta, string Id) where T: ISTFResource;
+		void SaveResource<M, R>(byte[] Resource, string FileExtension, M Meta, string Id) where M: ISTFResource where R: UnityEngine.Object;
 		T SaveAndLoadResource<T>(byte[] Resource, string Name, string FileExtension) where T: UnityEngine.Object;
 		void SaveResourceBelongingToId(UnityEngine.Object Resource, string FileExtension, string OwnerId);
 		void SaveGeneratedResource(UnityEngine.Object Resource, string FileExtension);

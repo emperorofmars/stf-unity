@@ -96,7 +96,7 @@ namespace STF.Serialisation
 			this.Trash.Add(Trash);
 		}
 
-		public T LoadMeta<T>(UnityEngine.Object Resource) where T: UnityEngine.Object, ISTFResource
+		public T LoadMeta<T>(UnityEngine.Object Resource) where T: ISTFResource
 		{
 			if(ResourceMeta.ContainsKey(Resource)) return (T)ResourceMeta[Resource];
 			
@@ -104,7 +104,7 @@ namespace STF.Serialisation
 			var metaPath = Path.ChangeExtension(assetPath, "Asset");
 			return AssetDatabase.LoadAssetAtPath<T>(metaPath);
 		}
-		public (byte[], T, string) LoadAsset<T>(UnityEngine.Object Resource) where T: UnityEngine.Object, ISTFResource
+		public (byte[], T, string) LoadAsset<T>(UnityEngine.Object Resource) where T: ISTFResource
 		{
 			var assetPath = AssetDatabase.GetAssetPath(Resource);
 			var arrayBuffer = File.ReadAllBytes(assetPath);

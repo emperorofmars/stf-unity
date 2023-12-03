@@ -39,7 +39,7 @@ namespace STF.Serialisation
 		string AddBuffer(byte[] Data, string Id = null);
 		void AddTrash(UnityEngine.Object Trash);
 
-		T LoadMeta<T>(UnityEngine.Object Resource) where T: UnityEngine.Object, ISTFResource;
-		(byte[] Data, T Meta, string Path) LoadAsset<T>(UnityEngine.Object Resource) where T: UnityEngine.Object, ISTFResource;
+		T LoadMeta<T>(UnityEngine.Object Resource) where T: ISTFResource;
+		(byte[] Data, T Meta, string Path) LoadAsset<T>(UnityEngine.Object Resource) where T: ISTFResource;
 	}
 }

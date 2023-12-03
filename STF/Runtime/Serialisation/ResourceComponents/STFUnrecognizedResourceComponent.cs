@@ -41,7 +41,7 @@ namespace STF.Serialisation
 			ret.Id = Id;
 			ret.Json = Json.ToString();
 			ret.UsedResources = Json["used_resources"].ToObject<List<string>>().Select((string rid) => State.Resources[rid]).ToList();
-			ret.Resource = (UnityEngine.Object)Resource;
+			ret.Resource = Resource;
 			Resource.Components.Add(ret);
 		}
 	}

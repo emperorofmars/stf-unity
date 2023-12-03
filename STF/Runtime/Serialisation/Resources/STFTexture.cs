@@ -64,8 +64,8 @@ namespace STF.Serialisation
 			
 			var arrayBuffer = State.Buffers[meta.OriginalBufferId];
 
-			SerdeUtil.ParseResourceComponents(State, meta, Json);
 			State.SaveResource<STFTexture, Texture2D>(arrayBuffer, (string)Json["format"], meta, Id);
+			SerdeUtil.ParseResourceComponents(State, meta, Json);
 			return;
 		}
 	}

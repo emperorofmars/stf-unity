@@ -120,8 +120,15 @@ namespace STF.Serialisation
 				var valuesJson = new JArray();
 				foreach(var value in property.Values)
 				{
-					// improve this, fall back to unrecognized
-					valuesJson.Add(MTF.PropertyValueRegistry.PropertyValueExporters[value.Type].SerializeToJson(mtfExportState, value));
+					if(MTF.PropertyValueRegistry.PropertyValueExporters.ContainsKey(value.Type))
+					{
+						valuesJson.Add(MTF.PropertyValueRegistry.PropertyValueExporters[value.Type].SerializeToJson(mtfExportState, value));
+					}
+					else
+					{
+						Debug.LogWarning($"Unrecognized Material PropertyValue: {value.Type}");
+						// Unrecognized Material Property
+					}
 				}
 				propertiesJson.Add(property.Type, valuesJson);
 			}

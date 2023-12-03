@@ -43,7 +43,7 @@ namespace STF.Serialisation
 				Id = Id,
 				DownscalePriority = (int)Json["downscale_priority"]
 			};
-			Resource.Components.Add(ret);
+			State.AddResourceComponent(ret, Resource, Id);
 		}
 	}
 }

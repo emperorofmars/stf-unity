@@ -289,19 +289,12 @@ namespace STF.Serialisation
 
 			foreach(var entry in (JObject)Json["mappings"])
 			{
-				if(entry.Value != null)
-				{
-					Debug.Log(armature);
-					Debug.Log(armature.Root);
-					var go = ((ASTFNode)armature.Root.GetComponentsInChildren<ISTFNode>()?.FirstOrDefault(c => c.Id == (string)entry.Value))?.gameObject;
-					Debug.Log(go);
-				}
 				ret.Mappings.Add(new STFHumanoidArmature.BoneMappingPair(entry.Key, ((ASTFNode)armature.Root.GetComponentsInChildren<ISTFNode>()?.FirstOrDefault(c => c.Id == (string)entry.Value))?.gameObject));
 			}
 			var avatar = STFHumanoidArmature.GenerateAvatar(ret, armature);
 			State.SaveGeneratedResource(avatar, "asset");
 			ret.GeneratedAvatar = avatar;
-			Resource.Components.Add(ret);
+			State.AddResourceComponent(ret, Resource, Id);
 		}
 	}
 }

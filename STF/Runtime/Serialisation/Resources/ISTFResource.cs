@@ -8,16 +8,16 @@ using UnityExtensions;
 
 namespace STF.Serialisation
 {
-	public interface ISTFResource
+	public abstract class  ISTFResource : ScriptableObject
 	{
-		string Id {get; set;}
-		string Name {get; set;}
-		string ResourceLocation {get; set;}
-		UnityEngine.Object Resource {get; set;}
-		List<ISTFResourceComponent> Components {get; set;}
+		public virtual string Id {get; set;}
+		public virtual string Name {get; set;}
+		public virtual string ResourceLocation {get; set;}
+		public virtual UnityEngine.Object Resource {get; set;}
+		public virtual List<ISTFResourceComponent> Components {get; set;}
 	}
 
-	public abstract class ASTFResource : ScriptableObject, ISTFResource
+	public abstract class ASTFResource : ISTFResource
 	{
 		[Serializable] public class SerializedResourceComponent {
 			public string Id = System.Guid.NewGuid().ToString();
@@ -27,19 +27,19 @@ namespace STF.Serialisation
 		}
 
 		[Id] public string _Id = System.Guid.NewGuid().ToString();
-		public string Id {get => _Id; set => _Id = value;}
+		public override string Id {get => _Id; set => _Id = value;}
 
 		public string _Name;
-		public string Name {get => _Name; set => _Name = value;}
+		public override string Name {get => _Name; set => _Name = value;}
 		
 		public UnityEngine.Object _Resource;
-		public UnityEngine.Object Resource {get => _Resource; set => _Resource = value;}
+		public override UnityEngine.Object Resource {get => _Resource; set => _Resource = value;}
 
 		public string _ResourceLocation;
-		public string ResourceLocation {get => _ResourceLocation; set => _ResourceLocation = value;}
+		public override string ResourceLocation {get => _ResourceLocation; set => _ResourceLocation = value;}
 		
 		[ReorderableList(elementsAreSubassets = true)] public List<ISTFResourceComponent> _Components = new List<ISTFResourceComponent>();
-		public List<ISTFResourceComponent> Components { get => _Components; set => _Components = value; }
+		public override List<ISTFResourceComponent> Components { get => _Components; set => _Components = value; }
 
 	}
 

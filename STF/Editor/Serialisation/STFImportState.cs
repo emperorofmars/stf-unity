@@ -51,6 +51,15 @@ namespace STF.Serialisation
 			Resources.Add(Id, Resource);
 		}
 
+		public void AddResourceComponent(ISTFResourceComponent Component, ISTFResource Resource, string Id)
+		{
+			Component.Resource = Resource;
+			Resource.Components.Add(Component);
+			AssetDatabase.AddObjectToAsset(Component, AssetDatabase.GetAssetPath(Resource));
+			//AssetDatabase.AddObjectToAsset(Component, Resource);
+			AssetDatabase.Refresh();
+		}
+
 		public void AddTrash(UnityEngine.Object Trash)
 		{
 			this.Trash.Add(Trash);
@@ -64,7 +73,7 @@ namespace STF.Serialisation
 			AddResource(Resource, Id);
 			AssetDatabase.Refresh();
 		}
-		public void SaveResource<T>(UnityEngine.Object Resource, string FileExtension, T Meta, string Id) where T: UnityEngine.Object, ISTFResource
+		public void SaveResource<T>(UnityEngine.Object Resource, string FileExtension, T Meta, string Id) where T: ISTFResource
 		{
 			if(!FileExtension.StartsWith(".")) FileExtension = "." + FileExtension;
 			var location = Path.Combine(TargetLocation, STFConstants.ResourceDirectoryName, Meta.Name + "_" + Id + FileExtension);
@@ -75,7 +84,7 @@ namespace STF.Serialisation
 			AddResource(Meta, Id);
 			AssetDatabase.Refresh();
 		}
-		public void SaveResource<T>(GameObject Resource, T Meta, string Id) where T: UnityEngine.Object, ISTFResource
+		public void SaveResource<T>(GameObject Resource, T Meta, string Id) where T: ISTFResource
 		{
 			var location = Path.Combine(TargetLocation, STFConstants.ResourceDirectoryName, Meta.Name + "_" + Id + ".Prefab");
 			var saved = PrefabUtility.SaveAsPrefabAsset(Resource, location);
@@ -85,7 +94,7 @@ namespace STF.Serialisation
 			AddResource(Meta, Id);
 			AssetDatabase.Refresh();
 		}
-		public void SaveResource<M, R>(byte[] Resource, string FileExtension, M Meta, string Id) where M: UnityEngine.Object, ISTFResource where R: UnityEngine.Object
+		public void SaveResource<M, R>(byte[] Resource, string FileExtension, M Meta, string Id) where M: ISTFResource where R: UnityEngine.Object
 		{
 			if(!FileExtension.StartsWith(".")) FileExtension = "." + FileExtension;
 			var location = Path.Combine(TargetLocation, STFConstants.ResourceDirectoryName, Meta.Name + "_" + Id + FileExtension);

@@ -484,8 +484,8 @@ namespace STF.Serialisation
 			mesh.UploadMeshData(false);
 			mesh.RecalculateBounds();
 
-			SerdeUtil.ParseResourceComponents(State, meta, Json);
 			State.SaveResource(mesh, "mesh", meta, Id);
+			SerdeUtil.ParseResourceComponents(State, meta, Json);
 			return;
 		}
 	}
