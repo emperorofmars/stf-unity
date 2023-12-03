@@ -35,7 +35,7 @@ An STF setup in Unity can be further processed into specific target applications
 # This Repository
 Apart from the core STF format support, this repository contains a subproject called MTF, which adds support for arbitrary material/shader definitions. It's independent of STF and could be further expanded into its own project.
 
-The `Addons` directory contains support for additional material converters and a set of STF extensions called AVA. AVA is a proof-of-concept set of extensions which add support for VR-Avatars to STF.
+Support for VR-Avatars is contained in the AVA directory. It's a proof-of-concept set of extensions and converters for VRChat, ChilloutVR and VRM.
 
 ---
 
