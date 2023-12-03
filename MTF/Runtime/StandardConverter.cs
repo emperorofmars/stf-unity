@@ -58,7 +58,7 @@ namespace MTF
 			var ret = ExistingMTFMaterial != null ? ExistingMTFMaterial : ScriptableObject.CreateInstance<Material>();
 			ret.name = ExistingMTFMaterial != null ? ExistingMTFMaterial.name : UnityMaterial.name;
 			ret.PreferedShaderPerTarget.Add(new Material.ShaderTarget{Platform = "unity3d", Shaders = new List<string>{ShaderName}});
-			ret.StyleHints.Add("realistic");
+			ret.StyleHints.Add(new Material.StyleHint { Name = "style", Value = "realistic" });
 
 			MaterialParserUtil.ParseTextureProperty(UnityMaterial, ret, "albedo", "_MainTex");
 			MaterialParserUtil.ParseColorProperty(UnityMaterial, ret, "albedo", "_Color");

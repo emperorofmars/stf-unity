@@ -105,8 +105,14 @@ namespace STF.Serialisation
 				{"type", MTFMaterialImporter._TYPE},
 				{"name", mat.name},
 				{"targets", new JObject(mat.PreferedShaderPerTarget.Select(e => new JProperty(e.Platform, new JArray(e.Shaders))))},
-				{"hints", new JArray(mat.StyleHints)}
 			};
+			var renderHints = new JObject();
+			foreach(var entry in mat.StyleHints)
+			{
+				renderHints.Add(entry.Name, entry.Value);
+			}
+			ret.Add("hints", renderHints);
+
 			var mtfExportState = new MTFPropertyValueExportState(State);
 			var propertiesJson = new JObject();
 			foreach(var property in mat.Properties)
@@ -144,7 +150,10 @@ namespace STF.Serialisation
 			{
 				mat.PreferedShaderPerTarget.Add(new MTF.Material.ShaderTarget{Platform = entry.Key, Shaders = entry.Value.ToObject<List<string>>()});
 			}
-			mat.StyleHints = Json["hints"].ToObject<List<string>>();
+			foreach(var entry in (JObject)Json["hints"])
+			{
+				mat.StyleHints.Add(new MTF.Material.StyleHint {Name = entry.Key, Value = (string)entry.Value});
+			}
 			
 			var mtfImportState = new MTFPropertyValueImportState(State);
 			foreach(var propertyJson in (JObject)Json["properties"])

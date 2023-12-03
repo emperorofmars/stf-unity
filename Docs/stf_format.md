@@ -1,16 +1,16 @@
 
 
 # STF Format
-STF is a binary format made up of at least one chunk, which is always a UTF-8 encoded definition in the JSON format. All further chunks are optional buffers which have to be referenced by the JSON definition.
-
 The STF format is similar to GLTF 2.0, but differs in significant ways.
 
-Everything is addressed by UUID. It must persist between import and export.
+It is a binary format made up of at least one chunk, which is always a UTF-8 encoded definition in the Json format. All further chunks are optional buffers which have to be referenced by the Json definition.
 
-Every asset, node, component and resource has a type. The importer/exporter for each object is selected by its type. Support for additional types can be hot-loaded.
-If a type is not supported, the JSON and all referenced objects have to be preserved and reexported unless manually removed. (This is implemented only for components currently)
+Every object in the Json Definition is addressed by UUID. It must persist between import and export.
 
-A file cannot be changed automatically between import and export, unless explicitly desired by the user.
+Every object has a type. The importer/exporter for each object is selected by its type. Support for additional types can be hot-loaded.
+If a type is not supported, the Json and all referenced objects have to be preserved and re-exported unless manually removed.
+
+An STF file must stay the same between import and export, unless explicitly modified by the user.
 
 ## Table of Content
 - [JSON Definition](#json-definition)
@@ -23,7 +23,7 @@ A file cannot be changed automatically between import and export, unless explici
 - [GLTF 2.0 Issues](#gltf-20-issues)
 
 ## JSON Definition
-The JSON definition has 6 properties in the root object.
+The JSON definition consists of 6 properties in the root object.
 - `meta` Information about the file.
 - `main` UUID of the main asset.
 - `assets` A dict of UUID → asset pairs. Assets can list node UUID's and resource UUID's, depending on the asset type.
@@ -45,7 +45,8 @@ Example:
 				"name": "Test",
 				"type": "STF.asset",
 				"root": "4147da6b-e4ca-42db-826e-46a5dda9322f",
-				"author": "Emperor of Mars"
+				"author": "Emperor of Mars",
+				...
 			}
 		},
 		"nodes": {
@@ -94,27 +95,27 @@ Example:
 		]
 	}
 
-## STF-Unity Specific Notes
+<!--## STF-Unity Specific Notes
 This implementation for Unity uses a two stage design. The first one parses an STF file into a Unity scene using its own components which represent the STF file 1:1 with no regard for Unity functionality. This is called the authoring scene, as it can be used to export STF files.
 
 Multiple second stages can be registered to convert the intermediary authoring scene into an application-specific one. This step is destructive and throws information not relevant for the target application away, including all STF related meta-information, resolves all relationships between components and potentially applies optimizations.
 
 Included is a basic second stage which converts into a pure Unity scene, and throws everything else away.
-The intermediary format is intended for authoring STF files.
+The intermediary format is intended for authoring STF files.-->
 
 ## Extensibility
-The extensibility of this format is a first class feature. All implementations must provide an easy way to add and hotload support for additional types.
+The extensibility of the STF format is a first class feature. All implementations must provide an easy way to add and hot-load support for additional types.
 
 By default, STF supports only a limited set of features which can be expected from a common 3d file-format. These include support for skinned meshes, armatures, animations, materials and textures.
-
-If for example the included mesh type is not satisfactory, a different mesh type can be implemented. These can exist in parallel and will work as long as the importer/exporter for the new mesh-type is present. All types are namespaced, and can be versioned. It is the responsibility of the importer/exporter for a type to handle versioning. Importers are implemented for each type in an encapsulated manner. As such it is trivial to register additional ones.
 
 Components can have defined relationships to other components and be specific to a target application.
 Components can extend or override others.
 
-For example, multiple Social VR applications support one or another library for bone physics. None of which are compatible with each other, but they generally work the same. A generic STF-component can be used to describe the common features and be conversible to all implemented applications formats, err-ing on the side of the resulting physics not flipping out in the application. If there exists a dedicated STF-component for a specific application, it can override the basic generic component. This way multiple mutually exclusive and application/game-engine specific features can be supported simultaneously.
+For example, multiple Social VR applications support one or another library for bone physics. None of which are compatible with each other, but they generally work the same.
+A generic STF-component for bone-physics can be convertible to all implemented applications formats, erring on the side of the resulting physics not flipping out in the application.
+If there exists an application specific component, it can override the basic generic component. This way multiple mutually exclusive and application/game-engine specific features can be supported simultaneously.
 
-**To extend STF with the ability to represent VR & V-Tubing avatars, the [AVA Proof of Concept](https://github.com/emperorofmars/ava-unity) was created. This shows the potential and ease of extending STF.**
+**To extend STF with the ability to represent VR & V-Tubing avatars, the 'AVA' Proof of Concept extensions were created. This shows the potential and ease of extending STF and is included in this repository.**
 
 ## Addons
 
@@ -122,24 +123,24 @@ It is possible to create assets of the type `STF.addon`. These provide a list of
 
 That way it becomes trivial for a third party to create assets like a set of clothing for a base character model. The STF importer scans the Unity project for STF addons targeting the selected asset and presents the user with a simple checkbox to apply it.
 
-![Screenshot of an STF file's inspector in Unity, containing a list of detected addons, with a checkbox to apply it to the current model.](./Images/import_settings_addons.png)
+<!-- ![Screenshot of an STF file's inspector in Unity, containing a list of detected addons, with a checkbox to apply it to the current model.](./Images/import_settings_addons.png) -->
 
 ## Material Format
-As part of creating this format, I created the beginning of a universal material format, preliminarily called: MTF - Material Transfer Format.
-It's not fleshed out at all and exists in an incredibly basic form, but this is the idea:
+As part of creating this format, I created a universal material format, called: **MTF - Material Transfer Format**.
+It's included in this Repository, but not dependent on STF. STF merely makes use of MTF.
 
-Materials consist of a dictionary of properties. A set of universal properties will be defined and must be used in its specified manner. These include albedo, roughness, specular, glossiness, ... The name is used as the key for the dictionary.
+Materials consist of a dictionary of properties. A set of universal properties will be defined and must be used in its specified manner. These include albedo, roughness, specular, glossiness, etc.
 
-Each property has a list of objects, in order of priority. Each object has a type property and can be a scalar, integer, string, texture reference (by UUID), texture channel reference, ..., and anything else that the importer/exporter has support for.
+Each property has a list of objects, in order of priority. Each object has a type property and can be a float, integer, string, color, texture, texture channel, etc.
 
 It is a list to account for the case in which not every implementation can understand every type of property. The first object which is understood by the implementation and target-material will be used.
 
 Example: The first and most prioritized object could be a mathematical definition, which is only understood by a few specific applications. To make it work elsewhere, the second object could be a texture, rendered from the mathematical definition.
 
-Properties, not specified by the MTF format, can be freely used. Properties can indicate to which target application/shader they belong and so can the entire material. The material can also have a set of hint properties (just a list of string key-value pairs), indicating whether it should be rendered in a cartoony or realistic style for example.
+Properties, not specified by the MTF format, can be freely used. Properties can indicate to which target application/shader they belong and so can the entire material. The material can also have a set of hint properties, indicating whether it should be rendered in a cartoony or realistic style for example.
 
-Converters for specific shaders can be implemented, otherwise properties can be converted based on Unity's system.
-The "target_shader" property indicates which converter is to be used. If a converter or target shader is not present, a default will be chosen, or the user can specify an alternative shader.
+Converters for specific shaders can be implemented, otherwise properties can be converted based on Unity's material-property system.
+The "targets" property indicates which converter is to be preferably used. If a converter or target shader is not present, a default will be chosen, or the user can specify an alternative shader.
 
 Even if a perfect conversion is not possible, the hope is that at least the best possible conversion can happen. This will also ease the switching to a different target shader.
 
@@ -148,8 +149,14 @@ Even if a perfect conversion is not possible, the hope is that at least the best
 		"d2a3568f-0116-4f3d-866d-9ce420035de6": {
 			"type": "STF.material",
 			"name": "Body",
-			"target_shader": "Poiyomi 8",
-			"render-hints": { "style": "toony" },
+			"targets": {
+				"unity3d": [
+					".poiyomi/Poiyomi 8.1/Poiyomi Toon"
+				],
+				"godot4": [
+					...
+				]
+			},
 			"albedo": [
 				{
 					"type" : "texture",
@@ -178,28 +185,27 @@ Even if a perfect conversion is not possible, the hope is that at least the best
 	},
 	...
 
-Such a material format could have use beyond just STF and should probably become its own project, which STF would merely make use of.
-
-# Current Status and Considerations
-- Create more addon applier classes. For example one to set specific blendshapes on the target asset or one to merge meshes together.
+## Current Status and Considerations
+- Create more addon applier classes. I.e. to merge meshes, copy blendshape values, ...
 - Generally refine the entire user experience of using STF. Build better inspectors for components and resources.
-- Significantly expand the material system. Build a proper UI for it. It should make it easy to add properties and generate Unity materials for whatever shader is selected. Maybe make MTF its own exportable file-format as well!
+- Implement Scene assets.
+- Add support for instantiating assets, especially into Scene assets.
 
 # Some Background and Motivation
-VR Avatars are currently distributed as packages for game-engines, specifically Unity. This is an issue as end users have a hard time using professional tools. Additionally, Unity is not a character-editor, it's a tool with which a character-editor application can be created.
+VR Avatars are currently distributed as packages for game-engines, specifically for Unity. This is an issue as end-users have a hard time using professional tools. Additionally, Unity is not a character-editor by itself, it's a tool with which a character-editor application could be built.
 
-I wanted to create a universal character-editor application aimed at end users wishing to adapt their VR Avatar models but without the technical knowledge to do so in a game-engine.
-Therefore, I needed a file format that this character-editor-application could parse. This is where my descend into madness began.
+I wanted to create a universal character-editor application, aimed at end users wishing to adapt their VR Avatar models, but without the technical knowledge to work in a game-engine.
+Therefore, I needed a file format that this character-editor-application could parse.
 
 Initially I wanted to create a format based on GLTF 2.0 to represent VR & V-Tubing avatars in a single file, agnostic of any target application, but with support for 100% of the features of each.
 
-*VRM is a format also in the form of a GLTF extension, which also represents VR & V-Tubing avatars. However, it only supports a small subset of features, supports only a small number of hard-coded materials and doesn't support animations at all.*
+*VRM is a format also in the form of a GLTF extension, which also represents VR & V-Tubing avatars. It was created before social-VR was figured out to the extent it is now, and doesn't support most basic features that users today expect and require*
 
-I didn't think it would be too complicated to create something better than VRM, however I encountered countless issues with the GLTF 2.0 specification itself as well its implementations.
+I didn't think it would be too complicated to create something better than VRM, however I encountered countless issues with the GLTF 2.0 specification itself as well as many of its implementations.
 I wanted to avoid having to create my own format, but after 4 months of trying, I saw no way to make this work with glTF 2.0.
 
 After 4 more months, I have created this STF format prototype and the AVA proof of concept set of extensions. STF puts extensibility first, and supports most of everything that GLTF does, and makes it trivial to implement anything beside that.
-STF was created with consideration of how most applications like Blender, Unity, Godot or Unreal Engine represent models and scenes. As such, most headaches from GLTF should have been solved here, hopefully.
+STF was created with consideration of how most authoring tools like Blender, Unity, Godot or Unreal Engine represent models and scenes. As such, most headaches from GLTF should have been solved here, hopefully.
 
 # glTF 2.0 Issues
 - Material references and morphtarget values sit on the mesh, not its instances.
@@ -211,24 +217,24 @@ STF was created with consideration of how most applications like Blender, Unity,
 - There is weirdness with multiple meshes sharing the same armature.
   https://github.com/KhronosGroup/glTF/issues/1285
 - Morphtarget names are not supported by the specification. Sometimes these are stored on the 'extras' field of the mesh, sometimes on the first mesh primitive. The Blender GLTF implementation does the first, the UnityGLTF implementation does the latter.
-- GLTF itself is supremely extensible, however to implement additional extensions in most GLTF libraries, they have to be forked and modified at the core. When an GLTF implementation has support for loading additional extensions, like the Godot 4 engine, it is often accompanied by significant issues.
 - GLTF only supports specific hard-coded materials.
+- The buffer system is overly complicated and a lot of implementations don't bother with it. As such blendshapes store values for every vertex, even if not included in the blendshape. Typical VR avatars have often multiple hundred blendshapes, which leads to comical file sizes.
+- GLTF itself is supremely extensible, however to implement additional extensions in most GLTF libraries, they have to be forked and modified at the core. When a GLTF implementation has support for loading additional extensions, like the Godot 4 engine, it is accompanied by significant issues.
 
 ## Issues in glTF 2.0 implementations I've tried to work with
 - Blender
 	- The Blender implementation exports insanely large files.
   https://github.com/KhronosGroup/glTF-Blender-IO/issues/1346
-  Godot does this as well.
-  A file being 95% larger and consisting of 95% zeros in the case of my Fox VR Avatar Base (thanks to about 200 morphtargets) is just not serious.
+  A file being 95% larger and consisting of 95% zeros in the case of my Fox VR Avatar Base (thanks to about 200 morphtargets) is just not acceptable.
 - Godot
 	- Godot also exports ridiculously large files like Blender.
 	- glTF import and export scene handling: https://github.com/godotengine/godot-proposals/discussions/6588
 	- glTF export exclusions: https://github.com/godotengine/godot-proposals/discussions/6587
 	- ImporterMeshInstance3D metadata lost in glTF import process: https://github.com/godotengine/godot-proposals/discussions/6586
 - Unity
-	- Hardcoded extensions in both UnityGLTF and the new in developement GLTFast implementation.
+	- Hardcoded extensions in both UnityGLTF and the new in-developement GLTFast implementation.
 
-To fix most of the issues, breaking changes would be needed for the GLTF specification.
+To fix most of the issues, breaking changes would be needed for the GLTF specification, and a significant rethinking on how to implement it.
 Most of this has been known for a long time, and there has been no change, only a silent absence of general GLTF use, sadly.
 
-My hope is that I was able to account for all issues with STF and create something that can be extended further to fit in any use case for a 3d file format, while being extremely easy to work with.
+My hope is that I was able to account for all issues with STF, and to create something that can be extended further to fit in any use case for a 3d file format, while being extremely easy to work with.

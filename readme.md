@@ -5,6 +5,8 @@ Implementation for Unity 2019.4 or higher.
 
 # **! This is a WIP and not ready for productive use !**
 
+# **! Currently, I am significantly reworking the codebase. It won't be based on a ScriptedImporter, as that has too many limitations. !**
+
 You are very welcome to open discussions with your ideas, suggestions and questions about the format and its possibilities. Open issues for concrete changes. Pull requests are very welcome!
 
 ## [Check out an example file here!](https://emperorofmars.itch.io/stf-avatar-showcase)
