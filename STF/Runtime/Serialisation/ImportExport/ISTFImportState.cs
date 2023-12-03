@@ -27,6 +27,7 @@ namespace STF.Serialisation
 		void AddResourceComponent(ISTFResourceComponent Component, ISTFResource ResourceMeta, string Id);
 		void AddTrash(UnityEngine.Object Trash);
 
+		void SaveSecondaryResource(UnityEngine.Object Component, UnityEngine.Object Resource);
 		void SaveResource(UnityEngine.Object Resource, string FileExtension, string Id);
 		void SaveResource<T>(UnityEngine.Object Resource, string FileExtension, T Meta, string Id) where T: ISTFResource;
 		void SaveResource<T>(GameObject Resource, T Meta, string Id) where T: ISTFResource;

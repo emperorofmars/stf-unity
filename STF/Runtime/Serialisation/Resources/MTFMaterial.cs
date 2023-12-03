@@ -4,6 +4,7 @@ using Newtonsoft.Json.Linq;
 using UnityEngine;
 using System.Linq;
 using System.Collections.Generic;
+using UnityEditor;
 
 namespace STF.Serialisation
 {
@@ -24,9 +25,13 @@ namespace STF.Serialisation
 	}
 	public class MTFMaterialParseState : MTF.IMaterialParseState
 	{
-
+		public void SavePropertyValue(MTF.IPropertyValue PropertyValue, MTF.Material.Property Property, MTF.Material Material)
+		{
+			PropertyValue.name = Property.Type + ":" + PropertyValue.Type + ":" + Guid.NewGuid().ToString();
+			Property.Values.Add(PropertyValue);
+		}
 	}
-	
+
 	public class MTFPropertyValueImportState : MTF.IPropertyValueImportState
 	{
 		ISTFImportState State;
@@ -161,6 +166,7 @@ namespace STF.Serialisation
 			{
 				mat.StyleHints.Add(new MTF.Material.StyleHint {Name = entry.Key, Value = (string)entry.Value});
 			}
+			State.SaveResource(mat, "Asset", Id);
 			
 			var mtfImportState = new MTFPropertyValueImportState(State);
 			foreach(var propertyJson in (JObject)Json["properties"])
@@ -168,8 +174,19 @@ namespace STF.Serialisation
 				var mtfProperty = new MTF.Material.Property { Type = propertyJson.Key };
 				foreach (var valueJson in propertyJson.Value)
 				{
+					var propertyValueType = (string)valueJson["type"];
 					// improve this, not just default ones & fall back to unrecognized
-					mtfProperty.Values.Add(MTF.PropertyValueRegistry.PropertyValueImporters[(string)valueJson["type"]].ParseFromJson(mtfImportState, (JObject)valueJson));
+					if(MTF.PropertyValueRegistry.PropertyValueImporters.ContainsKey(propertyValueType))
+					{
+						var propertyValue = MTF.PropertyValueRegistry.PropertyValueImporters[propertyValueType].ParseFromJson(mtfImportState, (JObject)valueJson);
+						propertyValue.name = propertyJson.Key + ":" + propertyValueType + ":" + Guid.NewGuid().ToString();
+						mtfProperty.Values.Add(propertyValue);
+						State.SaveSecondaryResource(propertyValue, mat);
+					}
+					else
+					{
+						Debug.LogWarning($"Unrecognized Material PropertyValue: {propertyValueType}");
+					}
 				}
 				mat.Properties.Add(mtfProperty);
 			}
@@ -191,7 +208,6 @@ namespace STF.Serialisation
 			mat.ConvertedMaterial = unityMaterial;
 			//mat.OnBeforeSerialize();
 			State.SaveResourceBelongingToId(unityMaterial, "Asset", Id);
-			State.SaveResource(mat, "Asset", Id);
 			return;
 		}
 	}

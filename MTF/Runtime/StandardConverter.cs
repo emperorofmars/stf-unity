@@ -60,14 +60,14 @@ namespace MTF
 			ret.PreferedShaderPerTarget.Add(new Material.ShaderTarget{Platform = "unity3d", Shaders = new List<string>{ShaderName}});
 			ret.StyleHints.Add(new Material.StyleHint { Name = "style", Value = "realistic" });
 
-			MaterialParserUtil.ParseTextureProperty(UnityMaterial, ret, "albedo", "_MainTex");
-			MaterialParserUtil.ParseColorProperty(UnityMaterial, ret, "albedo", "_Color");
+			MaterialParserUtil.ParseTextureProperty(State, UnityMaterial, ret, "albedo", "_MainTex");
+			MaterialParserUtil.ParseColorProperty(State, UnityMaterial, ret, "albedo", "_Color");
 			
-			MaterialParserUtil.ParseTextureProperty(UnityMaterial, ret, "normal", "_BumpMap");
+			MaterialParserUtil.ParseTextureProperty(State, UnityMaterial, ret, "normal", "_BumpMap");
 			
-			MaterialParserUtil.ParseTextureChannelProperty(UnityMaterial, ret, "metallic", 0, "_MetallicGlossMap");
-			MaterialParserUtil.ParseTextureChannelProperty(UnityMaterial, ret, "smoothness", 4, "_MetallicGlossMap");
-			MaterialParserUtil.ParseFloatProperty(UnityMaterial, ret, "specular", "_SpecularHighlights");
+			MaterialParserUtil.ParseTextureChannelProperty(State, UnityMaterial, ret, "metallic", 0, "_MetallicGlossMap");
+			MaterialParserUtil.ParseTextureChannelProperty(State, UnityMaterial, ret, "smoothness", 4, "_MetallicGlossMap");
+			MaterialParserUtil.ParseFloatProperty(State, UnityMaterial, ret, "specular", "_SpecularHighlights");
 			return ret;
 		}
 	}

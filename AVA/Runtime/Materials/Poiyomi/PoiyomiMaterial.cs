@@ -70,14 +70,14 @@ namespace MTF.Addons
 			ret.PreferedShaderPerTarget.Add(new Material.ShaderTarget{Platform = "unity3d", Shaders = new List<string>{ShaderName}});
 			//ret.StyleHints.Add("realistic");
 			
-			MaterialParserUtil.ParseTextureProperty(UnityMaterial, ret, "albedo", "_MainTex");
-			MaterialParserUtil.ParseColorProperty(UnityMaterial, ret, "albedo", "_Color");
-			MaterialParserUtil.ParseTextureProperty(UnityMaterial, ret, "normal", "_BumpMap");
+			MaterialParserUtil.ParseTextureProperty(State, UnityMaterial, ret, "albedo", "_MainTex");
+			MaterialParserUtil.ParseColorProperty(State, UnityMaterial, ret, "albedo", "_Color");
+			MaterialParserUtil.ParseTextureProperty(State, UnityMaterial, ret, "normal", "_BumpMap");
 
-			MaterialParserUtil.ParseTextureChannelProperty(UnityMaterial, ret, "metallic", 0, "_MochieMetallicMaps");
-			MaterialParserUtil.ParseTextureChannelProperty(UnityMaterial, ret, "smoothness", 1, "_MochieMetallicMaps");
-			MaterialParserUtil.ParseTextureChannelProperty(UnityMaterial, ret, "reflection", 2, "_MochieMetallicMaps");
-			MaterialParserUtil.ParseTextureChannelProperty(UnityMaterial, ret, "specular", 3, "_MochieMetallicMaps");
+			MaterialParserUtil.ParseTextureChannelProperty(State, UnityMaterial, ret, "metallic", 0, "_MochieMetallicMaps");
+			MaterialParserUtil.ParseTextureChannelProperty(State, UnityMaterial, ret, "smoothness", 1, "_MochieMetallicMaps");
+			MaterialParserUtil.ParseTextureChannelProperty(State, UnityMaterial, ret, "reflection", 2, "_MochieMetallicMaps");
+			MaterialParserUtil.ParseTextureChannelProperty(State, UnityMaterial, ret, "specular", 3, "_MochieMetallicMaps");
 			return ret;
 		}
 	}

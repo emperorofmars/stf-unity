@@ -39,10 +39,9 @@ namespace STF.Serialisation
 
 		public void ParseFromJson(ISTFImportState State, JObject Json, string Id, ISTFResource Resource)
 		{
-			var ret = new STFTextureDownscalePriority {
-				Id = Id,
-				DownscalePriority = (int)Json["downscale_priority"]
-			};
+			var ret = ScriptableObject.CreateInstance<STFTextureDownscalePriority>();
+			ret.Id = Id;
+			ret.DownscalePriority = (int)Json["downscale_priority"];
 			State.AddResourceComponent(ret, Resource, Id);
 		}
 	}

@@ -98,50 +98,54 @@ namespace MTF
 			return property;
 		}
 
-		public static bool ParseTextureProperty(UnityEngine.Material UnityMaterial, Material MTFMaterial, string MTFPropertyType, string UnityPropertyName)
+		public static bool ParseTextureProperty(IMaterialParseState State, UnityEngine.Material UnityMaterial, Material MTFMaterial, string MTFPropertyType, string UnityPropertyName)
 		{
 			if(UnityMaterial.HasProperty(UnityPropertyName) && UnityMaterial.GetTexture(UnityPropertyName) != null)
 			{
 				var prop = ScriptableObject.CreateInstance<TexturePropertyValue>();
 				prop.Texture = (Texture2D)UnityMaterial.GetTexture(UnityPropertyName);
-				_EnsureProperty(MTFMaterial, MTFPropertyType).Values.Add(prop);
+				//_EnsureProperty(MTFMaterial, MTFPropertyType).Values.Add(prop);
+				State.SavePropertyValue(prop, _EnsureProperty(MTFMaterial, MTFPropertyType), MTFMaterial);
 				return true;
 			}
 			return false;
 		}
 
-		public static bool ParseTextureChannelProperty(UnityEngine.Material UnityMaterial, Material MTFMaterial, string MTFPropertyType, int Channel, string UnityPropertyName)
+		public static bool ParseTextureChannelProperty(IMaterialParseState State, UnityEngine.Material UnityMaterial, Material MTFMaterial, string MTFPropertyType, int Channel, string UnityPropertyName)
 		{
 			if(UnityMaterial.HasProperty(UnityPropertyName) && UnityMaterial.GetTexture(UnityPropertyName) != null)
 			{
 				var prop = ScriptableObject.CreateInstance<TextureChannelPropertyValue>();
 				prop.Texture = (Texture2D)UnityMaterial.GetTexture(UnityPropertyName);
 				prop.Channel = Channel;
-				_EnsureProperty(MTFMaterial, MTFPropertyType).Values.Add(prop);
+				//_EnsureProperty(MTFMaterial, MTFPropertyType).Values.Add(prop);
+				State.SavePropertyValue(prop, _EnsureProperty(MTFMaterial, MTFPropertyType), MTFMaterial);
 				return true;
 			}
 			return false;
 		}
 		
-		public static bool ParseColorProperty(UnityEngine.Material UnityMaterial, Material MTFMaterial, string MTFPropertyType, string UnityPropertyName)
+		public static bool ParseColorProperty(IMaterialParseState State, UnityEngine.Material UnityMaterial, Material MTFMaterial, string MTFPropertyType, string UnityPropertyName)
 		{
 			if(UnityMaterial.HasProperty(UnityPropertyName) && UnityMaterial.GetColor(UnityPropertyName) != null)
 			{
 				var prop = ScriptableObject.CreateInstance<ColorPropertyValue>();
 				prop.Color = UnityMaterial.GetColor(UnityPropertyName);
-				_EnsureProperty(MTFMaterial, MTFPropertyType).Values.Add(prop);
+				//_EnsureProperty(MTFMaterial, MTFPropertyType).Values.Add(prop);
+				State.SavePropertyValue(prop, _EnsureProperty(MTFMaterial, MTFPropertyType), MTFMaterial);
 				return true;
 			}
 			return false;
 		}
 		
-		public static bool ParseFloatProperty(UnityEngine.Material UnityMaterial, Material MTFMaterial, string MTFPropertyType, string UnityPropertyName)
+		public static bool ParseFloatProperty(IMaterialParseState State, UnityEngine.Material UnityMaterial, Material MTFMaterial, string MTFPropertyType, string UnityPropertyName)
 		{
 			if(UnityMaterial.HasProperty(UnityPropertyName))
 			{
 				var prop = ScriptableObject.CreateInstance<FloatPropertyValue>();
 				prop.Value = UnityMaterial.GetFloat(UnityPropertyName);
-				_EnsureProperty(MTFMaterial, MTFPropertyType).Values.Add(prop);
+				//_EnsureProperty(MTFMaterial, MTFPropertyType).Values.Add(prop);
+				State.SavePropertyValue(prop, _EnsureProperty(MTFMaterial, MTFPropertyType), MTFMaterial);
 				return true;
 			}
 			return false;

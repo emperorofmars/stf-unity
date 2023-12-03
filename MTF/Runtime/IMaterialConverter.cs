@@ -11,7 +11,7 @@ namespace MTF
 	}
 	public interface IMaterialParseState
 	{
-		
+		void SavePropertyValue(IPropertyValue PropertyValue, Material.Property Property, MTF.Material Material);
 	}
 
 	public interface IMaterialConverter

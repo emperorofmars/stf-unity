@@ -55,14 +55,22 @@ namespace STF.Serialisation
 		{
 			Component.Resource = Resource;
 			Resource.Components.Add(Component);
-			AssetDatabase.AddObjectToAsset(Component, AssetDatabase.GetAssetPath(Resource));
-			//AssetDatabase.AddObjectToAsset(Component, Resource);
-			AssetDatabase.Refresh();
+			if(Component.name == null || Component.name.Length == 0) Component.name = Component.Type + ":" + Id;
+			SaveSecondaryResource(Component, Resource);
 		}
 
 		public void AddTrash(UnityEngine.Object Trash)
 		{
 			this.Trash.Add(Trash);
+		}
+
+		public void SaveSecondaryResource(UnityEngine.Object Component, UnityEngine.Object Resource)
+		{
+			var assetPath = AssetDatabase.GetAssetPath(Resource);
+			Debug.Assert(assetPath != null);
+			AssetDatabase.AddObjectToAsset(Component, assetPath);
+			AssetDatabase.ImportAsset(assetPath);
+			AssetDatabase.Refresh();
 		}
 
 		public void SaveResource(UnityEngine.Object Resource, string FileExtension, string Id)

@@ -48,6 +48,9 @@ namespace STF.Serialisation
 					var path = asset.Main ? System.IO.Path.Combine(TargetLocation, asset.Name + ".Prefab") : System.IO.Path.Combine(TargetLocation, STFConstants.SecondaryAssetsDirectoryName, asset.Name + ".Prefab");
 					PrefabUtility.SaveAsPrefabAsset(asset.Asset, path);
 				}
+
+				AssetDatabase.SaveAssets();
+				AssetDatabase.Refresh();
 			}
 			catch(Exception e)
 			{
