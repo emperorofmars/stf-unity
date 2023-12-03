@@ -1,5 +1,5 @@
 # STF - Scene Transfer Format
-**The Worlds Most Extensible Fileformat for 3D Models and Scenes**
+**The Worlds Most Extensible File Format for 3D Models and Scenes**
 
 Implementation for Unity 2019.4 or higher.
 
@@ -9,15 +9,15 @@ Implementation for Unity 2019.4 or higher.
 
 You are very welcome to open discussions with your ideas, suggestions and questions about the format and its possibilities. Open issues for concrete changes. Pull requests are very welcome!
 
-## [Check out an example file here!](https://emperorofmars.itch.io/stf-avatar-showcase)
+## [Check out a showcase file here!](https://emperorofmars.itch.io/stf-avatar-showcase)
 <!-- ## [Watch the video presentation about STF and its AVA extensions here!](https://youtu.be/ozkmGxFG_ug) -->
 
 # STF Format
-The STF format is heavily based on the concept of glTF 2.0. It's essentially my attempt to create a glTF-done-right format with an actually practically usable extension system, while avoiding its fatal mistakes. [Read more on glTF's issues here.](./Docs/stf_format.md#gltf-20-issues)
+The STF format is heavily based on the concept of glTF 2.0. It's essentially my attempt to create a glTF-done-right format with a practically usable extension system, while avoiding its breaking issues. [Read more on glTF's issues here.](./Docs/stf_format.md#gltf-20-issues)
 
-Unlike glTF, there are no hard definitions of specific resource types. Instead, every object has a `type` property. Based on it, a registered converter will be selected to process this object. These converters can be easily hot loaded, enabling an unprecedented ease of writing extensions.
+Unlike glTF, there are no hard definitions of specific resource types. Instead, every object has a `type` property. Based on an objects type, a registered converter will be selected to process this object. These converters can be easily hot loaded, enabling an unprecedented ease of writing extensions.
 
-A STF setup in Unity can be further processed into specific target applications formats by `Second Stage Converters`. For example, an application agnostic VR-Avatar definition implemented in STF can be converted into an VRChat avatar setup that is ready to be uploaded by the VRChat SDK.
+An STF setup in Unity can be further processed into specific target applications formats. For example, an application agnostic VR-Avatar definition implemented in STF can be converted into an VRChat avatar setup that is ready to be uploaded by the VRChat SDK.
 
 ### [Read up on how STF works in detail here.](./Docs/stf_format.md)
 
