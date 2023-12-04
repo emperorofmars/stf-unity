@@ -1,3 +1,6 @@
+#if UNITY_EDITOR
+#if AVA_VRCSDK3_FOUND
+
 using System;
 using System.Collections.Generic;
 using STF.ApplicationConversion;
@@ -7,9 +10,9 @@ using UnityEngine.Animations;
 
 namespace AVA.ApplicationConversion
 {
-	public class AVAVrchatConverter : ASTFApplicationConverter
+	public class AVA_VRC_Converter : ASTFApplicationConverter
 	{
-		public const string _TARGET_NAME = "unity3d";
+		public const string _TARGET_NAME = "vrchat_sdk3";
 		public override string TargetName => _TARGET_NAME;
 
 		public override Dictionary<Type, ISTFNodeComponentApplicationConverter> Converters => new Dictionary<Type, ISTFNodeComponentApplicationConverter>() {
@@ -26,3 +29,6 @@ namespace AVA.ApplicationConversion
 		}
 	}
 }
+
+#endif
+#endif
