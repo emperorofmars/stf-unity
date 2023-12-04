@@ -18,7 +18,7 @@ namespace STF.Serialisation
 				if(State.Context.NodeImporters.ContainsKey(type))
 				{
 					var childGo = State.Context.NodeImporters[type].ParseFromJson(State, childJson, childId);
-					childGo.transform.SetParent(Go.transform);
+					childGo.transform.SetParent(Go.transform, false);
 				}
 				else
 				{

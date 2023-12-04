@@ -179,7 +179,7 @@ namespace STF.Serialisation
 					if(MTF.PropertyValueRegistry.PropertyValueImporters.ContainsKey(propertyValueType))
 					{
 						var propertyValue = MTF.PropertyValueRegistry.PropertyValueImporters[propertyValueType].ParseFromJson(mtfImportState, (JObject)valueJson);
-						propertyValue.name = propertyJson.Key + ":" + propertyValueType + ":" + Guid.NewGuid().ToString();
+						propertyValue.name = propertyJson.Key + ":" + propertyValueType + ":" + mtfProperty.Values.Count();
 						mtfProperty.Values.Add(propertyValue);
 						State.SaveSecondaryResource(propertyValue, mat);
 					}

@@ -45,7 +45,9 @@ namespace STF.Serialisation
 				var nodeJson = (JObject)State.JsonRoot["nodes"][rootId];
 
 				var assetImportState = new STFAssetImportState(Id, State, State.Context);
-				var rootGo = State.Context.NodeImporters[(string)nodeJson["type"]].ParseFromJson(assetImportState, nodeJson, rootId);
+				var nodeType = (string)nodeJson["type"] != null && ((string)nodeJson["type"]).Length > 0 ? (string)nodeJson["type"] : STFNode._TYPE;
+				// Check node type validity
+				var rootGo = State.Context.NodeImporters[nodeType].ParseFromJson(assetImportState, nodeJson, rootId);
 				
 				var asset = rootGo.AddComponent<STFAsset>();
 				asset.Id = Id;
@@ -57,9 +59,6 @@ namespace STF.Serialisation
 				asset.LicenseLink = (string)JsonAsset["license_link"];
 
 				State.SaveAsset(rootGo, asset.Name, State.MainAssetId == Id);
-
-				var type = (string)nodeJson["type"];
-				if(type == null || type.Length == 0) type = STFNode._TYPE;
 			}
 			catch(Exception e)
 			{
