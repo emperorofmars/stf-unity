@@ -4,7 +4,6 @@ using Newtonsoft.Json.Linq;
 using UnityEngine;
 using System.Linq;
 using System.Collections.Generic;
-using UnityEditor;
 
 namespace STF.Serialisation
 {

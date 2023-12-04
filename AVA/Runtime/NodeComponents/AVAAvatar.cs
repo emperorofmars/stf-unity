@@ -4,8 +4,7 @@ using UnityEngine;
 using System.Threading.Tasks;
 using STF.Serialisation;
 using STF.Util;
-using VRC;
-
+using System.Linq;
 
 
 #if UNITY_EDITOR
@@ -20,7 +19,43 @@ namespace AVA.Serialisation
 		public override string Type => _TYPE;
 		public GameObject viewport_parent;
 		public Vector3 viewport_position;
-		public SkinnedMeshRenderer MainMesh;
+		public STFMeshInstance MainMesh;
+
+		public void TrySetup()
+		{
+			var meshInstances = GetComponentsInChildren<STFMeshInstance>();
+			if(meshInstances.Count() == 1) MainMesh = meshInstances[0];
+			else MainMesh = meshInstances.FirstOrDefault(m => m.name.ToLower().Contains("body"));
+			
+			if(MainMesh != null)
+			{
+				var humanoidDefinition = TryGetHumanoidDefinition();
+				SetupViewport(humanoidDefinition);
+			}
+		}
+
+		public STFHumanoidArmature TryGetHumanoidDefinition()
+		{
+			return (STFHumanoidArmature)MainMesh?.ArmatureInstance?.armature?.Components?.FirstOrDefault(comp => comp.Type == STFHumanoidArmature._TYPE);
+		}
+
+		public GameObject FindBoneInstance(STFHumanoidArmature HumanoidDefinition, string HumanoidBone)
+		{
+			var humanoidBone = HumanoidDefinition.Mappings.Find(m => m.humanoidName == HumanoidBone)?.bone;
+			return MainMesh?.ArmatureInstance.bones.Find(b => b.GetComponent<STFBoneInstanceNode>().BoneId == humanoidBone?.GetComponent<STFBoneNode>().Id);
+		}
+
+		public void SetupViewport(STFHumanoidArmature HumanoidDefinition)
+		{
+			viewport_parent = FindBoneInstance(HumanoidDefinition, "Head");
+			var eyeLeft = FindBoneInstance(HumanoidDefinition, "EyeLeft");
+			var eyeRight = FindBoneInstance(HumanoidDefinition, "EyeRight");
+
+			viewport_position = ((eyeLeft.transform.position + eyeRight.transform.position) / 2) - viewport_parent.transform.position;
+			viewport_position.x = Math.Abs(viewport_position.x) < 0.0001 ? 0 : viewport_position.x;
+			viewport_position.y = Math.Abs(viewport_position.y) < 0.0001 ? 0 : viewport_position.y;
+			viewport_position.z = Math.Abs(viewport_position.z) < 0.0001 ? 0 : viewport_position.z;
+		}
 	}
 
 	public class AVAAvatarExporter : ASTFNodeComponentExporter
