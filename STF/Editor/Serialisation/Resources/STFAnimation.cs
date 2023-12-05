@@ -105,7 +105,7 @@ namespace STF.Serialisation
 							}
 							else
 							{
-								node = curveTarget.gameObject.GetComponents<ISTFNode>()?.OrderBy(k => k.PrefabHirarchy).FirstOrDefault();
+								node = curveTarget.gameObject.GetComponents<ISTFNode>()?.OrderBy(k => k.PrefabHirarchy).LastOrDefault();
 								curveJson.Add("node_id", node.Id);
 								curveJson.Add("component_id", State.Components[curveTarget].Id);
 							}
@@ -171,7 +171,7 @@ namespace STF.Serialisation
 			meta.Id = Id;
 			meta.Name = (string)Json["name"];
 			var ret = new AnimationClip();
-			ret.name = (string)Json["name"];
+			ret.name = meta.Name;
 			ret.frameRate = (float)Json["fps"];
 			switch((string)Json["loop_type"])
 			{
@@ -194,22 +194,6 @@ namespace STF.Serialisation
 							case "resource_component": targetObjectType = STFObjectType.ResourceComponent; break;
 						}
 						var property = (string)track["property"];
-
-						//if(target_id == null || String.IsNullOrWhiteSpace(target_id)) throw new Exception("Target id for animation is null!");
-
-						/*var targetNode = state.GetNode(target_id);
-						var targetComponent = state.GetComponent(target_id);
-						var targetResource = state.GetResource(target_id);*/
-						/*if(((JObject)State.JsonRoot["nodes"]).ContainsKey(target_id))
-						{
-							targetObjectType = STFObjectType.Node;
-							targetType = (string)State.JsonRoot["nodes"][target_id]["type"];
-						}
-						else if(((JObject)State.JsonRoot["resources"]).ContainsKey(target_id))
-						{
-							targetObjectType = STFObjectType.Resource;
-							targetType = (string)State.JsonRoot["resources"][target_id]["type"];
-						}*/
 
 						if(track["keys"] == null) throw new Exception("Animation track must have keys!");
 
