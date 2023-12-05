@@ -111,14 +111,17 @@ namespace STF.Serialisation
 
 		public static (string, JObject) SerializeNodeComponent(ISTFExportState State, Component NodeComponent)
 		{
+			(string Id, JObject JsonComponent) ret;
 			if(State.Context.NodeComponentExporters.ContainsKey(NodeComponent.GetType()))
 			{
-				return State.Context.NodeComponentExporters[NodeComponent.GetType()].SerializeToJson(State, NodeComponent);
+				ret = State.Context.NodeComponentExporters[NodeComponent.GetType()].SerializeToJson(State, NodeComponent);
 			}
 			else
 			{
-				return STFUnrecognizedNodeComponentExporter.SerializeToJson(State, NodeComponent);
+				ret = STFUnrecognizedNodeComponentExporter.SerializeToJson(State, NodeComponent);
 			}
+			State.AddComponent(NodeComponent, ret.JsonComponent, ret.Id);
+			return ret;
 		}
 
 		public static string SerializeResource(ISTFExportState State, UnityEngine.Object Resource, UnityEngine.Object Context = null)

@@ -5,6 +5,7 @@ using UnityEngine;
 using System.Threading.Tasks;
 using UnityEditor;
 using System.Linq;
+using static STF.Serialisation.STFConstants;
 
 namespace STF.Serialisation
 {
@@ -59,13 +60,14 @@ namespace STF.Serialisation
 
 				if(c.type == typeof(GameObject) || c.type == typeof(Transform))
 				{
+					curveJson.Add("target_object_type", "node");
 					if(c.path.StartsWith("STF_NODE"))
 					{
 						var pathSplit = c.path.Split(':');
-						var objectId = pathSplit[1];
-						var curveTarget = root.GetComponentsInChildren<ISTFNode>().FirstOrDefault(n => n.Id == objectId);
-						curveJson.Add("target_id", objectId);
-						curveJson.Add("property", State.Context.NodeExporters[curveTarget.Type].ConvertPropertyPath(c.propertyName));
+						var nodeId = pathSplit[1];
+						//var curveTarget = root.GetComponentsInChildren<ISTFNode>().FirstOrDefault(n => n.Id == nodeId);
+						curveJson.Add("node_id", nodeId);
+						curveJson.Add("property", c.propertyName);
 					}
 					else
 					{
@@ -73,8 +75,49 @@ namespace STF.Serialisation
 						var nodes = curveTarget is GameObject ? ((GameObject)curveTarget).GetComponents<ISTFNode>() : ((Transform)curveTarget).GetComponents<ISTFNode>();
 						var stfNode = nodes?.OrderBy(k => k.PrefabHirarchy).FirstOrDefault();
 						
-						curveJson.Add("target_id", stfNode.Id);
+						curveJson.Add("node_id", stfNode.Id);
 						curveJson.Add("property", State.Context.NodeExporters[stfNode.Type].ConvertPropertyPath(c.propertyName));
+					}
+				}
+				else if(c.type.IsSubclassOf(typeof(Component)))
+				{
+					curveJson.Add("target_object_type", "node_component");
+					if(c.path.StartsWith("STF_NODE"))
+					{
+						var pathSplit = c.path.Split(':');
+						var nodeId = pathSplit[1];
+						var componentId = pathSplit[1];
+						curveJson.Add("node_id", nodeId);
+						curveJson.Add("component_id", componentId);
+						curveJson.Add("property", c.propertyName);
+					}
+					else
+					{
+						var curveTarget = (Component)AnimationUtility.GetAnimatedObject(root, c);
+						if(!c.type.IsSubclassOf(typeof(ISTFNodeComponent)))
+						{
+							var stfOwner = curveTarget.gameObject.GetComponents<ISTFNodeComponent>()?.FirstOrDefault(nc => nc.OwnedUnityComponent == curveTarget);
+							var node = curveTarget.gameObject.GetComponents<ISTFNode>()?.FirstOrDefault(n => n.Id == stfOwner?.ParentNodeId);
+							if(stfOwner != null && node != null)
+							{
+								curveJson.Add("node_id", node.Id);
+								curveJson.Add("component_id", stfOwner.Id);
+							}
+							else
+							{
+								node = curveTarget.gameObject.GetComponents<ISTFNode>()?.OrderBy(k => k.PrefabHirarchy).FirstOrDefault();
+								curveJson.Add("node_id", node.Id);
+								curveJson.Add("component_id", State.Components[curveTarget].Id);
+							}
+						}
+						else
+						{
+							var stfComponent = (ISTFNodeComponent)curveTarget;
+							var node = curveTarget.gameObject.GetComponents<ISTFNode>()?.FirstOrDefault(n => n.Id == stfComponent.ParentNodeId);
+							curveJson.Add("node_id", node.Id);
+							curveJson.Add("component_id", stfComponent.Id);
+						}
+						curveJson.Add("property", State.Context.NodeComponentExporters[c.type].ConvertPropertyPath(c.propertyName));
 					}
 				}
 				else
@@ -142,20 +185,31 @@ namespace STF.Serialisation
 				State.AddTask(new Task(() => {
 					try
 					{
-						var target_id = (string)track["target_id"];
+						STFObjectType targetObjectType = STFObjectType.Unknown;
+						switch((string)track["target_object_type"])
+						{
+							case "node": targetObjectType = STFObjectType.Node; break;
+							case "node_component": targetObjectType = STFObjectType.NodeComponent; break;
+							case "resource": targetObjectType = STFObjectType.Resource; break;
+							case "resource_component": targetObjectType = STFObjectType.ResourceComponent; break;
+						}
 						var property = (string)track["property"];
-						if(target_id == null || String.IsNullOrWhiteSpace(target_id)) throw new Exception("Target id for animation is null!");
+
+						//if(target_id == null || String.IsNullOrWhiteSpace(target_id)) throw new Exception("Target id for animation is null!");
 
 						/*var targetNode = state.GetNode(target_id);
 						var targetComponent = state.GetComponent(target_id);
 						var targetResource = state.GetResource(target_id);*/
-						int targetObjectType = -1;
-						string targetType = null;
-						if(((JObject)State.JsonRoot["nodes"]).ContainsKey(target_id))
+						/*if(((JObject)State.JsonRoot["nodes"]).ContainsKey(target_id))
 						{
-							targetObjectType = 0;
+							targetObjectType = STFObjectType.Node;
 							targetType = (string)State.JsonRoot["nodes"][target_id]["type"];
 						}
+						else if(((JObject)State.JsonRoot["resources"]).ContainsKey(target_id))
+						{
+							targetObjectType = STFObjectType.Resource;
+							targetType = (string)State.JsonRoot["resources"][target_id]["type"];
+						}*/
 
 						if(track["keys"] == null) throw new Exception("Animation track must have keys!");
 
@@ -167,22 +221,23 @@ namespace STF.Serialisation
 							{
 								curve.AddKey((float)key["time"], (float)key["value"]);
 							}
-							if(targetObjectType == 0) // node
+							if(targetObjectType == STFObjectType.Node) // node
 							{
+								var nodeId = (string)track["node_id"];
+								var targetType = (string)State.JsonRoot["nodes"][nodeId]["type"];
 								var translatedProperty = State.Context.NodeImporters[targetType].ConvertPropertyPath(property);
 								
 								var unityType = (property.StartsWith("translation") || property.StartsWith("rotation") || property.StartsWith("scale")) ? typeof(Transform) : typeof(GameObject);
-								ret.SetCurve("STF_NODE:" + target_id, unityType, translatedProperty, curve);
+								ret.SetCurve("STF_NODE:" + nodeId, unityType, translatedProperty, curve);
 							}
-							/*else if(targetObjectType == 1) // component
+							else if(targetObjectType == STFObjectType.NodeComponent) // component
 							{
-								if(!state.GetContext().AnimationTranslators.ContainsKey(targetComponent.GetType()))
-									throw new Exception("Property can't be translated: " + property);
-								var translatedProperty = state.GetContext().AnimationTranslators[targetComponent.GetType()].ToUnity(property);
-								var goId = targetComponent.gameObject.GetComponent<STFUUID>().id;
-								ret.SetCurve("STF_COMPONENT:" + goId + ":" + target_id, targetComponent.GetType(), translatedProperty, curve);
+								var nodeId = (string)track["node_id"];
+								var componentId = (string)track["component_id"];
+								var targetType = (string)State.JsonRoot["nodes"][nodeId]["components"][componentId]["type"];
+								ret.SetCurve("STF_COMPONENT:" + nodeId + ":" + componentId, typeof(Component), property, curve);
 							}
-							else if(targetResource != null) // resource
+							/*else if(targetObjectType == STFObjectType.Resource) // resource
 							{
 								if(!state.GetContext().AnimationTranslators.ContainsKey(targetResource.GetType()))
 									throw new Exception("Property can't be translated: " + property);

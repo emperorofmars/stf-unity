@@ -1,8 +1,8 @@
 using System;
+using static STF.Serialisation.STFConstants;
 
 namespace STF.Serialisation
 {
-	public enum STFObjectType {Asset, Node, NodeComponent, Resource, ResourceComponent}
 	public interface ISTFImportPostProcessor
 	{
 		STFObjectType STFObjectType {get;}

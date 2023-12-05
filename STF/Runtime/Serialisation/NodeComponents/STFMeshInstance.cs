@@ -20,7 +20,11 @@ namespace STF.Serialisation
 	{
 		public override string ConvertPropertyPath(string UnityProperty)
 		{
-			throw new NotImplementedException();
+			if(UnityProperty.StartsWith("blendShape"))
+			{
+				return "blendshape." + UnityProperty.Split('.')[1];
+			}
+			throw new Exception("Unrecognized animation property: " + UnityProperty);
 		}
 
 		public override (string, JObject) SerializeToJson(ISTFExportState State, Component component)
@@ -66,11 +70,16 @@ namespace STF.Serialisation
 	{
 		public override string ConvertPropertyPath(string STFProperty)
 		{
-			throw new NotImplementedException();
+			if(STFProperty.StartsWith("blendshape"))
+			{
+				return "blendShape." + STFProperty.Split('.')[1];
+			}
+			throw new Exception("Unrecognized animation property: " + STFProperty);
 		}
 
 		public override void ParseFromJson(ISTFAssetImportState State, JObject Json, string Id, GameObject Go)
 		{
+			// handle non skinned meshes as well
 			var c = Go.AddComponent<SkinnedMeshRenderer>();
 			var meshInstanceComponent = Go.AddComponent<STFMeshInstance>();
 			ParseRelationships(Json, meshInstanceComponent);
@@ -80,15 +89,7 @@ namespace STF.Serialisation
 
 			var meta = (STFMesh)State.Resources[(string)Json["mesh"]];
 			var resource = meta.Resource;
-			//if(resource.GetType() == typeof(Mesh))
-			//{
-				c.sharedMesh = (Mesh)resource;
-			//}
-			//else if(resource.GetType() == typeof(GameObject))
-			//{
-			//	var renderer = ((GameObject)resource).GetComponent<SkinnedMeshRenderer>();
-			//	c.sharedMesh = renderer.sharedMesh;
-			//}
+			c.sharedMesh = (Mesh)resource;
 
 			if((string)Json["armature_instance"] != null)
 			{
