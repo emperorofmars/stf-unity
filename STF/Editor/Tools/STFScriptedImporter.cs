@@ -12,7 +12,6 @@ namespace STF.Tools
 	[ScriptedImporter(1, new string[] {"stf"})]
 	public class STFScriptedImporter : ScriptedImporter
 	{
-		public static string DefaultUnpackFolder = "/STF Imports";
 		public string UnpackFolder;
 
 		public override void OnImportAsset(AssetImportContext ctx)
@@ -22,21 +21,7 @@ namespace STF.Tools
 			ctx.AddObjectToAsset("main", importInfo);
 			ctx.SetMainObject(importInfo);
 
-			EnsureDefaultUnpackFolder(Path.GetFileNameWithoutExtension(ctx.assetPath));
-		}
-
-		private void EnsureDefaultUnpackFolder(string filename)
-		{
-			if(!Directory.Exists("Assets/" + DefaultUnpackFolder))
-			{
-				AssetDatabase.CreateFolder("Assets", DefaultUnpackFolder);
-				AssetDatabase.Refresh();
-			}
-			if(!Directory.Exists("Assets/" + DefaultUnpackFolder + "/" + filename))
-			{
-				AssetDatabase.CreateFolder("Assets/" + DefaultUnpackFolder, filename);
-				AssetDatabase.Refresh();
-			}
+			STFDirectoryUtil.EnsureDefaultUnpackFolder(Path.GetFileNameWithoutExtension(ctx.assetPath));
 		}
 	}
 }

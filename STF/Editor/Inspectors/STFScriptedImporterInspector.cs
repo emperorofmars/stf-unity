@@ -34,7 +34,7 @@ namespace STF.Tools
 
 			EditorGUILayout.LabelField("Import", EditorStyles.whiteLargeLabel);
 
-			var selectedUnpackLocation = importer.UnpackFolder.Length > 0 ? importer.UnpackFolder : STFScriptedImporter.DefaultUnpackFolder + "/" + Path.GetFileNameWithoutExtension(importer.assetPath);
+			var selectedUnpackLocation = importer.UnpackFolder.Length > 0 ? importer.UnpackFolder : STFDirectoryUtil.DefaultUnpackFolder + "/" + Path.GetFileNameWithoutExtension(importer.assetPath);
 			
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.PrefixLabel("Selected Location:");
@@ -54,6 +54,7 @@ namespace STF.Tools
 
 			GUILayout.Space(10f);
 			if(GUILayout.Button("Import To Selected Location", GUILayout.ExpandWidth(true))) {
+				STFDirectoryUtil.EnsureDefaultUnpackFolder(Path.GetFileNameWithoutExtension(importer.assetPath));
 				var deserializer = new STFImporter("Assets" + selectedUnpackLocation, importer.assetPath);
 			}
 
