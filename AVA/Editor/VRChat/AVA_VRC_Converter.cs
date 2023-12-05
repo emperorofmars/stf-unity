@@ -30,7 +30,7 @@ namespace AVA.ApplicationConversion
 
 		public override bool CanConvert(ISTFAsset Asset)
 		{
-			return Asset.Type == STFAsset._TYPE;
+			return Asset.Type == STFAsset._TYPE && Asset.GetComponent<AVAAvatar>() != null;
 		}
 	}
 }
