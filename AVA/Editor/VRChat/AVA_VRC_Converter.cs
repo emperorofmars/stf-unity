@@ -3,10 +3,13 @@
 
 using System;
 using System.Collections.Generic;
+using AVA.Serialisation;
 using STF.ApplicationConversion;
 using STF.Serialisation;
 using UnityEngine;
 using UnityEngine.Animations;
+using VRC.SDK3.Avatars.Components;
+using VRC.SDK3.Dynamics.PhysBone.Components;
 
 namespace AVA.ApplicationConversion
 {
@@ -17,9 +20,10 @@ namespace AVA.ApplicationConversion
 
 		public override Dictionary<Type, ISTFNodeComponentApplicationConverter> Converters => new Dictionary<Type, ISTFNodeComponentApplicationConverter>() {
 			{typeof(STFTwistConstraint), new STFTwistConstraintConverter()},
+			{typeof(AVAAvatar), new AVA_VRC_AvatarConverter()},
 		};
 		public override List<Type> WhitelistedComponents => new List<Type> {
-			typeof(Transform), typeof(Animator), typeof(RotationConstraint), typeof(SkinnedMeshRenderer)
+			typeof(Transform), typeof(Animator), typeof(RotationConstraint), typeof(SkinnedMeshRenderer), typeof(VRCAvatarDescriptor), typeof(VRCPipelineManagerEditor), typeof(VRCPhysBone)
 		};
 		public override List<string> Targets => new List<string> {TargetName};
 

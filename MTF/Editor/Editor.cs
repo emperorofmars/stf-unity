@@ -1,4 +1,4 @@
-
+/*
 #if UNITY_EDITOR
 
 using UnityEngine;
@@ -22,3 +22,4 @@ namespace MTF
 }
 
 #endif
+*/

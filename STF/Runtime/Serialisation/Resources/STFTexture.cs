@@ -8,7 +8,9 @@ namespace STF.Serialisation
 {
 	public class STFTexture : ASTFResource
 	{
-		public bool Linear;
+		public string TextureType = "color"; // linear | normal
+		public Vector2Int TextureSize;
+		//public bool Linear;
 		public string OriginalBufferId;
 	}
 
@@ -22,17 +24,18 @@ namespace STF.Serialisation
 		public string SerializeToJson(ISTFExportState State, UnityEngine.Object Resource, UnityEngine.Object Context = null)
 		{
 			var texture = (Texture2D)Resource;
-			var ret = new JObject{
-				{"type", STFTextureImporter._TYPE}
-			};
-
 			var (arrayBuffer, meta, fileName) = State.LoadAsset<STFTexture>(texture);
 
-			ret.Add("name", meta != null ? meta.Name : Path.GetFileNameWithoutExtension(fileName));
-			ret.Add("format", Path.GetExtension(fileName));
-			ret.Add("width", texture.width);
-			ret.Add("height", texture.height);
-			ret.Add("linear", texture.graphicsFormat.ToString().ToLower().EndsWith("unorm"));
+			var ret = new JObject {
+				{ "type", STFTextureImporter._TYPE },
+				{ "name", meta != null ? meta.Name : Path.GetFileNameWithoutExtension(fileName) },
+				{ "image_format", Path.GetExtension(fileName) },
+				{ "texture_width", meta?.TextureSize != null ? meta.TextureSize.x : texture.width },
+				{ "texture_height", meta?.TextureSize != null ? meta.TextureSize.y : texture.height },
+			};
+
+			if(meta != null && meta.TextureType != null && meta.TextureType.Length >= 0) ret.Add("texture_type", meta.TextureType);
+			else ret.Add("texture_type", texture.graphicsFormat.ToString().ToLower().EndsWith("unorm") ? "linear" : "color");
 
 			var bufferId = State.AddBuffer(arrayBuffer, meta?.OriginalBufferId);
 			ret.Add("buffer", bufferId);
@@ -59,12 +62,16 @@ namespace STF.Serialisation
 			var meta = ScriptableObject.CreateInstance<STFTexture>();
 			meta.Id = Id;
 			meta.Name = (string)Json["name"];
-			meta.Linear = Json["linear"] != null ? (bool)Json["linear"] : false;
+			meta.TextureType = (string)Json["texture_type"];
+
+			if(Json["texture_width"] != null && Json["texture_height"] != null)
+				meta.TextureSize = new Vector2Int((int)Json["texture_width"], (int)Json["texture_height"]);
+			//meta.Linear = Json["linear"] != null ? (bool)Json["linear"] : false;
 			meta.OriginalBufferId = (string)Json["buffer"];
 			
 			var arrayBuffer = State.Buffers[meta.OriginalBufferId];
 
-			State.SaveResource<STFTexture, Texture2D>(arrayBuffer, (string)Json["format"], meta, Id);
+			State.SaveResource<STFTexture, Texture2D>(arrayBuffer, (string)Json["image_format"], meta, Id);
 			SerdeUtil.ParseResourceComponents(State, meta, Json);
 			return;
 		}

@@ -106,12 +106,13 @@ namespace STF.Serialisation
 		{
 			if(!FileExtension.StartsWith(".")) FileExtension = "." + FileExtension;
 			var location = Path.Combine(TargetLocation, STFConstants.ResourceDirectoryName, Meta.Name + "_" + Id + FileExtension);
+			AssetDatabase.CreateAsset(Meta, Path.ChangeExtension(location, "Asset"));
 			File.WriteAllBytes(location, Resource);
 			Meta.ResourceLocation = location;
 			AssetDatabase.Refresh();
 			Meta.Resource = AssetDatabase.LoadAssetAtPath<R>(location);
-			AssetDatabase.CreateAsset(Meta, Path.ChangeExtension(location, "Asset"));
 			AddResource(Meta, Id);
+			AssetDatabase.SaveAssets();
 			AssetDatabase.Refresh();
 		}
 		public T SaveAndLoadResource<T>(byte[] Resource, string Name, string FileExtension) where T: UnityEngine.Object

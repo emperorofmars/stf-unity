@@ -19,7 +19,7 @@ namespace STF.ApplicationConversion
 		private List<Component> IsOverridden = new List<Component>();
 		private Dictionary<Component, List<Component>> Overrides = new Dictionary<Component, List<Component>>();		
 		private Dictionary<Component, bool> TargetMatch = new Dictionary<Component, bool>();
-		private Dictionary<Component, Component> STFToConverted = new Dictionary<Component, Component>();
+		private Dictionary<Component, List<Component>> STFToConverted = new Dictionary<Component, List<Component>>();
 
 		public STFRelationshipMatrix(GameObject root, List<string> targets, List<Type> conversibleTypes)
 		{
@@ -124,10 +124,11 @@ namespace STF.ApplicationConversion
 
 		public void AddConverted(Component component, Component converted)
 		{
-			STFToConverted.Add(component, converted);
+			if(STFToConverted.ContainsKey(component)) STFToConverted[component].Add(converted);
+			else STFToConverted.Add(component, new List<Component> {converted});
 		}
 
-		public Component GetConverted(Component component)
+		public List<Component> GetConverted(Component component)
 		{
 			return STFToConverted[component];
 		}

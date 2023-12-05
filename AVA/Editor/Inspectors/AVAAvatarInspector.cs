@@ -27,29 +27,21 @@ namespace AVA.Serialisation
 				GUILayout.Space(10f);
 			}
 
-			if(c.MainMesh == null)
+			if(c.MainMeshInstance == null)
 			{
 				if(GUILayout.Button("Try Auto-Setup", GUILayout.ExpandWidth(false))) c.TrySetup();
 				GUILayout.Space(20f);
 			}
-			EditorGUILayout.PropertyField(serializedObject.FindProperty("MainMesh"));
+			EditorGUILayout.PropertyField(serializedObject.FindProperty("MainMeshInstance"));
 			
 			if(humanoidDefinition != null && humanoidDefinition.Mappings != null)
 			{
 				var eyeLeft = c.FindBoneInstance(humanoidDefinition, "EyeLeft");
 				var eyeRight = c.FindBoneInstance(humanoidDefinition, "EyeRight");
-
-				if(eyeLeft != null && eyeRight != null)
+				GUILayout.Space(10f);
+				if(GUILayout.Button(eyeLeft != null && eyeRight != null ? "Set viewport between the eyes" : "Set viewport to head", GUILayout.ExpandWidth(false)))
 				{
-					GUILayout.Space(10f);
-					if(GUILayout.Button("Set viewport between the eyes", GUILayout.ExpandWidth(false)))
-					{
-						c.SetupViewport(humanoidDefinition);
-					}
-				}
-				else
-				{
-					EditorGUILayout.LabelField("Eye bones not found!");
+					c.SetupViewport(humanoidDefinition);
 				}
 				
 				GUILayout.Space(10f);

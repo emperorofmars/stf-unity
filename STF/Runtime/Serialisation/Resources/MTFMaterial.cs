@@ -84,12 +84,14 @@ namespace STF.Serialisation
 			if(MTF.ShaderConverterRegistry.MaterialParsers.ContainsKey(mat.shader.name))
 			{
 				var mtfMaterial = MTF.ShaderConverterRegistry.MaterialParsers[mat.shader.name].ParseFromUnityMaterial(mtfExportState, mat);
+				mtfMaterial.MaterialName = Resource.name;
 				return SerdeUtil.SerializeResource(State, mtfMaterial);
 			}
 			else
 			{
 				Debug.LogWarning("Material Converter Not registered for shader: " + mat.shader.name + ", falling back.");
 				var mtfMaterial = MTF.ShaderConverterRegistry.MaterialParsers[MTF.StandardConverter._SHADER_NAME].ParseFromUnityMaterial(mtfExportState, mat);
+				mtfMaterial.MaterialName = Resource.name;
 				return SerdeUtil.SerializeResource(State, mtfMaterial);
 			}
 		}
@@ -107,7 +109,7 @@ namespace STF.Serialisation
 			var mat = (MTF.Material)Resource;
 			var ret = new JObject{
 				{"type", MTFMaterialImporter._TYPE},
-				{"name", mat.name},
+				{"name", mat.MaterialName?.Length > 0 ? mat.MaterialName : mat.name},
 				{"targets", new JObject(mat.PreferedShaderPerTarget.Select(e => new JProperty(e.Platform, new JArray(e.Shaders))))},
 			};
 			var renderHints = new JObject();
@@ -156,6 +158,7 @@ namespace STF.Serialisation
 		{
 			var mat = ScriptableObject.CreateInstance<MTF.Material>();
 			mat.Id = Id;
+			mat.MaterialName = (string)Json["name"];
 			mat.name = (string)Json["name"];
 			foreach(var entry in (JObject)Json["targets"])
 			{
@@ -203,9 +206,8 @@ namespace STF.Serialisation
 			}
 			var mtfConvertState = new MTFMaterialConvertState(State, mat.name + Id);
 			var unityMaterial = converter.ConvertToUnityMaterial(mtfConvertState, mat);
-			unityMaterial.name = mat.name + "_Converted";
+			unityMaterial.name = mat.MaterialName + "_Converted";
 			mat.ConvertedMaterial = unityMaterial;
-			//mat.OnBeforeSerialize();
 			State.SaveResourceBelongingToId(unityMaterial, "Asset", Id);
 			return;
 		}

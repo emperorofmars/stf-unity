@@ -2,11 +2,8 @@
 using System;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
-using System.IO;
 using System.Threading.Tasks;
 using UnityEditor;
-using STF.Util;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace STF.Serialisation

@@ -32,7 +32,7 @@ namespace STF.Serialisation
 			var usedResources = new JArray();
 
 			ret.Add("type", STFMeshImporter._TYPE);
-			ret.Add("name", mesh.name);
+			ret.Add("name", meta != null && meta.Name != null && meta.Name.Length > 0 ? meta.Name : mesh.name);
 
 			var bufferWidth = 3;
 			var numUVs = 0;
