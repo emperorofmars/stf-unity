@@ -77,6 +77,7 @@ namespace AVA.Serialisation
 			var ret = new JObject() {
 				{"type", AVAAvatar._TYPE}
 			};
+			SerializeRelationships(c, ret);
 			State.AddTask(new Task(() => {
 				ret.Add("main_mesh", c.MainMeshInstance?.Id);
 				ret.Add("viewport_parent", c.viewport_parent != null ? State.Nodes[c.viewport_parent].Id : null);
@@ -96,6 +97,7 @@ namespace AVA.Serialisation
 		public override void ParseFromJson(ISTFAssetImportState State, JObject Json, string Id, GameObject Go)
 		{
 			var c = Go.AddComponent<AVAAvatar>();
+			ParseRelationships(Json, c);
 			State.AddTask(new Task(() => {
 				c.MainMeshInstance = (string)Json["main_mesh"] != null ? (STFMeshInstance)State.Components[(string)Json["main_mesh"]] : null;
 				c.viewport_parent = (string)Json["viewport_parent"] != null ? State.Nodes[(string)Json["viewport_parent"]] : null;
