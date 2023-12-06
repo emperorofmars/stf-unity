@@ -43,36 +43,14 @@ namespace STF.Serialisation
 				Utils.RunTasks(state.Tasks);
 				ParseAssets();
 				Utils.RunTasks(state.Tasks);
-
-				foreach(var postProcessor in state.Context.ImportPostProcessors)
-				{
-					switch(postProcessor.STFObjectType)
-					{
-						case STFObjectType.Asset:
-							break;
-						case STFObjectType.Node:
-							break;
-						case STFObjectType.NodeComponent:
-							break;
-						case STFObjectType.Resource:
-							foreach(var r in state.Resources)
-							{
-								if(r.Value.GetType() == postProcessor.TargetType)
-								{
-									postProcessor.PostProcess(state, r.Value);
-								}
-							}
-							break;
-						case STFObjectType.ResourceComponent:
-							break;
-					}
-				}
+				Utils.RunTasks(state.PostprocessTasks);
+				RunPostProcessors();
 				Utils.RunTasks(state.Tasks);
 				
-				foreach(var asset in state.AssetsToSave)
+				foreach(var asset in state.Assets)
 				{
-					var path = asset.Main ? System.IO.Path.Combine(TargetLocation, asset.Name + ".Prefab") : System.IO.Path.Combine(TargetLocation, STFConstants.SecondaryAssetsDirectoryName, asset.Name + ".Prefab");
-					PrefabUtility.SaveAsPrefabAsset(asset.Asset, path);
+					var path = asset.Id == state.MainAssetId ? System.IO.Path.Combine(TargetLocation, asset.Name + ".Prefab") : System.IO.Path.Combine(TargetLocation, STFConstants.SecondaryAssetsDirectoryName, asset.Name + ".Prefab");
+					PrefabUtility.SaveAsPrefabAsset(asset.gameObject, path);
 				}
 
 				AssetDatabase.SaveAssets();
@@ -146,6 +124,34 @@ namespace STF.Serialisation
 				{
 					Debug.LogWarning($"Unrecognized Asset: {type}");
 					// Unrecognized Asset
+				}
+			}
+		}
+
+		private void RunPostProcessors()
+		{
+
+			foreach(var postProcessor in state.Context.ImportPostProcessors)
+			{
+				switch(postProcessor.STFObjectType)
+				{
+					case STFObjectType.Asset:
+						break;
+					case STFObjectType.Node:
+						break;
+					case STFObjectType.NodeComponent:
+						break;
+					case STFObjectType.Resource:
+						foreach(var r in state.Resources)
+						{
+							if(r.Value.GetType() == postProcessor.TargetType)
+							{
+								postProcessor.PostProcess(state, r.Value);
+							}
+						}
+						break;
+					case STFObjectType.ResourceComponent:
+						break;
 				}
 			}
 		}

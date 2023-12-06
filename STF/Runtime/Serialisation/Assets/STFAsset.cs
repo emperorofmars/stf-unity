@@ -58,7 +58,9 @@ namespace STF.Serialisation
 				asset.License = (string)JsonAsset["license"];
 				asset.LicenseLink = (string)JsonAsset["license_link"];
 
-				State.SaveAsset(rootGo, asset.Name, State.MainAssetId == Id);
+				asset.ImportPath = State.TargetLocation;
+
+				State.SaveAsset(asset);
 			}
 			catch(Exception e)
 			{

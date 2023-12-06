@@ -7,6 +7,7 @@ using UnityEditor;
 using System.Linq;
 using static STF.Serialisation.STFConstants;
 using System.Collections.Generic;
+using STF.Util;
 
 namespace STF.Serialisation
 {
@@ -165,10 +166,11 @@ namespace STF.Serialisation
 			var meta = ScriptableObject.CreateInstance<STFAnimation>();
 			meta.Id = Id;
 			meta.Name = (string)Json["name"];
-			var ret = new AnimationClip();
-			ret.name = meta.Name;
-			ret.frameRate = (float)Json["fps"];
-			switch((string)Json["loop_type"])
+			var ret = new AnimationClip {
+				name = meta.Name,
+				frameRate = (float)Json["fps"]
+			};
+			switch ((string)Json["loop_type"])
 			{
 				case "cycle": ret.wrapMode = WrapMode.Loop; break;
 				case "pingpong": ret.wrapMode = WrapMode.PingPong; break;
@@ -177,9 +179,12 @@ namespace STF.Serialisation
 
 			if(Json["tracks"] != null) foreach(JObject track in Json["tracks"])
 			{
-				State.AddTask(new Task(() => {
+				State.AddPostprocessTask(new Task(() => {
 					try
 					{
+						GameObject Root = null;
+						if(State.PostprocessContext.ContainsKey(ret)) Root = (GameObject)State.PostprocessContext[ret];
+
 						STFObjectType targetObjectType = STFObjectType.Unknown;
 						switch((string)track["target_object_type"])
 						{
@@ -203,30 +208,56 @@ namespace STF.Serialisation
 							if(targetObjectType == STFObjectType.Node) // node
 							{
 								var nodeIds = track["node_ids"].ToObject<List<string>>();
-								var nodeIdsString = "";
-								foreach(var nodeId in nodeIds)
+								if(Root != null)
 								{
-									if(nodeIdsString == "") nodeIdsString = nodeIdsString + nodeId;
-									else nodeIdsString = nodeIdsString + ":" + nodeId;
+									var targetNode = Root.GetComponentsInChildren<ISTFNode>().FirstOrDefault(n => n.Id == nodeIds[nodeIds.Count() - 1]);
+									var targetType = (string)State.JsonRoot["nodes"][nodeIds[nodeIds.Count() - 1]]["type"];
+									var translatedProperty = State.Context.NodeImporters[targetType].ConvertPropertyPath(property);
+
+									var unityType = (property.StartsWith("translation") || property.StartsWith("rotation") || property.StartsWith("scale")) ? typeof(Transform) : typeof(GameObject);
+
+									var path = Utils.getPath(Root.transform, ((Component)targetNode).transform);
+									ret.SetCurve(path, unityType, translatedProperty, curve);
 								}
-								var targetType = (string)State.JsonRoot["nodes"][nodeIds[nodeIds.Count() - 1]]["type"];
-								var translatedProperty = State.Context.NodeImporters[targetType].ConvertPropertyPath(property);
-								
-								var unityType = (property.StartsWith("translation") || property.StartsWith("rotation") || property.StartsWith("scale")) ? typeof(Transform) : typeof(GameObject);
-								ret.SetCurve("STF_NODE:" + nodeIdsString, unityType, translatedProperty, curve);
+								else
+								{
+									var nodeIdsString = "";
+									foreach(var nodeId in nodeIds)
+									{
+										if(nodeIdsString == "") nodeIdsString = nodeIdsString + nodeId;
+										else nodeIdsString = nodeIdsString + ":" + nodeId;
+									}
+									var targetType = (string)State.JsonRoot["nodes"][nodeIds[nodeIds.Count() - 1]]["type"];
+									
+									var unityType = (property.StartsWith("translation") || property.StartsWith("rotation") || property.StartsWith("scale")) ? typeof(Transform) : typeof(GameObject);
+									ret.SetCurve("STF_NODE:" + nodeIdsString, unityType, property, curve);
+								}
 							}
 							else if(targetObjectType == STFObjectType.NodeComponent) // component
 							{
 								var nodeIds = track["node_ids"].ToObject<List<string>>();
-								var nodeIdsString = "";
-								foreach(var nodeId in nodeIds)
-								{
-									if(nodeIdsString == "") nodeIdsString = nodeIdsString + nodeId;
-									else nodeIdsString = ":" + nodeIdsString + nodeId;
-								}
 								var componentId = (string)track["component_id"];
-								var targetType = (string)State.JsonRoot["nodes"][nodeIds[nodeIds.Count() - 1]]["components"][componentId]["type"];
-								ret.SetCurve("STF_COMPONENT:" + nodeIdsString + ":" + componentId, typeof(Component), property, curve);
+								if(Root != null)
+								{
+									var targetNode = Root.GetComponentsInChildren<ISTFNode>().FirstOrDefault(n => n.Id == nodeIds[nodeIds.Count() - 1]);
+									var targetSTFComponent = ((Component)targetNode).GetComponents<ISTFNodeComponent>().FirstOrDefault(nc => nc.Id == componentId);
+
+									var targetComponent =  targetSTFComponent.OwnedUnityComponent != null ? targetSTFComponent.OwnedUnityComponent : (Component)targetSTFComponent;
+									var translatedProperty = State.Context.NodeComponentImporters[targetSTFComponent.Type].ConvertPropertyPath(property);
+									
+									var path = Utils.getPath(Root.transform, ((Component)targetNode).transform);
+									ret.SetCurve(path, targetComponent.GetType(), translatedProperty, curve);
+								}
+								else
+								{
+									var nodeIdsString = "";
+									foreach(var nodeId in nodeIds)
+									{
+										if(nodeIdsString == "") nodeIdsString = nodeIdsString + nodeId;
+										else nodeIdsString = ":" + nodeIdsString + nodeId;
+									}
+									ret.SetCurve("STF_COMPONENT:" + nodeIdsString + ":" + componentId, typeof(Component), property, curve);
+								}
 							}
 							/*else if(targetObjectType == STFObjectType.Resource) // resource
 							{

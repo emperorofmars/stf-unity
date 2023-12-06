@@ -1,11 +1,6 @@
 
-#if UNITY_EDITOR
-
 using System;
-using System.Collections.Generic;
 using UnityEngine;
-using Newtonsoft.Json.Linq;
-using System.Threading.Tasks;
 using STF_Util;
 
 namespace STF.Serialisation
@@ -22,7 +17,7 @@ namespace STF.Serialisation
 		public string License;
 		public string LicenseLink;
 		public Texture2D Preview;
+
+		public string ImportPath;
 	}
 }
-
-#endif

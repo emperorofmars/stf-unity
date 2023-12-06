@@ -48,6 +48,8 @@ namespace STF.Serialisation
 			{
 				var resource = State.Resources[r];
 				c.Resources.Add(resource is ISTFResource ? ((ISTFResource)resource).Resource : resource);
+				if(resource is AnimationClip) State.SetPostprocessContext(resource, Go);
+				else if(resource is ISTFResource && ((ISTFResource)resource).Resource is AnimationClip) State.SetPostprocessContext(((ISTFResource)resource).Resource, Go);
 			}
 		}
 	}

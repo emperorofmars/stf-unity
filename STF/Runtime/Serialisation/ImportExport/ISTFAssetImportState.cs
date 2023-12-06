@@ -33,6 +33,7 @@ namespace STF.Serialisation
 		void AddComponent(Component Node, string Id);
 		void AddTrash(UnityEngine.Object Trash);
 		UnityEngine.Object Instantiate(UnityEngine.Object Resource);
+		void SetPostprocessContext(UnityEngine.Object Resource, UnityEngine.Object Context);
 	}
 	
 	public interface ISTFAssetExporter
@@ -93,6 +94,10 @@ namespace STF.Serialisation
 		public Object Instantiate(Object Resource)
 		{
 			return State.Instantiate(Resource);
+		}
+		public void SetPostprocessContext(UnityEngine.Object Resource, UnityEngine.Object Context)
+		{
+			State.SetPostprocessContext(Resource, Context);
 		}
 	}
 }

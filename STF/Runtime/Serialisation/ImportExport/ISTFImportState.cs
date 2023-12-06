@@ -13,8 +13,8 @@ namespace STF.Serialisation
 		string MainAssetId {get;}
 		JObject JsonRoot {get;}
 
-		// id -> asset
-		//Dictionary<string, STFAsset> Assets {get;}
+		List<ISTFAsset> Assets {get;}
+		Dictionary<UnityEngine.Object, UnityEngine.Object> PostprocessContext {get;}
 
 		// id -> resource
 		Dictionary<string, UnityEngine.Object> Resources  {get;}
@@ -23,9 +23,11 @@ namespace STF.Serialisation
 		Dictionary<string, byte[]> Buffers {get;}
 
 		void AddTask(Task task);
+		void AddPostprocessTask(Task task);
 		void AddResource(UnityEngine.Object Resource, string Id);
 		void AddResourceComponent(ISTFResourceComponent Component, ISTFResource ResourceMeta, string Id);
 		void AddTrash(UnityEngine.Object Trash);
+		void SetPostprocessContext(UnityEngine.Object Resource, UnityEngine.Object Context);
 
 		void SaveSecondaryResource(UnityEngine.Object Component, UnityEngine.Object Resource);
 		void SaveResource(UnityEngine.Object Resource, string FileExtension, string Id);
@@ -39,6 +41,6 @@ namespace STF.Serialisation
 		UnityEngine.Object LoadResource(ISTFResource Resource);
 		UnityEngine.Object Instantiate(UnityEngine.Object Resource);
 
-		void SaveAsset(GameObject Root, string Name, bool Main = false);
+		void SaveAsset(ISTFAsset Asset);
 	}
 }

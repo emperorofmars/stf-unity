@@ -30,8 +30,12 @@ namespace STF.Serialisation
 		// stuff to delete before the import finishes
 		public List<UnityEngine.Object> Trash = new List<UnityEngine.Object>();
 		public List<Task> Tasks = new List<Task>();
+		public List<Task> PostprocessTasks = new List<Task>();
+		public Dictionary<UnityEngine.Object, UnityEngine.Object> _PostprocessContext = new Dictionary<Object, Object>();
+		public Dictionary<UnityEngine.Object, UnityEngine.Object> PostprocessContext => _PostprocessContext;
 
-		public List<(GameObject Asset, string Name, bool Main)> AssetsToSave = new List<(GameObject Asset, string Name, bool Main)>();
+		public List<ISTFAsset> _Assets = new List<ISTFAsset>();
+		public List<ISTFAsset> Assets => _Assets;
 
 		public STFImportState(STFImportContext Context, string TargetLocation, JObject JsonRoot)
 		{
@@ -44,6 +48,11 @@ namespace STF.Serialisation
 		public void AddTask(Task task)
 		{
 			Tasks.Add(task);
+		}
+		
+		public void AddPostprocessTask(Task task)
+		{
+			PostprocessTasks.Add(task);
 		}
 
 		public void AddResource(UnityEngine.Object Resource, string Id)
@@ -62,6 +71,12 @@ namespace STF.Serialisation
 		public void AddTrash(UnityEngine.Object Trash)
 		{
 			this.Trash.Add(Trash);
+		}
+
+		public void SetPostprocessContext(UnityEngine.Object Resource, UnityEngine.Object Context)
+		{
+			if(PostprocessContext.ContainsKey(Resource)) PostprocessContext[Resource] = Context;
+			else PostprocessContext.Add(Resource, Context);
 		}
 
 		public void SaveSecondaryResource(UnityEngine.Object Component, UnityEngine.Object Resource)
@@ -150,9 +165,9 @@ namespace STF.Serialisation
 			return PrefabUtility.InstantiatePrefab(Resource);
 		}
 		
-		public void SaveAsset(GameObject Root, string Name, bool Main = false)
+		public void SaveAsset(ISTFAsset Asset)
 		{
-			this.AssetsToSave.Add((Root, Name, Main));
+			Assets.Add(Asset);
 		}
 	}
 }
