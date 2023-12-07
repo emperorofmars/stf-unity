@@ -163,13 +163,20 @@ namespace STF.Serialisation
 				}
 				else
 				{
-					/*var keyframes = AnimationUtility.GetObjectReferenceCurve(clip, c);
+					var keyframes = AnimationUtility.GetObjectReferenceCurve(clip, c);
 					foreach(var keyframe in keyframes)
 					{
-						var id = keyframe.value is GameObject || keyframe.value is Transform ?
-								state.GetNodeId(keyframe.value is GameObject ? (GameObject)keyframe.value : ((Transform)keyframe.value).gameObject) : state.GetResourceId(keyframe.value);
-						keysJson.Add(new JObject() {{"time", keyframe.time}, {"value", id}});
-					}*/
+						if(keyframe.value.GetType().IsSubclassOf(typeof(ISTFResourceComponent)))
+						{
+							var resourceComponentId = State.ResourceComponents[(ISTFResourceComponent)keyframe.value].Id;
+							keysJson.Add(new JObject() {{"time", keyframe.time}, {"value", resourceComponentId}});
+						}
+						else
+						{
+							var resourceId = State.Resources[keyframe.value].Id;
+							keysJson.Add(new JObject() {{"time", keyframe.time}, {"value", resourceId}});
+						}
+					}
 				}
 			}
 			return curvesJson;
