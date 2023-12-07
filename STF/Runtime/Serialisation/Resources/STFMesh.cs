@@ -10,15 +10,16 @@ using UnityEngine.Rendering;
 
 namespace STF.Serialisation
 {
-	public class STFMesh : ASTFResource
+	public class STFMesh : ISTFResource
 	{
+		public const string _TYPE = "STF.mesh";
 		public string OriginalBufferId;
 		public string ArmatureId;
 	}
 
 	public class STFMeshExporter : ISTFResourceExporter
 	{
-		public string ConvertPropertyPath(string UnityProperty)
+		public string ConvertPropertyPath(ISTFExportState State, UnityEngine.Object Resource, string UnityProperty)
 		{
 			throw new NotImplementedException();
 		}
@@ -31,7 +32,7 @@ namespace STF.Serialisation
 			
 			var usedResources = new JArray();
 
-			ret.Add("type", STFMeshImporter._TYPE);
+			ret.Add("type", STFMesh._TYPE);
 			ret.Add("name", meta != null && meta.Name != null && meta.Name.Length > 0 ? meta.Name : mesh.name);
 
 			var bufferWidth = 3;
@@ -287,9 +288,7 @@ namespace STF.Serialisation
 
 	public class STFMeshImporter : ISTFResourceImporter
 	{
-		public const string _TYPE = "STF.mesh";
-
-		public string ConvertPropertyPath(string STFProperty)
+		public string ConvertPropertyPath(ISTFImportState State, UnityEngine.Object Resource, string STFProperty)
 		{
 			throw new NotImplementedException();
 		}

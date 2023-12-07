@@ -7,53 +7,34 @@ using UnityEngine;
 
 namespace STF.Serialisation
 {
-	public interface ISTFNodeComponent
+	public abstract class ISTFNodeComponent : MonoBehaviour
 	{
-		string Id {get; set;}
-		string Type {get;}
-		string ParentNodeId {get; set;}
-		List<string> Extends {get; set;}
-		List<string> Overrides {get; set;}
-		List<string> Targets {get; set;}
-		Component OwnedUnityComponent {get; set;}
-	}
-
-	public abstract class ASTFNodeComponent : MonoBehaviour, ISTFNodeComponent
-	{
-		[Id] public string _Id = Guid.NewGuid().ToString();
-		public string Id {get => _Id; set => _Id = value;}
+		[Id] public string Id = Guid.NewGuid().ToString();
 		public abstract string Type { get; }
-		public string _ParentNodeId;
-		public string ParentNodeId {get => _ParentNodeId; set => _ParentNodeId = value;}
 
-		public List<string> _extends = new List<string>();
-		public List<string> Extends {get => _extends; set => _extends = value;}
-
-		public List<string> _overrides = new List<string>();
-		public List<string> Overrides {get => _overrides; set => _overrides = value;}
-
-		public List<string> _targets = new List<string>();
-		public List<string> Targets {get => _targets; set => _targets = value;}
+		public string ParentNodeId;
+		public List<string> Extends = new List<string>();
+		public List<string> Overrides = new List<string>();
+		public List<string> Targets = new List<string>();
 		
-		public Component _OwnedUnityComponent;
-		public Component OwnedUnityComponent {get => _OwnedUnityComponent; set => _OwnedUnityComponent = value;}
+		public Component OwnedUnityComponent;
 	}
 	
 	public interface ISTFNodeComponentExporter
 	{
-		string ConvertPropertyPath(string UnityProperty);
+		string ConvertPropertyPath(ISTFExportState State, Component Component, string UnityProperty);
 		(string Id, JObject JsonComponent) SerializeToJson(ISTFExportState State, Component Component);
 	}
 	
 	public interface ISTFNodeComponentImporter
 	{
-		string ConvertPropertyPath(string STFProperty);
+		string ConvertPropertyPath(ISTFImportState State, Component Component, string STFProperty);
 		void ParseFromJson(ISTFAssetImportState State, JObject Json, string Id, GameObject Go);
 	}
 	
 	public abstract class ASTFNodeComponentExporter : ISTFNodeComponentExporter
 	{
-		public abstract string ConvertPropertyPath(string UnityProperty);
+		public abstract string ConvertPropertyPath(ISTFExportState State, Component Component, string UnityProperty);
 		abstract public (string Id, JObject JsonComponent) SerializeToJson(ISTFExportState State, Component Component);
 
 		public static void SerializeRelationships(ISTFNodeComponent Component, JObject Json)
@@ -66,7 +47,7 @@ namespace STF.Serialisation
 	
 	public abstract class ASTFNodeComponentImporter : ISTFNodeComponentImporter
 	{
-		public abstract string ConvertPropertyPath(string STFProperty);
+		public abstract string ConvertPropertyPath(ISTFImportState State, Component Component, string STFProperty);
 		abstract public void ParseFromJson(ISTFAssetImportState State, JObject Json, string Id, GameObject Go);
 
 		public static void ParseRelationships(JObject Json, ISTFNodeComponent Component)

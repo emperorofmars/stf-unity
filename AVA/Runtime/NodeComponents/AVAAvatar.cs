@@ -13,7 +13,7 @@ using UnityEditor;
 
 namespace AVA.Serialisation
 {
-	public class AVAAvatar : ASTFNodeComponent
+	public class AVAAvatar : ISTFNodeComponent
 	{
 		public const string _TYPE = "AVA.avatar";
 		public override string Type => _TYPE;
@@ -66,7 +66,7 @@ namespace AVA.Serialisation
 
 	public class AVAAvatarExporter : ASTFNodeComponentExporter
 	{
-		public override string ConvertPropertyPath(string UnityProperty)
+		public override string ConvertPropertyPath(ISTFExportState State, Component Component, string UnityProperty)
 		{
 			throw new NotImplementedException();
 		}
@@ -89,7 +89,7 @@ namespace AVA.Serialisation
 
 	public class AVAAvatarImporter : ASTFNodeComponentImporter
 	{
-		public override string ConvertPropertyPath(string STFProperty)
+		public override string ConvertPropertyPath(ISTFImportState State, Component Component, string STFProperty)
 		{
 			throw new NotImplementedException();
 		}

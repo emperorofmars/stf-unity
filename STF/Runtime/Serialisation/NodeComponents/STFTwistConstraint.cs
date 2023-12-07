@@ -7,7 +7,7 @@ using UnityEngine.Animations;
 
 namespace STF.Serialisation
 {
-	public class STFTwistConstraint : ASTFNodeComponent
+	public class STFTwistConstraint : ISTFNodeComponent
 	{
 		public const string _TYPE = "STF.constraint.twist";
 		public override string Type => _TYPE;
@@ -17,9 +17,9 @@ namespace STF.Serialisation
 
 	public class STFTwistConstraintExporter : ASTFNodeComponentExporter
 	{
-		public override string ConvertPropertyPath(string UnityProperty)
+		public override string ConvertPropertyPath(ISTFExportState State, Component Component, string UnityProperty)
 		{
-			return UnityProperty;
+			throw new NotImplementedException();
 		}
 
 		public override (string, JObject) SerializeToJson(ISTFExportState State, Component Component)
@@ -39,9 +39,9 @@ namespace STF.Serialisation
 
 	public class STFTwistConstraintImporter : ASTFNodeComponentImporter
 	{
-		public override string ConvertPropertyPath(string STFProperty)
+		public override string ConvertPropertyPath(ISTFImportState State, Component Component, string STFProperty)
 		{
-			return STFProperty;
+			throw new NotImplementedException();
 		}
 
 		public override void ParseFromJson(ISTFAssetImportState State, JObject Json, string Id, GameObject Go)

@@ -8,7 +8,7 @@ using UnityEditor;
 
 namespace AVA.Serialisation
 {
-	public class AVAEyeBoneLimitsSimple : ASTFNodeComponent
+	public class AVAEyeBoneLimitsSimple : ISTFNodeComponent
 	{
 		public const string _TYPE = "AVA.eye_bone_limits_simple";
 		public override string Type => _TYPE;
@@ -20,7 +20,7 @@ namespace AVA.Serialisation
 
 	public class AVAEyeBoneLimitsSimpleExporter : ASTFNodeComponentExporter
 	{
-		public override string ConvertPropertyPath(string UnityProperty)
+		public override string ConvertPropertyPath(ISTFExportState State, Component Component, string UnityProperty)
 		{
 			throw new System.NotImplementedException();
 		}
@@ -42,7 +42,7 @@ namespace AVA.Serialisation
 
 	public class AVAEyeBoneLimitsSimpleImporter : ASTFNodeComponentImporter
 	{
-		public override string ConvertPropertyPath(string STFProperty)
+		public override string ConvertPropertyPath(ISTFImportState State, Component Component, string STFProperty)
 		{
 			throw new System.NotImplementedException();
 		}

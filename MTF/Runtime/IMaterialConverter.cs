@@ -17,12 +17,16 @@ namespace MTF
 	public interface IMaterialConverter
 	{
 		string ShaderName {get;}
+		
+		string ConvertPropertyPath(string MTFProperty);
 		UnityEngine.Material ConvertToUnityMaterial(IMaterialConvertState State, Material MTFMaterial, UnityEngine.Material ExistingUnityMaterial = null);
 	}
 
 	public interface IMaterialParser
 	{
 		string ShaderName {get;}
+		
+		string ConvertPropertyPath(string UnityProperty);
 		Material ParseFromUnityMaterial(IMaterialParseState State, UnityEngine.Material UnityMaterial, Material ExistingMTFMaterial = null);
 	}
 }

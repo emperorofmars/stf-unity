@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace STF.Serialisation
 {
-	public class STFMeshInstance : ASTFNodeComponent
+	public class STFMeshInstance : ISTFNodeComponent
 	{
 		public const string _TYPE = "STF.mesh_instance";
 		public override string Type => _TYPE;
@@ -18,11 +18,22 @@ namespace STF.Serialisation
 
 	public class STFMeshInstanceExporter : ASTFNodeComponentExporter
 	{
-		public override string ConvertPropertyPath(string UnityProperty)
+		public override string ConvertPropertyPath(ISTFExportState State, Component Component, string UnityProperty)
 		{
 			if(UnityProperty.StartsWith("blendShape"))
 			{
 				return "blendshape." + UnityProperty.Split('.')[1];
+			}
+			else if(UnityProperty.StartsWith("material"))
+			{
+				if(Component is SkinnedMeshRenderer)
+				{
+					return State.Context.ResourceExporters[typeof(MTF.Material)].ConvertPropertyPath(State, ((SkinnedMeshRenderer)Component).material, UnityProperty.Split('.')[1]);
+				}
+				else if(Component is STFMeshInstance)
+				{
+					return State.Context.ResourceExporters[typeof(MTF.Material)].ConvertPropertyPath(State, ((STFMeshInstance)Component).Materials[0], UnityProperty.Split('.')[1]);
+				}
 			}
 			throw new Exception("Unrecognized animation property: " + UnityProperty);
 		}
@@ -68,7 +79,7 @@ namespace STF.Serialisation
 
 	public class STFMeshInstanceImporter : ASTFNodeComponentImporter
 	{
-		public override string ConvertPropertyPath(string STFProperty)
+		public override string ConvertPropertyPath(ISTFImportState State, Component Component, string STFProperty)
 		{
 			if(STFProperty.StartsWith("blendshape"))
 			{

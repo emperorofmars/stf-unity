@@ -15,6 +15,12 @@ namespace MTF
 	{
 		public const string _SHADER_NAME = "Standard";
 		public string ShaderName {get => _SHADER_NAME;}
+
+		public string ConvertPropertyPath(string MTFProperty)
+		{
+			throw new NotImplementedException();
+		}
+
 		public UnityEngine.Material ConvertToUnityMaterial(IMaterialConvertState State, Material MTFMaterial, UnityEngine.Material ExistingUnityMaterial = null)
 		{
 			var ret = ExistingUnityMaterial != null ? ExistingUnityMaterial : new UnityEngine.Material(Shader.Find(ShaderName));
@@ -53,6 +59,12 @@ namespace MTF
 	public class StandardParser : IMaterialParser
 	{
 		public string ShaderName {get => StandardConverter._SHADER_NAME;}
+
+		public string ConvertPropertyPath(string UnityProperty)
+		{
+			throw new NotImplementedException();
+		}
+
 		public Material ParseFromUnityMaterial(IMaterialParseState State, UnityEngine.Material UnityMaterial, Material ExistingMTFMaterial = null)
 		{
 			var ret = ExistingMTFMaterial != null ? ExistingMTFMaterial : ScriptableObject.CreateInstance<Material>();

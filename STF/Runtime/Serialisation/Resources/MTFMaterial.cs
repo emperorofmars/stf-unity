@@ -71,7 +71,7 @@ namespace STF.Serialisation
 
 	public class UnityMaterialExporter : ISTFResourceExporter
 	{
-		public string ConvertPropertyPath(string UnityProperty)
+		public string ConvertPropertyPath(ISTFExportState State, UnityEngine.Object Resource, string UnityProperty)
 		{
 			throw new NotImplementedException();
 		}
@@ -99,9 +99,16 @@ namespace STF.Serialisation
 
 	public class MTFMaterialExporter : ISTFResourceExporter
 	{
-		public string ConvertPropertyPath(string UnityProperty)
+		public string ConvertPropertyPath(ISTFExportState State, UnityEngine.Object Resource, string UnityProperty)
 		{
-			throw new NotImplementedException();
+			if(Resource is MTF.Material)
+			{
+				return UnityProperty;
+			}
+			else
+			{
+				return MTF.ShaderConverterRegistry.MaterialParsers[((Material)Resource).shader.name].ConvertPropertyPath(UnityProperty);
+			}
 		}
 
 		public string SerializeToJson(ISTFExportState State, UnityEngine.Object Resource, UnityEngine.Object Context = null)
@@ -149,9 +156,11 @@ namespace STF.Serialisation
 	{
 		public static string _TYPE = "MTF.material";
 
-		public string ConvertPropertyPath(string STFProperty)
+		public string ConvertPropertyPath(ISTFImportState State, UnityEngine.Object Resource, string STFProperty)
 		{
-			throw new NotImplementedException();
+			return STFProperty;
+			//return MTF.ShaderConverterRegistry.MaterialConverters[((Material)Resource).shader.name].ConvertPropertyPath(STFProperty);
+			//throw new NotImplementedException();
 		}
 
 		public void ParseFromJson(ISTFImportState State, JObject Json, string Id)

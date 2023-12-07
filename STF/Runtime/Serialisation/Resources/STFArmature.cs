@@ -8,14 +8,14 @@ using UnityEngine;
 
 namespace STF.Serialisation
 {
-	public class STFArmature : ASTFResource
+	public class STFArmature : ISTFResource
 	{
 		public Matrix4x4[] Bindposes;
 	}
 
 	public class STFArmatureExporter : ISTFResourceExporter
 	{
-		public string ConvertPropertyPath(string UnityProperty)
+		public string ConvertPropertyPath(ISTFExportState State, UnityEngine.Object Resource, string UnityProperty)
 		{
 			throw new NotImplementedException();
 		}
@@ -65,7 +65,7 @@ namespace STF.Serialisation
 	{
 		public const string _TYPE = "STF.armature";
 
-		public string ConvertPropertyPath(string STFProperty)
+		public string ConvertPropertyPath(ISTFImportState State, UnityEngine.Object Resource, string STFProperty)
 		{
 			throw new NotImplementedException();
 		}

@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace STF.Serialisation
 {
-	public class STFResourceHolder : ASTFNodeComponent
+	public class STFResourceHolder : ISTFNodeComponent
 	{
 		public const string _TYPE = "STF.resource_holder";
 		public override string Type => _TYPE;
@@ -15,7 +15,7 @@ namespace STF.Serialisation
 
 	public class STFResourceHolderExporter : ASTFNodeComponentExporter
 	{
-		public override string ConvertPropertyPath(string UnityProperty)
+		public override string ConvertPropertyPath(ISTFExportState State, Component Component, string UnityProperty)
 		{
 			throw new System.NotImplementedException();
 		}
@@ -34,7 +34,7 @@ namespace STF.Serialisation
 
 	public class STFResourceHolderImporter : ASTFNodeComponentImporter
 	{
-		public override string ConvertPropertyPath(string STFProperty)
+		public override string ConvertPropertyPath(ISTFImportState State, Component Component, string STFProperty)
 		{
 			throw new System.NotImplementedException();
 		}

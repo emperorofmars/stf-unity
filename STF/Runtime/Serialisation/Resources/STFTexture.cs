@@ -6,7 +6,7 @@ using System.IO;
 
 namespace STF.Serialisation
 {
-	public class STFTexture : ASTFResource
+	public class STFTexture : ISTFResource
 	{
 		public string TextureType = "color"; // linear | normal
 		public Vector2Int TextureSize;
@@ -16,7 +16,7 @@ namespace STF.Serialisation
 
 	public class STFTexture2dExporter : ISTFResourceExporter
 	{
-		public string ConvertPropertyPath(string UnityProperty)
+		public string ConvertPropertyPath(ISTFExportState State, UnityEngine.Object Resource, string UnityProperty)
 		{
 			throw new NotImplementedException();
 		}
@@ -52,7 +52,7 @@ namespace STF.Serialisation
 	{
 		public const string _TYPE = "STF.texture";
 
-		public string ConvertPropertyPath(string STFProperty)
+		public string ConvertPropertyPath(ISTFImportState State, UnityEngine.Object Resource, string STFProperty)
 		{
 			throw new NotImplementedException();
 		}
