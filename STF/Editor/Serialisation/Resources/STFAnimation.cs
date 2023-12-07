@@ -65,7 +65,7 @@ namespace STF.Serialisation
 					curveJson.Add("target_object_type", "node");
 					if(c.path.StartsWith("STF_NODE"))
 					{
-						curveJson.Add("node_ids", new JArray(c.path.Split(':')));
+						curveJson.Add("node_ids", new JArray(c.path.Split(':').Skip(1).ToArray()));
 						curveJson.Add("property", c.propertyName);
 					}
 					else
@@ -82,9 +82,9 @@ namespace STF.Serialisation
 				else if(c.type.IsSubclassOf(typeof(Component)))
 				{
 					curveJson.Add("target_object_type", "node_component");
-					if(c.path.StartsWith("STF_NODE"))
+					if(c.path.StartsWith("STF_NODE_COMPONENT"))
 					{
-						var pathSplit = c.path.Split(':');
+						var pathSplit = c.path.Split(':').Skip(1).ToArray();
 						var componentId = pathSplit[pathSplit.Count() -1];
 						string[] nodeIds = new string[pathSplit.Count() -1];
 						for(int i = 0; i < nodeIds.Count(); i ++) nodeIds[i] = pathSplit[i];
@@ -110,9 +110,34 @@ namespace STF.Serialisation
 						curveJson.Add("property", State.Context.NodeComponentExporters[c.type].ConvertPropertyPath(c.propertyName));
 					}
 				}
+				else if(c.type.IsSubclassOf(typeof(ISTFResourceComponent)))
+				{
+					curveJson.Add("target_object_type", "resource_component");
+					if(c.path.StartsWith("STF_RESOURCE_COMPONENT"))
+					{
+						var pathSplit = c.path.Split(':').Skip(1).ToArray();
+						curveJson.Add("resource_id", pathSplit[0]);
+						curveJson.Add("component_id", pathSplit[1]);
+						curveJson.Add("property", c.propertyName);
+					}
+					else
+					{
+					}
+				}
 				else if(c.type.IsSubclassOf(typeof(UnityEngine.Object)))
 				{
+					// determine if its a resource or resourceComponent
+					curveJson.Add("target_object_type", "resource");
+					if(c.path.StartsWith("STF_RESOURCE"))
+					{
+						var pathSplit = c.path.Split(':').Skip(1).ToArray();
+						curveJson.Add("resource_id", pathSplit[0]);
+						curveJson.Add("property", c.propertyName);
+					}
+					else
+					{
 
+					}
 				}
 				// resources
 				// resource components
@@ -135,6 +160,7 @@ namespace STF.Serialisation
 					var curve = AnimationUtility.GetEditorCurve(clip, c);
 					foreach(var keyframe in curve.keys)
 					{
+						// TODO: also set ease in/out vectors and such, dont be like gltf
 						keysJson.Add(new JObject() {{"time", keyframe.time}, {"value", keyframe.value}});
 					}
 				}
@@ -208,7 +234,7 @@ namespace STF.Serialisation
 							if(targetObjectType == STFObjectType.Node) // node
 							{
 								var nodeIds = track["node_ids"].ToObject<List<string>>();
-								if(Root != null)
+								try
 								{
 									var targetNode = Root.GetComponentsInChildren<ISTFNode>().FirstOrDefault(n => n.Id == nodeIds[nodeIds.Count() - 1]);
 									var targetType = (string)State.JsonRoot["nodes"][nodeIds[nodeIds.Count() - 1]]["type"];
@@ -219,7 +245,7 @@ namespace STF.Serialisation
 									var path = Utils.getPath(Root.transform, ((Component)targetNode).transform);
 									ret.SetCurve(path, unityType, translatedProperty, curve);
 								}
-								else
+								catch(Exception)
 								{
 									var nodeIdsString = "";
 									foreach(var nodeId in nodeIds)
@@ -237,7 +263,7 @@ namespace STF.Serialisation
 							{
 								var nodeIds = track["node_ids"].ToObject<List<string>>();
 								var componentId = (string)track["component_id"];
-								if(Root != null)
+								try
 								{
 									var targetNode = Root.GetComponentsInChildren<ISTFNode>().FirstOrDefault(n => n.Id == nodeIds[nodeIds.Count() - 1]);
 									var targetSTFComponent = ((Component)targetNode).GetComponents<ISTFNodeComponent>().FirstOrDefault(nc => nc.Id == componentId);
@@ -248,7 +274,7 @@ namespace STF.Serialisation
 									var path = Utils.getPath(Root.transform, ((Component)targetNode).transform);
 									ret.SetCurve(path, targetComponent.GetType(), translatedProperty, curve);
 								}
-								else
+								catch(Exception)
 								{
 									var nodeIdsString = "";
 									foreach(var nodeId in nodeIds)
@@ -256,17 +282,22 @@ namespace STF.Serialisation
 										if(nodeIdsString == "") nodeIdsString = nodeIdsString + nodeId;
 										else nodeIdsString = ":" + nodeIdsString + nodeId;
 									}
-									ret.SetCurve("STF_COMPONENT:" + nodeIdsString + ":" + componentId, typeof(Component), property, curve);
+									ret.SetCurve("STF_NODE_COMPONENT:" + nodeIdsString + ":" + componentId, typeof(Component), property, curve);
 								}
 							}
-							/*else if(targetObjectType == STFObjectType.Resource) // resource
+							else if(targetObjectType == STFObjectType.Resource)
 							{
-								if(!state.GetContext().AnimationTranslators.ContainsKey(targetResource.GetType()))
-									throw new Exception("Property can't be translated: " + property);
-								var translatedProperty = state.GetContext().AnimationTranslators[targetResource.GetType()].ToUnity(property);
-								ret.SetCurve("STF_RESOURCE:" + target_id, targetResource.GetType(), translatedProperty, curve);
-							}*/
-							// resource component
+								var resourceId = (string)track["resource_id"];
+								var targetType = (string)State.JsonRoot["resources"][resourceId]["type"];
+								ret.SetCurve("STF_RESOURCE:" + resourceId, typeof(UnityEngine.Object), property, curve);
+							}
+							else if(targetObjectType == STFObjectType.ResourceComponent)
+							{
+								var resourceId = (string)track["resource_id"];
+								var resourceComponentId = (string)track["component_id"];
+								var targetType = (string)State.JsonRoot["resources"][resourceId]["type"];
+								ret.SetCurve("STF_RESOURCE_COMPONENT:" + resourceId + ":" + resourceComponentId, typeof(ISTFResourceComponent), property, curve);
+							}
 							else
 							{
 								throw new Exception("Target id for animation is invalid");
