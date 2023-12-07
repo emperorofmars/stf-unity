@@ -122,11 +122,13 @@ namespace STF.Serialisation
 					}
 					else
 					{
+						var curveTarget = (ISTFResourceComponent)AnimationUtility.GetAnimatedObject(root, c);
+						curveJson.Add("resource_id", curveTarget.Id);
+						curveJson.Add("property", State.Context.ResourceComponentExporters[curveTarget.Type].ConvertPropertyPath(c.propertyName));
 					}
 				}
 				else if(c.type.IsSubclassOf(typeof(UnityEngine.Object)))
 				{
-					// determine if its a resource or resourceComponent
 					curveJson.Add("target_object_type", "resource");
 					if(c.path.StartsWith("STF_RESOURCE"))
 					{
@@ -136,16 +138,11 @@ namespace STF.Serialisation
 					}
 					else
 					{
-
+						var curveTarget = AnimationUtility.GetAnimatedObject(root, c);
+						curveJson.Add("resource_id", State.Resources[curveTarget].Id);
+						curveJson.Add("property", State.Context.ResourceExporters[curveTarget.GetType()].ConvertPropertyPath(c.propertyName));
 					}
 				}
-				// resources
-				// resource components
-				/*else
-				{
-					curveJson.Add("target_id", c.path);
-					curveJson.Add("property", c.propertyName);
-				}*/
 
 				if(!c.isDiscreteCurve && !c.isPPtrCurve) curveJson.Add("type", "interpolated");
 				else if(c.isDiscreteCurve && !c.isPPtrCurve) curveJson.Add("type", "discrete");

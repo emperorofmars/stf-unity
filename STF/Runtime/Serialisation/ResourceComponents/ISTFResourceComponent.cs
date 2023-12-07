@@ -10,12 +10,9 @@ namespace STF.Serialisation
 
 	public abstract class ISTFResourceComponent : ScriptableObject
 	{
-		public string _Id = Guid.NewGuid().ToString();
-		public string Id {get => _Id; set => _Id = value;}
-		public abstract string Type { get; }
-
-		public List<string> _targets = new List<string>();
-		public List<string> Targets {get => _targets; set => _targets = value;}
+		public abstract string Type {get;}
+		public string Id = Guid.NewGuid().ToString();
+		public List<string> Targets = new List<string>();
 
 		[HideInInspector] public ISTFResource Resource;
 	}
