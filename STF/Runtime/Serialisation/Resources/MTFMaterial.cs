@@ -73,7 +73,7 @@ namespace STF.Serialisation
 	{
 		public string ConvertPropertyPath(ISTFExportState State, UnityEngine.Object Resource, string UnityProperty)
 		{
-			throw new NotImplementedException();
+			return MTF.ShaderConverterRegistry.MaterialParsers[((Material)Resource).shader.name].ConvertPropertyPath(UnityProperty);
 		}
 
 		public string SerializeToJson(ISTFExportState State, UnityEngine.Object Resource, UnityEngine.Object Context = null)
@@ -101,14 +101,7 @@ namespace STF.Serialisation
 	{
 		public string ConvertPropertyPath(ISTFExportState State, UnityEngine.Object Resource, string UnityProperty)
 		{
-			if(Resource is MTF.Material)
-			{
-				return UnityProperty;
-			}
-			else
-			{
-				return MTF.ShaderConverterRegistry.MaterialParsers[((Material)Resource).shader.name].ConvertPropertyPath(UnityProperty);
-			}
+			return UnityProperty;
 		}
 
 		public string SerializeToJson(ISTFExportState State, UnityEngine.Object Resource, UnityEngine.Object Context = null)

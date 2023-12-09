@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using STF_Util;
 using UnityEngine;
-using UnityExtensions;
 
 namespace STF.Serialisation
 {
@@ -16,7 +15,7 @@ namespace STF.Serialisation
 
 		public string ResourceLocation;
 		
-		[ReorderableList(elementsAreSubassets = true)] public List<ISTFResourceComponent> Components = new List<ISTFResourceComponent>();
+		public List<ISTFResourceComponent> Components = new List<ISTFResourceComponent>();
 
 	}
 

@@ -28,7 +28,7 @@ namespace STF.Serialisation
 			{
 				if(Component is SkinnedMeshRenderer)
 				{
-					return State.Context.ResourceExporters[typeof(MTF.Material)].ConvertPropertyPath(State, ((SkinnedMeshRenderer)Component).material, UnityProperty.Split('.')[1]);
+					return State.Context.ResourceExporters[typeof(Material)].ConvertPropertyPath(State, ((SkinnedMeshRenderer)Component).sharedMaterial, UnityProperty.Split('.')[1]);
 				}
 				else if(Component is STFMeshInstance)
 				{
