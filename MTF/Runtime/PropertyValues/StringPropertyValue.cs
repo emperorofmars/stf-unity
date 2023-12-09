@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace MTF
 {
+	[CreateAssetMenu(fileName = "StringPropertyValue", menuName = "MTF/PropertyValues/String", order = 1)]
 	public class StringPropertyValue : IPropertyValue
 	{
 		public const string _TYPE = "MTF.string";

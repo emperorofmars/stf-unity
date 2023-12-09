@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace MTF
 {
+	[CreateAssetMenu(fileName = "ColorPropertyValue", menuName = "MTF/PropertyValues/Color", order = 1)]
 	public class ColorPropertyValue : IPropertyValue
 	{
 		public const string _TYPE = "MTF.color";

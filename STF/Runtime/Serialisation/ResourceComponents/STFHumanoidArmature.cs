@@ -6,6 +6,7 @@ using UnityEngine;
 
 namespace STF.Serialisation
 {
+	[CreateAssetMenu(fileName = "STFHumanoidArmature", menuName = "STF/Resource Components/Humanoid Armature", order = 1)]
 	public class STFHumanoidArmature : ISTFResourceComponent
 	{
 		public const string _TYPE = "STF.armature.humanoid";

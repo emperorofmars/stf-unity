@@ -79,6 +79,7 @@ namespace STF.Serialisation
 				if(File.Exists(entry)) File.Delete(entry);
 				else Directory.Delete(entry, true);
 			}
+			AssetDatabase.Refresh();
 			AssetDatabase.CreateFolder(state.TargetLocation, STFConstants.ResourceDirectoryName);
 			AssetDatabase.CreateFolder(state.TargetLocation, STFConstants.SecondaryAssetsDirectoryName);
 			AssetDatabase.CreateFolder(state.TargetLocation, STFConstants.PreservedBuffersDirectoryName);

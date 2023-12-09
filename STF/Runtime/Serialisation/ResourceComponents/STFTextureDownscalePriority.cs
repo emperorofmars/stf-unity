@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace STF.Serialisation
 {
-	[System.Serializable]
+	[CreateAssetMenu(fileName = "STFTextureDownscalePriority", menuName = "STF/Resource Components/Texture Downscale Priority", order = 1)]
 	public class STFTextureDownscalePriority : ISTFResourceComponent
 	{
 		public const string _TYPE = "STF.texture.downscale_priprity";

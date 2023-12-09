@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace MTF
 {
+	[CreateAssetMenu(fileName = "FloatPropertyValue", menuName = "MTF/PropertyValues/Float", order = 1)]
 	public class FloatPropertyValue : IPropertyValue
 	{
 		public const string _TYPE = "MTF.float";

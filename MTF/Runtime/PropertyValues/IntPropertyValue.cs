@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace MTF
 {
+	[CreateAssetMenu(fileName = "IntPropertyValue", menuName = "MTF/PropertyValues/Int", order = 1)]
 	public class IntPropertyValue : IPropertyValue
 	{
 		public const string _TYPE = "MTF.int";

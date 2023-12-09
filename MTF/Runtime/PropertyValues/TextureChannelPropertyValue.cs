@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace MTF
 {
+	[CreateAssetMenu(fileName = "TextureChannelPropertyValue", menuName = "MTF/PropertyValues/Texture Channel", order = 1)]
 	public class TextureChannelPropertyValue : IPropertyValue
 	{
 		public const string _TYPE = "MTF.texture_channel";

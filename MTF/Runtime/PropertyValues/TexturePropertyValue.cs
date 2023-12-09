@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace MTF
 {
+	[CreateAssetMenu(fileName = "TexturePropertyValue", menuName = "MTF/PropertyValues/Texture", order = 1)]
 	public class TexturePropertyValue : IPropertyValue
 	{
 		public const string _TYPE = "MTF.texture";

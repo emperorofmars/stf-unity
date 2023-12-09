@@ -5,7 +5,6 @@ using UnityEngine;
 
 namespace STF.Serialisation
 {
-	[System.Serializable]
 	public class STFUnrecognizedResourceComponent : ISTFResourceComponent
 	{
 		public string _Type;
