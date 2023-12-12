@@ -151,6 +151,10 @@ namespace STF.Serialisation
 
 		public string ConvertPropertyPath(ISTFImportState State, UnityEngine.Object Resource, string STFProperty)
 		{
+			//var mat = (UnityEngine.Material)Resource;
+			//MTF.ShaderConverterRegistry.MaterialConverters[mat.shader.name].ConvertPropertyPath(STFProperty);
+
+
 			return STFProperty;
 			//return MTF.ShaderConverterRegistry.MaterialConverters[((Material)Resource).shader.name].ConvertPropertyPath(STFProperty);
 			//throw new NotImplementedException();

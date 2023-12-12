@@ -231,7 +231,7 @@ namespace STF.Serialisation
 									var targetNode = Root.GetComponentsInChildren<ISTFNode>().FirstOrDefault(n => n.Id == nodeIds[nodeIds.Count() - 1]);
 									var targetSTFComponent = ((Component)targetNode).GetComponents<ISTFNodeComponent>().FirstOrDefault(nc => nc.Id == componentId);
 
-									var targetComponent =  targetSTFComponent.OwnedUnityComponent != null ? targetSTFComponent.OwnedUnityComponent : (Component)targetSTFComponent;
+									var targetComponent =  targetSTFComponent.OwnedUnityComponent != null ? targetSTFComponent.OwnedUnityComponent : targetSTFComponent;
 									var translatedProperty = State.Context.NodeComponentImporters[targetSTFComponent.Type].ConvertPropertyPath(State, targetSTFComponent, property);
 									
 									var path = Utils.getPath(Root.transform, ((Component)targetNode).transform);
@@ -248,6 +248,10 @@ namespace STF.Serialisation
 									ret.SetCurve("STF_NODE_COMPONENT:" + nodeIdsString + ":" + componentId, typeof(Component), property, curve);
 								}
 							}
+						}
+						else
+						{
+							throw new Exception("Unhandled Animation Property");
 						}
 						/*else
 						{

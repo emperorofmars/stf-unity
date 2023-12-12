@@ -18,7 +18,9 @@ namespace MTF.Addons
 
 		public string ConvertPropertyPath(string MTFProperty)
 		{
-			throw new NotImplementedException();
+			if(MTFProperty == "decal:0") return "_DecalBlendAlpha";
+
+			return MTFProperty;
 		}
 
 		public UnityEngine.Material ConvertToUnityMaterial(IMaterialConvertState State, Material MTFMaterial, UnityEngine.Material ExistingUnityMaterial = null)
@@ -72,7 +74,9 @@ namespace MTF.Addons
 
 		public string ConvertPropertyPath(string UnityProperty)
 		{
-			throw new NotImplementedException();
+			if(UnityProperty == "_DecalBlendAlpha") return "decal:0";
+
+			return UnityProperty;
 		}
 
 		public Material ParseFromUnityMaterial(IMaterialParseState State, UnityEngine.Material UnityMaterial, Material ExistingMTFMaterial = null)

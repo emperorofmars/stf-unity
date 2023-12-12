@@ -28,11 +28,11 @@ namespace STF.Serialisation
 			{
 				if(Component is SkinnedMeshRenderer)
 				{
-					return State.Context.ResourceExporters[typeof(Material)].ConvertPropertyPath(State, ((SkinnedMeshRenderer)Component).sharedMaterial, UnityProperty.Split('.')[1]);
+					return "material:0." + State.Context.ResourceExporters[typeof(Material)].ConvertPropertyPath(State, ((SkinnedMeshRenderer)Component).sharedMaterial, UnityProperty.Split('.')[1]);
 				}
 				else if(Component is STFMeshInstance)
 				{
-					return State.Context.ResourceExporters[typeof(MTF.Material)].ConvertPropertyPath(State, ((STFMeshInstance)Component).Materials[0], UnityProperty.Split('.')[1]);
+					return "material:0." + State.Context.ResourceExporters[typeof(MTF.Material)].ConvertPropertyPath(State, ((STFMeshInstance)Component).Materials[0], UnityProperty.Split('.')[1]);
 				}
 			}
 			throw new Exception("Unrecognized animation property: " + UnityProperty);
@@ -84,6 +84,13 @@ namespace STF.Serialisation
 			if(STFProperty.StartsWith("blendshape"))
 			{
 				return "blendShape." + STFProperty.Split('.')[1];
+			}
+			else if(STFProperty.StartsWith("material"))
+			{
+				var matIdx = STFProperty.Split(':')[1].Split('.')[0];
+				//return State.Context.ResourceImporters[MTFMaterialImporter._TYPE].ConvertPropertyPath(State, ((SkinnedMeshRenderer)Component).sharedMaterial, STFProperty.Split('.')[1]);
+
+				return "material." + STFProperty.Split('.')[1];
 			}
 			throw new Exception("Unrecognized animation property: " + STFProperty);
 		}
