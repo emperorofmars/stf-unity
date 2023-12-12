@@ -73,7 +73,8 @@ namespace STF.Serialisation
 	{
 		public string ConvertPropertyPath(ISTFExportState State, UnityEngine.Object Resource, string UnityProperty)
 		{
-			return MTF.ShaderConverterRegistry.MaterialParsers[((Material)Resource).shader.name].ConvertPropertyPath(UnityProperty);
+			if(UnityProperty.StartsWith("MTF.")) return UnityProperty.Substring(UnityProperty.IndexOf('.') + 1);
+			else return MTF.ShaderConverterRegistry.MaterialParsers[((Material)Resource).shader.name].ConvertPropertyPath(UnityProperty);
 		}
 
 		public string SerializeToJson(ISTFExportState State, UnityEngine.Object Resource, UnityEngine.Object Context = null)
@@ -151,13 +152,9 @@ namespace STF.Serialisation
 
 		public string ConvertPropertyPath(ISTFImportState State, UnityEngine.Object Resource, string STFProperty)
 		{
-			//var mat = (UnityEngine.Material)Resource;
-			//MTF.ShaderConverterRegistry.MaterialConverters[mat.shader.name].ConvertPropertyPath(STFProperty);
-
-
-			return STFProperty;
-			//return MTF.ShaderConverterRegistry.MaterialConverters[((Material)Resource).shader.name].ConvertPropertyPath(STFProperty);
-			//throw new NotImplementedException();
+			var material = (MTF.Material)Resource;
+			if(material.ConvertedMaterial != null) return MTF.ShaderConverterRegistry.MaterialConverters[material.ConvertedMaterial.shader.name].ConvertPropertyPath(STFProperty);
+			else return "MTF." + STFProperty;
 		}
 
 		public void ParseFromJson(ISTFImportState State, JObject Json, string Id)

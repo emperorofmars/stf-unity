@@ -22,17 +22,20 @@ namespace STF.Serialisation
 		{
 			if(UnityProperty.StartsWith("blendShape"))
 			{
-				return "blendshape." + UnityProperty.Split('.')[1];
+				return "blendshape." + UnityProperty.Substring(UnityProperty.IndexOf('.') + 1);
 			}
 			else if(UnityProperty.StartsWith("material"))
 			{
+				var materialProperty = UnityProperty.Substring(UnityProperty.IndexOf('.') + 1);
+				//var matIdx = int.Parse(UnityProperty.Split(':')[1].Split('.')[0]);
 				if(Component is SkinnedMeshRenderer)
 				{
-					return "material:0." + State.Context.ResourceExporters[typeof(Material)].ConvertPropertyPath(State, ((SkinnedMeshRenderer)Component).sharedMaterial, UnityProperty.Split('.')[1]);
+					// handle material index
+					return "material:0." + State.Context.ResourceExporters[typeof(Material)].ConvertPropertyPath(State, ((SkinnedMeshRenderer)Component).sharedMaterial, materialProperty);
 				}
 				else if(Component is STFMeshInstance)
 				{
-					return "material:0." + State.Context.ResourceExporters[typeof(MTF.Material)].ConvertPropertyPath(State, ((STFMeshInstance)Component).Materials[0], UnityProperty.Split('.')[1]);
+					return "material:0." + State.Context.ResourceExporters[typeof(MTF.Material)].ConvertPropertyPath(State, ((STFMeshInstance)Component).Materials[0], materialProperty);
 				}
 			}
 			throw new Exception("Unrecognized animation property: " + UnityProperty);
@@ -87,10 +90,10 @@ namespace STF.Serialisation
 			}
 			else if(STFProperty.StartsWith("material"))
 			{
-				var matIdx = STFProperty.Split(':')[1].Split('.')[0];
-				//return State.Context.ResourceImporters[MTFMaterialImporter._TYPE].ConvertPropertyPath(State, ((SkinnedMeshRenderer)Component).sharedMaterial, STFProperty.Split('.')[1]);
+				var matIdx = int.Parse(STFProperty.Split(':')[1].Split('.')[0]);
 
-				return "material." + STFProperty.Split('.')[1];
+				// TODO: handle material slot index
+				return "material." + State.Context.ResourceImporters[MTFMaterialImporter._TYPE].ConvertPropertyPath(State, ((STFMeshInstance)Component).Materials[matIdx], STFProperty.Substring(STFProperty.IndexOf('.') + 1));
 			}
 			throw new Exception("Unrecognized animation property: " + STFProperty);
 		}

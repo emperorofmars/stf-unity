@@ -208,7 +208,7 @@ namespace STF.Serialisation
 								{
 									var targetNode = Root.GetComponentsInChildren<ISTFNode>().FirstOrDefault(n => n.Id == nodeIds[nodeIds.Count() - 1]);
 									var translatedProperty = State.Context.NodeImporters[targetType].ConvertPropertyPath(property);
-									var path = Utils.getPath(Root.transform, ((Component)targetNode).transform);
+									var path = Utils.getPath(Root.transform, ((Component)targetNode).transform, true);
 									ret.SetCurve(path, unityType, translatedProperty, curve);
 								}
 								catch(Exception)
@@ -234,7 +234,7 @@ namespace STF.Serialisation
 									var targetComponent =  targetSTFComponent.OwnedUnityComponent != null ? targetSTFComponent.OwnedUnityComponent : targetSTFComponent;
 									var translatedProperty = State.Context.NodeComponentImporters[targetSTFComponent.Type].ConvertPropertyPath(State, targetSTFComponent, property);
 									
-									var path = Utils.getPath(Root.transform, ((Component)targetNode).transform);
+									var path = Utils.getPath(Root.transform, ((Component)targetNode).transform, true);
 									ret.SetCurve(path, targetComponent.GetType(), translatedProperty, curve);
 								}
 								catch(Exception)
