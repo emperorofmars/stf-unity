@@ -16,7 +16,7 @@ namespace MTF
 		public const string _SHADER_NAME = "Standard";
 		public string ShaderName {get => _SHADER_NAME;}
 
-		public string ConvertPropertyPath(string MTFProperty)
+		public string ConvertPropertyPath(string MTFProperty, UnityEngine.Material UnityMaterial)
 		{
 			throw new NotImplementedException();
 		}
@@ -60,7 +60,7 @@ namespace MTF
 	{
 		public string ShaderName {get => StandardConverter._SHADER_NAME;}
 
-		public string ConvertPropertyPath(string UnityProperty)
+		public string ConvertPropertyPath(string UnityProperty, UnityEngine.Material UnityMaterial)
 		{
 			throw new NotImplementedException();
 		}

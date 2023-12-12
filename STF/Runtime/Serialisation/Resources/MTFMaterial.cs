@@ -74,7 +74,7 @@ namespace STF.Serialisation
 		public string ConvertPropertyPath(ISTFExportState State, UnityEngine.Object Resource, string UnityProperty)
 		{
 			if(UnityProperty.StartsWith("MTF.")) return UnityProperty.Substring(UnityProperty.IndexOf('.') + 1);
-			else return MTF.ShaderConverterRegistry.MaterialParsers[((Material)Resource).shader.name].ConvertPropertyPath(UnityProperty);
+			else return MTF.ShaderConverterRegistry.MaterialParsers[((Material)Resource).shader.name].ConvertPropertyPath(UnityProperty, (Material)Resource);
 		}
 
 		public string SerializeToJson(ISTFExportState State, UnityEngine.Object Resource, UnityEngine.Object Context = null)
@@ -153,7 +153,7 @@ namespace STF.Serialisation
 		public string ConvertPropertyPath(ISTFImportState State, UnityEngine.Object Resource, string STFProperty)
 		{
 			var material = (MTF.Material)Resource;
-			if(material.ConvertedMaterial != null) return MTF.ShaderConverterRegistry.MaterialConverters[material.ConvertedMaterial.shader.name].ConvertPropertyPath(STFProperty);
+			if(material.ConvertedMaterial != null) return MTF.ShaderConverterRegistry.MaterialConverters[material.ConvertedMaterial.shader.name].ConvertPropertyPath(STFProperty, material.ConvertedMaterial);
 			else return "MTF." + STFProperty;
 		}
 

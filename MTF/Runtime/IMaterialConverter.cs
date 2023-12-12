@@ -18,7 +18,7 @@ namespace MTF
 	{
 		string ShaderName {get;}
 		
-		string ConvertPropertyPath(string MTFProperty);
+		string ConvertPropertyPath(string MTFProperty, UnityEngine.Material UnityMaterial);
 		UnityEngine.Material ConvertToUnityMaterial(IMaterialConvertState State, Material MTFMaterial, UnityEngine.Material ExistingUnityMaterial = null);
 	}
 
@@ -26,7 +26,7 @@ namespace MTF
 	{
 		string ShaderName {get;}
 		
-		string ConvertPropertyPath(string UnityProperty);
+		string ConvertPropertyPath(string UnityProperty, UnityEngine.Material UnityMaterial);
 		Material ParseFromUnityMaterial(IMaterialParseState State, UnityEngine.Material UnityMaterial, Material ExistingMTFMaterial = null);
 	}
 }

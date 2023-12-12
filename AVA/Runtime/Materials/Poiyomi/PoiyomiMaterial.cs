@@ -16,9 +16,9 @@ namespace MTF.Addons
 		public const string _SHADER_NAME = ".poiyomi/Poiyomi 8.1/Poiyomi Toon";
 		public string ShaderName {get => _SHADER_NAME;}
 
-		public string ConvertPropertyPath(string MTFProperty)
+		public string ConvertPropertyPath(string MTFProperty, UnityEngine.Material UnityMaterial)
 		{
-			if(MTFProperty == "decal:0") return "_DecalBlendAlpha";
+			if(MTFProperty == "decal:0") return "_DecalBlendAlpha"; // set this to be an animated property
 
 			return MTFProperty;
 		}
@@ -72,7 +72,7 @@ namespace MTF.Addons
 	{
 		public string ShaderName {get => PoiyomiConverter._SHADER_NAME;}
 
-		public string ConvertPropertyPath(string UnityProperty)
+		public string ConvertPropertyPath(string UnityProperty, UnityEngine.Material UnityMaterial)
 		{
 			if(UnityProperty == "_DecalBlendAlpha") return "decal:0";
 
