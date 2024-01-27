@@ -15,8 +15,12 @@ namespace STF.ApplicationConversion
 
 	public abstract class ASTFApplicationConverter : ISTFApplicationConverter
 	{
-		//protected abstract Dictionary<Type, ISTFSecondStageResourceProcessor> ResourceProcessors {get;}
-		public abstract Dictionary<Type, ISTFNodeComponentApplicationConverter> Converters {get;}
+		public abstract Dictionary<Type, ISTFNodeComponentApplicationConverter> NodeComponentConverters {get;}
+		public abstract Dictionary<Type, ISTFResourceApplicationConverter> ResourceConverters {get;}
+
+		// node converters !
+		// resource component converters ???
+		
 		public abstract List<Type> WhitelistedComponents {get;}
 		public abstract string TargetName {get;}
 		public abstract List<string> Targets {get;}
@@ -32,17 +36,36 @@ namespace STF.ApplicationConversion
 				ret = UnityEngine.Object.Instantiate(Asset.gameObject);
 				ret.name = Asset.gameObject.name + "_" + TargetName;
 
-				state = new STFApplicationConvertState(StorageContext, ret, TargetName, Targets, Converters.Keys.ToList());
+				state = new STFApplicationConvertState(StorageContext, ret, TargetName, Targets, NodeComponentConverters.Keys.ToList());
 
+				// gather and convert resources
 				foreach(var component in ret.GetComponentsInChildren<Component>())
 				{
-					if(state.RelMat.IsMatched(component) && Converters.ContainsKey(component.GetType()))
+					if(state.RelMat.IsMatched(component) && NodeComponentConverters.ContainsKey(component.GetType()))
 					{
-						Converters[component.GetType()].Convert(state, component);
+						NodeComponentConverters[component.GetType()].ConvertResources(state, component);
+					}
+				}
+				state.RunTasks();
+				foreach(var resource in state.RegisteredResources)
+				{
+					if(ResourceConverters.ContainsKey(resource.GetType()))
+					{
+						ResourceConverters[resource.GetType()].Convert(state, resource);
+					}
+				}
+
+				// convert node components
+				foreach(var component in ret.GetComponentsInChildren<Component>())
+				{
+					if(state.RelMat.IsMatched(component) && NodeComponentConverters.ContainsKey(component.GetType()))
+					{
+						NodeComponentConverters[component.GetType()].Convert(state, component);
 					}
 				}
 				state.RunTasks();
 
+				// cleanup
 				foreach(var component in ret.GetComponentsInChildren<Component>())
 				{
 					if(!WhitelistedComponents.Contains(component.GetType()))

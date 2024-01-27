@@ -26,6 +26,9 @@ namespace STF.ApplicationConversion
 		public List<Task> _Tasks = new List<Task>();
 		public List<UnityEngine.Object> _Trash = new List<UnityEngine.Object>();
 
+		public List<UnityEngine.Object> _RegisteredResources = new List<UnityEngine.Object>();
+		public List<UnityEngine.Object> RegisteredResources => _RegisteredResources;
+
 		public STFApplicationConvertState(ISTFApplicationConvertStorageContext StorageContext, GameObject Root, string Target, List<string> ValidTargets, List<Type> ConversibleTypes)
 		{
 			this.StorageContext = StorageContext;
@@ -42,6 +45,11 @@ namespace STF.ApplicationConversion
 		public void AddTrash(UnityEngine.Object Trash)
 		{
 			_Trash.Add(Trash);
+		}
+
+		public void RegisterResource(UnityEngine.Object Resource)
+		{
+			_RegisteredResources.Add(Resource);
 		}
 
 		public void SaveConvertedResource(UnityEngine.Object OriginalResource, UnityEngine.Object ConvertedResource, string FileExtension)

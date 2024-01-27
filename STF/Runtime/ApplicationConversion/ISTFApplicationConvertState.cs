@@ -11,6 +11,9 @@ namespace STF.ApplicationConversion
 		GameObject Root {get;}
 		string TargetApplication {get;}
 
+		List<UnityEngine.Object> RegisteredResources {get;}
+		void RegisterResource(UnityEngine.Object Resource);
+
 		void SaveGeneratedResource(UnityEngine.Object Resource, string fileExtension);
 		void SaveConvertedResource(UnityEngine.Object OriginalResource, UnityEngine.Object ConvertedResource, string fileExtension);
 

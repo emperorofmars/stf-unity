@@ -152,9 +152,10 @@ namespace STF.Serialisation
 
 		public string ConvertPropertyPath(ISTFImportState State, UnityEngine.Object Resource, string STFProperty)
 		{
-			var material = (MTF.Material)Resource;
+			/*var material = (MTF.Material)Resource;
 			if(material.ConvertedMaterial != null) return MTF.ShaderConverterRegistry.MaterialConverters[material.ConvertedMaterial.shader.name].ConvertPropertyPath(STFProperty, material.ConvertedMaterial);
-			else return "MTF." + STFProperty;
+			else return "MTF." + STFProperty;*/
+			return "MTF." + STFProperty;
 		}
 
 		public void ParseFromJson(ISTFImportState State, JObject Json, string Id)

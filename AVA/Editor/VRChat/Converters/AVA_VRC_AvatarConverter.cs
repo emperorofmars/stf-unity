@@ -11,6 +11,11 @@ namespace AVA.ApplicationConversion
 {
 	public class AVA_VRC_AvatarConverter : ISTFNodeComponentApplicationConverter
 	{
+		public void ConvertResources(ISTFApplicationConvertState State, Component Component)
+		{
+			// nothing to convert
+		}
+
 		public void Convert(ISTFApplicationConvertState State, Component Component)
 		{
 			var avaAvatar = (AVAAvatar)Component;

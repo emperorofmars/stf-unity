@@ -60,6 +60,11 @@ namespace STF.Serialisation
 
 	public class STFTwistConstraintConverter : ISTFNodeComponentApplicationConverter
 	{
+		public void ConvertResources(ISTFApplicationConvertState State, Component Component)
+		{
+			// nothing to convert
+		}
+
 		public void Convert(ISTFApplicationConvertState State, Component Component)
 		{
 			var stfComponent = (STFTwistConstraint)Component;

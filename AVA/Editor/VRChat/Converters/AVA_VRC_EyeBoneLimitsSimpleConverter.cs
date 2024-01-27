@@ -13,6 +13,11 @@ namespace AVA.ApplicationConversion
 {
 	public class AVA_VRC_EyeBoneLimitsSimpleConverter : ISTFNodeComponentApplicationConverter
 	{
+		public void ConvertResources(ISTFApplicationConvertState State, Component Component)
+		{
+			// nothing to convert
+		}
+		
 		public void Convert(ISTFApplicationConvertState State, Component Component)
 		{
 			var c = (AVAEyeBoneLimitsSimple)Component;

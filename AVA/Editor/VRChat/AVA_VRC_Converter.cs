@@ -18,10 +18,12 @@ namespace AVA.ApplicationConversion
 		public const string _TARGET_NAME = "vrchat_sdk3";
 		public override string TargetName => _TARGET_NAME;
 
-		public override Dictionary<Type, ISTFNodeComponentApplicationConverter> Converters => new Dictionary<Type, ISTFNodeComponentApplicationConverter>() {
+		public override Dictionary<Type, ISTFNodeComponentApplicationConverter> NodeComponentConverters => new Dictionary<Type, ISTFNodeComponentApplicationConverter>() {
 			{typeof(STFTwistConstraint), new STFTwistConstraintConverter()},
 			{typeof(AVAAvatar), new AVA_VRC_AvatarConverter()},
 			{typeof(AVAEyeBoneLimitsSimple), new AVA_VRC_EyeBoneLimitsSimpleConverter()},
+		};
+		public override Dictionary<Type, ISTFResourceApplicationConverter> ResourceConverters => new Dictionary<Type, ISTFResourceApplicationConverter>() {
 		};
 		public override List<Type> WhitelistedComponents => new List<Type> {
 			typeof(Transform), typeof(Animator), typeof(RotationConstraint), typeof(SkinnedMeshRenderer), typeof(VRCAvatarDescriptor), typeof(VRCPipelineManagerEditor), typeof(VRCPhysBone)

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json.Linq;
+using STF.ApplicationConversion;
 using UnityEngine;
 
 namespace STF.Serialisation
@@ -53,4 +54,26 @@ namespace STF.Serialisation
 			}
 		}
 	}
+
+	public class STFResourceHolderApplicationConverter : ISTFNodeComponentApplicationConverter
+	{
+		public void ConvertResources(ISTFApplicationConvertState State, Component Component)
+		{
+			foreach(var r in (Component as STFResourceHolder).Resources)
+			{
+				State.RegisterResource(r);
+			}
+		}
+
+		public void Convert(ISTFApplicationConvertState State, Component Component)
+		{
+			List<Object> newResources = new List<Object>();
+			foreach(var r in (Component as STFResourceHolder).Resources)
+			{
+				newResources.Add(State.ConvertedResources.ContainsKey(r) ? State.ConvertedResources[r] : r);
+			}
+			(Component as STFResourceHolder).Resources = newResources;
+		}
+	}
 }
+
