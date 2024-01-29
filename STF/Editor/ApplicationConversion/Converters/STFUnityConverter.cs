@@ -1,3 +1,6 @@
+
+#if UNITY_EDITOR
+
 using System;
 using System.Collections.Generic;
 using STF.Serialisation;
@@ -13,9 +16,11 @@ namespace STF.ApplicationConversion
 
 		public override Dictionary<Type, ISTFNodeComponentApplicationConverter> NodeComponentConverters => new Dictionary<Type, ISTFNodeComponentApplicationConverter>() {
 			{typeof(STFTwistConstraint), new STFTwistConstraintConverter()},
+			{typeof(STFResourceHolder), new STFResourceHolderApplicationConverter()},
 		};
 		public override Dictionary<Type, ISTFResourceApplicationConverter> ResourceConverters => new Dictionary<Type, ISTFResourceApplicationConverter>() {
-
+			{typeof(MTF.Material), new MTFMaterialApplicationConverter()},
+			{typeof(AnimationClip), new STFAnimationApplicationConverter()}
 		};
 
 		public override List<Type> WhitelistedComponents => new List<Type> {
@@ -29,3 +34,5 @@ namespace STF.ApplicationConversion
 		}
 	}
 }
+
+#endif

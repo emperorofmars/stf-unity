@@ -1,3 +1,5 @@
+#if UNITY_EDITOR
+
 using System.IO;
 using UnityEditor;
 using UnityEngine;
@@ -19,5 +21,16 @@ namespace STF.ApplicationConversion
 			if(!FileExtension.StartsWith(".")) FileExtension = "." + FileExtension;
 			AssetDatabase.CreateAsset(Resource, Path.Combine(TargetPath, Resource.name + FileExtension));
 		}
+
+		public Object DuplicateResource(Object Resource)
+		{
+			var path = AssetDatabase.GetAssetPath(Resource);
+
+			// TODO
+			
+			return null;
+		}
 	}
 }
+
+#endif

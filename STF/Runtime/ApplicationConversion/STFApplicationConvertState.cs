@@ -52,6 +52,7 @@ namespace STF.ApplicationConversion
 
 		public void RegisterResource(UnityEngine.Object Resource, UnityEngine.Object Context = null)
 		{
+			Resource = StorageContext.DuplicateResource(Resource);
 			_RegisteredResources.Add(Resource);
 			if(Context != null) _RegisteredResourcesContext.Add(Resource, Context);
 		}

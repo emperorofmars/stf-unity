@@ -15,7 +15,6 @@ namespace STF.ApplicationConversion
 		List<UnityEngine.Object> RegisteredResources {get;}
 		Dictionary<UnityEngine.Object, UnityEngine.Object> RegisteredResourcesContext {get;}
 		void RegisterResource(UnityEngine.Object Resource, UnityEngine.Object Context = null);
-
 		void SaveGeneratedResource(UnityEngine.Object Resource, string fileExtension);
 		void SaveConvertedResource(UnityEngine.Object OriginalResource, UnityEngine.Object ConvertedResource, string fileExtension);
 
@@ -27,6 +26,7 @@ namespace STF.ApplicationConversion
 	{
 		string TargetPath {get;}
 
+		UnityEngine.Object DuplicateResource(UnityEngine.Object Resource);
 		void SaveGeneratedResource(UnityEngine.Object Resource, string fileExtension);
 	}
 }

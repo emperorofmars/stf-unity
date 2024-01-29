@@ -22,7 +22,7 @@ namespace AVA.ApplicationConversion
 			{typeof(STFTwistConstraint), new STFTwistConstraintConverter()},
 			{typeof(AVAAvatar), new AVA_VRC_AvatarConverter()},
 			{typeof(AVAEyeBoneLimitsSimple), new AVA_VRC_EyeBoneLimitsSimpleConverter()},
-			{typeof(STFResourceHolder), new STFResourceHolderApplicationConverter()},
+			{typeof(STFResourceHolder), new STFResourceHolderApplicationConverter()}, // TODO Remove this one, only for temporary testing
 		};
 		public override Dictionary<Type, ISTFResourceApplicationConverter> ResourceConverters => new Dictionary<Type, ISTFResourceApplicationConverter>() {
 			{typeof(MTF.Material), new MTFMaterialApplicationConverter()},
