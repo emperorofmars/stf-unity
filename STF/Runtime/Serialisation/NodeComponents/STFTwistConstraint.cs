@@ -65,6 +65,11 @@ namespace STF.Serialisation
 			// nothing to convert
 		}
 
+		public string ConvertPropertyPath(ISTFApplicationConvertState State, Component Resource, string STFProperty)
+		{
+			throw new NotImplementedException();
+		}
+
 		public void Convert(ISTFApplicationConvertState State, Component Component)
 		{
 			var stfComponent = (STFTwistConstraint)Component;

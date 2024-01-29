@@ -4,6 +4,7 @@ namespace STF.ApplicationConversion
 {
 	public interface ISTFResourceApplicationConverter
 	{
-		void Convert(ISTFApplicationConvertState State, UnityEngine.Object Component);
+		string ConvertPropertyPath(ISTFApplicationConvertState State, UnityEngine.Object Resource, string STFProperty);
+		void Convert(ISTFApplicationConvertState State, UnityEngine.Object Resource);
 	}
 }

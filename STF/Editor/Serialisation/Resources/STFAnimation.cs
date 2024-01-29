@@ -8,6 +8,8 @@ using System.Linq;
 using static STF.Serialisation.STFConstants;
 using System.Collections.Generic;
 using STF.Util;
+using STF.ApplicationConversion;
+using BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines;
 
 namespace STF.Serialisation
 {
@@ -307,6 +309,41 @@ namespace STF.Serialisation
 		{
 			STFRegistry.RegisterResourceImporter(STFAnimation._TYPE, new STFAnimationImporter());
 			STFRegistry.RegisterResourceExporter(typeof(AnimationClip), new STFAnimationExporter());
+		}
+	}
+
+	public class STFAnimationApplicationConverter : ISTFResourceApplicationConverter
+	{
+		public string ConvertPropertyPath(ISTFApplicationConvertState State, UnityEngine.Object Resource, string STFProperty)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void Convert(ISTFApplicationConvertState State, UnityEngine.Object Resource)
+		{
+			var clip = Resource as AnimationClip;
+			State.AddTask(new Task(() => {
+				convertCurves(State, AnimationUtility.GetCurveBindings(clip), clip, (GameObject)State.RegisteredResourcesContext[Resource]);
+				convertCurves(State, AnimationUtility.GetObjectReferenceCurveBindings(clip), clip, (GameObject)State.RegisteredResourcesContext[Resource]);
+			}));
+
+		}
+
+		protected void convertCurves(ISTFApplicationConvertState State, EditorCurveBinding[] Bindings, AnimationClip Clip, GameObject Root)
+		{
+			foreach(var c in Bindings)
+			{
+				if(c.type == typeof(GameObject) || c.type == typeof(Transform))
+				{
+					var curveTarget = AnimationUtility.GetAnimatedObject(Root, c);
+					Debug.Log("curveTarget: " + curveTarget);
+				}
+				else if(c.type.IsSubclassOf(typeof(Component)))
+				{
+					var curveTarget = (Component)AnimationUtility.GetAnimatedObject(Root, c);
+					Debug.Log("curveTarget: " + curveTarget);
+				}
+			}
 		}
 	}
 }

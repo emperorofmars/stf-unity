@@ -42,6 +42,7 @@ namespace STF.ApplicationConversion
 					{
 						if(targets.Find(t => t == componentTarget) != null)
 						{
+							Debug.Log(component);
 							match = true;
 							break;
 						}

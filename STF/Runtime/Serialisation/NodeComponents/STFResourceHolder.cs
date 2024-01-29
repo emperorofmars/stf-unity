@@ -61,8 +61,13 @@ namespace STF.Serialisation
 		{
 			foreach(var r in (Component as STFResourceHolder).Resources)
 			{
-				State.RegisterResource(r);
+				State.RegisterResource(r, Component.gameObject);
 			}
+		}
+
+		public string ConvertPropertyPath(ISTFApplicationConvertState State, Component Resource, string STFProperty)
+		{
+			throw new System.NotImplementedException();
 		}
 
 		public void Convert(ISTFApplicationConvertState State, Component Component)
@@ -70,6 +75,7 @@ namespace STF.Serialisation
 			List<Object> newResources = new List<Object>();
 			foreach(var r in (Component as STFResourceHolder).Resources)
 			{
+				Debug.Log(r);
 				newResources.Add(State.ConvertedResources.ContainsKey(r) ? State.ConvertedResources[r] : r);
 			}
 			(Component as STFResourceHolder).Resources = newResources;

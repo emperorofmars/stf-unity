@@ -22,8 +22,11 @@ namespace AVA.ApplicationConversion
 			{typeof(STFTwistConstraint), new STFTwistConstraintConverter()},
 			{typeof(AVAAvatar), new AVA_VRC_AvatarConverter()},
 			{typeof(AVAEyeBoneLimitsSimple), new AVA_VRC_EyeBoneLimitsSimpleConverter()},
+			{typeof(STFResourceHolder), new STFResourceHolderApplicationConverter()},
 		};
 		public override Dictionary<Type, ISTFResourceApplicationConverter> ResourceConverters => new Dictionary<Type, ISTFResourceApplicationConverter>() {
+			{typeof(MTF.Material), new MTFMaterialApplicationConverter()},
+			{typeof(AnimationClip), new STFAnimationApplicationConverter()}
 		};
 		public override List<Type> WhitelistedComponents => new List<Type> {
 			typeof(Transform), typeof(Animator), typeof(RotationConstraint), typeof(SkinnedMeshRenderer), typeof(VRCAvatarDescriptor), typeof(VRCPipelineManagerEditor), typeof(VRCPhysBone)

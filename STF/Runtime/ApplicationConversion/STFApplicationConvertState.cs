@@ -13,7 +13,7 @@ namespace STF.ApplicationConversion
 		public STFRelationshipMatrix _RelMat;
 		public STFRelationshipMatrix RelMat => _RelMat;
 
-		public Dictionary<UnityEngine.Object, UnityEngine.Object> _ConvertedResources;
+		public Dictionary<UnityEngine.Object, UnityEngine.Object> _ConvertedResources = new Dictionary<UnityEngine.Object, UnityEngine.Object>();
 		public Dictionary<UnityEngine.Object, UnityEngine.Object> ConvertedResources => _ConvertedResources;
 
 		public GameObject _Root;
@@ -28,6 +28,9 @@ namespace STF.ApplicationConversion
 
 		public List<UnityEngine.Object> _RegisteredResources = new List<UnityEngine.Object>();
 		public List<UnityEngine.Object> RegisteredResources => _RegisteredResources;
+
+		public Dictionary<UnityEngine.Object, UnityEngine.Object> _RegisteredResourcesContext = new Dictionary<UnityEngine.Object, UnityEngine.Object>();
+		public Dictionary<UnityEngine.Object, UnityEngine.Object> RegisteredResourcesContext => _RegisteredResourcesContext;
 
 		public STFApplicationConvertState(ISTFApplicationConvertStorageContext StorageContext, GameObject Root, string Target, List<string> ValidTargets, List<Type> ConversibleTypes)
 		{
@@ -47,9 +50,10 @@ namespace STF.ApplicationConversion
 			_Trash.Add(Trash);
 		}
 
-		public void RegisterResource(UnityEngine.Object Resource)
+		public void RegisterResource(UnityEngine.Object Resource, UnityEngine.Object Context = null)
 		{
 			_RegisteredResources.Add(Resource);
+			if(Context != null) _RegisteredResourcesContext.Add(Resource, Context);
 		}
 
 		public void SaveConvertedResource(UnityEngine.Object OriginalResource, UnityEngine.Object ConvertedResource, string FileExtension)

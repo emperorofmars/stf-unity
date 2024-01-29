@@ -17,6 +17,11 @@ namespace AVA.ApplicationConversion
 		{
 			// nothing to convert
 		}
+
+		public string ConvertPropertyPath(ISTFApplicationConvertState State, Component Resource, string STFProperty)
+		{
+			throw new System.NotImplementedException();
+		}
 		
 		public void Convert(ISTFApplicationConvertState State, Component Component)
 		{

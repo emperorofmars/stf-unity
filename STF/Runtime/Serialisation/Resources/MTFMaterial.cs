@@ -4,6 +4,7 @@ using Newtonsoft.Json.Linq;
 using UnityEngine;
 using System.Linq;
 using System.Collections.Generic;
+using STF.ApplicationConversion;
 
 namespace STF.Serialisation
 {
@@ -214,6 +215,22 @@ namespace STF.Serialisation
 			mat.ConvertedMaterial = unityMaterial;
 			State.SaveResourceBelongingToId(unityMaterial, "Asset", Id);
 			return;
+		}
+	}
+
+	// Application Resource Converter
+	public class MTFMaterialApplicationConverter : ISTFResourceApplicationConverter
+	{
+		public string ConvertPropertyPath(ISTFApplicationConvertState State, UnityEngine.Object Resource, string STFProperty)
+		{
+			var material = (MTF.Material)Resource;
+			if(material.ConvertedMaterial != null) return MTF.ShaderConverterRegistry.MaterialConverters[material.ConvertedMaterial.shader.name].ConvertPropertyPath(STFProperty, material.ConvertedMaterial);
+			// TODO: else generate material and then convert the property
+			else return "MTF." + STFProperty;
+		}
+
+		public void Convert(ISTFApplicationConvertState State, UnityEngine.Object Resource)
+		{
 		}
 	}
 }

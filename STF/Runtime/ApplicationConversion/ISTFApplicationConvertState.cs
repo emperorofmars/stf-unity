@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Runtime.Remoting.Contexts;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -12,7 +13,8 @@ namespace STF.ApplicationConversion
 		string TargetApplication {get;}
 
 		List<UnityEngine.Object> RegisteredResources {get;}
-		void RegisterResource(UnityEngine.Object Resource);
+		Dictionary<UnityEngine.Object, UnityEngine.Object> RegisteredResourcesContext {get;}
+		void RegisterResource(UnityEngine.Object Resource, UnityEngine.Object Context = null);
 
 		void SaveGeneratedResource(UnityEngine.Object Resource, string fileExtension);
 		void SaveConvertedResource(UnityEngine.Object OriginalResource, UnityEngine.Object ConvertedResource, string fileExtension);

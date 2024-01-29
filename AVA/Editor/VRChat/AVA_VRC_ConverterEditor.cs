@@ -69,8 +69,6 @@ namespace AVA.ApplicationConversion
 					AssetDatabase.Refresh();
 				}
 			}
-			
-			Debug.Log(AssetDatabase.GetAssetPath(Asset));
 
 			GUILayout.BeginHorizontal();
 			GUILayout.Label("Output Folder:", GUILayout.ExpandWidth(false));

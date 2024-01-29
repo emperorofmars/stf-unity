@@ -19,6 +19,8 @@ namespace AVA.Serialisation
 			var c = (AVAAvatar)target;
 
 			EditorGUI.BeginChangeCheck();
+			
+			EditorGUILayout.PropertyField(serializedObject.FindProperty("Id"));
 
 			var humanoidDefinition = c.TryGetHumanoidDefinition();
 			if(humanoidDefinition == null)

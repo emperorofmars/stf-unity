@@ -18,7 +18,7 @@ namespace STF.ApplicationConversion
 		public abstract Dictionary<Type, ISTFNodeComponentApplicationConverter> NodeComponentConverters {get;}
 		public abstract Dictionary<Type, ISTFResourceApplicationConverter> ResourceConverters {get;}
 
-		// node converters !
+		// node converters ?
 		// resource component converters ???
 		
 		public abstract List<Type> WhitelistedComponents {get;}
@@ -47,6 +47,7 @@ namespace STF.ApplicationConversion
 					}
 				}
 				state.RunTasks();
+
 				foreach(var resource in state.RegisteredResources)
 				{
 					if(ResourceConverters.ContainsKey(resource.GetType()))
@@ -54,6 +55,7 @@ namespace STF.ApplicationConversion
 						ResourceConverters[resource.GetType()].Convert(state, resource);
 					}
 				}
+				state.RunTasks();
 
 				// convert node components
 				foreach(var component in ret.GetComponentsInChildren<Component>())

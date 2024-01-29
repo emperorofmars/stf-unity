@@ -51,6 +51,11 @@ namespace AVA.Serialisation
 			}
 
 			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.PrefixLabel("Extends");
+			c.Extends[0] = EditorGUILayout.TextField(c.Extends[0]);
+			EditorGUILayout.EndHorizontal();
+
+			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.PrefixLabel("Limit Up");
 			c.up = EditorGUILayout.FloatField(c.up);
 			EditorGUILayout.EndHorizontal();
