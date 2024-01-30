@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json.Linq;
+using STF.ApplicationConversion;
 using UnityEngine;
 
 namespace STF.Serialisation
@@ -163,6 +164,34 @@ namespace STF.Serialisation
 			}
 			c.sharedMaterials = materials;
 			c.localBounds = c.sharedMesh.bounds;
+		}
+	}
+
+	public class STFMeshInstanceApplicationConverter : ISTFNodeComponentApplicationConverter
+	{
+		public void Convert(ISTFApplicationConvertState State, Component Component)
+		{
+		}
+
+		public string ConvertPropertyPath(ISTFApplicationConvertState State, Component Component, string STFProperty)
+		{
+			// Significantly unfuck this	
+			if(STFProperty.StartsWith("material"))
+			{
+				Debug.Log("MTF AAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+				var matIdx = int.Parse(STFProperty.Split(':')[1].Split('.')[0]);
+				var meshInstance = Component.gameObject.GetComponent<STFMeshInstance>();
+				return State.ConverterContext.Resource[typeof(MTF.Material)].ConvertPropertyPath(State, meshInstance.Materials[matIdx], STFProperty.Substring(STFProperty.IndexOf('.') + 1));
+			}
+			else
+			{
+				return STFProperty;
+			}
+		}
+
+		public void ConvertResources(ISTFApplicationConvertState State, Component Component)
+		{
+			// Maybe add the material ??
 		}
 	}
 }

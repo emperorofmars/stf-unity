@@ -223,10 +223,16 @@ namespace STF.Serialisation
 	{
 		public string ConvertPropertyPath(ISTFApplicationConvertState State, UnityEngine.Object Resource, string STFProperty)
 		{
+			Debug.Log("STFProperty: " + STFProperty);
+
 			var material = (MTF.Material)Resource;
-			if(material.ConvertedMaterial != null) return MTF.ShaderConverterRegistry.MaterialConverters[material.ConvertedMaterial.shader.name].ConvertPropertyPath(STFProperty, material.ConvertedMaterial);
+			if(STFProperty.StartsWith("MTF") && material.ConvertedMaterial != null)
+			{
+				STFProperty = STFProperty.Substring(STFProperty.IndexOf('.') + 1);
+				return MTF.ShaderConverterRegistry.MaterialConverters[material.ConvertedMaterial.shader.name].ConvertPropertyPath(STFProperty, material.ConvertedMaterial);
+			}
 			// TODO: else generate material and then convert the property
-			else return "MTF." + STFProperty;
+			else return STFProperty;
 		}
 
 		public void Convert(ISTFApplicationConvertState State, UnityEngine.Object Resource)

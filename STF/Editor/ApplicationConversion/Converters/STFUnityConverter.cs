@@ -13,14 +13,16 @@ namespace STF.ApplicationConversion
 	{
 		public const string _TARGET_NAME = "unity3d";
 		public override string TargetName => _TARGET_NAME;
-
-		public override Dictionary<Type, ISTFNodeComponentApplicationConverter> NodeComponentConverters => new Dictionary<Type, ISTFNodeComponentApplicationConverter>() {
-			{typeof(STFTwistConstraint), new STFTwistConstraintConverter()},
-			{typeof(STFResourceHolder), new STFResourceHolderApplicationConverter()},
-		};
-		public override Dictionary<Type, ISTFResourceApplicationConverter> ResourceConverters => new Dictionary<Type, ISTFResourceApplicationConverter>() {
-			{typeof(MTF.Material), new MTFMaterialApplicationConverter()},
-			{typeof(AnimationClip), new STFAnimationApplicationConverter()}
+		public override STFApplicationConverterContext ConverterContext => new STFApplicationConverterContext {
+			NodeComponent = new Dictionary<Type, ISTFNodeComponentApplicationConverter>() {
+				{typeof(STFTwistConstraint), new STFTwistConstraintConverter()},
+				{typeof(STFResourceHolder), new STFResourceHolderApplicationConverter()},
+				{typeof(SkinnedMeshRenderer), new STFMeshInstanceApplicationConverter()},
+			},
+			Resource = new Dictionary<Type, ISTFResourceApplicationConverter>() {
+				{typeof(MTF.Material), new MTFMaterialApplicationConverter()},
+				{typeof(AnimationClip), new STFAnimationApplicationConverter()}
+			}
 		};
 
 		public override List<Type> WhitelistedComponents => new List<Type> {

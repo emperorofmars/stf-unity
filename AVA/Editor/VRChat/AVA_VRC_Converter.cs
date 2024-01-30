@@ -17,16 +17,18 @@ namespace AVA.ApplicationConversion
 	{
 		public const string _TARGET_NAME = "vrchat_sdk3";
 		public override string TargetName => _TARGET_NAME;
-
-		public override Dictionary<Type, ISTFNodeComponentApplicationConverter> NodeComponentConverters => new Dictionary<Type, ISTFNodeComponentApplicationConverter>() {
+		public override STFApplicationConverterContext ConverterContext => new STFApplicationConverterContext {
+			NodeComponent = new Dictionary<Type, ISTFNodeComponentApplicationConverter>() {
 			{typeof(STFTwistConstraint), new STFTwistConstraintConverter()},
 			{typeof(AVAAvatar), new AVA_VRC_AvatarConverter()},
 			{typeof(AVAEyeBoneLimitsSimple), new AVA_VRC_EyeBoneLimitsSimpleConverter()},
+			{typeof(SkinnedMeshRenderer), new STFMeshInstanceApplicationConverter()},
 			{typeof(STFResourceHolder), new STFResourceHolderApplicationConverter()}, // TODO Remove this one, only for temporary testing
-		};
-		public override Dictionary<Type, ISTFResourceApplicationConverter> ResourceConverters => new Dictionary<Type, ISTFResourceApplicationConverter>() {
-			{typeof(MTF.Material), new MTFMaterialApplicationConverter()},
-			{typeof(AnimationClip), new STFAnimationApplicationConverter()}
+			},
+			Resource = new Dictionary<Type, ISTFResourceApplicationConverter>() {
+				{typeof(MTF.Material), new MTFMaterialApplicationConverter()},
+				{typeof(AnimationClip), new STFAnimationApplicationConverter()}
+			}
 		};
 		public override List<Type> WhitelistedComponents => new List<Type> {
 			typeof(Transform), typeof(Animator), typeof(RotationConstraint), typeof(SkinnedMeshRenderer), typeof(VRCAvatarDescriptor), typeof(VRCPipelineManagerEditor), typeof(VRCPhysBone)

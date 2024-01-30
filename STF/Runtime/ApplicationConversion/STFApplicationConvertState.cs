@@ -13,6 +13,10 @@ namespace STF.ApplicationConversion
 		public STFRelationshipMatrix _RelMat;
 		public STFRelationshipMatrix RelMat => _RelMat;
 
+		
+		public STFApplicationConverterContext _ConverterContext;
+		public STFApplicationConverterContext ConverterContext => _ConverterContext;
+
 		public Dictionary<UnityEngine.Object, UnityEngine.Object> _ConvertedResources = new Dictionary<UnityEngine.Object, UnityEngine.Object>();
 		public Dictionary<UnityEngine.Object, UnityEngine.Object> ConvertedResources => _ConvertedResources;
 
@@ -32,9 +36,10 @@ namespace STF.ApplicationConversion
 		public Dictionary<UnityEngine.Object, UnityEngine.Object> _RegisteredResourcesContext = new Dictionary<UnityEngine.Object, UnityEngine.Object>();
 		public Dictionary<UnityEngine.Object, UnityEngine.Object> RegisteredResourcesContext => _RegisteredResourcesContext;
 
-		public STFApplicationConvertState(ISTFApplicationConvertStorageContext StorageContext, GameObject Root, string Target, List<string> ValidTargets, List<Type> ConversibleTypes)
+		public STFApplicationConvertState(ISTFApplicationConvertStorageContext StorageContext, STFApplicationConverterContext ConverterContext, GameObject Root, string Target, List<string> ValidTargets, List<Type> ConversibleTypes)
 		{
 			this.StorageContext = StorageContext;
+			_ConverterContext = ConverterContext;
 			_Root = Root;
 			_TargetApplication = Target;
 			_RelMat = new STFRelationshipMatrix(Root, ValidTargets, ConversibleTypes);

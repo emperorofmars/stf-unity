@@ -321,28 +321,33 @@ namespace STF.Serialisation
 
 		public void Convert(ISTFApplicationConvertState State, UnityEngine.Object Resource)
 		{
-			State.SaveGeneratedResource(Resource, "anim");
 			var clip = Resource as AnimationClip;
 			State.AddTask(new Task(() => {
 				convertCurves(State, AnimationUtility.GetCurveBindings(clip), clip, (GameObject)State.RegisteredResourcesContext[Resource]);
 				convertCurves(State, AnimationUtility.GetObjectReferenceCurveBindings(clip), clip, (GameObject)State.RegisteredResourcesContext[Resource]);
+				AssetDatabase.SaveAssets();
+				AssetDatabase.Refresh();
 			}));
-
 		}
 
 		protected void convertCurves(ISTFApplicationConvertState State, EditorCurveBinding[] Bindings, AnimationClip Clip, GameObject Root)
 		{
-			foreach(var c in Bindings)
+			for(int i = 0; i < Bindings.Count(); i++)
 			{
-				if(c.type == typeof(GameObject) || c.type == typeof(Transform))
+				if(Bindings[i].type == typeof(GameObject) || Bindings[i].type == typeof(Transform))
 				{
-					var curveTarget = AnimationUtility.GetAnimatedObject(Root, c);
-					Debug.Log("curveTarget: " + curveTarget);
+					var curveTarget = AnimationUtility.GetAnimatedObject(Root, Bindings[i]);
 				}
-				else if(c.type.IsSubclassOf(typeof(Component)))
+				else if(Bindings[i].type.IsSubclassOf(typeof(Component)))
 				{
-					var curveTarget = (Component)AnimationUtility.GetAnimatedObject(Root, c);
-					Debug.Log("curveTarget: " + curveTarget);
+					var curveTarget = (Component)AnimationUtility.GetAnimatedObject(Root, Bindings[i]);
+
+					if(State.ConverterContext.NodeComponent.ContainsKey(curveTarget.GetType()))
+					{
+						var translated = State.ConverterContext.NodeComponent[curveTarget.GetType()].ConvertPropertyPath(State, curveTarget, Bindings[i].propertyName);
+						Bindings[i].propertyName = translated;
+						Debug.Log(Bindings[i]);
+					}
 				}
 			}
 		}

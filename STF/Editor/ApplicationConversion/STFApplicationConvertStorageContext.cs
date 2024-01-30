@@ -25,10 +25,15 @@ namespace STF.ApplicationConversion
 		public Object DuplicateResource(Object Resource)
 		{
 			var path = AssetDatabase.GetAssetPath(Resource);
+			var resourceTargetPath = Path.Combine(_TargetPath, Path.GetFileNameWithoutExtension(path) + "_Converted" + Path.GetExtension(path));
+			File.WriteAllBytes(resourceTargetPath, File.ReadAllBytes(path));
+			AssetDatabase.Refresh();
+			return AssetDatabase.LoadAssetAtPath(resourceTargetPath, Resource.GetType());
+		}
 
-			// TODO
-			
-			return null;
+		public void SavePrefab(GameObject Go, string Name = null)
+		{
+			PrefabUtility.SaveAsPrefabAssetAndConnect(Go, Path.Combine(TargetPath, Name != null && Name.Length > 0 ? Name : Go.name) + ".prefab", InteractionMode.AutomatedAction);
 		}
 	}
 }
