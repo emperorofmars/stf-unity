@@ -126,7 +126,7 @@ namespace STF.Serialisation
 					var curve = AnimationUtility.GetEditorCurve(clip, c);
 					foreach(var keyframe in curve.keys)
 					{
-						// TODO: also set ease in/out vectors and such, dont be like gltf
+						// TODO: also set ease in/out vectors and such, don't be like gltf
 						keysJson.Add(new JObject() {{"time", keyframe.time}, {"value", keyframe.value}});
 					}
 				}
@@ -135,6 +135,7 @@ namespace STF.Serialisation
 					var keyframes = AnimationUtility.GetObjectReferenceCurve(clip, c);
 					foreach(var keyframe in keyframes)
 					{
+						// can this even be a thing
 						if(keyframe.value.GetType().IsSubclassOf(typeof(ISTFResourceComponent)))
 						{
 							var resourceComponentId = State.ResourceComponents[(ISTFResourceComponent)keyframe.value].Id;
@@ -255,6 +256,7 @@ namespace STF.Serialisation
 						{
 							throw new Exception("Unhandled Animation Property");
 						}
+						// TODO actually implement object reference curves
 						/*else
 						{
 							var keyframes = new ObjectReferenceKeyframe[track["keys"].Count()];
@@ -276,7 +278,7 @@ namespace STF.Serialisation
 								newBinding.type = targetType;
 								AnimationUtility.SetObjectReferenceCurve(ret, newBinding, keyframes);
 							}
-							else if(targetComponent != null)
+							else if(targetNodeComponent != null)
 							{
 								if(!state.GetContext().AnimationTranslators.ContainsKey(targetComponent.GetType()))
 									throw new Exception("Property can't be translated: " + property);
@@ -324,7 +326,7 @@ namespace STF.Serialisation
 			var clip = Resource as AnimationClip;
 			State.AddTask(new Task(() => {
 				convertCurves(State, AnimationUtility.GetCurveBindings(clip), clip, (GameObject)State.RegisteredResourcesContext[Resource]);
-				//convertCurves(State, AnimationUtility.GetObjectReferenceCurveBindings(clip), clip, (GameObject)State.RegisteredResourcesContext[Resource]);
+				convertCurves(State, AnimationUtility.GetObjectReferenceCurveBindings(clip), clip, (GameObject)State.RegisteredResourcesContext[Resource]);
 			}));
 		}
 
@@ -349,8 +351,33 @@ namespace STF.Serialisation
 						Debug.Log(Bindings[i].propertyName);
 					}
 				}
-				// check for binding type
 				AnimationUtility.SetEditorCurve(Clip, Bindings[i], editorCurve);
+			}
+		}
+
+		protected void convertRefCurves(ISTFApplicationConvertState State, EditorCurveBinding[] Bindings, AnimationClip Clip, GameObject Root)
+		{
+			for(int i = 0; i < Bindings.Count(); i++)
+			{
+				var editorCurve = AnimationUtility.GetObjectReferenceCurve(Clip, Bindings[i]);
+				AnimationUtility.SetObjectReferenceCurve(Clip, Bindings[i], null);
+				// TODO actually implement object reference curves
+				/*if(Bindings[i].type == typeof(GameObject) || Bindings[i].type == typeof(Transform))
+				{
+					var curveTarget = AnimationUtility.GetAnimatedObject(Root, Bindings[i]);
+				}
+				else if(Bindings[i].type.IsSubclassOf(typeof(Component)))
+				{
+					var curveTarget = (Component)AnimationUtility.GetAnimatedObject(Root, Bindings[i]);
+
+					if(State.ConverterContext.NodeComponent.ContainsKey(curveTarget.GetType()))
+					{
+						var translated = State.ConverterContext.NodeComponent[curveTarget.GetType()].ConvertPropertyPath(State, curveTarget, Bindings[i].propertyName);
+						Bindings[i].propertyName = translated;
+						Debug.Log(Bindings[i].propertyName);
+					}
+				}*/
+				AnimationUtility.SetObjectReferenceCurve(Clip, Bindings[i], editorCurve);
 			}
 		}
 	}
