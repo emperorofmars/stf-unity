@@ -29,6 +29,18 @@ namespace STF.Serialisation
 			};
 			if(Asset.Preview) ret.Add("preview", SerdeUtil.SerializeResource(State, Asset.Preview));
 
+			for(int i = 0; i < Asset.gameObject.transform.childCount; i++)
+			{
+				var child = Asset.gameObject.transform.GetChild(i);
+				var childNodeInfo = child.GetComponents<ISTFNode>();
+				foreach(var nodeInfo in childNodeInfo)
+				{
+					if(nodeInfo.Type != STFPatchNode._TYPE/* || nodeInfo.Type != STFAppendageNode._TYPE*/)
+					{
+						throw new Exception("Addon Asset can only containt root nodes of the types '" + STFPatchNode._TYPE + "'"/* or '" + STFAppendageNode._TYPE + "' !"*/);
+					}
+				}
+			}
 			ret.Add("root_node", SerdeUtil.SerializeNode(State, Asset.gameObject));
 
 			return State.AddAsset(Asset, ret, Asset.Id);

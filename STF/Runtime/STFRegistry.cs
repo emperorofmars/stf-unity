@@ -54,25 +54,27 @@ namespace STF.Serialisation
 	{
 		public static readonly Dictionary<string, ISTFAssetExporter> DefaultAssetExporters = new Dictionary<string, ISTFAssetExporter>() {
 			{STFAsset._TYPE, new STFAssetExporter()},
-			//{STFAddonAssetExporter._TYPE, new STFAddonAssetExporter()}
+			{STFAddonAsset._TYPE, new STFAddonAssetExporter()}
 		};
 		public static readonly Dictionary<string, ISTFAssetImporter> DefaultAssetImporters = new Dictionary<string, ISTFAssetImporter>() {
 			{STFAsset._TYPE, new STFAssetImporter()},
-			//{STFAddonAssetImporter._TYPE, new STFAddonAssetImporter()}
+			{STFAddonAsset._TYPE, new STFAddonAssetImporter()}
 		};
 		public static readonly Dictionary<string, ISTFNodeImporter> DefaultNodeImporters = new Dictionary<string, ISTFNodeImporter>() {
 			{STFNode._TYPE, new STFNodeImporter()},
 			{STFArmatureInstanceNode._TYPE, new STFArmatureInstanceImporter()},
 			{STFBoneNode._TYPE, new DontInvokeNodeImporter()},
 			{STFBoneInstanceNode._TYPE, new DontInvokeNodeImporter()},
+			{STFPatchNode._TYPE, new STFPatchNodeImporter()},
 			//{STFAppendageNodeImporter._TYPE, new STFAppendageNodeImporter()},
-			//{STFPatchNodeImporter._TYPE, new STFPatchNodeImporter()}
 		};
 		public static readonly Dictionary<string, ISTFNodeExporter> DefaultNodeExporters = new Dictionary<string, ISTFNodeExporter>() {
 			{STFNode._TYPE, new STFNodeExporter()},
 			{STFArmatureInstanceNode._TYPE, new STFArmatureInstanceExporter()},
 			{STFBoneNode._TYPE, new DontInvokeNodeExporter()},
 			{STFBoneInstanceNode._TYPE, new DontInvokeNodeExporter()},
+			{STFPatchNode._TYPE, new STFPatchNodeExporter()},
+			// appendage node
 		};
 		public static readonly Dictionary<string, ISTFNodeComponentImporter> DefaultNodeComponentImporters = new Dictionary<string, ISTFNodeComponentImporter>() {
 			{STFMeshInstance._TYPE, new STFMeshInstanceImporter()},
