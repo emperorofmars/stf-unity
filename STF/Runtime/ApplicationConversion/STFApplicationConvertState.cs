@@ -57,10 +57,15 @@ namespace STF.ApplicationConversion
 
 		public void RegisterResource(UnityEngine.Object Resource, UnityEngine.Object Context = null)
 		{
-			var DuplicatedResource = StorageContext.DuplicateResource(Resource);
-			_RegisteredResources.Add(DuplicatedResource);
-			_ConvertedResources.Add(Resource, DuplicatedResource);
-			if(Context != null) _RegisteredResourcesContext.Add(DuplicatedResource, Context);
+			_RegisteredResources.Add(Resource);
+			if(Context != null) _RegisteredResourcesContext.Add(Resource, Context);
+		}
+
+		public UnityEngine.Object DuplicateResource(UnityEngine.Object Resource)
+		{
+			var ret = StorageContext.DuplicateResource(Resource);
+			_ConvertedResources.Add(Resource, ret);
+			return ret;
 		}
 
 		public void SaveConvertedResource(UnityEngine.Object OriginalResource, UnityEngine.Object ConvertedResource, string FileExtension)

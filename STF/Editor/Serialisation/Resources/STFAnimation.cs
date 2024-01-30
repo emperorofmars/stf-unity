@@ -323,7 +323,7 @@ namespace STF.Serialisation
 
 		public void Convert(ISTFApplicationConvertState State, UnityEngine.Object Resource)
 		{
-			var clip = Resource as AnimationClip;
+			var clip = State.DuplicateResource(Resource) as AnimationClip;
 			State.AddTask(new Task(() => {
 				convertCurves(State, AnimationUtility.GetCurveBindings(clip), clip, (GameObject)State.RegisteredResourcesContext[Resource]);
 				convertCurves(State, AnimationUtility.GetObjectReferenceCurveBindings(clip), clip, (GameObject)State.RegisteredResourcesContext[Resource]);
