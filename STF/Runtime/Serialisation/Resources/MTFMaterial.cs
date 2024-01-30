@@ -223,8 +223,6 @@ namespace STF.Serialisation
 	{
 		public string ConvertPropertyPath(ISTFApplicationConvertState State, UnityEngine.Object Resource, string STFProperty)
 		{
-			Debug.Log("STFProperty: " + STFProperty);
-
 			var material = (MTF.Material)Resource;
 			if(STFProperty.StartsWith("MTF") && material.ConvertedMaterial != null)
 			{

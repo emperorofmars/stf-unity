@@ -324,9 +324,7 @@ namespace STF.Serialisation
 			var clip = Resource as AnimationClip;
 			State.AddTask(new Task(() => {
 				convertCurves(State, AnimationUtility.GetCurveBindings(clip), clip, (GameObject)State.RegisteredResourcesContext[Resource]);
-				convertCurves(State, AnimationUtility.GetObjectReferenceCurveBindings(clip), clip, (GameObject)State.RegisteredResourcesContext[Resource]);
-				AssetDatabase.SaveAssets();
-				AssetDatabase.Refresh();
+				//convertCurves(State, AnimationUtility.GetObjectReferenceCurveBindings(clip), clip, (GameObject)State.RegisteredResourcesContext[Resource]);
 			}));
 		}
 
@@ -334,6 +332,8 @@ namespace STF.Serialisation
 		{
 			for(int i = 0; i < Bindings.Count(); i++)
 			{
+				var editorCurve = AnimationUtility.GetEditorCurve(Clip, Bindings[i]);
+				AnimationUtility.SetEditorCurve(Clip, Bindings[i], null);
 				if(Bindings[i].type == typeof(GameObject) || Bindings[i].type == typeof(Transform))
 				{
 					var curveTarget = AnimationUtility.GetAnimatedObject(Root, Bindings[i]);
@@ -346,9 +346,11 @@ namespace STF.Serialisation
 					{
 						var translated = State.ConverterContext.NodeComponent[curveTarget.GetType()].ConvertPropertyPath(State, curveTarget, Bindings[i].propertyName);
 						Bindings[i].propertyName = translated;
-						Debug.Log(Bindings[i]);
+						Debug.Log(Bindings[i].propertyName);
 					}
 				}
+				// check for binding type
+				AnimationUtility.SetEditorCurve(Clip, Bindings[i], editorCurve);
 			}
 		}
 	}

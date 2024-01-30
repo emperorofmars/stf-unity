@@ -75,7 +75,6 @@ namespace STF.Serialisation
 			List<Object> newResources = new List<Object>();
 			foreach(var r in (Component as STFResourceHolder).Resources)
 			{
-				Debug.Log(r);
 				newResources.Add(State.ConvertedResources.ContainsKey(r) ? State.ConvertedResources[r] : r);
 			}
 			(Component as STFResourceHolder).Resources = newResources;

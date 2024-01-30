@@ -27,6 +27,8 @@ namespace STF.ApplicationConversion
 		void SaveGeneratedResource(UnityEngine.Object Resource, string fileExtension);
 		void SaveConvertedResource(UnityEngine.Object OriginalResource, UnityEngine.Object ConvertedResource, string fileExtension);
 
+		void SaveEverything();
+
 		void AddTask(Task Task);
 		void AddTrash(UnityEngine.Object Trash);
 	}
@@ -38,5 +40,6 @@ namespace STF.ApplicationConversion
 		UnityEngine.Object DuplicateResource(UnityEngine.Object Resource);
 		void SaveGeneratedResource(UnityEngine.Object Resource, string fileExtension);
 		void SavePrefab(GameObject Go, string Name = null);
+		void SaveEverything();
 	}
 }

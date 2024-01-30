@@ -35,6 +35,12 @@ namespace STF.ApplicationConversion
 		{
 			PrefabUtility.SaveAsPrefabAssetAndConnect(Go, Path.Combine(TargetPath, Name != null && Name.Length > 0 ? Name : Go.name) + ".prefab", InteractionMode.AutomatedAction);
 		}
+
+		public void SaveEverything()
+		{
+			AssetDatabase.SaveAssets();
+			AssetDatabase.Refresh();
+		}
 	}
 }
 

@@ -45,6 +45,7 @@ namespace STF.ApplicationConversion
 					}
 				}
 				state.RunTasks();
+				state.SaveEverything();
 
 				foreach(var resource in state.RegisteredResources)
 				{
@@ -54,6 +55,7 @@ namespace STF.ApplicationConversion
 					}
 				}
 				state.RunTasks();
+				state.SaveEverything();
 
 				// convert node components
 				foreach(var component in ret.GetComponentsInChildren<Component>())
@@ -64,6 +66,7 @@ namespace STF.ApplicationConversion
 					}
 				}
 				state.RunTasks();
+				state.SaveEverything();
 
 				// cleanup
 				foreach(var component in ret.GetComponentsInChildren<Component>())

@@ -31,7 +31,7 @@ namespace AVA.ApplicationConversion
 			}
 		};
 		public override List<Type> WhitelistedComponents => new List<Type> {
-			typeof(Transform), typeof(Animator), typeof(RotationConstraint), typeof(SkinnedMeshRenderer), typeof(VRCAvatarDescriptor), typeof(VRCPipelineManagerEditor), typeof(VRCPhysBone)
+			typeof(Transform), typeof(Animator), typeof(RotationConstraint), typeof(SkinnedMeshRenderer), typeof(VRCAvatarDescriptor), typeof(VRCPipelineManagerEditor), typeof(VRCPhysBone), typeof(STFResourceHolder)
 		};
 		public override List<string> Targets => new List<string> {TargetName};
 

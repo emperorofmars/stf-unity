@@ -178,7 +178,6 @@ namespace STF.Serialisation
 			// Significantly unfuck this	
 			if(STFProperty.StartsWith("material"))
 			{
-				Debug.Log("MTF AAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 				var matIdx = int.Parse(STFProperty.Split(':')[1].Split('.')[0]);
 				var meshInstance = Component.gameObject.GetComponent<STFMeshInstance>();
 				return State.ConverterContext.Resource[typeof(MTF.Material)].ConvertPropertyPath(State, meshInstance.Materials[matIdx], STFProperty.Substring(STFProperty.IndexOf('.') + 1));
