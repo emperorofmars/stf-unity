@@ -28,7 +28,10 @@ namespace STF.ApplicationConversion
 			var resourceTargetPath = Path.Combine(_TargetPath, Path.GetFileNameWithoutExtension(path) + "_Converted" + Path.GetExtension(path));
 			File.WriteAllBytes(resourceTargetPath, File.ReadAllBytes(path));
 			AssetDatabase.Refresh();
-			return AssetDatabase.LoadAssetAtPath(resourceTargetPath, Resource.GetType());
+			var ret = AssetDatabase.LoadAssetAtPath(resourceTargetPath, Resource.GetType());
+			ret.name = ret.name + "_Converted";
+			AssetDatabase.SaveAssets();
+			return ret;
 		}
 
 		public void SavePrefab(GameObject Go, string Name = null)

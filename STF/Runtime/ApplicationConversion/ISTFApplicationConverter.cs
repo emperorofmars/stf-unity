@@ -85,6 +85,7 @@ namespace STF.ApplicationConversion
 			}
 			catch(Exception e)
 			{
+				// TODO: delete generated stuff
 				throw new Exception($"Error during STF conversion to application: {TargetName}", e);
 			}
 			finally
