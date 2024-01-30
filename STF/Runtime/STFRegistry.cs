@@ -66,7 +66,7 @@ namespace STF.Serialisation
 			{STFBoneNode._TYPE, new DontInvokeNodeImporter()},
 			{STFBoneInstanceNode._TYPE, new DontInvokeNodeImporter()},
 			{STFPatchNode._TYPE, new STFPatchNodeImporter()},
-			//{STFAppendageNodeImporter._TYPE, new STFAppendageNodeImporter()},
+			{STFAppendageNode._TYPE, new STFAppendageNodeImporter()},
 		};
 		public static readonly Dictionary<string, ISTFNodeExporter> DefaultNodeExporters = new Dictionary<string, ISTFNodeExporter>() {
 			{STFNode._TYPE, new STFNodeExporter()},
@@ -74,7 +74,7 @@ namespace STF.Serialisation
 			{STFBoneNode._TYPE, new DontInvokeNodeExporter()},
 			{STFBoneInstanceNode._TYPE, new DontInvokeNodeExporter()},
 			{STFPatchNode._TYPE, new STFPatchNodeExporter()},
-			// appendage node
+			{STFAppendageNode._TYPE, new STFAppendageNodeExporter()},
 		};
 		public static readonly Dictionary<string, ISTFNodeComponentImporter> DefaultNodeComponentImporters = new Dictionary<string, ISTFNodeComponentImporter>() {
 			{STFMeshInstance._TYPE, new STFMeshInstanceImporter()},

@@ -5,6 +5,9 @@ using UnityEngine;
 
 namespace STF.Serialisation
 {
+	/*
+		Utility Component to store Armature Info.
+	*/
 	public class STFArmatureNodeInfo : MonoBehaviour
 	{
 		public string ArmatureId = Guid.NewGuid().ToString();
