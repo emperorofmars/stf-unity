@@ -50,78 +50,47 @@ namespace STF.Serialisation
 
 		public override (string, JObject) SerializeToJson(ISTFExportState State, Component Component)
 		{
+			Renderer renderer = Component as Renderer;
+			Mesh mesh;
+			if(Component is SkinnedMeshRenderer) mesh = (renderer as SkinnedMeshRenderer).sharedMesh;
+			else mesh = (renderer as MeshRenderer).gameObject.GetComponent<MeshFilter>().sharedMesh;
+			
+			var meshId = SerdeUtil.SerializeResource(State, mesh);
+
+			var ret = new JObject {
+				{"type", STFMeshInstance._TYPE},
+				{"mesh", meshId}
+			};
+
+			var meshInstance = Component.gameObject.GetComponent<STFMeshInstance>();
+			SerializeRelationships(meshInstance, ret);
+
 			if(Component is SkinnedMeshRenderer)
 			{
-				SkinnedMeshRenderer c = (SkinnedMeshRenderer)Component;
-				var meshId = SerdeUtil.SerializeResource(State, c.sharedMesh);
-
-				var ret = new JObject {
-					{"type", STFMeshInstance._TYPE},
-					{"mesh", meshId}
-				};
-
-				var meshInstance = c.gameObject.GetComponent<STFMeshInstance>();
-				SerializeRelationships(meshInstance, ret);
-				
 				if(meshInstance.ArmatureInstanceId != null && meshInstance.ArmatureInstanceId.Length > 0) ret.Add("armature_instance", meshInstance.ArmatureInstanceId);
-				else ret.Add("armature_instance", State.Nodes[c.rootBone.parent.gameObject].Id);
-
-				var materials = new JArray();
-				for(int matIdx = 0; matIdx < c.sharedMaterials.Length; matIdx++)
-				{
-					if(meshInstance.Materials.Count > matIdx && meshInstance.Materials[matIdx] != null)
-					{
-						materials.Add(SerdeUtil.SerializeResource(State, meshInstance.Materials[matIdx]));
-					}
-					else
-					{
-						materials.Add(SerdeUtil.SerializeResource(State, c.sharedMaterials[matIdx]));
-					}
-				}
-				
-				ret.Add("materials", materials);
-				ret.Add("morphtarget_values", new JArray(Enumerable.Range(0, c.sharedMesh.blendShapeCount).Select(i => c.GetBlendShapeWeight(i))));
-
-				var resourcesUsed = new JArray(meshId, ret["armature_instance"]);
-				foreach(var m in ret["materials"]) if(m != null) resourcesUsed.Add(m);
-				ret.Add("resources_used", resourcesUsed);
-				return (meshInstance.Id, ret);
+				else ret.Add("armature_instance", State.Nodes[(renderer as SkinnedMeshRenderer).rootBone.parent.gameObject].Id);
 			}
-			else // Non Skinned
+
+			var materials = new JArray();
+			for(int matIdx = 0; matIdx < renderer.sharedMaterials.Length; matIdx++)
 			{
-				MeshRenderer c = (MeshRenderer)Component;
-				var meshFilter = c.gameObject.GetComponent<MeshFilter>();
-				var meshId = SerdeUtil.SerializeResource(State, meshFilter.sharedMesh);
-
-				var ret = new JObject {
-					{"type", STFMeshInstance._TYPE},
-					{"mesh", meshId}
-				};
-
-				var meshInstance = c.gameObject.GetComponent<STFMeshInstance>();
-				SerializeRelationships(meshInstance, ret);
-
-				var materials = new JArray();
-				for(int matIdx = 0; matIdx < c.sharedMaterials.Length; matIdx++)
+				if(meshInstance.Materials.Count > matIdx && meshInstance.Materials[matIdx] != null)
 				{
-					if(meshInstance.Materials.Count > matIdx && meshInstance.Materials[matIdx] != null)
-					{
-						materials.Add(SerdeUtil.SerializeResource(State, meshInstance.Materials[matIdx]));
-					}
-					else
-					{
-						materials.Add(SerdeUtil.SerializeResource(State, c.sharedMaterials[matIdx]));
-					}
+					materials.Add(SerdeUtil.SerializeResource(State, meshInstance.Materials[matIdx]));
 				}
-				
-				ret.Add("materials", materials);
-				ret.Add("morphtarget_values", new JArray(Enumerable.Range(0, meshFilter.sharedMesh.blendShapeCount).Select(i => 0)));
-
-				var resourcesUsed = new JArray(meshId, ret["armature_instance"]);
-				foreach(var m in ret["materials"]) if(m != null) resourcesUsed.Add(m);
-				ret.Add("resources_used", resourcesUsed);
-				return (meshInstance.Id, ret);
+				else
+				{
+					materials.Add(SerdeUtil.SerializeResource(State, renderer.sharedMaterials[matIdx]));
+				}
 			}
+			
+			ret.Add("materials", materials);
+			ret.Add("morphtarget_values", new JArray(Enumerable.Range(0, mesh.blendShapeCount).Select(i => Component is SkinnedMeshRenderer ? (renderer as SkinnedMeshRenderer).GetBlendShapeWeight(i) : 0)));
+
+			var resourcesUsed = new JArray(meshId, ret["armature_instance"]);
+			foreach(var m in ret["materials"]) if(m != null) resourcesUsed.Add(m);
+			ret.Add("resources_used", resourcesUsed);
+			return (meshInstance.Id, ret);
 		}
 	}
 
@@ -145,17 +114,21 @@ namespace STF.Serialisation
 		public override void ParseFromJson(ISTFAssetImportState State, JObject Json, string Id, GameObject Go)
 		{
 			var meta = (STFMesh)State.Resources[(string)Json["mesh"]];
+			var meshInstanceComponent = Go.AddComponent<STFMeshInstance>();
+			meshInstanceComponent.Id = Id;
+			ParseRelationships(Json, meshInstanceComponent);
+			State.AddComponent(meshInstanceComponent, Id);
+
+			Mesh mesh = (Mesh)meta.Resource;
+			Renderer renderer;
+
 			if(meta.ArmatureId != null && meta.ArmatureId.Length > 0)
 			{
 				var c = Go.AddComponent<SkinnedMeshRenderer>();
-				var meshInstanceComponent = Go.AddComponent<STFMeshInstance>();
-				ParseRelationships(Json, meshInstanceComponent);
-				meshInstanceComponent.Id = Id;
+				renderer = c;
 				meshInstanceComponent.OwnedUnityComponent = c;
-				State.AddComponent(meshInstanceComponent, Id);
 
-				var resource = meta.Resource;
-				c.sharedMesh = (Mesh)resource;
+				c.sharedMesh = mesh;
 
 				if((string)Json["armature_instance"] != null)
 				{
@@ -173,32 +146,7 @@ namespace STF.Serialisation
 						meshInstanceComponent.ArmatureInstanceId = (string)Json["armature_instance"];
 					}
 				}
-
-				var materials = new UnityEngine.Material[c.sharedMesh.subMeshCount];
-				meshInstanceComponent.Materials = new List<MTF.Material>(new MTF.Material[c.sharedMesh.subMeshCount]);
-				for(int i = 0; i < materials.Length; i++)
-				{
-					try{
-						if((string)Json["materials"][i] != null && State.Resources.ContainsKey((string)Json["materials"][i]))
-						{
-							var mtfMaterial = (MTF.Material)State.Resources[(string)Json["materials"][i]];
-							meshInstanceComponent.Materials[i] = mtfMaterial;
-							materials[i] = mtfMaterial?.ConvertedMaterial;
-						}
-						else
-						{
-							Debug.LogWarning("Material Import Error, Falling back to default material.");
-							var mtfMaterial = MTF.Material.CreateDefaultMaterial();
-							meshInstanceComponent.Materials[i] = mtfMaterial;
-							// actually convert
-							materials[i] = mtfMaterial?.ConvertedMaterial;
-						}
-					}
-					catch(Exception)
-					{
-						Debug.LogWarning("Material Import Error, Skipping.");
-					}
-				}
+				
 				if(c.sharedMesh.blendShapeCount > 0 && Json["morphtarget_values"] != null)
 				{
 					for(int i = 0; i < c.sharedMesh.blendShapeCount; i++)
@@ -207,50 +155,43 @@ namespace STF.Serialisation
 					}
 
 				}
-				c.sharedMaterials = materials;
 				c.localBounds = c.sharedMesh.bounds;
 			}
 			else // Non skinned mesh
 			{
 				var c = Go.AddComponent<MeshRenderer>();
+				renderer = c;
 				var meshFilter = Go.AddComponent<MeshFilter>();
-				var meshInstanceComponent = Go.AddComponent<STFMeshInstance>();
-				ParseRelationships(Json, meshInstanceComponent);
-				meshInstanceComponent.Id = Id;
 				meshInstanceComponent.OwnedUnityComponent = c;
-				State.AddComponent(meshInstanceComponent, Id);
 
-				var resource = meta.Resource;
-				meshFilter.sharedMesh = (Mesh)resource;
-
-				var materials = new UnityEngine.Material[meshFilter.sharedMesh.subMeshCount];
-				meshInstanceComponent.Materials = new List<MTF.Material>(new MTF.Material[meshFilter.sharedMesh.subMeshCount]);
-				for(int i = 0; i < materials.Length; i++)
-				{
-					try{
-						if((string)Json["materials"][i] != null && State.Resources.ContainsKey((string)Json["materials"][i]))
-						{
-							var mtfMaterial = (MTF.Material)State.Resources[(string)Json["materials"][i]];
-							meshInstanceComponent.Materials[i] = mtfMaterial;
-							materials[i] = mtfMaterial?.ConvertedMaterial;
-						}
-						else
-						{
-							Debug.LogWarning("Material Import Error, Falling back to default material.");
-							var mtfMaterial = MTF.Material.CreateDefaultMaterial();
-							meshInstanceComponent.Materials[i] = mtfMaterial;
-							// actually convert
-							materials[i] = mtfMaterial?.ConvertedMaterial;
-						}
-					}
-					catch(Exception)
-					{
-						Debug.LogWarning("Material Import Error, Skipping.");
-					}
-				}
-				c.sharedMaterials = materials;
+				meshFilter.sharedMesh = mesh;
 			}
 
+			var materials = new UnityEngine.Material[mesh.subMeshCount];
+			meshInstanceComponent.Materials = new List<MTF.Material>(new MTF.Material[mesh.subMeshCount]);
+			for(int i = 0; i < materials.Length; i++)
+			{
+				try{
+					if((string)Json["materials"][i] != null && State.Resources.ContainsKey((string)Json["materials"][i]))
+					{
+						var mtfMaterial = (MTF.Material)State.Resources[(string)Json["materials"][i]];
+						meshInstanceComponent.Materials[i] = mtfMaterial;
+						materials[i] = mtfMaterial?.ConvertedMaterial;
+					}
+					else
+					{
+						Debug.LogWarning("Material Import Error, Falling back to default material.");
+						var mtfMaterial = MTF.Material.CreateDefaultMaterial();
+						meshInstanceComponent.Materials[i] = mtfMaterial;
+						materials[i] = mtfMaterial?.ConvertedMaterial;
+					}
+				}
+				catch(Exception)
+				{
+					Debug.LogWarning("Material Import Error, Skipping.");
+				}
+			}
+			renderer.sharedMaterials = materials;
 		}
 	}
 

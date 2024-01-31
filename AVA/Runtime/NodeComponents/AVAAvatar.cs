@@ -97,6 +97,7 @@ namespace AVA.Serialisation
 		public override void ParseFromJson(ISTFAssetImportState State, JObject Json, string Id, GameObject Go)
 		{
 			var c = Go.AddComponent<AVAAvatar>();
+			c.Id = Id;
 			ParseRelationships(Json, c);
 			State.AddTask(new Task(() => {
 				c.MainMeshInstance = (string)Json["main_mesh"] != null ? (STFMeshInstance)State.Components[(string)Json["main_mesh"]] : null;
