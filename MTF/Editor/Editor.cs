@@ -15,8 +15,8 @@ namespace MTF
 	public class MaterialInspector : Editor
 	{
 		string[] Converters = DetectConverters();
-		int Selection = 0;
-		private Vector2 shaderScrollPos;
+		int ShaderSelection = 0;
+		private Vector2 ShaderScrollPos;
 
 
 		public override void OnInspectorGUI()
@@ -29,15 +29,15 @@ namespace MTF
 
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.LabelField("Select Target Shader");
-			shaderScrollPos = GUILayout.BeginScrollView(shaderScrollPos, GUILayout.MaxHeight(100));
-			Selection = GUILayout.SelectionGrid(Selection, Converters, 1);
+			ShaderScrollPos = GUILayout.BeginScrollView(ShaderScrollPos, GUILayout.MaxHeight(100));
+			ShaderSelection = GUILayout.SelectionGrid(ShaderSelection, Converters, 1);
 			GUILayout.EndScrollView();
 			EditorGUILayout.EndHorizontal();
 
 			if(GUILayout.Button("Convert to Selected Shader"))
 			{
 				var convertState = new MTFEditorMaterialConvertState(Path.GetDirectoryName(AssetDatabase.GetAssetPath(material.ConvertedMaterial)), material.name);
-				var newUnityMaterial = MTF.ShaderConverterRegistry.MaterialConverters[Converters[Selection]].ConvertToUnityMaterial(convertState, material);
+				var newUnityMaterial = MTF.ShaderConverterRegistry.MaterialConverters[Converters[ShaderSelection]].ConvertToUnityMaterial(convertState, material);
 				EditorUtility.CopySerialized(newUnityMaterial, material.ConvertedMaterial);
 				AssetDatabase.SaveAssets();
 			}
