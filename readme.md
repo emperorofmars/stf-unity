@@ -15,6 +15,8 @@ Using those avatars as an end-user is prohibitively difficult as it requires the
 
 This project is supposed to improve that, by creating a prototype/proof of concept of an extensible file format for 3d models. It should be trivial to extend to support fully featured VR & V-Tubing Avatars.
 
+One of the main motivations for this project is to enable the creation of an easy to use 'Character Editor' application. End-users would be able to adapt their avatars as easily as in a video-game character creation screen and easily use them in applications like VRChat and VSeeFace.
+
 ## STF Format
 The STF format is heavily based on the concept of glTF 2.0. It's essentially my attempt to create a glTF-done-right format with a practically usable extension system, while avoiding its severe flaws. [Read more on glTF's issues here.](./Docs/stf_format.md#gltf-20-issues)
 
