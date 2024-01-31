@@ -34,41 +34,39 @@ namespace AVA.ApplicationConversion
 
 			GUILayout.BeginHorizontal();
 			GUILayout.Label("Select Asset", EditorStyles.whiteLargeLabel, GUILayout.ExpandWidth(false));
-			Asset = (ISTFAsset)EditorGUILayout.ObjectField(
+			var tmpAsset = (ISTFAsset)EditorGUILayout.ObjectField(
 				Asset,
 				typeof(ISTFAsset),
 				true,
 				GUILayout.ExpandWidth(true)
 			);
 			GUILayout.EndHorizontal();
+			if(tmpAsset != Asset)
+			{
+				Asset = tmpAsset;
+				path = null;
+				Debug.Log(PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(Asset));
+				Debug.Log(Path.GetDirectoryName(PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(Asset)));
+				path = Path.GetDirectoryName(PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(Asset));
+				if(!Directory.Exists(Path.Combine(path, DefaultUnpackFolder)))
+				{
+					AssetDatabase.CreateFolder(path, DefaultUnpackFolder);
+					AssetDatabase.Refresh();
+				}
+				path = Path.Combine(path, DefaultUnpackFolder);
+				if(!Directory.Exists(Path.Combine(path, AVA_VRC_Converter._TARGET_NAME)))
+				{
+					AssetDatabase.CreateFolder(path, AVA_VRC_Converter._TARGET_NAME);
+					AssetDatabase.Refresh();
+				}
+				path = Path.Combine(path, AVA_VRC_Converter._TARGET_NAME);
+			}
 			
 			drawHLine();
 
 			// addons
 
 			// settings
-
-			if(path == null && Asset != null)
-			{
-				path = Path.Combine("Assets", DefaultUnpackFolder, Asset.Name, AVA_VRC_Converter._TARGET_NAME);
-
-
-				if(!Directory.Exists("Assets/" + DefaultUnpackFolder))
-				{
-					AssetDatabase.CreateFolder("Assets", DefaultUnpackFolder);
-					AssetDatabase.Refresh();
-				}
-				if(!Directory.Exists(Path.Combine("Assets", DefaultUnpackFolder, Asset.Name)))
-				{
-					AssetDatabase.CreateFolder(Path.Combine("Assets", DefaultUnpackFolder), Asset.Name);
-					AssetDatabase.Refresh();
-				}
-				if(!Directory.Exists(Path.Combine("Assets", DefaultUnpackFolder, Asset.Name, AVA_VRC_Converter._TARGET_NAME)))
-				{
-					AssetDatabase.CreateFolder(Path.Combine("Assets", DefaultUnpackFolder, Asset.Name), AVA_VRC_Converter._TARGET_NAME);
-					AssetDatabase.Refresh();
-				}
-			}
 
 			GUILayout.BeginHorizontal();
 			GUILayout.Label("Output Folder:", GUILayout.ExpandWidth(false));

@@ -53,7 +53,7 @@ namespace STF.Editors
 			drawHLine();
 
 			if(TargetAsset && Addon && GUILayout.Button("Convert", GUILayout.ExpandWidth(true))) {
-				// TODO: significantly expand the options, most importantly create a storage context similar to application conversions so that resources can be adapted/created and stored
+				// TODO: Significantly expand the options, most importantly create a storage context interface similar to application conversions so that resources can be adapted/created and stored.
 				STFAddonApplier.Apply(TargetAsset, Addon);
 			}
 			
