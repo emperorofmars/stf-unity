@@ -17,7 +17,6 @@ namespace STF.Serialisation
 		public List<MTF.Material> Materials = new List<MTF.Material>();
 	}
 
-	// TODO refactor this garbage
 	public class STFMeshInstanceExporter : ASTFNodeComponentExporter
 	{
 		public override string ConvertPropertyPath(ISTFExportState State, Component Component, string UnityProperty)
@@ -30,15 +29,10 @@ namespace STF.Serialisation
 			{
 				var materialProperty = UnityProperty.Substring(UnityProperty.IndexOf('.') + 1);
 				//var matIdx = int.Parse(UnityProperty.Split(':')[1].Split('.')[0]);
-				if(Component is SkinnedMeshRenderer)
+				if(Component is Renderer)
 				{
-					// handle material index
-					return "material." + State.Context.ResourceExporters[typeof(Material)].ConvertPropertyPath(State, ((SkinnedMeshRenderer)Component).sharedMaterial, materialProperty);
-				}
-				else if(Component is MeshRenderer)
-				{
-					// handle material index
-					return "material." + State.Context.ResourceExporters[typeof(Material)].ConvertPropertyPath(State, ((MeshRenderer)Component).sharedMaterial, materialProperty);
+					// handle material index somehow
+					return "material." + State.Context.ResourceExporters[typeof(Material)].ConvertPropertyPath(State, ((Renderer)Component).sharedMaterial, materialProperty);
 				}
 				else if(Component is STFMeshInstance)
 				{
