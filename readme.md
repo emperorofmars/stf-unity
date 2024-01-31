@@ -18,7 +18,7 @@ This project is supposed to improve that, by creating a prototype/proof of conce
 One of the main motivations for this project is to enable the creation of an easy to use 'Character Editor' application. End-users would be able to adapt their avatars as easily as in a video-game character creation screen and easily use them in applications like VRChat and VSeeFace.
 
 ## STF Format
-The STF format is heavily based on the concept of glTF 2.0. It's essentially my attempt to create a glTF-done-right format with a practically usable extension system, while avoiding its severe flaws. [Read more on glTF's issues here.](./Docs/stf_format.md#gltf-20-issues)
+The STF format is heavily based on the concept of glTF 2.0. It's essentially my attempt to create a glTF-done-right format with a practically usable extension system, while avoiding its severe flaws. [Read more on glTF's issues here.](./Docs/background_motivation.md#gltf-20-issues)
 
 Unlike glTF, there are no hard definitions of specific resource types. Instead, every object has a `type` property. Based on an object's `type`, a registered converter will be selected to process this object. These converters can be easily hot loaded, enabling an unprecedented ease of writing and rapidly prototyping extensions.
 
