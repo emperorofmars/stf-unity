@@ -5,6 +5,11 @@ using UnityEngine;
 
 namespace STF
 {
+	/*
+		Applies an STFAddonAsset to a target. Currently this can only copy nodes and components onto the target.
+		TODO:
+			Create an 'AddonTrigger' interface, which would enable actions to take place upon components/nodes being applied.
+	*/
 	public static class STFAddonApplier
 	{
 		public static GameObject Apply(ISTFAsset Base, STFAddonAsset Addon, bool InPlace = false)
