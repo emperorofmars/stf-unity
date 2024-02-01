@@ -31,6 +31,7 @@ STF was created with consideration of how most authoring tools like Blender, Uni
 	- The Blender implementation exports insanely large files.
   https://github.com/KhronosGroup/glTF-Blender-IO/issues/1346
   A file being 95% larger and consisting of 95% zeros in the case of my Fox VR Avatar Base (thanks to about 200 morphtargets) is just not acceptable.
+	- Small sidenote: Blender's animation system is designed purely for film. It's severely lacking for other applications where multiple animations are associated with the same file. As such I didn't consider implementing STF for Blender.
 - Godot
 	- Godot also exports ridiculously large files like Blender.
 	- glTF import and export scene handling: https://github.com/godotengine/godot-proposals/discussions/6588

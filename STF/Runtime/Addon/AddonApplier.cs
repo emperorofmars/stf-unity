@@ -1,15 +1,21 @@
 
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using STF.Serialisation;
 using UnityEngine;
 
-namespace STF
+namespace STF.Addon
 {
-	/*
-		Applies an STFAddonAsset to a target. Currently this can only copy nodes and components onto the target.
-		TODO:
-			Create an 'AddonTrigger' interface, which would enable actions to take place upon components/nodes being applied.
-	*/
+	public static class STFAddonApplierRegistry
+	{
+		public static readonly Dictionary<Type, ISTFAddonApplier> DefaultAddonAppliers = new Dictionary<Type, ISTFAddonApplier>();
+		private static Dictionary<Type, ISTFAddonApplier> RegisteredAddonAppliers = new Dictionary<Type, ISTFAddonApplier>();
+		public static Dictionary<Type, ISTFAddonApplier> AddonAppliers => CollectionUtil.Combine(DefaultAddonAppliers, RegisteredAddonAppliers);
+
+		public static void RegisterAddonApplier(Type Type, ISTFAddonApplier Applier) { RegisteredAddonAppliers.Add(Type, Applier); }
+	}
+
 	public static class STFAddonApplier
 	{
 		public static GameObject Apply(ISTFAsset Base, STFAddonAsset Addon, bool InPlace = false)
@@ -46,6 +52,7 @@ namespace STF
 						// copy acomponents
 						foreach(var component in addonGo.GetComponents<Component>())
 						{
+							// Do this with addon appliers
 							var newComponent = target.gameObject.AddComponent(component.GetType());
 							System.Reflection.FieldInfo[] fields = component.GetType().GetFields(); 
 							foreach (System.Reflection.FieldInfo field in fields)
