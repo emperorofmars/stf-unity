@@ -11,7 +11,14 @@ namespace STF.Addon
 	{
 		public virtual void Apply(ISTFAddonApplierContext Context, GameObject Target, Component SourceComponent)
 		{
-			
+			STFDefaultAddonApplier.Apply(Context, Target, SourceComponent);
+		}
+	}
+
+	public static class STFDefaultAddonApplier
+	{
+		public static void Apply(ISTFAddonApplierContext Context, GameObject Target, Component SourceComponent)
+		{
 			var newComponent = Target.AddComponent(SourceComponent.GetType());
 			System.Reflection.FieldInfo[] fields = SourceComponent.GetType().GetFields(); 
 			foreach (System.Reflection.FieldInfo field in fields)

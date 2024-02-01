@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace STF_Util
 {
 	static class CollectionUtil

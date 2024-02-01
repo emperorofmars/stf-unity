@@ -86,12 +86,7 @@ namespace STF.Addon
 							}
 							else
 							{	// copy the component
-								var newComponent = target.gameObject.AddComponent(component.GetType());
-								System.Reflection.FieldInfo[] fields = component.GetType().GetFields(); 
-								foreach (System.Reflection.FieldInfo field in fields)
-								{
-									field.SetValue(newComponent, field.GetValue(component));
-								}
+								STFDefaultAddonApplier.Apply(ApplierContext, target.gameObject, component);
 							}
 						}
 					}
