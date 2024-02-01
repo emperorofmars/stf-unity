@@ -2,26 +2,54 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using STF.Serialisation;
+using STF.Util;
 using UnityEngine;
 
 namespace STF.Addon
 {
 	public static class STFAddonApplierRegistry
 	{
-		public static readonly Dictionary<Type, ISTFAddonApplier> DefaultAddonAppliers = new Dictionary<Type, ISTFAddonApplier>();
+		public static readonly Dictionary<Type, ISTFAddonApplier> DefaultAddonAppliers = new Dictionary<Type, ISTFAddonApplier> {
+			{typeof(SkinnedMeshRenderer), new STFMeshInstanceAddonApplier()},
+		};
 		private static Dictionary<Type, ISTFAddonApplier> RegisteredAddonAppliers = new Dictionary<Type, ISTFAddonApplier>();
 		public static Dictionary<Type, ISTFAddonApplier> AddonAppliers => CollectionUtil.Combine(DefaultAddonAppliers, RegisteredAddonAppliers);
 
 		public static void RegisterAddonApplier(Type Type, ISTFAddonApplier Applier) { RegisteredAddonAppliers.Add(Type, Applier); }
 	}
 
+	public interface ISTFAddonApplierContext
+	{
+		GameObject Root {get;}
+
+		void AddTask(Task Task);
+	}
+
+	public class DefaultSTFAddonApplierContext : ISTFAddonApplierContext
+	{
+		public GameObject _Root;
+		public GameObject Root => _Root;
+
+		public List<Task> Tasks = new List<Task>();
+		public void AddTask(Task Task) { Tasks.Add(Task); }
+
+		public DefaultSTFAddonApplierContext(GameObject Root)
+		{
+			this._Root = Root;
+		}
+	}
+
 	public static class STFAddonApplier
 	{
 		public static GameObject Apply(ISTFAsset Base, STFAddonAsset Addon, bool InPlace = false)
 		{
+
 			GameObject ret = InPlace ? Base.gameObject : UnityEngine.Object.Instantiate(Base.gameObject);
 			ret.name = Base.name + "_applied_" + Addon.Name;
+
+			var ApplierContext = new DefaultSTFAddonApplierContext(ret);
 
 			for(int addonNodeIdx = 0; addonNodeIdx < Addon.transform.childCount; addonNodeIdx++)
 			{
@@ -52,12 +80,18 @@ namespace STF.Addon
 						// copy acomponents
 						foreach(var component in addonGo.GetComponents<Component>())
 						{
-							// Do this with addon appliers
-							var newComponent = target.gameObject.AddComponent(component.GetType());
-							System.Reflection.FieldInfo[] fields = component.GetType().GetFields(); 
-							foreach (System.Reflection.FieldInfo field in fields)
+							if(STFAddonApplierRegistry.AddonAppliers.ContainsKey(component.GetType()))
 							{
-								field.SetValue(newComponent, field.GetValue(component));
+								STFAddonApplierRegistry.AddonAppliers[component.GetType()].Apply(ApplierContext, target.gameObject, component);
+							}
+							else
+							{	// copy the component
+								var newComponent = target.gameObject.AddComponent(component.GetType());
+								System.Reflection.FieldInfo[] fields = component.GetType().GetFields(); 
+								foreach (System.Reflection.FieldInfo field in fields)
+								{
+									field.SetValue(newComponent, field.GetValue(component));
+								}
 							}
 						}
 					}
@@ -67,6 +101,7 @@ namespace STF.Addon
 					}
 				}
 			}
+			Utils.RunTasks(ApplierContext.Tasks);
 			return ret;
 		}
 	}

@@ -2,7 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
+using STF.Addon;
 using STF.ApplicationConversion;
 using UnityEngine;
 
@@ -186,6 +188,35 @@ namespace STF.Serialisation
 				}
 			}
 			renderer.sharedMaterials = materials;
+		}
+	}
+
+	public class STFMeshInstanceAddonApplier : ASTFAddonApplier
+	{
+		public override void Apply(ISTFAddonApplierContext Context, GameObject Target, Component SourceComponent)
+		{
+			base.Apply(Context, Target, SourceComponent);
+			if((SourceComponent as STFMeshInstance).ArmatureInstanceId != null && (SourceComponent as STFMeshInstance).ArmatureInstanceId.Length > 0)
+			{
+				// Is a skinned mesh, armature must be applied to the Unity SkinnedMeshRenderer component. Its in a task so that the separate SkinnedMeshRenderer component is guaranteed to have been copied to the target.
+				// add task to context
+				new Task(() => {
+					var smr = Target.GetComponent<SkinnedMeshRenderer>();
+					
+					var armatureInstanceNode = Context.Root.GetComponentsInChildren<STFArmatureInstanceNode>().FirstOrDefault(c => c.Id == (SourceComponent as STFMeshInstance).ArmatureInstanceId);
+					if(armatureInstanceNode != null)
+					{
+						smr.sharedMesh.bindposes = armatureInstanceNode.armature.Bindposes;
+
+						smr.rootBone = armatureInstanceNode.root.transform;
+						smr.bones = armatureInstanceNode.bones.Select(b => b.transform).ToArray();
+					}
+					else
+					{
+						throw new Exception("Invalid armature instance");
+					}
+				});
+			}
 		}
 	}
 

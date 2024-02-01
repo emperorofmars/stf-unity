@@ -9,7 +9,7 @@ Implementation for Unity 2022.3 or higher.
 <!-- ## [Watch the video presentation about STF and its AVA extensions here!](https://youtu.be/ozkmGxFG_ug) -->
 
 ## Introduction
-The single relevant format for VR & V-Tubing avatars is a `.unitypackage` that contains a scene with a setup somewhere.
+The single relevant format for VR & V-Tubing avatars is a `.unitypackage` that contains a scene with a setup for a specific application somewhere.
 There is no interoperability for avatars. And it is severely lacking for 3d models by themselves.
 Using those avatars as an end-user is prohibitively difficult as it requires the use of a Game-Engine like Unity.
 
