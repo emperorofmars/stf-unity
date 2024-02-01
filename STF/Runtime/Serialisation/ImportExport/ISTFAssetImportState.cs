@@ -30,7 +30,7 @@ namespace STF.Serialisation
 
 		void AddTask(Task task);
 		void AddNode(GameObject Node, string Id);
-		void AddComponent(Component Node, string Id);
+		void AddComponent(Component Component, string Id);
 		void AddTrash(UnityEngine.Object Trash);
 		UnityEngine.Object Instantiate(UnityEngine.Object Resource);
 		void SetPostprocessContext(UnityEngine.Object Resource, UnityEngine.Object Context);
