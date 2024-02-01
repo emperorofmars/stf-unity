@@ -54,7 +54,7 @@ namespace STF.Addon
 			for(int addonNodeIdx = 0; addonNodeIdx < Addon.transform.childCount; addonNodeIdx++)
 			{
 				var addonGo = Addon.transform.GetChild(addonNodeIdx);
-				var addonNode = addonGo.GetComponent<ISTFNode>();
+				var addonNode = addonGo.GetComponent<ASTFNode>();
 				if(addonNode.Type == STFAppendageNode._TYPE)
 				{
 					var target = ret.transform.GetComponentsInChildren<ASTFNode>().FirstOrDefault(c => c.Id == (addonNode as STFAppendageNode).TargetId);

@@ -73,7 +73,7 @@ namespace STF.Serialisation
 					else
 					{
 						var curveTarget = AnimationUtility.GetAnimatedObject(root, c);
-						var nodes = curveTarget is GameObject ? ((GameObject)curveTarget).GetComponents<ISTFNode>() : ((Transform)curveTarget).GetComponents<ISTFNode>();
+						var nodes = curveTarget is GameObject ? ((GameObject)curveTarget).GetComponents<ASTFNode>() : ((Transform)curveTarget).GetComponents<ASTFNode>();
 						nodes = nodes.OrderBy(k => k.PrefabHirarchy).ToArray();
 						var stfNode = nodes.FirstOrDefault();
 						
@@ -97,7 +97,7 @@ namespace STF.Serialisation
 					else
 					{
 						var curveTarget = (Component)AnimationUtility.GetAnimatedObject(root, c);
-						var nodes = curveTarget.gameObject.GetComponents<ISTFNode>().OrderBy(k => k.PrefabHirarchy).ToArray();
+						var nodes = curveTarget.gameObject.GetComponents<ASTFNode>().OrderBy(k => k.PrefabHirarchy).ToArray();
 						curveJson.Add("node_ids", new JArray(nodes.Select(n => n.Id)));
 						if(!c.type.IsSubclassOf(typeof(ISTFNodeComponent)))
 						{
@@ -209,7 +209,7 @@ namespace STF.Serialisation
 								var unityType = (property.StartsWith("translation") || property.StartsWith("rotation") || property.StartsWith("scale")) ? typeof(Transform) : typeof(GameObject);
 								try
 								{
-									var targetNode = Root.GetComponentsInChildren<ISTFNode>().FirstOrDefault(n => n.Id == nodeIds[nodeIds.Count() - 1]);
+									var targetNode = Root.GetComponentsInChildren<ASTFNode>().FirstOrDefault(n => n.Id == nodeIds[nodeIds.Count() - 1]);
 									var translatedProperty = State.Context.NodeImporters[targetType].ConvertPropertyPath(property);
 									var path = Utils.getPath(Root.transform, ((Component)targetNode).transform, true);
 									ret.SetCurve(path, unityType, translatedProperty, curve);
@@ -231,7 +231,7 @@ namespace STF.Serialisation
 								var componentId = (string)track["component_id"];
 								try
 								{
-									var targetNode = Root.GetComponentsInChildren<ISTFNode>().FirstOrDefault(n => n.Id == nodeIds[nodeIds.Count() - 1]);
+									var targetNode = Root.GetComponentsInChildren<ASTFNode>().FirstOrDefault(n => n.Id == nodeIds[nodeIds.Count() - 1]);
 									var targetSTFComponent = ((Component)targetNode).GetComponents<ISTFNodeComponent>().FirstOrDefault(nc => nc.Id == componentId);
 
 									var targetComponent =  targetSTFComponent.OwnedUnityComponent != null ? targetSTFComponent.OwnedUnityComponent : targetSTFComponent;

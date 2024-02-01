@@ -37,7 +37,7 @@ namespace STF.Tools
 				true,
 				GUILayout.ExpandWidth(true)
 			);
-			if(root && (root.transform.parent != null || root.GetComponent<STFAsset>() != null || root.GetComponent<ISTFNode>() != null)) root = null; // only root nodes allowed
+			if(root && (root.transform.parent != null || root.GetComponent<STFAsset>() != null || root.GetComponent<ASTFNode>() != null)) root = null; // only root nodes allowed
 			GUILayout.EndHorizontal();
 			duplicate = GUILayout.Toggle(duplicate, "Setup On Duplicate");
 

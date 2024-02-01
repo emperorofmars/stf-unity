@@ -36,16 +36,6 @@ namespace STF.Serialisation
 		void SetPostprocessContext(UnityEngine.Object Resource, UnityEngine.Object Context);
 	}
 	
-	public interface ISTFAssetExporter
-	{
-		string SerializeToJson(ISTFExportState State, ISTFAsset Asset);
-	}
-	
-	public interface ISTFAssetImporter
-	{
-		void ParseFromJson(ISTFImportState State, JObject JsonAsset, string Id);
-	}
-	
 	public class STFAssetImportState : ISTFAssetImportState
 	{
 		private string _AssetId;

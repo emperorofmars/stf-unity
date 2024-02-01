@@ -49,7 +49,7 @@ namespace STF.Serialisation
 		public List<Type> ExportExclusions = new List<Type>();
 	}
 
-	// Used to register STF object types. Default ones are included by default, additional ones can be added automatically.
+	// Used to register STF object types. Default ones are included here, additional ones can be added using the appropriate method.
 	public static class STFRegistry
 	{
 		public static readonly Dictionary<string, ISTFAssetExporter> DefaultAssetExporters = new Dictionary<string, ISTFAssetExporter>() {
@@ -111,7 +111,7 @@ namespace STF.Serialisation
 		};
 		public static readonly List<ISTFImportPostProcessor> DefaultImportPostProcessors = new List<ISTFImportPostProcessor>();
 		public static readonly List<Type> DefaultExportExclusions = new List<Type>() {
-			typeof(Transform), typeof(ISTFNode), typeof(Animator), typeof(STFAsset), typeof(STFNode), typeof(STFBoneNode), typeof(STFBoneInstanceNode), typeof(STFMeshInstance), typeof(STFArmatureInstanceNode), typeof(STFArmatureNodeInfo)
+			typeof(Transform), typeof(ASTFNode), typeof(Animator), typeof(STFAsset), typeof(STFNode), typeof(STFBoneNode), typeof(STFBoneInstanceNode), typeof(STFMeshInstance), typeof(STFArmatureInstanceNode), typeof(STFArmatureNodeInfo)
 		};
 
 		private static Dictionary<string, ISTFAssetImporter> RegisteredAssetImporters = new Dictionary<string, ISTFAssetImporter>();

@@ -54,7 +54,7 @@ namespace STF.Tools
 			// Setup Id's for all gameobjects and suitable components
 			foreach(var c in root.GetComponentsInChildren<Transform>())
 			{
-				var id = c.gameObject.GetComponent<ISTFNode>();
+				var id = c.gameObject.GetComponent<ASTFNode>();
 				if(id == null) id = c.gameObject.AddComponent<STFNode>();
 				// handle supported non stf components
 			}
@@ -82,7 +82,7 @@ namespace STF.Tools
 					if(externalArmatureInstance)
 					{
 						var smrAddon = smr.gameObject.AddComponent<STFSkinnedMeshRendererAddon>();
-						smrAddon.ArmatureInstanceId = externalArmatureInstance.GetComponent<ISTFNode>().NodeId;
+						smrAddon.ArmatureInstanceId = externalArmatureInstance.GetComponent<ASTFNode>().NodeId;
 					}
 					continue;
 				}

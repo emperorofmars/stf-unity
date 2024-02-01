@@ -6,14 +6,7 @@ using STF_Util;
 
 namespace STF.Serialisation
 {
-	public interface ISTFNode
-	{
-		string Type {get;}
-		string Id {get; set;}
-		int PrefabHirarchy {get; set;} // Zero if its not an instance of an prefab. If its a prefab instance, this value is +1 of the prefabs own ISTFNode component.
-		string Origin {get; set;}
-	}
-	public abstract class ASTFNode : MonoBehaviour, ISTFNode
+	public abstract class ASTFNode : MonoBehaviour
 	{
 		public abstract string Type { get; }
 		[Id] public string _Id = Guid.NewGuid().ToString();

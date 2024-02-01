@@ -2,6 +2,7 @@
 using System;
 using UnityEngine;
 using STF_Util;
+using Newtonsoft.Json.Linq;
 
 namespace STF.Serialisation
 {
@@ -19,5 +20,15 @@ namespace STF.Serialisation
 		public Texture2D Preview;
 
 		public string ImportPath;
+	}
+	
+	public interface ISTFAssetExporter
+	{
+		string SerializeToJson(ISTFExportState State, ISTFAsset Asset);
+	}
+	
+	public interface ISTFAssetImporter
+	{
+		void ParseFromJson(ISTFImportState State, JObject JsonAsset, string Id);
 	}
 }
