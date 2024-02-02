@@ -67,6 +67,11 @@ namespace STF.Serialisation
 				asset.License = (string)JsonAsset["license"];
 				asset.LicenseLink = (string)JsonAsset["license_link"];
 
+				if(JsonAsset["preview"] != null)
+				{
+					asset.Preview = (Texture2D)(State.Resources[(string)JsonAsset["preview"]] as ISTFResource).Resource;
+				}
+
 				asset.ImportPath = State.TargetLocation;
 
 				State.SaveAsset(asset);

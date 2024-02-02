@@ -63,6 +63,10 @@ namespace STF.Serialisation
 			if(c.Resource == null)
 			{
 				c.Resource = (ISTFResource)AssetDatabase.LoadMainAssetAtPath(AssetDatabase.GetAssetPath(target));
+				if(c.Resource == null)
+				{
+					c.Resource = (ISTFResource)EditorGUILayout.ObjectField("Parent Resource", c.Resource, typeof(STFArmature), false);
+				}
 			}
 			if(c.Resource != null && c.Resource.GetType() == typeof(STFArmature))
 			{

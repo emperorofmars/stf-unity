@@ -202,49 +202,57 @@ namespace STF.Serialisation
 
 		public static Avatar GenerateAvatar(STFHumanoidArmature stfComponent, STFArmatureNodeInfo Armature)
 		{
-			var mappings = stfComponent.Mappings
-					.FindAll(mapping => !String.IsNullOrWhiteSpace(mapping.humanoidName) && mapping.bone != null)
-					.Select(mapping => new KeyValuePair<string, GameObject>(STFHumanoidArmature.translateHumanoidSTFtoUnity(mapping.humanoidName, stfComponent.LocomotionType), mapping.bone))
-					.Where(mapping => !String.IsNullOrWhiteSpace(mapping.Key)).ToList();
-			
-			var humanDescription = new HumanDescription
+			try
 			{
-				armStretch = 0.05f,
-				feetSpacing = 0f,
-				hasTranslationDoF = false,
-				legStretch = 0.05f,
-				lowerArmTwist = 0.5f,
-				lowerLegTwist = 0.5f,
-				upperArmTwist = 0.5f,
-				upperLegTwist = 0.5f,
-				skeleton = Armature.GetComponentsInChildren<Transform>().Select(t => {
-					return new SkeletonBone()
-					{
-						name = t.name,
-						position = t.localPosition,
-						rotation = t.localRotation,
-						scale = t.localScale
-					};
-				}).ToArray(),
-				human = mappings.Select(mapping => 
+				var mappings = stfComponent.Mappings
+						.FindAll(mapping => !String.IsNullOrWhiteSpace(mapping.humanoidName) && mapping.bone != null)
+						.Select(mapping => new KeyValuePair<string, GameObject>(STFHumanoidArmature.translateHumanoidSTFtoUnity(mapping.humanoidName, stfComponent.LocomotionType), mapping.bone))
+						.Where(mapping => !String.IsNullOrWhiteSpace(mapping.Key)).ToList();
+				
+				var humanDescription = new HumanDescription
 				{
-					var bone = new HumanBone {
-						humanName = mapping.Key,
-						boneName = mapping.Value.name,
-						limit = new HumanLimit {useDefaultValues = true}
-					};
-					return bone;
-				}).ToArray()
-			};
+					armStretch = 0.05f,
+					feetSpacing = 0f,
+					hasTranslationDoF = false,
+					legStretch = 0.05f,
+					lowerArmTwist = 0.5f,
+					lowerLegTwist = 0.5f,
+					upperArmTwist = 0.5f,
+					upperLegTwist = 0.5f,
+					skeleton = Armature.GetComponentsInChildren<Transform>().Select(t => {
+						return new SkeletonBone()
+						{
+							name = t.name,
+							position = t.localPosition,
+							rotation = t.localRotation,
+							scale = t.localScale
+						};
+					}).ToArray(),
+					human = mappings.Select(mapping => 
+					{
+						var bone = new HumanBone {
+							humanName = mapping.Key,
+							boneName = mapping.Value.name,
+							limit = new HumanLimit {useDefaultValues = true}
+						};
+						return bone;
+					}).ToArray()
+				};
 
-			var avatar = AvatarBuilder.BuildHumanAvatar(Armature.gameObject, humanDescription);
-			avatar.name = Armature.name + "Avatar";
+				var avatar = AvatarBuilder.BuildHumanAvatar(Armature.gameObject, humanDescription);
+				avatar.name = Armature.name + "Avatar";
 
-			if (!avatar.isValid)
-			{
-				throw new Exception("Invalid humanoid avatar");
+				if (!avatar.isValid)
+				{
+					throw new Exception("Invalid humanoid avatar");
+				}
+				return avatar;
 			}
-			return avatar;
+			catch(Exception e)
+			{
+				Debug.Log(e);
+				return null;
+			}
 		}
 	}
 	
@@ -293,8 +301,11 @@ namespace STF.Serialisation
 				ret.Mappings.Add(new STFHumanoidArmature.BoneMappingPair(entry.Key, ((ASTFNode)armature.Root.GetComponentsInChildren<ASTFNode>()?.FirstOrDefault(c => c.Id == (string)entry.Value))?.gameObject));
 			}
 			var avatar = STFHumanoidArmature.GenerateAvatar(ret, armature);
-			State.SaveGeneratedResource(avatar, "asset");
-			ret.GeneratedAvatar = avatar;
+			if(avatar != null)
+			{
+				State.SaveGeneratedResource(avatar, "asset");
+				ret.GeneratedAvatar = avatar;
+			}
 			State.AddResourceComponent(ret, Resource, Id);
 		}
 	}
