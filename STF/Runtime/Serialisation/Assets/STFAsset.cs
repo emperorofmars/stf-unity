@@ -2,6 +2,7 @@
 using System;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace STF.Serialisation
 {
@@ -46,9 +47,17 @@ namespace STF.Serialisation
 
 				var assetImportState = new STFAssetImportState(Id, State, State.Context);
 				var nodeType = (string)nodeJson["type"] != null && ((string)nodeJson["type"]).Length > 0 ? (string)nodeJson["type"] : STFNode._TYPE;
-				// Check node type validity
-				var rootGo = State.Context.NodeImporters[nodeType].ParseFromJson(assetImportState, nodeJson, rootId);
 				
+				GameObject rootGo;
+				if(State.Context.NodeImporters.ContainsKey(nodeType))
+				{
+					rootGo = State.Context.NodeImporters[nodeType].ParseFromJson(assetImportState, nodeJson, rootId);
+				}
+				else
+				{
+					rootGo = STFUnrecognizedNodeImporter.ParseFromJson(assetImportState, nodeJson, rootId);
+				}
+
 				var asset = rootGo.AddComponent<STFAsset>();
 				asset.Id = Id;
 				asset.Name = (string)JsonAsset["name"];
