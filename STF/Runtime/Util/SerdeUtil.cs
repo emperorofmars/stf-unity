@@ -23,6 +23,8 @@ namespace STF.Serialisation
 				else
 				{
 					Debug.LogWarning($"Unrecognized Node: {type}");
+					var childGo = STFUnrecognizedNodeImporter.ParseFromJson(State, childJson, childId);
+					childGo.transform.SetParent(Go.transform, false);
 				}
 			}
 		}
@@ -92,7 +94,7 @@ namespace STF.Serialisation
 			else
 			{
 				Debug.LogWarning($"Unrecognized Node: {node.Type}");
-				return null;
+				return STFUnrecognizedNodeExporter.SerializeToJson(State, Go);
 			}
 		}
 
