@@ -1,5 +1,5 @@
 # STF Format
-The STF format is similar to GLTF 2.0, but differs in significant ways.
+The STF format is based on the idea of GLTF 2.0, but differs in significant ways.
 
 It is a binary format made up of at least one chunk, which is always a UTF-8 encoded definition in the Json format. All further chunks are optional buffers which have to be referenced by the Json definition.
 
@@ -89,18 +89,10 @@ Example:
 		]
 	}
 
-## STF-Unity Specific Notes
-This implementation for Unity uses a two stage design. The first one parses an STF file into a Unity scene using its own components which represent the STF file 1:1 with no regard for Unity functionality. This is called the authoring scene, as it is intended for authoring STF files.
-
-Application-converters can be made to convert the intermediary authoring scene into an application-specific one. This step is destructive and throws information not relevant for the target application away, including all STF related meta-information, resolves all relationships between components and potentially applies optimizations.
-
-Included is a basic second stage which converts into a pure Unity scene, and throws everything else away.
-The AVA subproject includes Application-converters for VRChat and VRM/VSeeFace.
-
 ## Extensibility
 The extensibility of the STF format is a first class feature. All implementations must provide an easy way to add and hot-load support for additional types.
 
-By default, STF supports only a limited set of features which can be expected from a common 3d file-format. These include support for skinned meshes, armatures, animations, materials and textures.
+By default, STF supports only a limited set of features which can be expected from a common 3d file-format. These include support for meshes, armatures, animations, materials and textures.
 
 Components can have defined relationships to other components and be specific to a target application.
 Components can extend or override others.
@@ -113,9 +105,10 @@ If there exists an application specific component, it can override the basic gen
 
 ## Addons
 
-It is possible to create assets of the type `STF.addon`. These provide a list of nodes that can be of the types `STF.appendage_node` and `STF.patch_node`. They target the nodes of other assets and either parent themselves to the target (appendage) or add their child nodes and components to the target (patch).
+It is possible to create assets of the type `STF.addon`. These provide a list of nodes that can be of the types `STF.node_appendage` and `STF.node_patch`. They target the nodes of other assets and either parent themselves to the target (appendage) or add their child nodes and components to the target (patch).
 
-That way it becomes trivial for a third party to create assets like a set of clothing for a base character model. The STF importer scans the Unity project for STF addons targeting the selected asset and presents the user with a simple checkbox to apply it.
+That way it becomes trivial for a third party to create assets like a set of clothing for a base character model. To apply an addon as a Unity user, the 'STF-Tools/Apply Addons' tool can be used.
+In the future, importing an STF file, applying addons and converting to a specific target application should happen in one UI flow.
 
 ## Material Format
 As part of creating this format, I created a universal material format, called: **MTF - Material Transfer Format**.
@@ -176,3 +169,11 @@ Even if a perfect conversion is not possible, the hope is that at least the best
 		...
 	},
 	...
+
+## STF-Unity Specific Notes
+This implementation for Unity uses a two stage design. The first one parses an STF file into a Unity scene using its own components which represent the STF file 1:1 with no regard for Unity functionality. This is called the authoring scene, as it is intended for authoring STF files.
+
+Application-converters can be made to convert the intermediary authoring scene into an application-specific one. This step is destructive and throws information not relevant for the target application away, including all STF related meta-information, resolves all relationships between components and potentially applies optimizations.
+
+Included is a basic application-converter which converts into a pure Unity scene, and throws everything else away.
+The AVA subproject includes Application-converters for VRChat and VRM/VSeeFace.

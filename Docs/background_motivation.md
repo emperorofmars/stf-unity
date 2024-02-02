@@ -1,18 +1,18 @@
 # Some Background and Motivation
 VR Avatars are currently distributed as packages for game-engines, specifically for Unity. This is an issue as end-users have a hard time using professional tools. Additionally, Unity is not a character-editor by itself, it's a tool with which a character-editor application could be built.
 
-I wanted to create a universal character-editor application, aimed at end users wishing to adapt their VR Avatar models, but without the technical knowledge to work in a game-engine.
+Late 2022, I wanted to create a universal character-editor application. It would be aimed at end users wanting to adapt their VR Avatar models who don't have the technical knowledge to work in a game-engine.
 Therefore, I needed a file format that this character-editor-application could parse.
 
 Initially I wanted to create a format based on glTF 2.0 to represent VR & V-Tubing avatars in a single file, agnostic of any target application, but with support for 100% of the features of each.
 
 *VRM is a format also in the form of a glTF extension, which also represents VR & V-Tubing avatars. It was created before social-VR was figured out to the extent it is now, and doesn't support most basic features that users today expect and require*
 
-I didn't think it would be too complicated to create something better than VRM, however I encountered countless issues with the glTF 2.0 specification itself as well as many of its implementations.
-I wanted to avoid having to create my own format, but after 4 months of trying, I saw no way to make this work with glTF 2.0.
+Trying to work with glTF 2.0, I encountered countless issues with its implementations. I realized that some of these issues are also due to flaws in the glTF specification.
+I wanted to avoid having to create my own format, but after many months of trying, I saw no way to make this work with glTF 2.0.
 
-After 4 more months, I have created this STF format prototype and the AVA proof of concept set of extensions. STF puts extensibility first, and supports most of everything that glTF does, and makes it trivial to implement anything beside that.
-STF was created with consideration of how most authoring tools like Blender, Unity, Godot or Unreal Engine represent models and scenes. As such, most headaches from glTF should have been solved here, hopefully.
+I have created this STF format prototype and the AVA proof of concept set of extensions. STF puts extensibility first, and supports most of everything that glTF does, and makes it trivial to implement anything beside that.
+STF was created with consideration to how most authoring tools like Blender, Unity, Godot or Unreal Engine represent models and scenes. As such, most headaches from glTF should have been solved here, hopefully.
 
 # glTF 2.0 Issues
 - Material references and morphtarget values sit on the mesh object, not its instances.
