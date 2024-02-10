@@ -10,7 +10,6 @@ namespace STF.Serialisation
 	{
 		public const string _TYPE = "STF.asset";
 		public override string Type => _TYPE;
-		public List<string> appliedAddonIds = new List<string>();
 		public Dictionary<UnityEngine.Object, UnityEngine.Object> ResourceMeta = new Dictionary<UnityEngine.Object, UnityEngine.Object>();
 	}
 

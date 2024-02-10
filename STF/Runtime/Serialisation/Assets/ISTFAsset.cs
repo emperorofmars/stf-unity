@@ -3,6 +3,7 @@ using System;
 using UnityEngine;
 using STF_Util;
 using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
 
 namespace STF.Serialisation
 {
@@ -20,6 +21,7 @@ namespace STF.Serialisation
 		public Texture2D Preview;
 
 		public string ImportPath;
+		public List<string> AppliedAddonIds;
 	}
 	
 	public interface ISTFAssetExporter
