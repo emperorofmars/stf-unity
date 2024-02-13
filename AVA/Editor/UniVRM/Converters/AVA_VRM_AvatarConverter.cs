@@ -18,6 +18,12 @@ namespace ava.Converters
 			var avaAvatar = (AVAAvatar)Component;
 			var asset = State.Root.GetComponent<ISTFAsset>();
 
+			var animator = avaAvatar.gameObject.AddComponent<Animator>();
+			animator.applyRootMotion = true;
+			animator.updateMode = AnimatorUpdateMode.Normal;
+			animator.cullingMode = AnimatorCullingMode.CullUpdateTransforms;
+			animator.avatar = avaAvatar.TryGetHumanoidDefinition()?.GeneratedAvatar;
+
 			var vrmMetaComponent = Component.gameObject.AddComponent<VRMMeta>();
 			var vrmMeta = new VRMMetaObject();
 			vrmMeta.name = "VRM_Meta";
@@ -29,13 +35,9 @@ namespace ava.Converters
 			vrmMeta.OtherLicenseUrl = asset.LicenseLink;
 			vrmMeta.Thumbnail = asset.Preview;
 			
-			State.AddTask(new Task(() => {
-				//var humanoid = avaAvatar.TryGetHumanoidDefinition();
-
-				var vrmFirstPerson = Component.gameObject.AddComponent<VRMFirstPerson>();
-				vrmFirstPerson.FirstPersonBone = avaAvatar.viewport_parent?.transform;
-				vrmFirstPerson.FirstPersonOffset = avaAvatar.viewport_position;
-			}));
+			var vrmFirstPerson = Component.gameObject.AddComponent<VRMFirstPerson>();
+			vrmFirstPerson.FirstPersonBone = avaAvatar.viewport_parent?.transform;
+			vrmFirstPerson.FirstPersonOffset = avaAvatar.viewport_position;
 
 			var secondary = new GameObject();
 			secondary.name = "VRM_secondary";
