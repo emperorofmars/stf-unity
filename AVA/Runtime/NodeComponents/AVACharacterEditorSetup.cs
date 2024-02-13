@@ -45,46 +45,17 @@ namespace AVA.Serialisation
 		public List<CharacterEditorCategory> categories = new List<CharacterEditorCategory>();
 	}
 
-	/*public class AVACharacterEditorSetupImporter : ASTFComponentImporter
-	{
-		override public void ParseFromJson(ISTFImporter state, ISTFAsset asset, JToken json, string id, GameObject go)
-		{
-			var c = go.AddComponent<AVACharacterEditorSetup>();
-			state.AddComponent(id, c);
-			c.id = id;
-			this.ParseRelationships(json, c);
-		}
-	}
-
-	public class AVACharacterEditorSetupExporter : ASTFComponentExporter
-	{
-		override public List<GameObject> GatherNodes(Component component)
-		{
-			var c = (AVACharacterEditorSetup)component;
-			var ret = new List<GameObject>();
-			return ret;
-		}
-
-		override public JToken SerializeToJson(ISTFExporter state, Component component)
-		{
-			var c = (AVACharacterEditorSetup)component;
-			var ret = new JObject();
-			string voice_parent_node = state.GetNodeId(c.voice_parent);
-			ret.Add("type", AVACharacterEditorSetup._TYPE);
-			this.SerializeRelationships(c, ret);
-			return ret;
-		}
-	}
-
+/*
 #if UNITY_EDITOR
 	[InitializeOnLoad]
 	public class Register_AVACharacterEditorSetup
 	{
 		static Register_AVACharacterEditorSetup()
 		{
-			STFRegistry.RegisterComponentImporter(AVACharacterEditorSetup._TYPE, new AVACharacterEditorSetupImporter());
-			STFRegistry.RegisterComponentExporter(typeof(AVACharacterEditorSetup), new AVACharacterEditorSetupExporter());
+			STFRegistry.RegisterNodeComponentImporter(AVACharacterEditorSetup._TYPE, new AVACharacterEditorSetupImporter());
+			STFRegistry.RegisterNodeComponentExporter(typeof(AVACharacterEditorSetup), new AVACharacterEditorSetupExporter());
 		}
 	}
-#endif*/
+#endif
+*/
 }
