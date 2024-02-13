@@ -2,20 +2,15 @@ using UnityEngine;
 
 namespace STF.Addon
 {
-	public interface ISTFAddonApplier
-	{
-		public void Apply(ISTFAddonApplierContext Context, GameObject Target, Component SourceComponent);
-	}
-
-	public abstract class ASTFAddonApplier : ISTFAddonApplier
+	public abstract class ISTFNodeComponentAddonApplier
 	{
 		public virtual void Apply(ISTFAddonApplierContext Context, GameObject Target, Component SourceComponent)
 		{
-			STFDefaultAddonApplier.Apply(Context, Target, SourceComponent);
+			STFDefaultNodeComponentAddonApplier.Apply(Context, Target, SourceComponent);
 		}
 	}
 
-	public static class STFDefaultAddonApplier
+	public static class STFDefaultNodeComponentAddonApplier
 	{
 		public static void Apply(ISTFAddonApplierContext Context, GameObject Target, Component SourceComponent)
 		{

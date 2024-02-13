@@ -11,13 +11,13 @@ namespace STF.Addon
 {
 	public static class STFAddonApplierRegistry
 	{
-		public static readonly Dictionary<Type, ISTFAddonApplier> DefaultAddonAppliers = new Dictionary<Type, ISTFAddonApplier> {
+		public static readonly Dictionary<Type, ISTFNodeComponentAddonApplier> DefaultAddonAppliers = new Dictionary<Type, ISTFNodeComponentAddonApplier> {
 			{typeof(SkinnedMeshRenderer), new STFMeshInstanceAddonApplier()},
 		};
-		private static Dictionary<Type, ISTFAddonApplier> RegisteredAddonAppliers = new Dictionary<Type, ISTFAddonApplier>();
-		public static Dictionary<Type, ISTFAddonApplier> AddonAppliers => CollectionUtil.Combine(DefaultAddonAppliers, RegisteredAddonAppliers);
+		private static Dictionary<Type, ISTFNodeComponentAddonApplier> RegisteredAddonAppliers = new Dictionary<Type, ISTFNodeComponentAddonApplier>();
+		public static Dictionary<Type, ISTFNodeComponentAddonApplier> AddonAppliers => CollectionUtil.Combine(DefaultAddonAppliers, RegisteredAddonAppliers);
 
-		public static void RegisterAddonApplier(Type Type, ISTFAddonApplier Applier) { RegisteredAddonAppliers.Add(Type, Applier); }
+		public static void RegisterAddonApplier(Type Type, ISTFNodeComponentAddonApplier Applier) { RegisteredAddonAppliers.Add(Type, Applier); }
 	}
 
 	public interface ISTFAddonApplierContext
@@ -60,7 +60,17 @@ namespace STF.Addon
 					var target = ret.transform.GetComponentsInChildren<ISTFNode>().FirstOrDefault(c => c.Id == (addonNode as STFAppendageNode).TargetId);
 					if(target != null)
 					{
-						UnityEngine.Object.Instantiate(addonGo).SetParent(target.transform);
+						var t = UnityEngine.Object.Instantiate(addonGo);
+						t.SetParent(target.transform);
+						t.name = addonGo.name;
+						// transform components
+						foreach(var component in t.GetComponents<Component>())
+						{
+							if(STFAddonApplierRegistry.AddonAppliers.ContainsKey(component.GetType()))
+							{
+								STFAddonApplierRegistry.AddonAppliers[component.GetType()].Apply(ApplierContext, target.gameObject, component);
+							}
+						}
 					}
 					else
 					{
@@ -75,18 +85,21 @@ namespace STF.Addon
 						// copy children
 						for(int addonChildIdx = 0; addonChildIdx < target.transform.childCount; addonChildIdx++)
 						{
-							UnityEngine.Object.Instantiate(addonGo.GetChild(addonChildIdx)).SetParent(target.transform);
+							var t = UnityEngine.Object.Instantiate(addonGo.GetChild(addonChildIdx));
+							t.SetParent(target.transform);
+							t.name = addonGo.GetChild(addonChildIdx).name;
 						}
 						// copy acomponents
 						foreach(var component in addonGo.GetComponents<Component>())
 						{
 							if(STFAddonApplierRegistry.AddonAppliers.ContainsKey(component.GetType()))
 							{
+								// transform components
 								STFAddonApplierRegistry.AddonAppliers[component.GetType()].Apply(ApplierContext, target.gameObject, component);
 							}
 							else
 							{	// copy the component
-								STFDefaultAddonApplier.Apply(ApplierContext, target.gameObject, component);
+								STFDefaultNodeComponentAddonApplier.Apply(ApplierContext, target.gameObject, component);
 							}
 						}
 					}
