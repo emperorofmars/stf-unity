@@ -196,14 +196,12 @@ namespace STF.Serialisation
 		public override void Apply(ISTFAddonApplierContext Context, GameObject Target, Component SourceComponent)
 		{
 			base.Apply(Context, Target, SourceComponent);
-			var meshInstance = Target.GetComponent<STFMeshInstance>();
+			var meshInstance = SourceComponent.GetComponent<STFMeshInstance>();
 			var smr = SourceComponent as SkinnedMeshRenderer;
 
-			var armatureInstanceNode = Context.Root.GetComponentsInChildren<STFArmatureInstanceNode>().FirstOrDefault(c => c.Id == meshInstance?.ArmatureInstanceId);
+			var armatureInstanceNode = Context.Root.GetComponentsInChildren<STFArmatureInstanceNode>().FirstOrDefault(c => c.Id == meshInstance.ArmatureInstanceId);
 			if(armatureInstanceNode != null)
 			{
-				Debug.Log("Setting up Armature");
-
 				smr.sharedMesh.bindposes = armatureInstanceNode.armature.Bindposes;
 
 				smr.rootBone = armatureInstanceNode.root.transform;
