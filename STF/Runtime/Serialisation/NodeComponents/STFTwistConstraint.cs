@@ -1,5 +1,7 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
+using BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1.X509;
 using Codice.CM.WorkspaceServer.Tree.GameUI.HeadTree;
 using Newtonsoft.Json.Linq;
 using STF.ApplicationConversion;
@@ -31,6 +33,7 @@ namespace STF.Serialisation
 				{"type", STFTwistConstraint._TYPE},
 				{"weight", c.Weight}
 			};
+			if(c.Target == null && (c.TargetId == null || c.TargetId.Length == 0)) c.TargetId = c.transform.parent?.GetComponents<ISTFNode>().OrderByDescending(c => c.PrefabHirarchy).FirstOrDefault()?.Id;
 			State.AddTask(new Task(() => {
 				ret.Add("target", c.Target != null ? c.Target.GetComponent<ISTFNode>().Id : c.TargetId);
 			}));
@@ -52,10 +55,8 @@ namespace STF.Serialisation
 			ParseRelationships(Json, c);
 			c.Id = Id;
 			c.Weight = (float)Json["weight"];
-			State.AddTask(new Task(() => {
-				c.Target = (string)Json["target"] != null ? State.Nodes[(string)Json["target"]] : null;
-				c.TargetId = (string)Json["target"];
-			}));
+			c.Target = Json["target"] != null && State.Nodes.ContainsKey((string)Json["target"]) ? State.Nodes[(string)Json["target"]] : null;
+			c.TargetId = (string)Json["target"];
 			State.AddComponent(c, Id);
 		}
 	}

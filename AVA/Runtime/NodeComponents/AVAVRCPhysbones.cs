@@ -5,6 +5,8 @@ using Newtonsoft.Json.Linq;
 using UnityEngine;
 using System.Threading.Tasks;
 using STF.Serialisation;
+using System.Linq;
+
 
 
 #if UNITY_EDITOR
@@ -74,7 +76,7 @@ namespace AVA.Serialisation
 			var ret = new JObject();
 			SerializeRelationships(c, ret);
 			ret.Add("type", AVAVRCPhysbones._TYPE);
-			ret.Add("target", c.target != null ? c.target?.GetComponent<ISTFNode>()?.Id : c.targetId);
+			ret.Add("target", c.target != null ? c.target?.GetComponents<ISTFNode>().OrderByDescending(c => c.PrefabHirarchy).FirstOrDefault()?.Id : c.targetId);
 			ret.Add("version", c.version);
 			ret.Add("integration_type", c.integration_type);
 			ret.Add("pull", c.pull);

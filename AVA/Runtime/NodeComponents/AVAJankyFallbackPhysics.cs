@@ -5,6 +5,8 @@ using Newtonsoft.Json.Linq;
 using UnityEngine;
 using System.Threading.Tasks;
 using STF.Serialisation;
+using System.Linq;
+
 
 
 #if UNITY_EDITOR
@@ -62,7 +64,7 @@ namespace AVA.Serialisation
 			var ret = new JObject();
 			SerializeRelationships(c, ret);
 			ret.Add("type", AVAJankyFallbackPhysics._TYPE);
-			ret.Add("target", c.target != null ? c.target?.GetComponent<ISTFNode>()?.Id : c.targetId);
+			ret.Add("target", c.target != null ? c.target?.GetComponents<ISTFNode>().OrderByDescending(c => c.PrefabHirarchy).FirstOrDefault()?.Id : c.targetId);
 			ret.Add("pull", c.pull);
 			ret.Add("spring", c.spring);
 			ret.Add("stiffness", c.stiffness);

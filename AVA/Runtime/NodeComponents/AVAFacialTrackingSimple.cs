@@ -29,7 +29,7 @@ namespace AVA.Serialisation
 		};
 
 		public static readonly List<string> FacialExpressions = new List<string> {
-			"blink", "look_up", "look_down" // add all the facial tracking ones
+			"eye_closed", "look_up", "look_down" // add all the facial tracking ones
 		};
 
 		public STFMeshInstance TargetMeshInstance;
