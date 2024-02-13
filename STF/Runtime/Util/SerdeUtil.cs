@@ -120,6 +120,7 @@ namespace STF.Serialisation
 			}
 			else
 			{
+				Debug.LogWarning($"Unrecognized Node: {NodeComponent.GetType()}");
 				ret = STFUnrecognizedNodeComponentExporter.SerializeToJson(State, NodeComponent);
 			}
 			State.AddComponent(NodeComponent, ret.JsonComponent, ret.Id);

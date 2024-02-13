@@ -71,7 +71,7 @@ namespace AVA.Serialisation
 			var ret = new JObject();
 			SerializeRelationships(c, ret);
 			ret.Add("type", AVAVRCPhysbones._TYPE);
-			ret.Add("target", State.Nodes[c.target].Id);
+			ret.Add("target", c.target?.GetComponent<ASTFNode>()?.Id);
 			ret.Add("version", c.version);
 			ret.Add("integration_type", c.integration_type);
 			ret.Add("pull", c.pull);

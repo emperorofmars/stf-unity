@@ -30,7 +30,7 @@ namespace AVA.Serialisation
 			if(MainMeshInstance != null)
 			{
 				var humanoidDefinition = TryGetHumanoidDefinition();
-				SetupViewport(humanoidDefinition);
+				if(humanoidDefinition) SetupViewport(humanoidDefinition);
 			}
 		}
 

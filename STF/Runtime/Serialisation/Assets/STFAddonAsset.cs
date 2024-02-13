@@ -9,6 +9,11 @@ namespace STF.Serialisation
 	{
 		public const string _TYPE = "STF.addon_asset";
 		public override string Type => _TYPE;
+		
+		// Give information onto which asset this addon can be applied. Very temporary implementation, should be more thought out.
+		// Possibilities: Restrict to ID(s), to type(s), check if a type/ID or something is present, etc...
+		public List<string> TargetConstraints = new List<string>();
+		
 		public Dictionary<UnityEngine.Object, UnityEngine.Object> ResourceMeta = new Dictionary<UnityEngine.Object, UnityEngine.Object>();
 	}
 

@@ -62,8 +62,12 @@ namespace STF.Serialisation
 			EditorGUILayout.PrefixLabel("Mapped " + (c.Mappings != null ? c.Mappings.Count : 0) + " bones.");
 			if(c.Resource == null)
 			{
-				c.Resource = (ISTFResource)AssetDatabase.LoadMainAssetAtPath(AssetDatabase.GetAssetPath(target));
-				if(c.Resource == null)
+				var mainAsset = AssetDatabase.LoadMainAssetAtPath(AssetDatabase.GetAssetPath(target));
+				if(mainAsset != null && mainAsset is ISTFResource)
+				{
+					c.Resource = (ISTFResource)AssetDatabase.LoadMainAssetAtPath(AssetDatabase.GetAssetPath(target));
+				}
+				else
 				{
 					c.Resource = (ISTFResource)EditorGUILayout.ObjectField("Parent Resource", c.Resource, typeof(STFArmature), false);
 				}

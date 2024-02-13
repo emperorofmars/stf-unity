@@ -77,7 +77,7 @@ namespace STF.Tools
 			GUILayout.Space(10);
 			drawHLine();
 			if(mainExport && GUILayout.Button("Export", GUILayout.ExpandWidth(true))) {
-				var path = EditorUtility.SaveFilePanel("STF Export", "Assets", mainExport.name + "01" + ".stf", "stf");
+				var path = EditorUtility.SaveFilePanel("STF Export", "Assets", mainExport.name + ".stf", "stf");
 				if(path != null && path.Length > 0) {
 					SerializeAsSTFBinary(mainExport, exports, path, DebugExport);
 				}

@@ -64,7 +64,7 @@ namespace STF.Serialisation
 			if(Component is SkinnedMeshRenderer)
 			{
 				if(meshInstance.ArmatureInstanceId != null && meshInstance.ArmatureInstanceId.Length > 0) ret.Add("armature_instance", meshInstance.ArmatureInstanceId);
-				else ret.Add("armature_instance", State.Nodes[(renderer as SkinnedMeshRenderer).rootBone.parent.gameObject].Id);
+				else ret.Add("armature_instance", (renderer as SkinnedMeshRenderer).rootBone.parent.GetComponent<STFArmatureInstanceNode>()?.Id);
 			}
 
 			var materials = new JArray();
