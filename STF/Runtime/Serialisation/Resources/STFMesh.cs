@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Schema;
 using Unity.Collections;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -335,7 +336,7 @@ namespace STF.Serialisation
 				mesh.SetVertices(vertices);
 				offset += 3;
 			}
-			if((bool)Json["normal"] == true)
+			if(Json.ContainsKey("normal") && (bool)Json["normal"] == true)
 			{
 				var normals = new List<Vector3>();
 				for(int i = 0; i < vertexCount; i++)
@@ -345,7 +346,7 @@ namespace STF.Serialisation
 				mesh.SetNormals(normals);
 				offset += 3;
 			}
-			if((bool)Json["tangent"] == true)
+			if(Json.ContainsKey("tangent") && (bool)Json["tangent"] == true)
 			{
 				var tangents = new List<Vector4>();
 				for(int i = 0; i < vertexCount; i++)
@@ -355,7 +356,7 @@ namespace STF.Serialisation
 				mesh.SetTangents(tangents);
 				offset += 4;
 			}
-			if((bool)Json["color"] == true)
+			if(Json.ContainsKey("color") && (bool)Json["color"] == true)
 			{
 				var colors = new List<Color>();
 				for(int i = 0; i < vertexCount; i++)
@@ -367,7 +368,7 @@ namespace STF.Serialisation
 			}
 			for(int uvIdx = 0; uvIdx < numUVs; uvIdx++)
 			{
-				if((bool)Json["normal"] == true)
+				if(Json.ContainsKey("normal") && (bool)Json["normal"] == true)
 				{
 					var uvs = new List<Vector3>();
 					for(int i = 0; i < vertexCount; i++)
