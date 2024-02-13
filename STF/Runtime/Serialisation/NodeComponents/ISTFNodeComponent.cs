@@ -39,9 +39,9 @@ namespace STF.Serialisation
 
 		public static void SerializeRelationships(ISTFNodeComponent Component, JObject Json)
 		{
-			if(Component.Extends != null && Component.Extends.Count > 0) Json.Add("extends", new JArray(Component.Extends));
-			if(Component.Overrides != null && Component.Overrides.Count > 0) Json.Add("overrides", new JArray(Component.Overrides));
-			if(Component.Targets != null && Component.Targets.Count > 0) Json.Add("targets", new JArray(Component.Targets));
+			if(Component?.Extends != null && Component.Extends.Count > 0) Json.Add("extends", new JArray(Component.Extends));
+			if(Component?.Overrides != null && Component.Overrides.Count > 0) Json.Add("overrides", new JArray(Component.Overrides));
+			if(Component?.Targets != null && Component.Targets.Count > 0) Json.Add("targets", new JArray(Component.Targets));
 		}
 	}
 	

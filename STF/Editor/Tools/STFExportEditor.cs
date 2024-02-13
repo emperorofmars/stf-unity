@@ -104,7 +104,7 @@ namespace STF.Tools
 				trash.Add(exportInstance);
 				var setupAsset = STFSetup.SetupStandaloneAssetInplace(exportInstance);
 				trash.AddRange(setupAsset.CreatedGos);
-				var exporter = new STFExporter(exportInstance.GetComponent<STFAsset>(), SecondaryAssets, ExportPath, setupAsset.ResourceMeta, DebugExport);
+				var exporter = new STFExporter(exportInstance.GetComponent<ISTFAsset>(), SecondaryAssets, ExportPath, setupAsset.ResourceMeta, DebugExport);
 			}
 			catch(Exception e)
 			{

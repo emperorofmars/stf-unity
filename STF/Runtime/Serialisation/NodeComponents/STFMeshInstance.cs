@@ -70,7 +70,7 @@ namespace STF.Serialisation
 			var materials = new JArray();
 			for(int matIdx = 0; matIdx < renderer.sharedMaterials.Length; matIdx++)
 			{
-				if(meshInstance.Materials.Count > matIdx && meshInstance.Materials[matIdx] != null)
+				if(meshInstance != null && meshInstance.Materials.Count > matIdx && meshInstance.Materials[matIdx] != null)
 				{
 					materials.Add(SerdeUtil.SerializeResource(State, meshInstance.Materials[matIdx]));
 				}
@@ -86,7 +86,7 @@ namespace STF.Serialisation
 			var resourcesUsed = new JArray(meshId, ret["armature_instance"]);
 			foreach(var m in ret["materials"]) if(m != null) resourcesUsed.Add(m);
 			ret.Add("resources_used", resourcesUsed);
-			return (meshInstance.Id, ret);
+			return (meshInstance != null ? meshInstance.Id : Guid.NewGuid().ToString(), ret);
 		}
 	}
 

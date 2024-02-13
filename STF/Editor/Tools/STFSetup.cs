@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using STF.Serialisation;
-using UnityEditor;
+//using UnityEditor;
 using UnityEngine;
 
 namespace STF.Tools
@@ -15,7 +15,7 @@ namespace STF.Tools
 		{
 			var CreatedGos = new List<GameObject>();
 			// Setup main asset info
-			var asset = root.GetComponent<STFAsset>();
+			var asset = root.GetComponent<ISTFAsset>();
 			if(asset == null)
 			{
 				asset = root.AddComponent<STFAsset>();
@@ -109,6 +109,10 @@ namespace STF.Tools
 				var armatureInstanceGo = smr.rootBone?.parent?.gameObject;
 				if(armatureInstanceGo == null) throw new Exception("Incorrectly setup SkinnedMeshRenderer: " + smr);
 				var armatureInstance = armatureInstanceGo.GetComponent<STFArmatureInstanceNode>();
+
+				// continue if an armature instance already exists. It can be assumed that its setup correctly.
+				if(armatureInstance != null) continue;
+
 				if(armatureInstance == null) armatureInstance = armatureInstanceGo.AddComponent<STFArmatureInstanceNode>();
 				// Setup armatureInstance to the definetively correct values
 				meshInstance.ArmatureInstance = armatureInstance;
@@ -122,18 +126,18 @@ namespace STF.Tools
 				}
 				if(!ret.ResourceMeta.ContainsKey(smr.sharedMesh))
 				{
-					if(AssetDatabase.IsMainAsset(smr.sharedMesh))
+					/*if(AssetDatabase.IsMainAsset(smr.sharedMesh))
 					{
 						var assetPath = AssetDatabase.GetAssetPath(smr.sharedMesh);
 						var metaPath = Path.ChangeExtension(assetPath, "Asset");
 						ret.ResourceMeta.Add(smr.sharedMesh, AssetDatabase.LoadAssetAtPath<STFMesh>(metaPath));
 					}
 					else
-					{
+					{*/
 						var stfMesh = ScriptableObject.CreateInstance<STFMesh>();
 						stfMesh.ArmatureId = armatureInstance.armature.Id;
 						ret.ResourceMeta.Add(smr.sharedMesh, stfMesh);
-					}
+					//}
 				}
 			}
 			// TODO: compare bind poses to see if the same armature is used multiple times in the scene

@@ -83,6 +83,7 @@ namespace STF.Serialisation
 		};
 		public static readonly Dictionary<Type, ISTFNodeComponentExporter> DefaultNodeComponentExporters = new Dictionary<Type, ISTFNodeComponentExporter>() {
 			{typeof(SkinnedMeshRenderer), new STFMeshInstanceExporter()},
+			{typeof(MeshRenderer), new STFMeshInstanceExporter()},
 			{typeof(STFTwistConstraint), new STFTwistConstraintExporter()},
 			{typeof(STFResourceHolder), new STFResourceHolderExporter()}
 		};
@@ -111,7 +112,8 @@ namespace STF.Serialisation
 		};
 		public static readonly List<ISTFImportPostProcessor> DefaultImportPostProcessors = new List<ISTFImportPostProcessor>();
 		public static readonly List<Type> DefaultExportExclusions = new List<Type>() {
-			typeof(Transform), typeof(ISTFNode), typeof(Animator), typeof(STFAsset), typeof(STFAddonAsset), typeof(STFNode), typeof(STFBoneNode), typeof(STFBoneInstanceNode), typeof(STFMeshInstance), typeof(STFArmatureInstanceNode), typeof(STFArmatureNodeInfo)
+			typeof(Transform), typeof(ISTFNode), typeof(Animator), typeof(STFAsset), typeof(STFAddonAsset), typeof(STFNode), typeof(STFBoneNode), typeof(STFBoneInstanceNode),
+			typeof(STFMeshInstance), typeof(STFArmatureInstanceNode), typeof(STFArmatureNodeInfo), typeof(MeshFilter)
 		};
 
 		private static Dictionary<string, ISTFAssetImporter> RegisteredAssetImporters = new Dictionary<string, ISTFAssetImporter>();

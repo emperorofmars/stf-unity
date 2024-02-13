@@ -29,6 +29,12 @@ namespace STF.Serialisation
 			var ret = new JObject();
 			var mesh = (Mesh)Resource;
 			var meta = State.LoadMeta<STFMesh>(Resource);
+			if(meta == null)
+			{
+				meta = ScriptableObject.CreateInstance<STFMesh>();
+				meta.Name = mesh.name;
+				meta.Resource = mesh;
+			}
 			
 			var usedResources = new JArray();
 

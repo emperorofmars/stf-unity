@@ -2,6 +2,7 @@
 using System;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace STF.Serialisation
 {
@@ -39,9 +40,9 @@ namespace STF.Serialisation
 				var childNodeInfo = child.GetComponents<ISTFNode>();
 				foreach(var nodeInfo in childNodeInfo)
 				{
-					if(nodeInfo.Type != STFPatchNode._TYPE/* || nodeInfo.Type != STFAppendageNode._TYPE*/)
+					if(nodeInfo.Type != STFPatchNode._TYPE && nodeInfo.Type != STFAppendageNode._TYPE)
 					{
-						throw new Exception("Addon Asset can only containt root nodes of the types '" + STFPatchNode._TYPE + "'"/* or '" + STFAppendageNode._TYPE + "' !"*/);
+						throw new Exception($"Addon Asset can only containt root nodes of the types '{ STFPatchNode._TYPE }' or '{ STFAppendageNode._TYPE }' !\nWrong node type: {nodeInfo.Type}");
 					}
 				}
 			}
