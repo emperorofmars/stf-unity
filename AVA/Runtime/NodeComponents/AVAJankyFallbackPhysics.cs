@@ -19,6 +19,7 @@ namespace AVA.Serialisation
 		public static string _TYPE = "AVA.janky_fallback_physics";
 		public override string Type => _TYPE;
 		public GameObject target;
+		public string targetId;
 		public float pull = 0.2f;
 		public float spring = 0.2f;
 		public float stiffness = 0.2f;
@@ -38,8 +39,8 @@ namespace AVA.Serialisation
 			ParseRelationships(Json, c);
 			c.Extends = Json["extends"]?.ToObject<List<string>>();
 
-			// async????
-			c.target = State.Nodes[(string)Json["target"]];
+			if(State.Nodes.ContainsKey((string)Json["target"])) c.target = State.Nodes[(string)Json["target"]];
+			c.targetId = (string)Json["target"];
 			c.pull = (float)Json["pull"];
 			c.spring = (float)Json["spring"];
 			c.stiffness = (float)Json["stiffness"];
@@ -61,7 +62,7 @@ namespace AVA.Serialisation
 			var ret = new JObject();
 			SerializeRelationships(c, ret);
 			ret.Add("type", AVAJankyFallbackPhysics._TYPE);
-			ret.Add("target", c.target?.GetComponent<ASTFNode>()?.Id);
+			ret.Add("target", c.target != null ? c.target?.GetComponent<ASTFNode>()?.Id : c.targetId);
 			ret.Add("pull", c.pull);
 			ret.Add("spring", c.spring);
 			ret.Add("stiffness", c.stiffness);

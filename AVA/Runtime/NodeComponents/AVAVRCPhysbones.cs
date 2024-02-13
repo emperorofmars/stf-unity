@@ -19,6 +19,7 @@ namespace AVA.Serialisation
 		public static string _TYPE = "AVA.VRC.physbones";
 		public override string Type => _TYPE;
 		public GameObject target;
+		public string targetId;
 		public string version = "1.1";
 		public string integration_type = "simplified";
 		public float pull = 0.2f; // TODO: support curves for each appropriate parameter
@@ -42,8 +43,10 @@ namespace AVA.Serialisation
 			var c = Go.AddComponent<AVAVRCPhysbones>();
 			c.Id = Id;
 			ParseRelationships(Json, c);
-			c.Extends = Json["extends"]?.ToObject<List<string>>();
-			c.target = State.Nodes[(string)Json["target"]];
+
+			if(State.Nodes.ContainsKey((string)Json["target"])) c.target = State.Nodes[(string)Json["target"]];
+			c.targetId = (string)Json["target"];
+
 			c.version = (string)Json["version"];
 			c.integration_type = (string)Json["integration_type"];
 			c.pull = (float)Json["pull"];
@@ -71,7 +74,7 @@ namespace AVA.Serialisation
 			var ret = new JObject();
 			SerializeRelationships(c, ret);
 			ret.Add("type", AVAVRCPhysbones._TYPE);
-			ret.Add("target", c.target?.GetComponent<ASTFNode>()?.Id);
+			ret.Add("target", c.target != null ? c.target?.GetComponent<ASTFNode>()?.Id : c.targetId);
 			ret.Add("version", c.version);
 			ret.Add("integration_type", c.integration_type);
 			ret.Add("pull", c.pull);

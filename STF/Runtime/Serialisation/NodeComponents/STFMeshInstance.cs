@@ -128,9 +128,9 @@ namespace STF.Serialisation
 
 				if((string)Json["armature_instance"] != null)
 				{
-					var armatureInstanceNode = State.Nodes[(string)Json["armature_instance"]];
-					if(armatureInstanceNode != null)
+					if(State.Nodes.ContainsKey((string)Json["armature_instance"]))
 					{
+						var armatureInstanceNode = State.Nodes[(string)Json["armature_instance"]];
 						var armatureInstance = armatureInstanceNode.GetComponent<STFArmatureInstanceNode>();
 						meshInstanceComponent.ArmatureInstance = armatureInstance;
 						c.rootBone = armatureInstance.root.transform;

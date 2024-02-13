@@ -423,9 +423,9 @@ namespace STF.Serialisation
 				mesh.SetBoneWeights(bonesPerVertexNat, weights);
 
 				State.AddTask(new Task(() => {
-					var armature = (STFArmature)State.Resources[(string)Json["armature"]];
-					if(armature != null)
+					if(State.Resources.ContainsKey((string)Json["armature"]))
 					{
+						var armature = (STFArmature)State.Resources[(string)Json["armature"]];
 						mesh.bindposes = armature.Bindposes;
 					}
 				}));

@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Codice.CM.WorkspaceServer.Tree.GameUI.HeadTree;
 using Newtonsoft.Json.Linq;
 using STF.ApplicationConversion;
 using UnityEngine;
@@ -12,6 +13,7 @@ namespace STF.Serialisation
 		public const string _TYPE = "STF.constraint.twist";
 		public override string Type => _TYPE;
 		public GameObject Target;
+		public string TargetId;
 		public float Weight = 0.5f;
 	}
 
@@ -30,7 +32,7 @@ namespace STF.Serialisation
 				{"weight", c.Weight}
 			};
 			State.AddTask(new Task(() => {
-				ret.Add("target", State.Nodes.ContainsKey(c.Target) ? State.Nodes[c.Target].Id : null);
+				ret.Add("target", c.Target != null ? c.Target.GetComponent<ASTFNode>().Id : c.TargetId);
 			}));
 			SerializeRelationships(c, ret);
 			return (c.Id, ret);
@@ -52,6 +54,7 @@ namespace STF.Serialisation
 			c.Weight = (float)Json["weight"];
 			State.AddTask(new Task(() => {
 				c.Target = (string)Json["target"] != null ? State.Nodes[(string)Json["target"]] : null;
+				c.TargetId = (string)Json["target"];
 			}));
 			State.AddComponent(c, Id);
 		}
