@@ -8,6 +8,7 @@ using STF.ApplicationConversion;
 using STF.Serialisation;
 using UnityEngine;
 using UnityEngine.Animations;
+using VRM;
 
 namespace AVA.ApplicationConversion
 {

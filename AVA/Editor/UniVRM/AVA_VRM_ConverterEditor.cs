@@ -58,7 +58,7 @@ namespace AVA.ApplicationConversion
 					AssetDatabase.CreateFolder(path, AVA_VRM_Converter._TARGET_NAME);
 					AssetDatabase.Refresh();
 				}
-				path = Path.Combine(path, AVA_VRM._TARGET_NAME);
+				path = Path.Combine(path, AVA_VRM_Converter._TARGET_NAME);
 			}
 			
 			drawHLine();
