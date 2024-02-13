@@ -19,9 +19,10 @@ namespace AVA.ApplicationConversion
 		public override STFApplicationConverterContext ConverterContext => new STFApplicationConverterContext {
 			NodeComponent = new Dictionary<Type, ISTFNodeComponentApplicationConverter>() {
 				{typeof(STFTwistConstraint), new STFTwistConstraintConverter()},
-				//{typeof(AVAAvatar), new AVA_VRM_AvatarConverter()},
-				//typeof(AVAEyeBoneLimitsSimple), new AVA_VRM_EyeBoneLimitsSimpleConverter()},
-				//{typeof(SkinnedMeshRenderer), new STFMeshInstanceApplicationConverter()},
+				{typeof(AVAAvatar), new AVA_VRM_AvatarConverter()},
+				{typeof(AVAEyeBoneLimitsSimple), new AVA_VRM_EyeBoneLimitsSimpleConverter()},
+				{typeof(SkinnedMeshRenderer), new STFMeshInstanceApplicationConverter()},
+				{typeof(AVAJankyFallbackPhysics), new AVA_VRM_JankyFallbackPhysicsConverter()},
 			},
 			Resource = new Dictionary<Type, ISTFResourceApplicationConverter>() {
 				{typeof(MTF.Material), new MTFMaterialApplicationConverter()},
@@ -29,7 +30,7 @@ namespace AVA.ApplicationConversion
 			}
 		};
 		public override List<Type> WhitelistedComponents => new List<Type> {
-			typeof(Transform), typeof(Animator), typeof(RotationConstraint), typeof(SkinnedMeshRenderer), typeof(VRMMeta), typeof(VRMLookAtHead),
+			typeof(Transform), typeof(Animator), typeof(RotationConstraint), typeof(SkinnedMeshRenderer), typeof(MeshFilter), typeof(MeshRenderer), typeof(VRMMeta), typeof(VRMLookAtHead),
 			typeof(VRMHumanoidDescription), typeof(VRMFirstPerson), typeof(VRMLookAtBoneApplyer), typeof(VRMBlendShapeProxy), typeof(VRMSpringBone)
 		};
 		public override List<string> Targets => new List<string> {TargetName, "gltf"};

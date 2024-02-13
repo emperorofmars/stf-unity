@@ -1,16 +1,15 @@
 #if UNITY_EDITOR
 #if AVA_UNIVRM_FOUND
 
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using AVA.Serialisation;
 using STF.ApplicationConversion;
 using UnityEngine;
 using VRM;
 
-namespace ava.Converters
+namespace AVA.ApplicationConversion
 {
-	public class AVAJankyFallbackPhysicsVRMConverter : ISTFNodeComponentApplicationConverter
+	public class AVA_VRM_JankyFallbackPhysicsConverter : ISTFNodeComponentApplicationConverter
 	{
 		public void Convert(ISTFApplicationConvertState State, Component Component)
 		{

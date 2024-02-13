@@ -8,7 +8,7 @@ using STF.ApplicationConversion;
 using UnityEngine;
 using VRC.SDK3.Avatars.Components;
 
-namespace ava.Converters
+namespace AVA.ApplicationConversion
 {
 	public class AVA_VRC_FacialTrackingSimpleConverter : ISTFNodeComponentApplicationConverter
 	{

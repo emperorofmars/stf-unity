@@ -44,8 +44,6 @@ namespace AVA.ApplicationConversion
 			{
 				Asset = tmpAsset;
 				path = null;
-				Debug.Log(PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(Asset));
-				Debug.Log(Path.GetDirectoryName(PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(Asset)));
 				path = Path.GetDirectoryName(PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(Asset));
 				if(!Directory.Exists(Path.Combine(path, DefaultUnpackFolder)))
 				{
@@ -75,6 +73,7 @@ namespace AVA.ApplicationConversion
 			if(GUILayout.Button("Select Output Folder", GUILayout.ExpandWidth(false)))
 			{
 				path = EditorUtility.SaveFolderPanel("Select Output Folder", path, "converted");
+				path = Path.Combine("Assets", Path.GetRelativePath(Application.dataPath, path));
 			}
 
 			drawHLine();

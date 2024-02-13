@@ -9,9 +9,9 @@ using UniHumanoid;
 using UnityEngine;
 using VRM;
 
-namespace ava.Converters
+namespace AVA.ApplicationConversion
 {
-	public class AVAEyeBoneLimitsSimpleVRMConverter : ISTFNodeComponentApplicationConverter
+	public class AVA_VRM_EyeBoneLimitsSimpleConverter : ISTFNodeComponentApplicationConverter
 	{
 		public void Convert(ISTFApplicationConvertState State, Component Component)
 		{

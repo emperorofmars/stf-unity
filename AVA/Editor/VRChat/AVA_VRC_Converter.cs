@@ -22,8 +22,11 @@ namespace AVA.ApplicationConversion
 			{typeof(STFTwistConstraint), new STFTwistConstraintConverter()},
 			{typeof(AVAAvatar), new AVA_VRC_AvatarConverter()},
 			{typeof(AVAEyeBoneLimitsSimple), new AVA_VRC_EyeBoneLimitsSimpleConverter()},
+			{typeof(AVAFacialTrackingSimple), new AVA_VRC_FacialTrackingSimpleConverter()},
 			{typeof(SkinnedMeshRenderer), new STFMeshInstanceApplicationConverter()},
-			{typeof(STFResourceHolder), new STFResourceHolderApplicationConverter()}, // TODO Remove this one, only for temporary testing
+			{typeof(AVAJankyFallbackPhysics), new AVA_VRC_JankyFallbackPhysicsConverter()},
+			{typeof(AVAVRCPhysbones), new AVA_VRC_PhysbonesConverter()},
+			{typeof(STFResourceHolder), new STFResourceHolderApplicationConverter()}, // TODO Remove this one, only for temporary testing until the vrchat controllers are generated
 			},
 			Resource = new Dictionary<Type, ISTFResourceApplicationConverter>() {
 				{typeof(MTF.Material), new MTFMaterialApplicationConverter()},
@@ -31,7 +34,7 @@ namespace AVA.ApplicationConversion
 			}
 		};
 		public override List<Type> WhitelistedComponents => new List<Type> {
-			typeof(Transform), typeof(Animator), typeof(RotationConstraint), typeof(SkinnedMeshRenderer), typeof(VRCAvatarDescriptor), typeof(VRCPipelineManagerEditor), typeof(VRCPhysBone), typeof(STFResourceHolder)
+			typeof(Transform), typeof(Animator), typeof(RotationConstraint), typeof(SkinnedMeshRenderer), typeof(MeshFilter), typeof(MeshRenderer), typeof(VRCAvatarDescriptor), typeof(VRCPipelineManagerEditor), typeof(VRCPhysBone), typeof(STFResourceHolder)
 		};
 		public override List<string> Targets => new List<string> {TargetName};
 

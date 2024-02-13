@@ -6,9 +6,9 @@ using STF.ApplicationConversion;
 using UnityEngine;
 using VRM;
 
-namespace ava.Converters
+namespace AVA.ApplicationConversion
 {
-	public class AVAFacialTrackingSimpleVRMConverter : ISTFNodeComponentApplicationConverter
+	public class AVA_VRM_FacialTrackingSimpleConverter : ISTFNodeComponentApplicationConverter
 	{
 
 		private void createBlendshapeClip(string visemeName, BlendShapePreset blendshapePreset, AVAFacialTrackingSimple c, VRMBlendShapeProxy vrmBlendshapeProxy, ISTFApplicationConvertState State)

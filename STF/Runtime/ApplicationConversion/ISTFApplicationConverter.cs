@@ -25,7 +25,7 @@ namespace STF.ApplicationConversion
 
 		public abstract bool CanConvert(ISTFAsset Asset);
 
-		public GameObject Convert(ISTFApplicationConvertStorageContext StorageContext, ISTFAsset Asset)
+		public virtual GameObject Convert(ISTFApplicationConvertStorageContext StorageContext, ISTFAsset Asset)
 		{
 			GameObject ret = null;
 			STFApplicationConvertState state = null;

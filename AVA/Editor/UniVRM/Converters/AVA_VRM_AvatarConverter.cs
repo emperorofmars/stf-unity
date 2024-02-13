@@ -1,31 +1,34 @@
 #if UNITY_EDITOR
 #if AVA_UNIVRM_FOUND
 
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using AVA.Serialisation;
 using STF.ApplicationConversion;
 using STF.Serialisation;
 using UnityEngine;
 using VRM;
 
-namespace ava.Converters
+namespace AVA.ApplicationConversion
 {
-	public class AVAAvatarVRMConverter : ISTFNodeComponentApplicationConverter
+	public class AVA_VRM_AvatarConverter : ISTFNodeComponentApplicationConverter
 	{
 		public void Convert(ISTFApplicationConvertState State, Component Component)
 		{
 			var avaAvatar = (AVAAvatar)Component;
 			var asset = State.Root.GetComponent<ISTFAsset>();
 
-			var animator = avaAvatar.gameObject.AddComponent<Animator>();
-			animator.applyRootMotion = true;
-			animator.updateMode = AnimatorUpdateMode.Normal;
-			animator.cullingMode = AnimatorCullingMode.CullUpdateTransforms;
-			animator.avatar = avaAvatar.TryGetHumanoidDefinition()?.GeneratedAvatar;
+			if(avaAvatar.GetComponent<Animator>() == null)
+			{
+				var animator = avaAvatar.gameObject.AddComponent<Animator>();
+				animator.applyRootMotion = true;
+				animator.updateMode = AnimatorUpdateMode.Normal;
+				animator.cullingMode = AnimatorCullingMode.CullUpdateTransforms;
+				animator.avatar = avaAvatar.TryGetHumanoidDefinition()?.GeneratedAvatar;
+				
+				State.RelMat.AddConverted(Component, animator);
+			}
 
 			var vrmMetaComponent = Component.gameObject.AddComponent<VRMMeta>();
-			var vrmMeta = new VRMMetaObject();
+			var vrmMeta = ScriptableObject.CreateInstance<VRMMetaObject>();
 			vrmMeta.name = "VRM_Meta";
 			vrmMetaComponent.Meta = vrmMeta;
 			vrmMeta.Title = asset.Name;

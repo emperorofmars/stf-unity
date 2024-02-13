@@ -28,14 +28,18 @@ namespace AVA.ApplicationConversion
 			var vrcAvatar = Component.gameObject.AddComponent<VRCAvatarDescriptor>();
 			if(avaAvatar.viewport_parent != null && avaAvatar.viewport_position != null) vrcAvatar.ViewPosition = avaAvatar.viewport_parent.transform.position - State.Root.transform.position + avaAvatar.viewport_position;
 
-			var animator = avaAvatar.gameObject.AddComponent<Animator>();
-			animator.applyRootMotion = true;
-			animator.updateMode = AnimatorUpdateMode.Normal;
-			animator.cullingMode = AnimatorCullingMode.CullUpdateTransforms;
-			animator.avatar = avaAvatar.TryGetHumanoidDefinition()?.GeneratedAvatar;
+			if(avaAvatar.GetComponent<Animator>() == null)
+			{
+				var animator = avaAvatar.gameObject.AddComponent<Animator>();
+				animator.applyRootMotion = true;
+				animator.updateMode = AnimatorUpdateMode.Normal;
+				animator.cullingMode = AnimatorCullingMode.CullUpdateTransforms;
+				animator.avatar = avaAvatar.TryGetHumanoidDefinition()?.GeneratedAvatar;
+				
+				State.RelMat.AddConverted(Component, animator);
+			}
 
 			State.RelMat.AddConverted(Component, vrcAvatar);
-			State.RelMat.AddConverted(Component, animator);
 		}
 	}
 }

@@ -45,8 +45,6 @@ namespace AVA.ApplicationConversion
 			{
 				Asset = tmpAsset;
 				path = null;
-				Debug.Log(PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(Asset));
-				Debug.Log(Path.GetDirectoryName(PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(Asset)));
 				path = Path.GetDirectoryName(PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(Asset));
 				if(!Directory.Exists(Path.Combine(path, DefaultUnpackFolder)))
 				{
