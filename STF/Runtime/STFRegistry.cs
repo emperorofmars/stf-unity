@@ -111,7 +111,7 @@ namespace STF.Serialisation
 		};
 		public static readonly List<ISTFImportPostProcessor> DefaultImportPostProcessors = new List<ISTFImportPostProcessor>();
 		public static readonly List<Type> DefaultExportExclusions = new List<Type>() {
-			typeof(Transform), typeof(ASTFNode), typeof(Animator), typeof(STFAsset), typeof(STFAddonAsset), typeof(STFNode), typeof(STFBoneNode), typeof(STFBoneInstanceNode), typeof(STFMeshInstance), typeof(STFArmatureInstanceNode), typeof(STFArmatureNodeInfo)
+			typeof(Transform), typeof(ISTFNode), typeof(Animator), typeof(STFAsset), typeof(STFAddonAsset), typeof(STFNode), typeof(STFBoneNode), typeof(STFBoneInstanceNode), typeof(STFMeshInstance), typeof(STFArmatureInstanceNode), typeof(STFArmatureNodeInfo)
 		};
 
 		private static Dictionary<string, ISTFAssetImporter> RegisteredAssetImporters = new Dictionary<string, ISTFAssetImporter>();

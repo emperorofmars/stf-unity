@@ -274,7 +274,7 @@ namespace STF.Serialisation
 			};
 			foreach(var m in c.Mappings)
 			{
-				jsonMappings.Add(m.humanoidName, m.bone.GetComponents<ASTFNode>()?.OrderBy(n => n.PrefabHirarchy).FirstOrDefault()?.Id);
+				jsonMappings.Add(m.humanoidName, m.bone.GetComponents<ISTFNode>()?.OrderBy(n => n.PrefabHirarchy).FirstOrDefault()?.Id);
 			}
 			return (Component.Id, ret);
 		}
@@ -298,7 +298,7 @@ namespace STF.Serialisation
 
 			foreach(var entry in (JObject)Json["mappings"])
 			{
-				ret.Mappings.Add(new STFHumanoidArmature.BoneMappingPair(entry.Key, ((ASTFNode)armature.Root.GetComponentsInChildren<ASTFNode>()?.FirstOrDefault(c => c.Id == (string)entry.Value))?.gameObject));
+				ret.Mappings.Add(new STFHumanoidArmature.BoneMappingPair(entry.Key, ((ISTFNode)armature.Root.GetComponentsInChildren<ISTFNode>()?.FirstOrDefault(c => c.Id == (string)entry.Value))?.gameObject));
 			}
 			var avatar = STFHumanoidArmature.GenerateAvatar(ret, armature);
 			if(avatar != null)

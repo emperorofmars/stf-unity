@@ -32,7 +32,7 @@ namespace STF.Serialisation
 				{"weight", c.Weight}
 			};
 			State.AddTask(new Task(() => {
-				ret.Add("target", c.Target != null ? c.Target.GetComponent<ASTFNode>().Id : c.TargetId);
+				ret.Add("target", c.Target != null ? c.Target.GetComponent<ISTFNode>().Id : c.TargetId);
 			}));
 			SerializeRelationships(c, ret);
 			return (c.Id, ret);

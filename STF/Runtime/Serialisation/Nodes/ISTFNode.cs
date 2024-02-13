@@ -6,7 +6,7 @@ using STF_Util;
 
 namespace STF.Serialisation
 {
-	public abstract class ASTFNode : MonoBehaviour
+	public abstract class ISTFNode : MonoBehaviour
 	{
 		public abstract string Type { get; }
 		[Id] public string _Id = Guid.NewGuid().ToString();

@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace STF.Serialisation
 {
-	public class STFArmatureInstanceNode : ASTFNode
+	public class STFArmatureInstanceNode : ISTFNode
 	{
 		public const string _TYPE = "STF.armature_instance";
 		public override string Type => _TYPE;

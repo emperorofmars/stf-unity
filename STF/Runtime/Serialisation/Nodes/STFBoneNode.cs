@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace STF.Serialisation
 {
-	public class STFBoneNode : ASTFNode
+	public class STFBoneNode : ISTFNode
 	{
 		public const string _TYPE = "STF.bone";
 		public override string Type => _TYPE;

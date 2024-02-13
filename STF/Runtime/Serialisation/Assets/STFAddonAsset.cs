@@ -36,7 +36,7 @@ namespace STF.Serialisation
 			for(int i = 0; i < Asset.gameObject.transform.childCount; i++)
 			{
 				var child = Asset.gameObject.transform.GetChild(i);
-				var childNodeInfo = child.GetComponents<ASTFNode>();
+				var childNodeInfo = child.GetComponents<ISTFNode>();
 				foreach(var nodeInfo in childNodeInfo)
 				{
 					if(nodeInfo.Type != STFPatchNode._TYPE/* || nodeInfo.Type != STFAppendageNode._TYPE*/)

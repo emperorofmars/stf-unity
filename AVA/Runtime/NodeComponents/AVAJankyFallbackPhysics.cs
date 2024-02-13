@@ -62,7 +62,7 @@ namespace AVA.Serialisation
 			var ret = new JObject();
 			SerializeRelationships(c, ret);
 			ret.Add("type", AVAJankyFallbackPhysics._TYPE);
-			ret.Add("target", c.target != null ? c.target?.GetComponent<ASTFNode>()?.Id : c.targetId);
+			ret.Add("target", c.target != null ? c.target?.GetComponent<ISTFNode>()?.Id : c.targetId);
 			ret.Add("pull", c.pull);
 			ret.Add("spring", c.spring);
 			ret.Add("stiffness", c.stiffness);

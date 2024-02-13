@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace STF.Serialisation
 {
-	public class STFAppendageNode : ASTFNode
+	public class STFAppendageNode : ISTFNode
 	{
 		public const string _TYPE = "STF.node_appendage";
 		public override string Type => _TYPE;

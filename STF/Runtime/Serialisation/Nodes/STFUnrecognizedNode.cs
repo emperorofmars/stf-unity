@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace STF.Serialisation
 {
-	public class STFUnrecognizedNode : ASTFNode
+	public class STFUnrecognizedNode : ISTFNode
 	{
 		public string _TYPE;
 		public override string Type => _TYPE;

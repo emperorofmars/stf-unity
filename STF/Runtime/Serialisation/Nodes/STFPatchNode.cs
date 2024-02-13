@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace STF.Serialisation
 {
-	public class STFPatchNode : ASTFNode
+	public class STFPatchNode : ISTFNode
 	{
 		public const string _TYPE = "STF.node_patch";
 		public override string Type => _TYPE;
