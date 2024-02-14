@@ -107,17 +107,21 @@ namespace STF.Tools
 				if(meshInstance == null) meshInstance = smr.gameObject.AddComponent<STFMeshInstance>();
 				// Check if an armatureInstance exists
 				var armatureInstanceGo = smr.rootBone?.parent?.gameObject;
-				if(armatureInstanceGo == null) throw new Exception("Incorrectly setup SkinnedMeshRenderer: " + smr);
+				if(armatureInstanceGo == null)
+				{
+					Debug.LogWarning("Incorrectly setup SkinnedMeshRenderer: " + smr);
+					continue;
+				}
+
 				var armatureInstance = armatureInstanceGo.GetComponent<STFArmatureInstanceNode>();
-
-				// continue if an armature instance already exists. It can be assumed that its setup correctly.
-				if(armatureInstance != null) continue;
-
 				if(armatureInstance == null) armatureInstance = armatureInstanceGo.AddComponent<STFArmatureInstanceNode>();
+
 				// Setup armatureInstance to the definetively correct values
 				meshInstance.ArmatureInstance = armatureInstance;
 				armatureInstance.root = smr.rootBone?.gameObject;
-				armatureInstance.bones = new List<GameObject>(smr.bones.Select(b => b.gameObject));
+
+				if(smr.bones != null) armatureInstance.bones = new List<GameObject>(smr.bones.Select(b => b?.gameObject));
+
 				// If the armatureInstance doesn't have an armature (eg was just created), then determine the armature from the smr bone hirarchy and the smr bind poses
 				if(armatureInstance.armature == null && !armatureInstancesToSetup.Contains(armatureInstance))
 				{

@@ -129,7 +129,7 @@ namespace STF.Serialisation
 		public static string SerializeResource(ISTFExportState State, UnityEngine.Object Resource, UnityEngine.Object Context = null)
 		{
 			if(State.Resources.ContainsKey(Resource)) return State.Resources[Resource].Id;
-			if(State.Context.ResourceExporters.ContainsKey(Resource.GetType()))
+			else if(State.Context.ResourceExporters.ContainsKey(Resource.GetType()))
 			{
 				return State.Context.ResourceExporters[Resource.GetType()].SerializeToJson(State, Resource, Context);
 			}

@@ -55,7 +55,7 @@ namespace STF.Serialisation
 			ParseRelationships(Json, c);
 			c.Id = Id;
 			c.Weight = (float)Json["weight"];
-			c.Target = Json["target"] != null && State.Nodes.ContainsKey((string)Json["target"]) ? State.Nodes[(string)Json["target"]] : null;
+			c.Target = (string)Json["target"] != null && State.Nodes.ContainsKey((string)Json["target"]) ? State.Nodes[(string)Json["target"]] : null;
 			c.TargetId = (string)Json["target"];
 			State.AddComponent(c, Id);
 		}
