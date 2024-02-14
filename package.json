@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "displayName": "STF Unity",
   "description": "Import and export support for stf files.",
-  "unity": "2019.4",
-  "unityRelease": "31f1",
+  "unity": "2022.3",
+  "unityRelease": "6f1",
   "license": "MIT",
   "dependencies": {
     "com.unity.nuget.newtonsoft-json": "2.0.2"
@@ -17,8 +17,8 @@
   ],
   "author": {
     "name": "Emperor of Mars",
-    "email": "contact@emperorofmars.org",
-    "url": "https://emperorofmars.org"
+    "email": "mars@squirrel.pub",
+    "url": "https://mars.squirrel.pub"
   },
   "type": "library"
 }
