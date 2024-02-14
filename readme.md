@@ -37,6 +37,7 @@ An STF setup in Unity can be further processed into specific target applications
 - If you exported it into the Assets hierarchy, just press CTRL+R for Unity to refresh its asset database and see it appear.
 - Play around
 
+![Screenshot of an STF model with its authoring components shown in the Unity inspector.](./Docs/Images/scene.png)
 ![Screenshot of an STF file's inspector in Unity.](./Docs/Images/import_settings.png)
 
 # This Repository

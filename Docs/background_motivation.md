@@ -6,12 +6,12 @@ Therefore, I needed a file format that this character-editor-application could p
 
 Initially I wanted to create a format based on glTF 2.0 to represent VR & V-Tubing avatars in a single file, agnostic of any target application, but with support for 100% of the features of each.
 
-*VRM is a format also in the form of a glTF extension, which also represents VR & V-Tubing avatars. It was created before social-VR was figured out to the extent it is now, and doesn't support most basic features that users today expect and require*
+*VRM is a format also in the form of a glTF extension, which also represents VR & V-Tubing avatars. It was created before social-VR was figured out to the extent it is now, and doesn't support most basic features that users today expect and require.*
 
-Trying to work with glTF 2.0, I encountered countless issues with its implementations. I realized that some of these issues are also due to flaws in the glTF specification.
+Trying to work with glTF 2.0, I encountered countless issues with its implementations. I realized that some of these issues are also due to flaws in the glTF specification. Others are caused by glTF implementations only hard-coding support for specific extensions, or being severely flawed in many other ways.
 I wanted to avoid having to create my own format, but after many months of trying, I saw no way to make this work with glTF 2.0.
 
-I have created this STF format prototype and the AVA proof of concept set of extensions. STF puts extensibility first, and supports most of everything that glTF does, and makes it trivial to implement anything beside that.
+So I created the STF format prototype and the AVA set of extensions. STF puts extensibility first, and supports most of everything that glTF does, and makes it trivial to implement anything beside that.
 STF was created with consideration to how most authoring tools like Blender, Unity, Godot or Unreal Engine represent models and scenes. As such, most headaches from glTF should have been solved here, hopefully.
 
 # glTF 2.0 Issues
