@@ -47,6 +47,15 @@ Support for VR-Avatars is contained in the AVA directory. It's a proof-of-concep
 
 **You are very welcome to open discussions & issues with your ideas, suggestions and questions about the format and its possibilities. Pull requests are very welcome!**
 
+# Current Status
+Most functionality which can be expected of a 3d model & scene file-format is implemented, not to full completion, but enough to show how the format is supposed to work. The UI and STF tooling is at a bare minimum level.
+
+The codebase is tested only in a 'good weather flight' manner.
+
+Alone, I can't bring a project like this to completion. I can only try to prove that this works and is very possible.
+
+My next step is likely going to be an implementation for the Godot 4 engine.
+
 ---
 
 Cheers!
