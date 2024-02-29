@@ -24,7 +24,7 @@ STF was created with consideration to how most authoring tools like Blender, Uni
 - Morphtarget names are not supported by the specification. Sometimes these are stored on the 'extras' field of the mesh, sometimes on the first mesh primitive. The Blender glTF implementation does the former, UnityGLTF does the latter.
 - glTF only supports specific hard-defined shaders.
 - The buffer system is convoluted and a lot of implementations don't seem to bother with it. As such blendshapes store values for every vertex, even if a vertex not included in the blendshape. Typical VR avatars have multiple hundred blendshapes, which leads to comical file sizes and VRAM use.
-- glTF in it's specification is supremely extensible, however implementing additional extensions in most glTF libraries is supported. They have to be forked and modified at the core. The way glTF does extensions, does not naturally lead to a good design in its implementations. STF is purposely designed to force a plugin based architecture.
+- glTF in it's specification is supremely extensible, however implementing additional extensions in often not supported or accompanied by severe issues. Implementations have to be forked and modified at the core. The way glTF does extensions, does not naturally lead to a good design in its implementations. STF is purposely designed to force a plugin based architecture.
 
 ## Issues in glTF 2.0 implementations I've tried to work with
 - Blender
