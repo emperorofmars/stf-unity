@@ -6,7 +6,7 @@ Implementation for Unity 2022.3 or higher.
 # **! This is a WIP and not ready for productive use !**
 
 ### [Find an example model here!](https://emperorofmars.itch.io/stf-avatar-showcase)
-<!-- ## [Watch the video presentation about STF and its AVA extensions here!](https://youtu.be/ozkmGxFG_ug) -->
+## [Watch the video presentation!](https://www.youtube.com/watch?v=cgY-faQrv78)
 
 ## Introduction
 The single relevant format for VR & V-Tubing avatars is a `.unitypackage` that contains a scene with a setup for a specific application somewhere.
