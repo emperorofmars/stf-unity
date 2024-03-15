@@ -14,7 +14,7 @@ namespace STF.Serialisation
 		public static string _MAGIC = "STF0";
 
 		public int VersionMajor = 0;
-		public int VersionMinor = 1;
+		public int VersionMinor = 2;
 		public string Json;
 		public List<byte[]> Buffers = new List<byte[]>();
 
@@ -36,7 +36,7 @@ namespace STF.Serialisation
 
 		private void parse(byte[] ByteArray)
 		{
-			var offset = 0;
+			long offset = 0; // I know its stupid having to convert it to int everywhere; TODO find a better solution for binary parsing / serialisation
 
 			// Magic
 			int magicLen = Encoding.UTF8.GetBytes(STFFile._MAGIC).Length;
@@ -49,21 +49,27 @@ namespace STF.Serialisation
 				throw new Exception("Not an STF file, invalid magic number.");
 			
 			// Version
-			this.VersionMajor = BitConverter.ToInt32(ByteArray, offset);
+			this.VersionMajor = BitConverter.ToInt32(ByteArray, (int)offset);
 			offset += sizeof(int);
-			this.VersionMinor = BitConverter.ToInt32(ByteArray, offset);
+			this.VersionMinor = BitConverter.ToInt32(ByteArray, (int)offset);
 			offset += sizeof(int);
+
+			// Json Definition Compression Format
+			Buffer.BlockCopy(ByteArray, 0, magicUtf8, 0, 4 * sizeof(byte));
+			offset += 4 * sizeof(byte);
+			var jsonCompression = Encoding.UTF8.GetString(magicUtf8); // placeholder for now
+			if(jsonCompression != "none") throw new Exception("Unsupported compression format: " + jsonCompression);
 			
-			// Header Length
-			int headerLen = BitConverter.ToInt32(ByteArray, offset);
+			// Header Size
+			int headerLen = BitConverter.ToInt32(ByteArray, (int)offset);
 			offset += sizeof(int);
 
 			// Buffer Lengths
-			var bufferLengths = new int[headerLen / sizeof(int)];
-			for(int i = 0; i < headerLen / sizeof(int); i++)
+			var bufferLengths = new long[headerLen / sizeof(long)];
+			for(int i = 0; i < headerLen / sizeof(long); i++)
 			{
-				bufferLengths[i] = BitConverter.ToInt32(ByteArray, offset);
-				offset += sizeof(int);
+				bufferLengths[i] = BitConverter.ToInt64(ByteArray, (int)offset);
+				offset += sizeof(long);
 			}
 
 			// Validity Check
@@ -75,13 +81,13 @@ namespace STF.Serialisation
 				throw new Exception("Invalid file: Size of buffers doesn't line up with total file size. ( calculated: " + totalLengthCheck + " | actual: " + ByteArray.Length + " )");
 
 			// First buffer, the Json definition
-			this.Json = Encoding.UTF8.GetString(ByteArray, offset, bufferLengths[0]);
+			this.Json = Encoding.UTF8.GetString(ByteArray, (int)offset, (int)bufferLengths[0]);
 			offset += bufferLengths[0];
 
 			for(int i = 1; i < bufferLengths.Count(); i++)
 			{
 				var buffer = new byte[bufferLengths[i]];
-				Buffer.BlockCopy(ByteArray, offset, buffer, 0, bufferLengths[i]);
+				Buffer.BlockCopy(ByteArray, (int)offset, buffer, 0, (int)bufferLengths[i]);
 				offset += bufferLengths[i];
 				this.Buffers.Add(buffer);
 			}
@@ -90,60 +96,69 @@ namespace STF.Serialisation
 		public byte[] CreateBinaryFromBuffers()
 		{
 			byte[] magicUtf8 = Encoding.UTF8.GetBytes(STFFile._MAGIC);
-			var headerSize = (this.Buffers.Count + 1) * sizeof(int); // +1 for the json definition
-			var bufferInfo = this.Buffers.Select(buffer => buffer.Length).ToArray(); // lengths of all binary buffers
+			long headerSize = (this.Buffers.Count + 1) * sizeof(long); // +1 for the json definition
+			long[] bufferInfo = new long[Buffers.Count()];
+			for(int i = 0; i < Buffers.Count(); i++) bufferInfo[i] = Buffers[i].Length; // lengths of all binary buffers
 			byte[] jsonUtf8 = Encoding.UTF8.GetBytes(this.Json);
+			byte[] jsonCompression = Encoding.UTF8.GetBytes("none"); // compression forman of the json definition, this is a placeholder for now
 
-			var arrayLen = magicUtf8.Length * sizeof(byte) + sizeof(int) * 2 + sizeof(int) + headerSize + jsonUtf8.Length * sizeof(byte);
+			// magic; version major + minor; compression format for json definition; number of buffers including the json definition; length of the json definition
+			var arrayLen = magicUtf8.Length * sizeof(byte) + sizeof(int) * 2 + sizeof(byte) * 4 + sizeof(int) + headerSize + jsonUtf8.Length * sizeof(byte);
+			// add the lengths of all further buffers
 			foreach(var bufferLen in bufferInfo) arrayLen += bufferLen;
 
-			// handle endianness at some point maybe
-
 			var byteArray = new byte[arrayLen];
-			var offset = 0;
+			long offset = 0;
 
 			// Magic
 			{
 				var size = magicUtf8.Length * sizeof(byte);
-				Buffer.BlockCopy(magicUtf8, 0, byteArray, offset, size);
+				Buffer.BlockCopy(magicUtf8, 0, byteArray, (int)offset, size);
 				offset += size;
 			}
 
 			// Version
 			{
 				var size = sizeof(int);
-				Buffer.BlockCopy(BitConverter.GetBytes(this.VersionMajor), 0, byteArray, offset, size);
+				Buffer.BlockCopy(BitConverter.GetBytes(this.VersionMajor), 0, byteArray, (int)offset, size);
 				offset += size;
-				Buffer.BlockCopy(BitConverter.GetBytes(this.VersionMinor), 0, byteArray, offset, size);
+				Buffer.BlockCopy(BitConverter.GetBytes(this.VersionMinor), 0, byteArray, (int)offset, size);
 				offset += size;
 			}
 
-			// Header Length
+			// Json definition compression
+			{
+				var size = jsonCompression.Length * sizeof(byte);
+				Buffer.BlockCopy(jsonCompression, 0, byteArray, (int)offset, size);
+				offset += size;
+			}
+
+			// Header Size
 			{
 				var size = sizeof(int);
-				Buffer.BlockCopy(BitConverter.GetBytes(headerSize), 0, byteArray, offset, size);
+				Buffer.BlockCopy(BitConverter.GetBytes(headerSize), 0, byteArray, (int)offset, size);
 				offset += size;
 			}
 
 			// Header: array of buffer lengths
 			// First the Json definition length
 			{
-				var size = sizeof(int);
-				Buffer.BlockCopy(BitConverter.GetBytes(jsonUtf8.Length), 0, byteArray, offset, size);
+				var size = sizeof(long);
+				Buffer.BlockCopy(BitConverter.GetBytes((long)jsonUtf8.Length), 0, byteArray, (int)offset, size);
 				offset += size;
 			}
 
 			// Now the array of the lengths of all the binary buffers
 			{
-				var size = bufferInfo.Length * sizeof(int);
-				Buffer.BlockCopy(bufferInfo, 0, byteArray, offset, size);
+				var size = bufferInfo.Length * sizeof(long);
+				Buffer.BlockCopy(bufferInfo, 0, byteArray, (int)offset, size);
 				offset += size;
 			}
 
 			// Json definition
 			{
 				var size = jsonUtf8.Length * sizeof(byte);
-				Buffer.BlockCopy(jsonUtf8, 0, byteArray, offset, size);
+				Buffer.BlockCopy(jsonUtf8, 0, byteArray, (int)offset, size);
 				offset += size;
 			}
 
@@ -151,7 +166,7 @@ namespace STF.Serialisation
 			foreach(var buffer in this.Buffers)
 			{
 				var size = buffer.Length * sizeof(byte);
-				Buffer.BlockCopy(buffer, 0, byteArray, offset, size);
+				Buffer.BlockCopy(buffer, 0, byteArray, (int)offset, size);
 				offset += size;
 			}
 
