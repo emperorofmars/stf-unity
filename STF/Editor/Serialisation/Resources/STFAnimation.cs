@@ -123,8 +123,12 @@ namespace STF.Serialisation
 					var curve = AnimationUtility.GetEditorCurve(clip, c);
 					foreach(var keyframe in curve.keys)
 					{
+						//keyframe.weightedMode = WeightedMode.
 						// TODO: also set ease in/out vectors and such, don't be like gltf
-						keysJson.Add(new JObject() {{"time", keyframe.time}, {"value", keyframe.value}});
+						keysJson.Add(new JObject() {
+							{"time", keyframe.time},
+							{"value", keyframe.value}
+						});
 					}
 				}
 				else
@@ -132,17 +136,8 @@ namespace STF.Serialisation
 					var keyframes = AnimationUtility.GetObjectReferenceCurve(clip, c);
 					foreach(var keyframe in keyframes)
 					{
-						// can this even be a thing
-						if(keyframe.value.GetType().IsSubclassOf(typeof(ISTFResourceComponent)))
-						{
-							var resourceComponentId = State.ResourceComponents[(ISTFResourceComponent)keyframe.value].Id;
-							keysJson.Add(new JObject() {{"time", keyframe.time}, {"value", resourceComponentId}});
-						}
-						else
-						{
-							var resourceId = State.Resources[keyframe.value].Id;
-							keysJson.Add(new JObject() {{"time", keyframe.time}, {"value", resourceId}});
-						}
+						var resourceId = State.Resources[keyframe.value].Id;
+						keysJson.Add(new JObject() {{"time", keyframe.time}, {"value", resourceId}});
 					}
 				}
 			}
@@ -197,9 +192,11 @@ namespace STF.Serialisation
 							var curve = new AnimationCurve();
 							foreach(JObject key in track["keys"])
 							{
-								curve.AddKey((float)key["time"], (float)key["value"]);
-								//var frame = new Keyframe();
-								//frame.
+								var keyframe = new Keyframe();
+								keyframe.time = (float)key["time"];
+								keyframe.value = (float)key["value"];
+								// TODO interpolation & tangents
+								curve.AddKey(keyframe);
 							}
 							if(targetObjectType == STFObjectType.Node) // node
 							{

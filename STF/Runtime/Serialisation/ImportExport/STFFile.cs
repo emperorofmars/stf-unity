@@ -4,6 +4,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Diagnostics;
 
 namespace STF.Serialisation
 {
@@ -36,7 +37,9 @@ namespace STF.Serialisation
 
 		private void parse(byte[] ByteArray)
 		{
-			long offset = 0; // I know its stupid having to convert it to int everywhere; TODO find a better solution for binary parsing / serialisation
+			// I know its stupid having to convert it to int everywhere.
+			// TODO find a better solution for binary parsing / serialisation.
+			long offset = 0;
 
 			// Magic
 			int magicLen = Encoding.UTF8.GetBytes(STFFile._MAGIC).Length;
@@ -55,7 +58,7 @@ namespace STF.Serialisation
 			offset += sizeof(int);
 
 			// Json Definition Compression Format
-			Buffer.BlockCopy(ByteArray, 0, magicUtf8, 0, 4 * sizeof(byte));
+			Buffer.BlockCopy(ByteArray, (int)offset, magicUtf8, 0, 4 * sizeof(byte));
 			offset += 4 * sizeof(byte);
 			var jsonCompression = Encoding.UTF8.GetString(magicUtf8); // placeholder for now
 			if(jsonCompression != "none") throw new Exception("Unsupported compression format: " + jsonCompression);
@@ -100,7 +103,7 @@ namespace STF.Serialisation
 			long[] bufferInfo = new long[Buffers.Count()];
 			for(int i = 0; i < Buffers.Count(); i++) bufferInfo[i] = Buffers[i].Length; // lengths of all binary buffers
 			byte[] jsonUtf8 = Encoding.UTF8.GetBytes(this.Json);
-			byte[] jsonCompression = Encoding.UTF8.GetBytes("none"); // compression forman of the json definition, this is a placeholder for now
+			byte[] jsonCompression = Encoding.UTF8.GetBytes("none"); // compression format of the json definition, this is a placeholder for now
 
 			// magic; version major + minor; compression format for json definition; number of buffers including the json definition; length of the json definition
 			var arrayLen = magicUtf8.Length * sizeof(byte) + sizeof(int) * 2 + sizeof(byte) * 4 + sizeof(int) + headerSize + jsonUtf8.Length * sizeof(byte);
