@@ -9,7 +9,6 @@ using static STF.Serialisation.STFConstants;
 using System.Collections.Generic;
 using STF.Util;
 using STF.ApplicationConversion;
-using BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines;
 
 namespace STF.Serialisation
 {
@@ -67,7 +66,7 @@ namespace STF.Serialisation
 					curveJson.Add("target_object_type", "node");
 					if(c.path.StartsWith("STF_NODE"))
 					{
-						curveJson.Add("node_ids", new JArray(c.path.Split(':').Skip(1).ToArray()));
+						curveJson.Add("node_id", c.path.Split(':').Skip(1).First());
 						curveJson.Add("property", c.propertyName);
 					}
 					else
@@ -77,7 +76,7 @@ namespace STF.Serialisation
 						nodes = nodes.OrderBy(k => k.PrefabHirarchy).ToArray();
 						var stfNode = nodes.FirstOrDefault();
 						
-						curveJson.Add("node_ids", new JArray(nodes.Select(n => n.Id)));
+						curveJson.Add("node_id", nodes.First().Id);
 						curveJson.Add("property", State.Context.NodeExporters[stfNode.Type].ConvertPropertyPath(c.propertyName));
 					}
 				}
@@ -88,9 +87,7 @@ namespace STF.Serialisation
 					{
 						var pathSplit = c.path.Split(':').Skip(1).ToArray();
 						var componentId = pathSplit[pathSplit.Count() -1];
-						string[] nodeIds = new string[pathSplit.Count() -1];
-						for(int i = 0; i < nodeIds.Count(); i ++) nodeIds[i] = pathSplit[i];
-						curveJson.Add("node_ids", new JArray(nodeIds));
+						curveJson.Add("node_id", pathSplit[0]);
 						curveJson.Add("component_id", componentId);
 						curveJson.Add("property", c.propertyName);
 					}
@@ -98,7 +95,7 @@ namespace STF.Serialisation
 					{
 						var curveTarget = (Component)AnimationUtility.GetAnimatedObject(root, c);
 						var nodes = curveTarget.gameObject.GetComponents<ISTFNode>().OrderBy(k => k.PrefabHirarchy).ToArray();
-						curveJson.Add("node_ids", new JArray(nodes.Select(n => n.Id)));
+						curveJson.Add("node_id", nodes[0].Id);
 						if(!c.type.IsSubclassOf(typeof(ISTFNodeComponent)))
 						{
 							var stfOwner = curveTarget.gameObject.GetComponents<ISTFNodeComponent>()?.FirstOrDefault(nc => nc.OwnedUnityComponent == curveTarget);
@@ -201,37 +198,33 @@ namespace STF.Serialisation
 							foreach(JObject key in track["keys"])
 							{
 								curve.AddKey((float)key["time"], (float)key["value"]);
+								//var frame = new Keyframe();
+								//frame.
 							}
 							if(targetObjectType == STFObjectType.Node) // node
 							{
-								var nodeIds = track["node_ids"].ToObject<List<string>>();
-								var targetType = (string)State.JsonRoot["nodes"][nodeIds[nodeIds.Count() - 1]]["type"];
+								var nodeId = (string)track["node_id"];
+								var targetType = (string)State.JsonRoot["nodes"][nodeId]["type"];
 								var unityType = (property.StartsWith("translation") || property.StartsWith("rotation") || property.StartsWith("scale")) ? typeof(Transform) : typeof(GameObject);
 								try
 								{
-									var targetNode = Root.GetComponentsInChildren<ISTFNode>().FirstOrDefault(n => n.Id == nodeIds[nodeIds.Count() - 1]);
+									var targetNode = Root.GetComponentsInChildren<ISTFNode>().FirstOrDefault(n => n.Id == nodeId);
 									var translatedProperty = State.Context.NodeImporters[targetType].ConvertPropertyPath(property);
 									var path = Utils.getPath(Root.transform, ((Component)targetNode).transform, true);
 									ret.SetCurve(path, unityType, translatedProperty, curve);
 								}
 								catch(Exception)
 								{
-									var nodeIdsString = "";
-									foreach(var nodeId in nodeIds)
-									{
-										if(nodeIdsString == "") nodeIdsString = nodeIdsString + nodeId;
-										else nodeIdsString = nodeIdsString + ":" + nodeId;
-									}
-									ret.SetCurve("STF_NODE:" + nodeIdsString, unityType, property, curve);
+									ret.SetCurve("STF_NODE:" + nodeId, unityType, property, curve);
 								}
 							}
 							else if(targetObjectType == STFObjectType.NodeComponent) // component
 							{
-								var nodeIds = track["node_ids"].ToObject<List<string>>();
+								var nodeId = (string)track["node_ids"];
 								var componentId = (string)track["component_id"];
 								try
 								{
-									var targetNode = Root.GetComponentsInChildren<ISTFNode>().FirstOrDefault(n => n.Id == nodeIds[nodeIds.Count() - 1]);
+									var targetNode = Root.GetComponentsInChildren<ISTFNode>().FirstOrDefault(n => n.Id == nodeId);
 									var targetSTFComponent = ((Component)targetNode).GetComponents<ISTFNodeComponent>().FirstOrDefault(nc => nc.Id == componentId);
 
 									var targetComponent =  targetSTFComponent.OwnedUnityComponent != null ? targetSTFComponent.OwnedUnityComponent : targetSTFComponent;
@@ -242,13 +235,7 @@ namespace STF.Serialisation
 								}
 								catch(Exception)
 								{
-									var nodeIdsString = "";
-									foreach(var nodeId in nodeIds)
-									{
-										if(nodeIdsString == "") nodeIdsString = nodeIdsString + nodeId;
-										else nodeIdsString = ":" + nodeIdsString + nodeId;
-									}
-									ret.SetCurve("STF_NODE_COMPONENT:" + nodeIdsString + ":" + componentId, typeof(Component), property, curve);
+									ret.SetCurve("STF_NODE_COMPONENT:" + nodeId + ":" + componentId, typeof(Component), property, curve);
 								}
 							}
 						}
