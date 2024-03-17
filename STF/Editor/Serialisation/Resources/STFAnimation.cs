@@ -197,11 +197,14 @@ namespace STF.Serialisation
 								var keyframe = new Keyframe {
 									time = (float)key["time"],
 									value = (float)key["value"],
-									inTangent = (float)key["in_tangent"],
-									inWeight = (float)key["in_weight"],
-									outTangent = (float)key["out_tangent"],
-									outWeight = (float)key["out_weight"],
 								};
+								if(key.ContainsKey("in_tangent") && key.ContainsKey("out_tangent"))
+								{
+									keyframe.inTangent = (float)key["in_tangent"];
+									keyframe.inWeight = (float)key["in_weight"];
+									keyframe.outTangent = (float)key["in_tangent"];
+									keyframe.outWeight = (float)key["out_weight"];
+								}
 								curve.AddKey(keyframe);
 							}
 							if(targetObjectType == STFObjectType.Node) // node

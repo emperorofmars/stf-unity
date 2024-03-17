@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Schema;
 using Unity.Collections;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -59,8 +58,6 @@ namespace STF.Serialisation
 
 			var offset = 0;
 			var vertexBuffer = new float[mesh.vertexCount * bufferWidth];
-			//var buffer = new JArray();
-			
 			{
 				ret.Add("vertex_count", mesh.vertexCount);
 				var vertices = new List<Vector3>();
@@ -153,24 +150,6 @@ namespace STF.Serialisation
 				ret.Add("skinned", true);
 				ret.Add("armature", meta.ArmatureId);
 				usedResources.Add(meta.ArmatureId);
-
-
-				/*state.AddTask(new Task(() => {
-					ret.Add("skinned", true);
-					var resourceContext = state.GetResourceContext(mesh);
-					if(resourceContext != null && resourceContext.ContainsKey("armature"))
-					{
-						ret.Add("armature", state.GetResourceId((STFArmature)resourceContext["armature"]));
-					}
-					else if(resourceContext != null && resourceContext.ContainsKey("armature_id"))
-					{
-						ret.Add("armature", (string)resourceContext["armature_id"]);
-					}
-					else
-					{
-						throw new Exception("No armature resource context for mesh :(");
-					}
-				}));*/
 
 				foreach(var num in mesh.GetBonesPerVertex()) weightLength += num;
 				weightBuffer = new byte[weightLength * (sizeof(float) + sizeof(int))];
