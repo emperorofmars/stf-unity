@@ -208,6 +208,7 @@ namespace STF.Serialisation
 							{
 								var nodeId = (string)track["node_id"];
 								var targetType = (string)State.JsonRoot["nodes"][nodeId]["type"];
+
 								// Implement a way for a node implementation to give the proper unity type. If for example mesh-instances are implemented as a node, this will have to happen.
 								var unityType = (property.StartsWith("translation") || property.StartsWith("rotation") || property.StartsWith("scale")) ? typeof(Transform) : typeof(GameObject);
 								try
@@ -229,12 +230,13 @@ namespace STF.Serialisation
 								try
 								{
 									var targetNode = Root.GetComponentsInChildren<ISTFNode>().FirstOrDefault(n => n.Id == nodeId);
-									var targetSTFComponent = ((Component)targetNode).GetComponents<ISTFNodeComponent>().FirstOrDefault(nc => nc.Id == componentId);
+									var targetSTFComponent = targetNode.GetComponents<ISTFNodeComponent>().FirstOrDefault(nc => nc.Id == componentId);
 
+									// Implement a way for a node component implementation to give the proper unity type instead of this.
 									var targetComponent =  targetSTFComponent.OwnedUnityComponent != null ? targetSTFComponent.OwnedUnityComponent : targetSTFComponent;
 									var translatedProperty = State.Context.NodeComponentImporters[targetSTFComponent.Type].ConvertPropertyPath(State, targetSTFComponent, property);
 									
-									var path = Utils.getPath(Root.transform, ((Component)targetNode).transform, true);
+									var path = Utils.getPath(Root.transform, targetNode.transform, true);
 									ret.SetCurve(path, targetComponent.GetType(), translatedProperty, curve);
 								}
 								catch(Exception)
@@ -262,19 +264,21 @@ namespace STF.Serialisation
 									var targetNode = Root.GetComponentsInChildren<ISTFNode>().FirstOrDefault(n => n.Id == nodeId);
 									var translatedProperty = State.Context.NodeImporters[targetType].ConvertPropertyPath(property);
 									var path = Utils.getPath(Root.transform, ((Component)targetNode).transform, true);
-								
-									var newBinding = new EditorCurveBinding();
-									newBinding.path = path;
-									newBinding.propertyName = translatedProperty;
-									newBinding.type = unityType;
+
+									var newBinding = new EditorCurveBinding {
+										path = path,
+										propertyName = translatedProperty,
+										type = unityType
+									};
 									AnimationUtility.SetObjectReferenceCurve(ret, newBinding, keyframes);
 								}
 								catch(Exception)
 								{
-									var newBinding = new EditorCurveBinding();
-									newBinding.path = "STF_NODE:" + nodeId;
-									newBinding.propertyName = property;
-									newBinding.type = unityType;
+									var newBinding = new EditorCurveBinding {
+										path = "STF_NODE:" + nodeId,
+										propertyName = property,
+										type = unityType
+									};
 									AnimationUtility.SetObjectReferenceCurve(ret, newBinding, keyframes);
 								}
 							}
@@ -291,19 +295,21 @@ namespace STF.Serialisation
 									var translatedProperty = State.Context.NodeComponentImporters[targetSTFComponent.Type].ConvertPropertyPath(State, targetSTFComponent, property);
 									
 									var path = Utils.getPath(Root.transform, ((Component)targetNode).transform, true);
-								
-									var newBinding = new EditorCurveBinding();
-									newBinding.path = path;
-									newBinding.propertyName = translatedProperty;
-									newBinding.type = targetComponent.GetType();
+
+									var newBinding = new EditorCurveBinding {
+										path = path,
+										propertyName = translatedProperty,
+										type = targetComponent.GetType()
+									};
 									AnimationUtility.SetObjectReferenceCurve(ret, newBinding, keyframes);
 								}
 								catch(Exception)
 								{
-									var newBinding = new EditorCurveBinding();
-									newBinding.path = "STF_NODE_COMPONENT:" + nodeId + ":" + componentId;
-									newBinding.propertyName = property;
-									newBinding.type = typeof(Component);
+									var newBinding = new EditorCurveBinding {
+										path = "STF_NODE_COMPONENT:" + nodeId + ":" + componentId,
+										propertyName = property,
+										type = typeof(Component)
+									};
 									AnimationUtility.SetObjectReferenceCurve(ret, newBinding, keyframes);
 								}
 							}
