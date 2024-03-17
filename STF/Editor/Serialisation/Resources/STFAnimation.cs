@@ -123,11 +123,13 @@ namespace STF.Serialisation
 					var curve = AnimationUtility.GetEditorCurve(clip, c);
 					foreach(var keyframe in curve.keys)
 					{
-						//keyframe.weightedMode = WeightedMode.
-						// TODO: also set ease in/out vectors and such, don't be like gltf
 						keysJson.Add(new JObject() {
 							{"time", keyframe.time},
-							{"value", keyframe.value}
+							{"value", keyframe.value},
+							{"in_tangent", keyframe.inTangent},
+							{"in_weight", keyframe.inWeight},
+							{"out_tangent", keyframe.outTangent},
+							{"out_weight", keyframe.outWeight}
 						});
 					}
 				}
@@ -136,7 +138,7 @@ namespace STF.Serialisation
 					var keyframes = AnimationUtility.GetObjectReferenceCurve(clip, c);
 					foreach(var keyframe in keyframes)
 					{
-						var resourceId = State.Resources[keyframe.value].Id;
+						var resourceId = SerdeUtil.SerializeResource(State, keyframe.value);
 						keysJson.Add(new JObject() {{"time", keyframe.time}, {"value", resourceId}});
 					}
 				}
@@ -192,22 +194,27 @@ namespace STF.Serialisation
 							var curve = new AnimationCurve();
 							foreach(JObject key in track["keys"])
 							{
-								var keyframe = new Keyframe();
-								keyframe.time = (float)key["time"];
-								keyframe.value = (float)key["value"];
-								// TODO interpolation & tangents
+								var keyframe = new Keyframe {
+									time = (float)key["time"],
+									value = (float)key["value"],
+									inTangent = (float)key["in_tangent"],
+									inWeight = (float)key["in_weight"],
+									outTangent = (float)key["out_tangent"],
+									outWeight = (float)key["out_weight"],
+								};
 								curve.AddKey(keyframe);
 							}
 							if(targetObjectType == STFObjectType.Node) // node
 							{
 								var nodeId = (string)track["node_id"];
 								var targetType = (string)State.JsonRoot["nodes"][nodeId]["type"];
+								// Implement a way for a node implementation to give the proper unity type. If for example mesh-instances are implemented as a node, this will have to happen.
 								var unityType = (property.StartsWith("translation") || property.StartsWith("rotation") || property.StartsWith("scale")) ? typeof(Transform) : typeof(GameObject);
 								try
 								{
 									var targetNode = Root.GetComponentsInChildren<ISTFNode>().FirstOrDefault(n => n.Id == nodeId);
 									var translatedProperty = State.Context.NodeImporters[targetType].ConvertPropertyPath(property);
-									var path = Utils.getPath(Root.transform, ((Component)targetNode).transform, true);
+									var path = Utils.getPath(Root.transform, targetNode.transform, true);
 									ret.SetCurve(path, unityType, translatedProperty, curve);
 								}
 								catch(Exception)
@@ -238,44 +245,69 @@ namespace STF.Serialisation
 						}
 						else
 						{
-							throw new Exception("Unhandled Animation Property");
-						}
-						// TODO actually implement object reference curves
-						/*else
-						{
 							var keyframes = new ObjectReferenceKeyframe[track["keys"].Count()];
 							for(int i = 0; i < keyframes.Length; i++)
 							{
 								keyframes[i].time = (float)track["keys"][i]["time"];
-								keyframes[i].value = state.GetResource((string)track["keys"][i]["value"]);
+								keyframes[i].value = State.Resources[(string)track["keys"][i]["value"]];
 							}
-							if(targetNode != null)
+
+							if(targetObjectType == STFObjectType.Node) // node
 							{
-								if(!state.GetContext().AnimationTranslators.ContainsKey(targetNode.GetType()))
-									throw new Exception("Property can't be translated: " + property);
-								var translatedProperty = state.GetContext().AnimationTranslators[targetNode.GetType()].ToUnity(property);
-								var targetType = (property.StartsWith("translation") || property.StartsWith("rotation") || property.StartsWith("scale")) ? typeof(Transform) : typeof(GameObject);
+								var nodeId = (string)track["node_id"];
+								var targetType = (string)State.JsonRoot["nodes"][nodeId]["type"];
+								var unityType = (property.StartsWith("translation") || property.StartsWith("rotation") || property.StartsWith("scale")) ? typeof(Transform) : typeof(GameObject);
+								try
+								{
+									var targetNode = Root.GetComponentsInChildren<ISTFNode>().FirstOrDefault(n => n.Id == nodeId);
+									var translatedProperty = State.Context.NodeImporters[targetType].ConvertPropertyPath(property);
+									var path = Utils.getPath(Root.transform, ((Component)targetNode).transform, true);
 								
-								var newBinding = new EditorCurveBinding();
-								newBinding.path = "STF_NODE:" + target_id;
-								newBinding.propertyName = translatedProperty;
-								newBinding.type = targetType;
-								AnimationUtility.SetObjectReferenceCurve(ret, newBinding, keyframes);
+									var newBinding = new EditorCurveBinding();
+									newBinding.path = path;
+									newBinding.propertyName = translatedProperty;
+									newBinding.type = unityType;
+									AnimationUtility.SetObjectReferenceCurve(ret, newBinding, keyframes);
+								}
+								catch(Exception)
+								{
+									var newBinding = new EditorCurveBinding();
+									newBinding.path = "STF_NODE:" + nodeId;
+									newBinding.propertyName = property;
+									newBinding.type = unityType;
+									AnimationUtility.SetObjectReferenceCurve(ret, newBinding, keyframes);
+								}
 							}
-							else if(targetNodeComponent != null)
+							else if(targetObjectType == STFObjectType.NodeComponent) // component
 							{
-								if(!state.GetContext().AnimationTranslators.ContainsKey(targetComponent.GetType()))
-									throw new Exception("Property can't be translated: " + property);
-								var translatedProperty = state.GetContext().AnimationTranslators[targetComponent.GetType()].ToUnity(property);
-								var goId = targetComponent.gameObject.GetComponent<STFUUID>().id;
+								var nodeId = (string)track["node_ids"];
+								var componentId = (string)track["component_id"];
+								try
+								{
+									var targetNode = Root.GetComponentsInChildren<ISTFNode>().FirstOrDefault(n => n.Id == nodeId);
+									var targetSTFComponent = ((Component)targetNode).GetComponents<ISTFNodeComponent>().FirstOrDefault(nc => nc.Id == componentId);
+
+									var targetComponent =  targetSTFComponent.OwnedUnityComponent != null ? targetSTFComponent.OwnedUnityComponent : targetSTFComponent;
+									var translatedProperty = State.Context.NodeComponentImporters[targetSTFComponent.Type].ConvertPropertyPath(State, targetSTFComponent, property);
+									
+									var path = Utils.getPath(Root.transform, ((Component)targetNode).transform, true);
 								
-								var newBinding = new EditorCurveBinding();
-								newBinding.path = "STF_COMPONENT:" + goId + ":" + target_id;
-								newBinding.propertyName = translatedProperty;
-								newBinding.type = targetComponent.GetType();
-								AnimationUtility.SetObjectReferenceCurve(ret, newBinding, keyframes);
+									var newBinding = new EditorCurveBinding();
+									newBinding.path = path;
+									newBinding.propertyName = translatedProperty;
+									newBinding.type = targetComponent.GetType();
+									AnimationUtility.SetObjectReferenceCurve(ret, newBinding, keyframes);
+								}
+								catch(Exception)
+								{
+									var newBinding = new EditorCurveBinding();
+									newBinding.path = "STF_NODE_COMPONENT:" + nodeId + ":" + componentId;
+									newBinding.propertyName = property;
+									newBinding.type = typeof(Component);
+									AnimationUtility.SetObjectReferenceCurve(ret, newBinding, keyframes);
+								}
 							}
-						}*/
+						}
 					}
 					catch(Exception e)
 					{
