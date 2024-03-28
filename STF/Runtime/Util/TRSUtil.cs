@@ -9,15 +9,15 @@ namespace STF.Util
 	{
 		public static Vector3 ParseLocation(JObject Json)
 		{
-			return new Vector3((float)Json["trs"][0][0], (float)Json["trs"][0][1], (float)Json["trs"][0][2]);
+			return new Vector3(-(float)Json["trs"][0][0], (float)Json["trs"][0][1], (float)Json["trs"][0][2]); // Flip the X-axis to convert from the glTF coordinate system
 		}
 		public static Vector3 ParseLocation(JArray Json)
 		{
-			return new Vector3((float)Json[0], (float)Json[1], (float)Json[2]);
+			return new Vector3(-(float)Json[0], (float)Json[1], (float)Json[2]);
 		}
 		public static Quaternion ParseRotation(JObject Json)
 		{
-			return new Quaternion((float)Json["trs"][1][0], (float)Json["trs"][1][1], (float)Json["trs"][1][2], (float)Json["trs"][1][3]);
+			return new Quaternion((float)Json["trs"][1][0], -(float)Json["trs"][1][1], -(float)Json["trs"][1][2], (float)Json["trs"][1][3]); // Flipping the X-axis with quats is funny
 		}
 		public static Vector3 ParseScale(JObject Json)
 		{
@@ -36,11 +36,11 @@ namespace STF.Util
 		
 		public static JArray SerializeLocation(Transform T)
 		{
-			return new JArray {T.localPosition.x, T.localPosition.y, T.localPosition.z};
+			return new JArray {-T.localPosition.x, T.localPosition.y, T.localPosition.z}; // Flip the X-axis to convert to the glTF coordinate system
 		}
 		public static JArray SerializeRotation(Transform T)
 		{
-			return new JArray {T.transform.localRotation.x, T.transform.localRotation.y, T.transform.localRotation.z, T.transform.localRotation.w};
+			return new JArray {T.transform.localRotation.x, -T.transform.localRotation.y, -T.transform.localRotation.z, T.transform.localRotation.w}; // Flipping the X-axis with quats is funny
 		}
 		public static JArray SerializeScale(Transform T)
 		{

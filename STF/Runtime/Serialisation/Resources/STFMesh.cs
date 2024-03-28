@@ -56,6 +56,11 @@ namespace STF.Serialisation
 			if(mesh.HasVertexAttribute(VertexAttribute.TexCoord6)) { bufferWidth += 2; numUVs++; }
 			if(mesh.HasVertexAttribute(VertexAttribute.TexCoord7)) { bufferWidth += 2; numUVs++; }
 
+			var indicesBytes = 8;
+			if(mesh.vertexCount < 2147483647) indicesBytes = 4;
+			else if(mesh.vertexCount < 65536) indicesBytes = 2;
+			ret.Add("indices_bytewidth", indicesBytes);
+
 			var offset = 0;
 			var vertexBuffer = new float[mesh.vertexCount * bufferWidth];
 			{
@@ -64,7 +69,7 @@ namespace STF.Serialisation
 				mesh.GetVertices(vertices);
 				for(int i = 0; i < vertices.Count; i++)
 				{
-					vertexBuffer[i * bufferWidth] = vertices[i].x;
+					vertexBuffer[i * bufferWidth] = -vertices[i].x; // invert x-axis to convert to the glTF coordinate space
 					vertexBuffer[i * bufferWidth + 1] = vertices[i].y;
 					vertexBuffer[i * bufferWidth + 2] = vertices[i].z;
 				}
@@ -77,7 +82,7 @@ namespace STF.Serialisation
 				mesh.GetNormals(normals);
 				for(int i = 0; i < normals.Count; i++)
 				{
-					vertexBuffer[i * bufferWidth + offset] = normals[i].x;
+					vertexBuffer[i * bufferWidth + offset] = -normals[i].x;
 					vertexBuffer[i * bufferWidth + offset + 1] = normals[i].y;
 					vertexBuffer[i * bufferWidth + offset + 2] = normals[i].z;
 				}
@@ -90,7 +95,7 @@ namespace STF.Serialisation
 				mesh.GetTangents(tangents);
 				for(int i = 0; i < tangents.Count; i++)
 				{
-					vertexBuffer[i * bufferWidth + offset] = tangents[i].x;
+					vertexBuffer[i * bufferWidth + offset] = -tangents[i].x;
 					vertexBuffer[i * bufferWidth + offset + 1] = tangents[i].y;
 					vertexBuffer[i * bufferWidth + offset + 2] = tangents[i].z;
 					vertexBuffer[i * bufferWidth + offset + 3] = tangents[i].w;
@@ -281,9 +286,8 @@ namespace STF.Serialisation
 
 		public void ParseFromJson(ISTFImportState State, JObject Json, string Id)
 		{
-			var mesh = new Mesh();
-			mesh.name = (string)Json["name"];
-			
+			var mesh = new Mesh { name = (string)Json["name"] };
+
 			var meta = ScriptableObject.CreateInstance<STFMesh>();
 			meta.ResourceLocation = Path.Combine(State.TargetLocation, STFConstants.ResourceDirectoryName, mesh.name + "_" + Id + ".mesh");
 			meta.OriginalBufferId = (string)Json["buffer"];
@@ -293,6 +297,7 @@ namespace STF.Serialisation
 			var bufferWidth = 3;
 			var numUVs = 0;
 			var vertexCount = (int)Json["vertex_count"];
+			var indicesByteWidth = (int)Json["indices_bytewidth"];
 
 			if(Json["normal"] != null) bufferWidth += 3;
 			if(Json["tangent"] != null) bufferWidth += 4;
