@@ -315,7 +315,7 @@ namespace STF.Serialisation
 				var vertices = new List<Vector3>();
 				for(int i = 0; i < vertexCount; i++)
 				{
-					vertices.Add(new Vector3(vertexbuffer[i * bufferWidth], vertexbuffer[i * bufferWidth + 1], vertexbuffer[i * bufferWidth + 2]));
+					vertices.Add(new Vector3(-vertexbuffer[i * bufferWidth], vertexbuffer[i * bufferWidth + 1], vertexbuffer[i * bufferWidth + 2]));
 				}
 				mesh.SetVertices(vertices);
 				offset += 3;
@@ -325,7 +325,7 @@ namespace STF.Serialisation
 				var normals = new List<Vector3>();
 				for(int i = 0; i < vertexCount; i++)
 				{
-					normals.Add(new Vector3(vertexbuffer[i * bufferWidth + offset], vertexbuffer[i * bufferWidth + offset + 1], vertexbuffer[i * bufferWidth + offset + 2]));
+					normals.Add(new Vector3(-vertexbuffer[i * bufferWidth + offset], vertexbuffer[i * bufferWidth + offset + 1], vertexbuffer[i * bufferWidth + offset + 2]));
 				}
 				mesh.SetNormals(normals);
 				offset += 3;
@@ -335,7 +335,7 @@ namespace STF.Serialisation
 				var tangents = new List<Vector4>();
 				for(int i = 0; i < vertexCount; i++)
 				{
-					tangents.Add(new Vector4(vertexbuffer[i * bufferWidth + offset], vertexbuffer[i * bufferWidth + offset + 1], vertexbuffer[i * bufferWidth + offset + 2], vertexbuffer[i * bufferWidth + offset + 3]));
+					tangents.Add(new Vector4(-vertexbuffer[i * bufferWidth + offset], vertexbuffer[i * bufferWidth + offset + 1], vertexbuffer[i * bufferWidth + offset + 2], vertexbuffer[i * bufferWidth + offset + 3]));
 				}
 				mesh.SetTangents(tangents);
 				offset += 4;
