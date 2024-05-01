@@ -21,7 +21,7 @@ namespace STF.Tools
 
 			STFDirectoryUtil.EnsureUnpackLocation(assetPath);
 
-			//new STFImporter(UnpackLocation, assetPath);
+			//new STFImporter(STFDirectoryUtil.GetUnpackLocation(assetPath), assetPath);
 		}
 	}
 }

@@ -3,6 +3,7 @@
 
 using System.IO;
 using STF.Serialisation;
+using STF.Tools;
 using UnityEditor;
 using UnityEngine;
 
@@ -42,22 +43,7 @@ namespace STF.ApplicationConversion.Editors
 			if(tmpAsset != Asset)
 			{
 				Asset = tmpAsset;
-				path = null;
-				Debug.Log(PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(Asset));
-				Debug.Log(Path.GetDirectoryName(PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(Asset)));
-				path = Path.GetDirectoryName(PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(Asset));
-				if(!Directory.Exists(Path.Combine(path, DefaultUnpackFolder)))
-				{
-					AssetDatabase.CreateFolder(path, DefaultUnpackFolder);
-					AssetDatabase.Refresh();
-				}
-				path = Path.Combine(path, DefaultUnpackFolder);
-				if(!Directory.Exists(Path.Combine(path, STFUnityConverter._TARGET_NAME)))
-				{
-					AssetDatabase.CreateFolder(path, STFUnityConverter._TARGET_NAME);
-					AssetDatabase.Refresh();
-				}
-				path = Path.Combine(path, STFUnityConverter._TARGET_NAME);
+				path = STFDirectoryUtil.EnsureConvertLocation(Asset, STFUnityConverter._TARGET_NAME);
 			}
 			
 			drawHLine();
@@ -65,18 +51,6 @@ namespace STF.ApplicationConversion.Editors
 			// addons
 
 			// settings
-
-			GUILayout.BeginHorizontal();
-			GUILayout.Label("Output Folder:", GUILayout.ExpandWidth(false));
-			GUILayout.Label(path, GUILayout.ExpandWidth(true));
-			GUILayout.EndHorizontal();
-
-			if(GUILayout.Button("Select Output Folder", GUILayout.ExpandWidth(false)))
-			{
-				path = EditorUtility.SaveFolderPanel("Select Output Folder", path, "converted");
-			}
-
-			drawHLine();
 
 			if(Asset && GUILayout.Button("Convert", GUILayout.ExpandWidth(true))) {
 				if(path != null && path.Length > 0) {
