@@ -12,8 +12,6 @@ namespace STF.Tools
 	[UnityEditor.AssetImporters.ScriptedImporter(1, new string[] {"stf"})]
 	public class STFScriptedImporter : UnityEditor.AssetImporters.ScriptedImporter
 	{
-		public string UnpackFolder;
-
 		public override void OnImportAsset(UnityEditor.AssetImporters.AssetImportContext ctx)
 		{
 			var importInfo = STFImportInfo.CreateInstance(new STFFile(ctx.assetPath));
@@ -21,7 +19,9 @@ namespace STF.Tools
 			ctx.AddObjectToAsset("main", importInfo);
 			ctx.SetMainObject(importInfo);
 
-			STFDirectoryUtil.EnsureDefaultUnpackFolder(Path.GetFileNameWithoutExtension(ctx.assetPath));
+			STFDirectoryUtil.EnsureUnpackLocation(assetPath);
+
+			//new STFImporter(UnpackLocation, assetPath);
 		}
 	}
 }

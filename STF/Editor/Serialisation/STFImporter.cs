@@ -1,11 +1,9 @@
 #if UNITY_EDITOR
 
 using UnityEngine;
-using System.Collections.Generic;
 using System;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using UnityEditor;
 using STF.Util;
@@ -34,8 +32,8 @@ namespace STF.Serialisation
 			try
 			{
 				var buffers = new STFFile(Path);
-				this.state = new STFImportState(Context, TargetLocation, JObject.Parse(buffers.Json));
-			
+				state = new STFImportState(Context, TargetLocation, JObject.Parse(buffers.Json));
+
 				EnsureFolderStructure();
 
 				ParseBuffers(buffers);
