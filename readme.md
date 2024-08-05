@@ -63,14 +63,13 @@ Support for VR-Avatars is contained in the AVA directory. It's a proof-of-concep
 # Original Motivation
 I make avatars for VR. The by far most popular and relevant social VR application is VRChat. VR avatars can also be used for V-Tubing, rendering/filmmaking and various other applications.
 
-The single relevant format for VR & V-Tubing avatars is a `.unitypackage` that contains a scene with a setup for a specific application, usually VRChat only, somewhere in its hirarchy.
+The single relevant format for VR & V-Tubing avatars is a `.unitypackage` that contains a scene with a setup for a specific application, usually VRChat only, somewhere in its hierarchy.
 
-There is no interoperability for avatars. And it is severely lacking for 3d models by themselves.
-Using those avatars as an end-user is prohibitively difficult as it requires the use of a Game-Engine like Unity.
+There is no interoperability for avatars. Using those avatars as an end-user is prohibitively difficult as it requires the use of a Game-Engine like Unity.
 
-This project is supposed to improve that, by creating a prototype/proof of concept of an extensible file format for 3d models. It should be trivial to extend to support fully featured VR & V-Tubing Avatars.
+STF should be able to easily host an extension for application agnostic & fully featured VR & V-Tubing avatars.
 
-Once such a format exists, I hope a sort of 'Character Editor' application can be made. End-users would be able to adapt their avatars as easily as in a video-game character creation screen and easily use them in applications like VRChat and VSeeFace. Currently, there is not even a 3d asset interchange format that satisfies basic needs, so this lies in the far future.
+Once such a format exists, I hope a sort of 'Character Editor' application can be created. End-users would be able to adapt their avatars as easily as in a video-game character creation screen and easily use them in applications like VRChat and VSeeFace. Currently, there is not even a 3d asset interchange format that satisfies basic needs, so this lies in the far future.
 
 # Current Status
 Most functionality which can be expected of a 3d model & scene file-format is implemented, not to full completion, but enough to show how the format is supposed to work. The UI/UX of STF tooling is at a bare minimum level.
