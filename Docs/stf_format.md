@@ -1,12 +1,12 @@
 # STF Format
-The STF format is based on the idea of GLTF 2.0, but differs in significant ways.
+The STF format is based on the concept of GLTF 2.0.
 
-It is a binary format made up of at least one chunk, which is always a UTF-8 encoded definition in the Json format. All further chunks are optional buffers which have to be referenced by the Json definition.
+It is a binary format made up of at least one chunk, which is always a UTF-8 encoded definition in the JSON format. All further chunks are optional buffers which have to be referenced by the JSON definition.
 
-Every object in the Json Definition is addressed by UUID. It must persist between import and export.
+Every object in the JSON Definition is addressed by UUID. It must persist between import and export.
 
 Every object has a type. The importer/exporter for each object is selected by its type. Support for additional types can be hot-loaded.
-If a type is not supported, the Json and all referenced objects have to be preserved and re-exported unless manually removed.
+If a type is not supported, the JSON and all referenced objects have to be preserved and re-exported unless manually removed.
 
 An STF file must stay the same between import and export, unless explicitly modified by the user.
 
@@ -20,7 +20,7 @@ An STF file must stay the same between import and export, unless explicitly modi
 The JSON definition consists of 6 properties in the root object.
 - `meta` Information about the file.
 - `main` UUID of the main asset.
-- `assets` A dict of UUID → asset pairs. Assets can list node UUID's, depending on the asset type.
+- `assets` A dict of UUID → asset pairs. Assets can list node UUID's, depending on the asset type. This will change in the future, an STF file will represent a single asset. The asset will still have a type.
 - `nodes` A dict of UUID → node pairs. Nodes can have a list of components and child-node UUID's.
 	- `components` A node's components describe additional information and behavior. For example mesh-instances or rotation constraints. Components can reference other nodes, resources and assets.
 - `resources` A list of UUID → resource pairs. Resources can reference nodes, other resources and buffers.

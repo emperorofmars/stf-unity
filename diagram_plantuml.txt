@@ -1,0 +1,64 @@
+@startuml
+!theme plain
+title STF Basic Types
+
+class Asset {
+id: uuid v4
+type : string
+nodes : List<Node>
+...
+}
+
+package Nodes {
+class Node {
+id: uuid v4
+type : string
+nodes : List<Node>
+components : List<NodeComponent>
+...
+}
+
+class NodeComponent {
+id: uuid v4
+type : string
+...
+}
+}
+
+package Resources {
+class Resource {
+id: uuid v4
+type : string
+components : List<ResourceComponent>
+...
+}
+
+class ResourceComponent {
+id: uuid v4
+type : string
+...
+}
+}
+
+class Buffer {
+id: uuid v4
+}
+
+Asset::nodes *-- Node : 0..n
+Node -[dashed]-> Resource : [allowed to reference]
+Resource -[dashed]-> Buffer : [allowed to reference]
+
+Node::components *-- NodeComponent : 0..n
+Resource::components *-- ResourceComponent : 0..n
+
+Node::nodes *-- Node : 0..n
+Resource -[dashed]-> Resource : [allowed to reference]
+
+NodeComponent -[dashed]-> NodeComponent : [allowed to reference]
+NodeComponent -[dashed]-> Node : [allowed to reference]
+NodeComponent -[dashed]-> Resource : [allowed to reference]
+
+ResourceComponent -[dashed]-> ResourceComponent : [allowed to reference]
+ResourceComponent -[dashed]-> Buffer : [allowed to reference]
+
+@enduml
