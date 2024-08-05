@@ -105,15 +105,15 @@ namespace AVA.Serialisation
 			throw new NotImplementedException();
 		}
 
-		override public void ParseFromJson(ISTFAssetImportState State, JObject Json, string Id, GameObject Go)
+		override public void ParseFromJson(ISTFImportState State, JObject Json, string Id, GameObject Go)
 		{
 			var c = Go.AddComponent<AVAFacialTrackingSimple>();
-			State.AddComponent(c, Id);
+			State.AddNodeComponent(c, Id);
 			c.Id = Id;
 			ParseRelationships(Json, c);
 
 			State.AddTask(new Task(() => {
-				c.TargetMeshInstance = (STFMeshInstance)State.Components[(string)Json["target_mesh_instance"]];
+				c.TargetMeshInstance = (STFMeshInstance)State.NodeComponents[(string)Json["target_mesh_instance"]];
 			}));
 			foreach(var vis in AVAFacialTrackingSimple.VoiceVisemes15)
 			{

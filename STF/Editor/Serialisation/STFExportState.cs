@@ -17,11 +17,6 @@ namespace STF.Serialisation
 		public STFExportContext Context {get =>_Context;}
 		string _TargetLocation;
 		public string TargetLocation {get =>_TargetLocation;}
-		public string _MainAssetId;
-		public string MainAssetId {get => _MainAssetId;}
-
-		public Dictionary<ISTFAsset, (string Id, JObject JsonAsset)> _Assets = new Dictionary<ISTFAsset, (string Id, JObject JsonAsset)>();
-		public Dictionary<ISTFAsset, (string Id, JObject JsonAsset)> Assets {get => _Assets;}
 
 		public Dictionary<GameObject, (string Id, JObject JsonNode)> _Nodes = new Dictionary<GameObject, (string Id, JObject JsonNode)>();
 		public Dictionary<GameObject, (string Id, JObject JsonNode)> Nodes {get => _Nodes;}
@@ -54,13 +49,6 @@ namespace STF.Serialisation
 		public void AddTask(Task task)
 		{
 			Tasks.Add(task);
-		}
-
-		public string AddAsset(ISTFAsset Asset, JObject Serialized, string Id = null)
-		{
-			if(Id == null || Id.Length == 0) Id = Guid.NewGuid().ToString();
-			Assets.Add(Asset, (Id, Serialized));
-			return Id;
 		}
 
 		public string AddNode(GameObject Go, JObject Serialized, string Id = null)

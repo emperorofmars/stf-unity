@@ -59,12 +59,11 @@ namespace STF.Serialisation
 					ret.UsedResources.Add(State.Resources[resourceId]);
 				}));
 			}
-			var assetImportState = new STFAssetImportState(Id, State, State.Context);
 			if(Json["used_nodes"] != null) foreach(string nodeId in Json["used_nodes"])
 			{
 				var type = (string)State.JsonRoot["nodes"][nodeId]["type"];
 				if(type == null || type.Length == 0) type = STFNode._TYPE;
-				var go = assetImportState.Context.NodeImporters[type].ParseFromJson(assetImportState, (JObject)State.JsonRoot["nodes"][nodeId], nodeId);
+				var go = State.Context.NodeImporters[type].ParseFromJson(State, (JObject)State.JsonRoot["nodes"][nodeId], nodeId);
 				go.name = (string)State.JsonRoot["nodes"][nodeId]["name"];
 				State.SaveResource(go, "Asset", nodeId);
 				ret.UsedNodes.Add((nodeId, go));

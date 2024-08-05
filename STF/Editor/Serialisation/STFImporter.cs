@@ -39,17 +39,14 @@ namespace STF.Serialisation
 				ParseBuffers(buffers);
 				ParseResources();
 				Utils.RunTasks(state.Tasks);
-				ParseAssets();
+				var Asset = ParseAsset();
 				Utils.RunTasks(state.Tasks);
 				Utils.RunTasks(state.PostprocessTasks);
 				RunPostProcessors();
 				Utils.RunTasks(state.Tasks);
-				
-				foreach(var asset in state.Assets)
-				{
-					var path = asset.Id == state.MainAssetId ? System.IO.Path.Combine(TargetLocation, asset.Name + ".Prefab") : System.IO.Path.Combine(TargetLocation, STFConstants.SecondaryAssetsDirectoryName, asset.Name + ".Prefab");
-					PrefabUtility.SaveAsPrefabAsset(asset.gameObject, path);
-				}
+
+				var path = System.IO.Path.Combine(TargetLocation, Asset.Name + ".Prefab");
+				PrefabUtility.SaveAsPrefabAsset(Asset.gameObject, path);
 
 				AssetDatabase.SaveAssets();
 				AssetDatabase.Refresh();
@@ -79,7 +76,6 @@ namespace STF.Serialisation
 			}
 			AssetDatabase.Refresh();
 			AssetDatabase.CreateFolder(state.TargetLocation, STFConstants.ResourceDirectoryName);
-			AssetDatabase.CreateFolder(state.TargetLocation, STFConstants.SecondaryAssetsDirectoryName);
 			AssetDatabase.CreateFolder(state.TargetLocation, STFConstants.PreservedBuffersDirectoryName);
 			AssetDatabase.Refresh();
 		}
@@ -109,27 +105,24 @@ namespace STF.Serialisation
 			}
 		}
 
-		private void ParseAssets()
+		private ISTFAsset ParseAsset()
 		{
-			foreach(var entry in (JObject)state.JsonRoot["assets"])
+			var type = (string)state.JsonRoot["asset"]["type"];
+			if(state.Context.AssetImporters.ContainsKey(type))
 			{
-				var type = (string)entry.Value["type"];
-				if(state.Context.AssetImporters.ContainsKey(type))
-				{
-					Debug.Log($"Parsing Asset: {type}");
-					state.Context.AssetImporters[type].ParseFromJson(state, (JObject)entry.Value, entry.Key);
-				}
-				else
-				{
-					Debug.LogWarning($"Unrecognized Asset: {type}");
-					// Unrecognized Asset
-				}
+				Debug.Log($"Parsing Asset: {type}");
+				return state.Context.AssetImporters[type].ParseFromJson(state, (JObject)state.JsonRoot["asset"]);
+			}
+			else
+			{
+				Debug.LogWarning($"Unrecognized Asset: {type}");
+				// Unrecognized Asset
+				return null;
 			}
 		}
 
 		private void RunPostProcessors()
 		{
-
 			foreach(var postProcessor in state.Context.ImportPostProcessors)
 			{
 				switch(postProcessor.STFObjectType)

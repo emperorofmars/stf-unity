@@ -13,10 +13,6 @@ namespace STF.Serialisation
 	{
 		STFExportContext Context {get;}
 		string TargetLocation {get;}
-		string MainAssetId {get;}
-
-		// Unity Asset -> Json Asset
-		Dictionary<ISTFAsset, (string Id, JObject JsonAsset)> Assets {get;}
 
 		// Unity Resource -> Json Resource
 		Dictionary<UnityEngine.Object, (string Id, JObject JsonResource)> Resources {get;}
@@ -31,7 +27,6 @@ namespace STF.Serialisation
 		Dictionary<Component, (string Id, JObject JsonComponent)> Components {get;}
 
 		void AddTask(Task task);
-		string AddAsset(ISTFAsset Asset, JObject Serialized, string Id = null);
 		string AddNode(GameObject Go, JObject Serialized, string Id = null);
 		string AddComponent(Component Component, JObject Serialized, string Id = null);
 		string AddResource(UnityEngine.Object Resource, JObject Serialized, string Id = null);

@@ -31,7 +31,7 @@ namespace STF.Serialisation
 
 	public class STFUnrecognizedNodeComponentImporter
 	{
-		public static void ParseFromJson(ISTFAssetImportState State, JObject Json, string Id, GameObject Go)
+		public static void ParseFromJson(ISTFImportState State, JObject Json, string Id, GameObject Go)
 		{
 			var c = Go.AddComponent<STFUnrecognizedNodeComponent>();
 			c.Id = Id;

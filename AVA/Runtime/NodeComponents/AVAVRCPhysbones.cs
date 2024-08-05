@@ -40,7 +40,7 @@ namespace AVA.Serialisation
 			throw new NotImplementedException();
 		}
 
-		public override void ParseFromJson(ISTFAssetImportState State, JObject Json, string Id, GameObject Go)
+		public override void ParseFromJson(ISTFImportState State, JObject Json, string Id, GameObject Go)
 		{
 			var c = Go.AddComponent<AVAVRCPhysbones>();
 			c.Id = Id;
@@ -59,7 +59,7 @@ namespace AVA.Serialisation
 			c.immobile_type = (string)Json["immobile_type"];
 			c.immobile = (float)Json["immobile"];
 
-			State.AddComponent(c, Id);
+			State.AddNodeComponent(c, Id);
 		}
 	}
 

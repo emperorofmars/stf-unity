@@ -73,7 +73,7 @@ namespace STF.Serialisation
 
 	public class STFArmatureInstanceImporter : ASTFNodeImporter
 	{
-		public override GameObject ParseFromJson(ISTFAssetImportState State, JObject JsonAsset, string Id)
+		public override GameObject ParseFromJson(ISTFImportState State, JObject JsonAsset, string Id)
 		{
 			var armatureResource = (STFArmature)State.Resources[(string)JsonAsset["armature"]];
 			var go = (GameObject)State.Instantiate(armatureResource.Resource);
@@ -86,7 +86,7 @@ namespace STF.Serialisation
 			armatureInstance.Id = Id;
 			armatureInstance.name = (string)JsonAsset["name"];
 			armatureInstance.PrefabHirarchy = 1;
-			armatureInstance.Origin = State.AssetId;
+			armatureInstance.Origin = State.Asset.Id;
 			
 			TRSUtil.ParseTRS(go, JsonAsset);
 
@@ -105,7 +105,7 @@ namespace STF.Serialisation
 				boneInstance.Id = boneInstanceIds[i];
 				boneInstance.BoneId = bone.Id;
 				boneInstance.PrefabHirarchy = 1;
-				boneInstance.Origin = State.AssetId;
+				boneInstance.Origin = State.Asset.Id;
 				armatureInstance.bones[i] = boneInstance.gameObject;
 
 				TRSUtil.ParseTRS(boneInstance.gameObject, boneInstanceJson);

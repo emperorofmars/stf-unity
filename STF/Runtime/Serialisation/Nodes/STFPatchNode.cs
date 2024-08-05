@@ -37,7 +37,7 @@ namespace STF.Serialisation
 	public class STFPatchNodeImporter : ASTFNodeImporter
 	{
 
-		public override GameObject ParseFromJson(ISTFAssetImportState State, JObject JsonAsset, string Id)
+		public override GameObject ParseFromJson(ISTFImportState State, JObject JsonAsset, string Id)
 		{
 			var ret = new GameObject();
 			State.AddNode(ret, Id);
@@ -45,7 +45,7 @@ namespace STF.Serialisation
 			var node = ret.AddComponent<STFPatchNode>();
 			node.Id = Id;
 			node.name = (string)JsonAsset["name"];
-			node.Origin = State.AssetId;
+			node.Origin = State.Asset.Id;
 			node.TargetId = (string)JsonAsset["target"];
 
 			TRSUtil.ParseTRS(ret, JsonAsset);

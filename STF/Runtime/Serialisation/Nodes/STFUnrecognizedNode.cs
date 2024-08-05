@@ -40,7 +40,7 @@ namespace STF.Serialisation
 
 	public static class STFUnrecognizedNodeImporter
 	{
-		public static GameObject ParseFromJson(ISTFAssetImportState State, JObject JsonAsset, string Id)
+		public static GameObject ParseFromJson(ISTFImportState State, JObject JsonAsset, string Id)
 		{
 			var ret = new GameObject();
 			State.AddNode(ret, Id);
@@ -48,7 +48,7 @@ namespace STF.Serialisation
 			var node = ret.AddComponent<STFUnrecognizedNode>();
 			node.Id = Id;
 			node.name = (string)JsonAsset["name"];
-			node.Origin = State.AssetId;
+			node.Origin = State.Asset.Id;
 			
 			node._TYPE = (string)JsonAsset["type"];
 			node.PreservedJson = JsonAsset.ToString();

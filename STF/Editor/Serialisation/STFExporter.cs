@@ -17,56 +17,41 @@ namespace STF.Serialisation
 	{
 		private STFExportState state;
 
-		public STFExporter(ISTFAsset MainAsset, List<ISTFAsset> SecondaryAssets, string ExportPath, Dictionary<UnityEngine.Object, UnityEngine.Object> ResourceMeta = null, bool DebugExport = false)
+		public STFExporter(ISTFAsset Asset, string ExportPath, Dictionary<UnityEngine.Object, UnityEngine.Object> ResourceMeta = null, bool DebugExport = false)
 		{
-			export(STFRegistry.GetDefaultExportContext(), MainAsset, SecondaryAssets, ExportPath, ResourceMeta, DebugExport);
+			export(STFRegistry.GetDefaultExportContext(), Asset, ExportPath, ResourceMeta, DebugExport);
 		}
 
-		public STFExporter(STFExportContext Context, ISTFAsset MainAsset, List<ISTFAsset> SecondaryAssets, string ExportPath, Dictionary<UnityEngine.Object, UnityEngine.Object> ResourceMeta = null, bool DebugExport = false)
+		public STFExporter(STFExportContext Context, ISTFAsset Asset, string ExportPath, Dictionary<UnityEngine.Object, UnityEngine.Object> ResourceMeta = null, bool DebugExport = false)
 		{
-			export(Context, MainAsset, SecondaryAssets, ExportPath, ResourceMeta, DebugExport);
+			export(Context, Asset, ExportPath, ResourceMeta, DebugExport);
 		}
 
-		private void export(STFExportContext Context, ISTFAsset MainAsset, List<ISTFAsset> SecondaryAssets, string ExportPath, Dictionary<UnityEngine.Object, UnityEngine.Object> ResourceMeta = null, bool DebugExport = false)
+		private void export(STFExportContext Context, ISTFAsset Asset, string ExportPath, Dictionary<UnityEngine.Object, UnityEngine.Object> ResourceMeta = null, bool DebugExport = false)
 		{
 			try
 			{
 				state = new STFExportState(Context, ExportPath, ResourceMeta);
-				state._MainAssetId = MainAsset.Id;
 
-				if(state.Context.AssetExporters.ContainsKey(MainAsset.Type))
+				JObject JsonAsset = null;
+				if(state.Context.AssetExporters.ContainsKey(Asset.Type))
 				{
-					Debug.Log($"Serializing Main Asset: {MainAsset.Type}");
-					state.Context.AssetExporters[MainAsset.Type].SerializeToJson(state, MainAsset);
+					Debug.Log($"Serializing Asset Type: {Asset.Type}");
+					JsonAsset = state.Context.AssetExporters[Asset.Type].SerializeToJson(state, Asset);
 				}
 				else
 				{
-					Debug.LogWarning($"Unrecognized Main Asset: {MainAsset.Type}");
+					Debug.LogWarning($"Unrecognized Asset Type: {Asset.Type}");
 					// Unrecognized Asset
-				}
-				foreach(var secondaryAsset in SecondaryAssets)
-				{
-					if(state.Context.AssetExporters.ContainsKey(secondaryAsset.Type))
-					{
-						Debug.Log($"Serializing Secondary Asset: {secondaryAsset.Type}");
-						state.Context.AssetExporters[secondaryAsset.Type].SerializeToJson(state, secondaryAsset);
-					}
-					else
-					{
-						Debug.LogWarning($"Unrecognized Secondary Asset: {secondaryAsset.Type}");
-						// Unrecognized Asset
-					}
+					throw new Exception($"Can't export unrecognized Asset Type: {Asset.Type}");
 				}
 				Utils.RunTasks(state.Tasks);
 
+				JsonAsset.Add("generator", "stf-unity");
+				JsonAsset.Add("timestamp", DateTime.Now.ToString());
 				JObject Json = new JObject
 				{
-					{"meta", new JObject {
-						{"generator", "stf-unity"},
-						{"timestamp", DateTime.Now.ToString()},
-					}},
-					{"main", state.MainAssetId},
-					{"assets", new JObject(state.Assets.Select(entry => new JProperty(entry.Value.Id, entry.Value.JsonAsset)))},
+					{"asset", JsonAsset},
 					{"nodes", new JObject(state.Nodes.Select(entry => new JProperty(entry.Value.Id, entry.Value.JsonNode)))},
 					{"resources", new JObject(state.Resources.Select(entry => new JProperty(entry.Value.Id, entry.Value.JsonResource)))},
 					{"buffers", new JArray(state.Buffers.Select(entry => entry.Key))}

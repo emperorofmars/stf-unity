@@ -107,13 +107,13 @@ namespace STF.Serialisation
 			throw new Exception("Unrecognized animation property: " + STFProperty);
 		}
 
-		public override void ParseFromJson(ISTFAssetImportState State, JObject Json, string Id, GameObject Go)
+		public override void ParseFromJson(ISTFImportState State, JObject Json, string Id, GameObject Go)
 		{
 			var meta = (STFMesh)State.Resources[(string)Json["mesh"]];
 			var meshInstanceComponent = Go.AddComponent<STFMeshInstance>();
 			meshInstanceComponent.Id = Id;
 			ParseRelationships(Json, meshInstanceComponent);
-			State.AddComponent(meshInstanceComponent, Id);
+			State.AddNodeComponent(meshInstanceComponent, Id);
 
 			Mesh mesh = (Mesh)meta.Resource;
 			Renderer renderer;
