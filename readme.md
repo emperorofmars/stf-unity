@@ -27,10 +27,10 @@ However, it is proprietary, undocumented, not extensible and many open source im
 ## STF Format
 STF is a binary format based on the concept of glTF 2.0, consisting of a definition in JSON and a bunch of binary buffers.
 
-STF consists of `nodes` with a list of `node_components` and `resources` with a list of `resource_components`.
+STF's JSON definition consists of `nodes` with a list of `node_components` and `resources` with a list of `resource_components`.
 All of these objects have a `type` property.
 
-By default only the basic types a 3d format has to support are included.
+By default, only the basic types a 3d format has to support are included.
 Support for additional types can be easily hot-loaded.
 
 Currently, an STF file can consist of multiple `assets` which reference a root node. This will change in the next version. An STF file will represent a single asset.
@@ -56,6 +56,8 @@ For VR avatars this is very common, however the process of delivering and applyi
 Apart from the core STF format implementation, this repository contains a subproject called MTF, which adds support for arbitrary and shader-agnostic materials. It's independent of STF and could be further expanded into its own project.
 
 Support for VR-Avatars is contained in the AVA directory. It's a proof-of-concept set of application-agnostic avatar components and converters for VRChat and VRM.
+
+A good place to start exploring the codebase is ./STF/Runtime/STFRegistry.cs, where types get registered, or ./STF/Runtime/Serialisation/ImportExport/STFFile.cs which handles the parsing and serialisation of binary STF files.
 
 **You are very welcome to open discussions & issues with your ideas, suggestions and questions about the format and its possibilities. Pull requests are very welcome!**
 
