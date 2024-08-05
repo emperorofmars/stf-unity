@@ -4,8 +4,8 @@
 Implementation for Unity 2022.3 or higher.
 
 # **! This is a WIP and not ready for productive use !**
-
 [Find an example model here!](https://emperorofmars.itch.io/stf-avatar-showcase)
+
 [Watch the video presentation!](https://www.youtube.com/watch?v=cgY-faQrv78)
 
 ## Introduction
@@ -13,13 +13,12 @@ I am in need of an open & extensible interchange format for 3d assets.
 
 Unfortunately, such a format does not exist.
 
-`fbx` is the next best thing, being most widely supported and able to store the most of my models.
-However, it is not extensible, proprietary, undocumented, and many open source implementations unfortunately faulty. Blender for example won't export animation curves, baking animations instead and making them useless for further editing. The paid [Better Fbx Importer & Exporter](https://blendermarket.com/products/better-fbx-importer--exporter) addon for Blender does the job.
+`fbx` is the next best thing, being the most widely supported and able to store the most of my models.
+However, it is proprietary, undocumented, not extensible and many open source implementations unfortunately faulty. Blender for example won't export animation curves, baking animations instead and making them useless for further editing. The paid [Better Fbx Importer & Exporter](https://blendermarket.com/products/better-fbx-importer--exporter) addon for Blender does the job.
 
-`glTF 2.0` is not an interchange format at all and not made for this purpose. For some reason, many in the '*open source gamedev sphere*' believe it is, and I fell victim to this mis-believe as well. GLTF would be comically bad as an interchange format, and due to my mis-believe, previously this readme even called STF a 'glTF-done-right' format. glTF is concerned with being efficiently loaded into a GPU, I need a format that is concerned with being loaded into an authoring tool like Blender or various game-engines.
+`glTF 2.0` is not an interchange format at all and not made for this purpose. For some reason, many in the '*open source gamedev sphere*' believe it is, and I fell victim to this mis-believe as well. GLTF does not work as an interchange format, and due to my mis-believe, previously this readme even called STF a 'glTF-done-right' format. glTF is concerned with being efficiently loaded into a GPU, I need a format that is concerned with being loaded into an authoring tool like Blender or various game-engines.
 
-My core requirements for an extensible 3d interchange format are:
-* Open Source
+**My core requirements for an open extensible 3d interchange format are:**
 * Extensions must be hot loadable and trivial to implement, enabling rapid prototyping of extensions.
 * Between import and export, the file can only change if the author does so explicitly. If an extension is not supported, it and all of its dependencies must be preserved and reexported, unless manually removed by the author. This is as trivial as storing the extensions JSON in a text field.
 * Everything must be addressed by a unique ID. This makes third party addons for a base model more robust.
@@ -72,13 +71,17 @@ STF should be able to easily host an extension for application agnostic & fully 
 Once such a format exists, I hope a sort of 'Character Editor' application can be created. End-users would be able to adapt their avatars as easily as in a video-game character creation screen and easily use them in applications like VRChat and VSeeFace. Currently, there is not even a 3d asset interchange format that satisfies basic needs, so this lies in the far future.
 
 # Current Status
-Most functionality which can be expected of a 3d model & scene file-format is implemented, not to full completion, but enough to show how the format is supposed to work. The UI/UX of STF tooling is at a bare minimum level.
+* Most functionality which can be expected of a 3d model format is implemented, not to full production readyness, but enough to show how the format is supposed to work.
+* The UI/UX of STF tooling is at a bare minimum level.
+* The codebase is tested only in a 'good weather flight' manner.
 
-The codebase is tested only in a 'good weather flight' manner.
+Alone, I can't bring a project like this to completion, as I can work on this only in my free time, while also making VR avatars as a hobby.
 
-Alone, I can't bring a project like this to completion. I can only try to prove that this works and is very possible.
+**I can only try to prove that this works and is very possible.**
 
-My next step is likely going to be an implementation for the Godot 4 engine.
+I am available for questions and discussions.
+
+My next step is likely going to be a cleanup of the functionality, and then an implementation for the Godot 4 engine. Once Blender's project 'Baklava' is released (Support for full animations) I may implement STF also in Blender.
 
 ---
 
