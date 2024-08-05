@@ -2,3 +2,16 @@ addons
 addon
 VRChat
 VSeeFace
+serialisation
+morphtarget
+deduplicate
+Morphtarget
+glTF
+UnityGLTF
+GLTFast
+Audiolink
+morphtargets
+Khronos
+hardcoded
+Accessors
+accessors

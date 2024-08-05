@@ -14,11 +14,11 @@ I am in need of an open & extensible interchange format for 3d assets.
 Unfortunately, such a format does not exist.
 
 `fbx` is the next best thing, being the most widely supported and able to store the most of my models.
-However, it is proprietary, undocumented, not extensible and many open source implementations unfortunately faulty. Blender for example won't export animation curves, baking animations instead and making them useless for further editing. The paid [Better Fbx Importer & Exporter](https://blendermarket.com/products/better-fbx-importer--exporter) addon for Blender does the job.
+However, it is proprietary, undocumented and not extensible. Some open source implementations are unfortunately faulty. Blender for example won't export animation curves, baking animations instead and making them useless for further editing. The paid [Better Fbx Importer & Exporter](https://blendermarket.com/products/better-fbx-importer--exporter) addon for Blender does the job.
 
-`glTF 2.0` is not an interchange format at all and not made for this purpose. For some reason, many in the '*open source gamedev sphere*' believe it is, and I fell victim to this mis-believe as well. GLTF does not work as an interchange format, and due to my mis-believe, previously this readme even called STF a 'glTF-done-right' format. glTF is concerned with being efficiently loaded into a GPU, I need a format that is concerned with being loaded into an authoring tool like Blender or various game-engines.
+`glTF 2.0` was originally designed as a distribution format, intended to be easily loaded into GPU memory. Some projects are trying to use it as an authoring/interchange format. Apparently this is a matter of a somewhat active debate. After trying to work with glTF 2.0 in this manner and analyzing its spec I don't think it can work for interchange/authoring. [Read in detail why here!](./Docs/gltf_fails_as_an_interchange_format.md)
 
-**My core requirements for an open extensible 3d interchange format are:**
+**My core requirements for an open & extensible 3d interchange format are:**
 * Extensions must be hot loadable and trivial to implement, enabling rapid prototyping of extensions.
 * Between import and export, the file can not change (except for some metadata perhaps). If an extension is not supported, it and all of its dependencies must be preserved and reexported, unless manually removed by the author.
 * Everything must be addressed by a unique ID. This makes third party addons for a base model more robust for example.
@@ -33,7 +33,7 @@ All of these objects have a `type` property.
 By default, only the basic types a 3d format has to support are included.
 Support for additional types can be easily hot-loaded.
 
-Currently, an STF file can consist of multiple `assets` which reference a root node. This will change in the next version. An STF file will represent a single asset.
+Currently, an STF file can consist of multiple `assets`. This will change in the next version. An STF file will represent a single asset.
 
 The `asset` also has a `type`. The default asset-type consists of a single root node. A 'scene' asset-type may be added in the future, and a 'patch' asset-type exists in a rudimentary form to experiment with the ability for third parties to create addons for other models.
 For VR avatars this is very common, however the process of delivering and applying such addons is difficult for the creator and especially the end-user.
@@ -57,7 +57,7 @@ Apart from the core STF format implementation, this repository contains a subpro
 
 Support for VR-Avatars is contained in the AVA directory. It's a proof-of-concept set of application-agnostic avatar components and converters for VRChat and VRM.
 
-A good place to start exploring the codebase is ./STF/Runtime/STFRegistry.cs, where types get registered, or ./STF/Runtime/Serialisation/ImportExport/STFFile.cs which handles the parsing and serialisation of binary STF files.
+A good place to start exploring the codebase is [./STF/Runtime/STFRegistry.cs](./STF/Runtime/STFRegistry.cs), where types get registered, or [./STF/Runtime/Serialisation/ImportExport/STFFile.cs](./STF/Runtime/Serialisation/ImportExport/STFFile.cs) which handles the parsing and serialisation of binary STF files.
 
 **You are very welcome to open discussions & issues with your ideas, suggestions and questions about the format and its possibilities. Pull requests are very welcome!**
 
@@ -73,7 +73,8 @@ STF should be able to easily host an extension for application agnostic & fully 
 Once such a format exists, I hope a sort of 'Character Editor' application can be created. End-users would be able to adapt their avatars as easily as in a video-game character creation screen and easily use them in applications like VRChat and VSeeFace. Currently, there is not even a 3d asset interchange format that satisfies basic needs, so this lies in the far future.
 
 # Current Status
-* Most functionality which can be expected of a 3d model format is implemented, not to full production readyness, but enough to show how the format is supposed to work.
+* This codebase, as well as the format itself, are the result of a lot of experimentation and could use a bit of cleanup.
+* The functionality which can be expected of a 3d model format is implemented, not to full production readiness, but enough to show how the format is supposed to work.
 * The UI/UX of STF tooling is at a bare minimum level.
 * The codebase is tested only in a 'good weather flight' manner.
 
