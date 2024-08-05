@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using STF.Addon;
 using STF.ApplicationConversion;
@@ -63,8 +62,8 @@ namespace STF.Serialisation
 
 			if(Component is SkinnedMeshRenderer)
 			{
-				if(meshInstance.ArmatureInstanceId != null && meshInstance.ArmatureInstanceId.Length > 0) ret.Add("armature_instance", meshInstance.ArmatureInstanceId);
-				else ret.Add("armature_instance", (renderer as SkinnedMeshRenderer).rootBone.parent.GetComponent<STFArmatureInstanceNode>()?.Id);
+				if(meshInstance.ArmatureInstanceId != null && meshInstance.ArmatureInstanceId.Length > 0) ret.Add("armature_instance", RefUtil.CreateNodeReference(meshInstance.ArmatureInstanceId));
+				else ret.Add("armature_instance", RefUtil.CreateNodeReference((renderer as SkinnedMeshRenderer).rootBone.parent.GetComponent<STFArmatureInstanceNode>()?.Id));
 			}
 
 			var materials = new JArray();
@@ -83,9 +82,6 @@ namespace STF.Serialisation
 			ret.Add("materials", materials);
 			ret.Add("morphtarget_values", new JArray(Enumerable.Range(0, mesh.blendShapeCount).Select(i => Component is SkinnedMeshRenderer ? (renderer as SkinnedMeshRenderer).GetBlendShapeWeight(i) : 0)));
 
-			var resourcesUsed = new JArray(meshId, ret["armature_instance"]);
-			foreach(var m in ret["materials"]) if(m != null) resourcesUsed.Add(m);
-			ret.Add("resources_used", resourcesUsed);
 			return (meshInstance != null ? meshInstance.Id : Guid.NewGuid().ToString(), ret);
 		}
 	}
@@ -130,7 +126,7 @@ namespace STF.Serialisation
 				{
 					if(State.Nodes.ContainsKey((string)Json["armature_instance"]))
 					{
-						var armatureInstanceNode = State.Nodes[(string)Json["armature_instance"]];
+						var armatureInstanceNode = State.Nodes[(string)Json["armature_instance"]["target"]];
 						var armatureInstance = armatureInstanceNode.GetComponent<STFArmatureInstanceNode>();
 						meshInstanceComponent.ArmatureInstance = armatureInstance;
 						c.rootBone = armatureInstance.root.transform;
@@ -139,7 +135,7 @@ namespace STF.Serialisation
 					}
 					else
 					{
-						meshInstanceComponent.ArmatureInstanceId = (string)Json["armature_instance"];
+						meshInstanceComponent.ArmatureInstanceId = (string)Json["armature_instance"]["target"];
 					}
 				}
 				
