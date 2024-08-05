@@ -20,8 +20,8 @@ However, it is proprietary, undocumented, not extensible and many open source im
 
 **My core requirements for an open extensible 3d interchange format are:**
 * Extensions must be hot loadable and trivial to implement, enabling rapid prototyping of extensions.
-* Between import and export, the file can only change if the author does so explicitly. If an extension is not supported, it and all of its dependencies must be preserved and reexported, unless manually removed by the author. This is as trivial as storing the extensions JSON in a text field.
-* Everything must be addressed by a unique ID. This makes third party addons for a base model more robust.
+* Between import and export, the file can not change (except for some metadata perhaps). If an extension is not supported, it and all of its dependencies must be preserved and reexported, unless manually removed by the author.
+* Everything must be addressed by a unique ID. This makes third party addons for a base model more robust for example.
 * Materials must be arbitrary and shader agnostic.
 
 ## STF Format
