@@ -40,7 +40,7 @@ namespace STF.Serialisation
 			throw new System.NotImplementedException();
 		}
 
-		public override void ParseFromJson(ISTFAssetImportState State, JObject Json, string Id, GameObject Go)
+		public override void ParseFromJson(ISTFImportState State, JObject Json, string Id, GameObject Go)
 		{
 			var c = Go.AddComponent<STFResourceHolder>();
 			ParseRelationships(Json, c);

@@ -15,10 +15,11 @@ namespace STF.Serialisation
 
 	public class STFAssetExporter : ISTFAssetExporter
 	{
-		public string SerializeToJson(ISTFExportState State, ISTFAsset Asset)
+		public JObject SerializeToJson(ISTFExportState State, ISTFAsset Asset)
 		{
 			var ret = new JObject
 			{
+				{"id", Asset.Id},
 				{"type", STFAsset._TYPE},
 				{"name", Asset.Name},
 				{"version", Asset.Version},
@@ -31,34 +32,33 @@ namespace STF.Serialisation
 
 			ret.Add("root_node", SerdeUtil.SerializeNode(State, Asset.gameObject));
 
-			return State.AddAsset(Asset, ret, Asset.Id);
+			return ret;
 		}
 	}
 	
 	public class STFAssetImporter : ISTFAssetImporter
 	{
-		public void ParseFromJson(ISTFImportState State, JObject JsonAsset, string Id)
+		public ISTFAsset ParseFromJson(ISTFImportState State, JObject JsonAsset)
 		{
 			try
 			{
 				var rootId = (string)JsonAsset["root_node"];
 				var nodeJson = (JObject)State.JsonRoot["nodes"][rootId];
 
-				var assetImportState = new STFAssetImportState(Id, State, State.Context);
 				var nodeType = (string)nodeJson["type"] != null && ((string)nodeJson["type"]).Length > 0 ? (string)nodeJson["type"] : STFNode._TYPE;
 				
 				GameObject rootGo;
 				if(State.Context.NodeImporters.ContainsKey(nodeType))
 				{
-					rootGo = State.Context.NodeImporters[nodeType].ParseFromJson(assetImportState, nodeJson, rootId);
+					rootGo = State.Context.NodeImporters[nodeType].ParseFromJson(State, nodeJson, rootId);
 				}
 				else
 				{
-					rootGo = STFUnrecognizedNodeImporter.ParseFromJson(assetImportState, nodeJson, rootId);
+					rootGo = STFUnrecognizedNodeImporter.ParseFromJson(State, nodeJson, rootId);
 				}
 
 				var asset = rootGo.AddComponent<STFAsset>();
-				asset.Id = Id;
+				asset.Id = (string)JsonAsset["id"];
 				asset.Name = (string)JsonAsset["name"];
 				asset.Version = (string)JsonAsset["version"];
 				asset.Author = (string)JsonAsset["author"];
@@ -73,13 +73,12 @@ namespace STF.Serialisation
 
 				asset.ImportPath = State.TargetLocation;
 
-				State.SaveAsset(asset);
+				return asset;
 			}
 			catch(Exception e)
 			{
 				throw new Exception("Error during Asset import: ", e);
 			}
-			return;
 		}
 	}
 }

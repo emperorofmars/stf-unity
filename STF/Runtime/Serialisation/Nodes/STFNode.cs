@@ -33,7 +33,7 @@ namespace STF.Serialisation
 	public class STFNodeImporter : ASTFNodeImporter
 	{
 
-		public override GameObject ParseFromJson(ISTFAssetImportState State, JObject JsonAsset, string Id)
+		public override GameObject ParseFromJson(ISTFImportState State, JObject JsonAsset, string Id)
 		{
 			var ret = new GameObject();
 			State.AddNode(ret, Id);

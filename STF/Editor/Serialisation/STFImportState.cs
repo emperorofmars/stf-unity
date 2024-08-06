@@ -14,16 +14,28 @@ namespace STF.Serialisation
 	{
 		STFImportContext _Context;
 		public STFImportContext Context {get =>_Context;}
+		
+		private string _AssetId;
+		public string AssetId => _AssetId;
+
 		string _TargetLocation;
 		public string TargetLocation {get =>_TargetLocation;}
-		string _MainAssetId;
-		public string MainAssetId {get => _MainAssetId;}
+
 		JObject _JsonRoot;
 		public JObject JsonRoot {get => _JsonRoot;}
-		//Dictionary<string, STFAsset> _Assets = new Dictionary<string, STFAsset>();
-		//public Dictionary<string, STFAsset> Assets {get => _Assets;}
+
+		Dictionary<string, GameObject> _Nodes = new Dictionary<string, GameObject>();
+		public Dictionary<string, GameObject> Nodes {get => _Nodes;}
+
+		Dictionary<string, Component> _NodeComponents = new Dictionary<string, Component>();
+		public Dictionary<string, Component> NodeComponents {get => _NodeComponents;}
+
 		Dictionary<string, UnityEngine.Object> _Resources = new Dictionary<string, UnityEngine.Object>();
 		public Dictionary<string, UnityEngine.Object> Resources {get => _Resources;}
+
+		Dictionary<string, UnityEngine.Object> _ResourceComponents = new Dictionary<string, UnityEngine.Object>();
+		public Dictionary<string, UnityEngine.Object> ResourceComponents {get => _ResourceComponents;}
+
 		Dictionary<string, byte[]> _Buffers = new Dictionary<string, byte[]>();
 		public Dictionary<string, byte[]> Buffers {get => _Buffers;}
 
@@ -34,15 +46,12 @@ namespace STF.Serialisation
 		public Dictionary<UnityEngine.Object, UnityEngine.Object> _PostprocessContext = new Dictionary<Object, Object>();
 		public Dictionary<UnityEngine.Object, UnityEngine.Object> PostprocessContext => _PostprocessContext;
 
-		public List<ISTFAsset> _Assets = new List<ISTFAsset>();
-		public List<ISTFAsset> Assets => _Assets;
-
 		public STFImportState(STFImportContext Context, string TargetLocation, JObject JsonRoot)
 		{
 			this._Context = Context;
 			this._TargetLocation = TargetLocation;
 			this._JsonRoot = JsonRoot;
-			this._MainAssetId = (string)JsonRoot["main"];
+			this._AssetId = (string)JsonRoot["asset"]["id"];
 		}
 
 		public void AddTask(Task task)
@@ -53,6 +62,17 @@ namespace STF.Serialisation
 		public void AddPostprocessTask(Task task)
 		{
 			PostprocessTasks.Add(task);
+		}
+
+		public void AddNode(GameObject Node, string Id)
+		{
+			Nodes.Add(Id, Node);
+			AddTrash(Node);
+		}
+
+		public void AddNodeComponent(Component Component, string Id)
+		{
+			NodeComponents.Add(Id, Component);
 		}
 
 		public void AddResource(UnityEngine.Object Resource, string Id)
@@ -163,11 +183,6 @@ namespace STF.Serialisation
 		public UnityEngine.Object Instantiate(UnityEngine.Object Resource)
 		{
 			return PrefabUtility.InstantiatePrefab(Resource);
-		}
-		
-		public void SaveAsset(ISTFAsset Asset)
-		{
-			Assets.Add(Asset);
 		}
 	}
 }

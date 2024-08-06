@@ -47,10 +47,10 @@ namespace AVA.Serialisation
 			throw new System.NotImplementedException();
 		}
 
-		public override void ParseFromJson(ISTFAssetImportState State, JObject Json, string Id, GameObject Go)
+		public override void ParseFromJson(ISTFImportState State, JObject Json, string Id, GameObject Go)
 		{
 			var c = Go.AddComponent<AVAEyeBoneLimitsSimple>();
-			State.AddComponent(c, Id);
+			State.AddNodeComponent(c, Id);
 			c.Id = Id;
 			ParseRelationships(Json, c);
 

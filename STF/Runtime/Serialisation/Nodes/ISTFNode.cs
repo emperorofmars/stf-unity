@@ -26,7 +26,7 @@ namespace STF.Serialisation
 	public interface ISTFNodeImporter
 	{
 		string ConvertPropertyPath(string STFProperty);
-		GameObject ParseFromJson(ISTFAssetImportState State, JObject JsonAsset, string Id);
+		GameObject ParseFromJson(ISTFImportState State, JObject JsonAsset, string Id);
 	}
 
 	public abstract class ASTFNodeExporter : ISTFNodeExporter
@@ -82,6 +82,6 @@ namespace STF.Serialisation
 			}
 			throw new Exception("Unrecognized animation property: " + STFProperty);
 		}
-		public abstract GameObject ParseFromJson(ISTFAssetImportState State, JObject JsonAsset, string Id);
+		public abstract GameObject ParseFromJson(ISTFImportState State, JObject JsonAsset, string Id);
 	}
 }

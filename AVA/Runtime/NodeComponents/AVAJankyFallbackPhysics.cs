@@ -34,7 +34,7 @@ namespace AVA.Serialisation
 			throw new NotImplementedException();
 		}
 
-		public override void ParseFromJson(ISTFAssetImportState State, JObject Json, string Id, GameObject Go)
+		public override void ParseFromJson(ISTFImportState State, JObject Json, string Id, GameObject Go)
 		{
 			var c = Go.AddComponent<AVAJankyFallbackPhysics>();
 			c.Id = Id;
@@ -47,7 +47,7 @@ namespace AVA.Serialisation
 			c.spring = (float)Json["spring"];
 			c.stiffness = (float)Json["stiffness"];
 			
-			State.AddComponent(c, Id);
+			State.AddNodeComponent(c, Id);
 		}
 	}
 

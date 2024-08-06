@@ -20,10 +20,11 @@ namespace STF.Serialisation
 
 	public class STFAddonAssetExporter : ISTFAssetExporter
 	{
-		public string SerializeToJson(ISTFExportState State, ISTFAsset Asset)
+		public JObject SerializeToJson(ISTFExportState State, ISTFAsset Asset)
 		{
 			var ret = new JObject
 			{
+				{"id", Asset.Id},
 				{"type", STFAddonAsset._TYPE},
 				{"name", Asset.Name},
 				{"version", Asset.Version},
@@ -48,26 +49,25 @@ namespace STF.Serialisation
 			}
 			ret.Add("root_node", SerdeUtil.SerializeNode(State, Asset.gameObject));
 
-			return State.AddAsset(Asset, ret, Asset.Id);
+			return ret;
 		}
 	}
 	
 	public class STFAddonAssetImporter : ISTFAssetImporter
 	{
-		public void ParseFromJson(ISTFImportState State, JObject JsonAsset, string Id)
+		public ISTFAsset ParseFromJson(ISTFImportState State, JObject JsonAsset)
 		{
 			try
 			{
 				var rootId = (string)JsonAsset["root_node"];
 				var nodeJson = (JObject)State.JsonRoot["nodes"][rootId];
 
-				var assetImportState = new STFAssetImportState(Id, State, State.Context);
 				var nodeType = (string)nodeJson["type"] != null && ((string)nodeJson["type"]).Length > 0 ? (string)nodeJson["type"] : STFNode._TYPE;
 				// Check node type validity
-				var rootGo = State.Context.NodeImporters[nodeType].ParseFromJson(assetImportState, nodeJson, rootId);
+				var rootGo = State.Context.NodeImporters[nodeType].ParseFromJson(State, nodeJson, rootId);
 				
 				var asset = rootGo.AddComponent<STFAddonAsset>();
-				asset.Id = Id;
+				asset.Id = (string)JsonAsset["id"];
 				asset.Name = (string)JsonAsset["name"];
 				asset.Version = (string)JsonAsset["version"];
 				asset.Author = (string)JsonAsset["author"];
@@ -77,13 +77,12 @@ namespace STF.Serialisation
 
 				asset.ImportPath = State.TargetLocation;
 
-				State.SaveAsset(asset);
+				return asset;
 			}
 			catch(Exception e)
 			{
 				throw new Exception("Error during Asset import: ", e);
 			}
-			return;
 		}
 	}
 }

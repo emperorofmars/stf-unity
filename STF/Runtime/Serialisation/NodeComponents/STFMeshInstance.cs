@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using STF.Addon;
 using STF.ApplicationConversion;
@@ -83,9 +82,11 @@ namespace STF.Serialisation
 			ret.Add("materials", materials);
 			ret.Add("morphtarget_values", new JArray(Enumerable.Range(0, mesh.blendShapeCount).Select(i => Component is SkinnedMeshRenderer ? (renderer as SkinnedMeshRenderer).GetBlendShapeWeight(i) : 0)));
 
-			var resourcesUsed = new JArray(meshId, ret["armature_instance"]);
+			var resourcesUsed = new JArray(meshId);
 			foreach(var m in ret["materials"]) if(m != null) resourcesUsed.Add(m);
 			ret.Add("resources_used", resourcesUsed);
+			ret.Add("nodes_used", new JArray(ret["armature_instance"]));
+
 			return (meshInstance != null ? meshInstance.Id : Guid.NewGuid().ToString(), ret);
 		}
 	}
@@ -107,13 +108,13 @@ namespace STF.Serialisation
 			throw new Exception("Unrecognized animation property: " + STFProperty);
 		}
 
-		public override void ParseFromJson(ISTFAssetImportState State, JObject Json, string Id, GameObject Go)
+		public override void ParseFromJson(ISTFImportState State, JObject Json, string Id, GameObject Go)
 		{
 			var meta = (STFMesh)State.Resources[(string)Json["mesh"]];
 			var meshInstanceComponent = Go.AddComponent<STFMeshInstance>();
 			meshInstanceComponent.Id = Id;
 			ParseRelationships(Json, meshInstanceComponent);
-			State.AddComponent(meshInstanceComponent, Id);
+			State.AddNodeComponent(meshInstanceComponent, Id);
 
 			Mesh mesh = (Mesh)meta.Resource;
 			Renderer renderer;

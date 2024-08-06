@@ -94,17 +94,17 @@ namespace AVA.Serialisation
 			throw new NotImplementedException();
 		}
 
-		public override void ParseFromJson(ISTFAssetImportState State, JObject Json, string Id, GameObject Go)
+		public override void ParseFromJson(ISTFImportState State, JObject Json, string Id, GameObject Go)
 		{
 			var c = Go.AddComponent<AVAAvatar>();
 			c.Id = Id;
 			ParseRelationships(Json, c);
 			State.AddTask(new Task(() => {
-				c.MainMeshInstance = (string)Json["main_mesh"] != null ? (STFMeshInstance)State.Components[(string)Json["main_mesh"]] : null;
+				c.MainMeshInstance = (string)Json["main_mesh"] != null ? (STFMeshInstance)State.NodeComponents[(string)Json["main_mesh"]] : null;
 				c.viewport_parent = (string)Json["viewport_parent"] != null ? State.Nodes[(string)Json["viewport_parent"]] : null;
 				c.viewport_position = TRSUtil.ParseLocation((JArray)Json["viewport_position"]);
 			}));
-			State.AddComponent(c, Id);
+			State.AddNodeComponent(c, Id);
 		}
 	}
 

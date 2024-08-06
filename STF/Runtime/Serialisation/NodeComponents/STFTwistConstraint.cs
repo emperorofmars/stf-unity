@@ -47,7 +47,7 @@ namespace STF.Serialisation
 			throw new NotImplementedException();
 		}
 
-		public override void ParseFromJson(ISTFAssetImportState State, JObject Json, string Id, GameObject Go)
+		public override void ParseFromJson(ISTFImportState State, JObject Json, string Id, GameObject Go)
 		{
 			var c = Go.AddComponent<STFTwistConstraint>();
 			ParseRelationships(Json, c);
@@ -55,7 +55,7 @@ namespace STF.Serialisation
 			c.Weight = (float)Json["weight"];
 			c.Target = (string)Json["target"] != null && State.Nodes.ContainsKey((string)Json["target"]) ? State.Nodes[(string)Json["target"]] : null;
 			c.TargetId = (string)Json["target"];
-			State.AddComponent(c, Id);
+			State.AddNodeComponent(c, Id);
 		}
 	}
 	

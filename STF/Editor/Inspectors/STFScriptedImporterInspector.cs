@@ -14,8 +14,6 @@ namespace STF.Tools
 	[CustomEditor(typeof(STFScriptedImporter))]
 	public class STFScriptedImporterInspector : Editor
 	{
-		bool _foldoutImportedAssets = true;
-
 		public override void OnInspectorGUI()
 		{
 			var importer = (STFScriptedImporter)target;
@@ -27,8 +25,6 @@ namespace STF.Tools
 			if(importInfo != null && importInfo.Buffers != null) EditorGUILayout.LabelField(importInfo.Buffers.VersionMajor + "." + importInfo.Buffers.VersionMinor);
 			else EditorGUILayout.LabelField("-");
 			EditorGUILayout.EndHorizontal();
-
-			var mainAsset = importInfo.Assets?.Find(a => a.assetId == importInfo.MainAssetId);
 
 			drawHLine();
 
@@ -42,35 +38,17 @@ namespace STF.Tools
 
 			drawHLine();
 
-			if(Directory.Exists(Path.Combine(STFDirectoryUtil.GetUnpackLocation(importer.assetPath))) && File.Exists(Path.Combine(STFDirectoryUtil.GetUnpackLocation(importer.assetPath), mainAsset.assetName + ".Prefab")))
+			if(Directory.Exists(Path.Combine(STFDirectoryUtil.GetUnpackLocation(importer.assetPath))) && File.Exists(Path.Combine(STFDirectoryUtil.GetUnpackLocation(importer.assetPath), importInfo.assetName + ".Prefab")))
 			{
-				EditorGUILayout.LabelField("Main Asset", EditorStyles.whiteLargeLabel);
+				EditorGUILayout.LabelField("STF Asset", EditorStyles.whiteLargeLabel);
 
 				EditorGUI.indentLevel++;
-				renderAsset(mainAsset, importer);
+				renderAsset(importInfo, importer);
 				if(GUILayout.Button("Instantiate", GUILayout.ExpandWidth(false))) {
-					var assetObject = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(Path.Combine(STFDirectoryUtil.GetUnpackLocation(importer.assetPath), mainAsset.assetName + ".Prefab"));
+					var assetObject = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(Path.Combine(STFDirectoryUtil.GetUnpackLocation(importer.assetPath), importInfo.assetName + ".Prefab"));
 					PrefabUtility.InstantiatePrefab(assetObject);
 				}
 				EditorGUI.indentLevel--;
-
-				drawHLine();
-
-				GUILayout.Space(5f);
-				_foldoutImportedAssets = EditorGUILayout.Foldout(_foldoutImportedAssets, "Secondary Assets", true, EditorStyles.foldoutHeader);
-				if(_foldoutImportedAssets && importInfo != null && importInfo.Assets != null && importInfo.Assets.Count > 1)
-				{
-					foreach(var asset in importInfo.Assets.FindAll(a => a.assetId != importInfo.MainAssetId))
-					{
-						EditorGUI.indentLevel++;
-						renderAsset(asset, importer);
-						if(GUILayout.Button("Instantiate", GUILayout.ExpandWidth(false))) {
-							var assetObject = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(Path.Combine(STFDirectoryUtil.GetUnpackLocation(importer.assetPath), STFConstants.SecondaryAssetsDirectoryName, asset.assetName + ".Prefab"));
-							PrefabUtility.InstantiatePrefab(assetObject);
-						}
-						EditorGUI.indentLevel--;
-					}
-				}
 
 				drawHLine();
 			}
@@ -88,7 +66,7 @@ namespace STF.Tools
 			GUILayout.Space(10);
 		}
 
-		private void renderAsset(STFAssetInfo asset, STFScriptedImporter importer)
+		private void renderAsset(STFImportInfo asset, STFScriptedImporter importer)
 		{
 			if(asset != null)
 			{

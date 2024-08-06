@@ -20,17 +20,20 @@ namespace STF.Serialisation
 		public string LicenseLink;
 		public Texture2D Preview;
 
+		public string OriginalFileName { get; }
+
+
 		public string ImportPath;
 		public List<string> AppliedAddonIds;
 	}
 	
 	public interface ISTFAssetExporter
 	{
-		string SerializeToJson(ISTFExportState State, ISTFAsset Asset);
+		JObject SerializeToJson(ISTFExportState State, ISTFAsset Asset);
 	}
 	
 	public interface ISTFAssetImporter
 	{
-		void ParseFromJson(ISTFImportState State, JObject JsonAsset, string Id);
+		ISTFAsset ParseFromJson(ISTFImportState State, JObject JsonAsset);
 	}
 }
