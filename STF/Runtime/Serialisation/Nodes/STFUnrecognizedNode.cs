@@ -48,7 +48,7 @@ namespace STF.Serialisation
 			var node = ret.AddComponent<STFUnrecognizedNode>();
 			node.Id = Id;
 			node.name = (string)JsonAsset["name"];
-			node.Origin = State.Asset.Id;
+			node.Origin = State.AssetId;
 			
 			node._TYPE = (string)JsonAsset["type"];
 			node.PreservedJson = JsonAsset.ToString();

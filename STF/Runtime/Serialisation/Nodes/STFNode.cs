@@ -41,7 +41,7 @@ namespace STF.Serialisation
 			var node = ret.AddComponent<STFNode>();
 			node.Id = Id;
 			node.name = (string)JsonAsset["name"];
-			node.Origin = State.Asset.Id;
+			node.Origin = State.AssetId;
 
 			TRSUtil.ParseTRS(ret, JsonAsset);
 			SerdeUtil.ParseNode(State, ret, JsonAsset);

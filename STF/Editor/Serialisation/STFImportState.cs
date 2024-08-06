@@ -15,8 +15,8 @@ namespace STF.Serialisation
 		STFImportContext _Context;
 		public STFImportContext Context {get =>_Context;}
 		
-		private ISTFAsset _Asset;
-		public ISTFAsset Asset => _Asset;
+		private string _AssetId;
+		public string AssetId => _AssetId;
 
 		string _TargetLocation;
 		public string TargetLocation {get =>_TargetLocation;}
@@ -51,6 +51,7 @@ namespace STF.Serialisation
 			this._Context = Context;
 			this._TargetLocation = TargetLocation;
 			this._JsonRoot = JsonRoot;
+			this._AssetId = (string)JsonRoot["asset"]["id"];
 		}
 
 		public void AddTask(Task task)

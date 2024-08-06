@@ -12,7 +12,7 @@ namespace STF.Serialisation
 		string TargetLocation {get;}
 		JObject JsonRoot {get;}
 
-		ISTFAsset Asset {get;}
+		string AssetId {get;}
 		Dictionary<UnityEngine.Object, UnityEngine.Object> PostprocessContext {get;}
 
 		// id -> node
