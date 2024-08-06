@@ -8,13 +8,18 @@ namespace STF.Serialisation
 {
 	public class STFImportState
 	{
-		public STFImportState(STFImportContext Context, IUnityImportContext UnityContext, JObject JsonRoot)
+		public STFImportState(STFImportContext Context, IUnityImportContext UnityContext, STFFile Buffers)
 		{
 			this.Context = Context;
 			this.UnityContext = UnityContext;
 			UnityContext.State = this;
-			this.JsonRoot = JsonRoot;
-			this.AssetId = (string)JsonRoot["asset"]["id"];
+			JsonRoot = JObject.Parse(Buffers.Json);
+			AssetId = (string)JsonRoot["asset"]["id"];
+			
+			for(int i = 0; i < Buffers.Buffers.Count; i++)
+			{
+				this.Buffers.Add((string)JsonRoot[STFKeywords.ObjectType.Buffers][i], Buffers.Buffers[i]);
+			}
 		}
 
 		public STFImportContext Context {protected set; get;}

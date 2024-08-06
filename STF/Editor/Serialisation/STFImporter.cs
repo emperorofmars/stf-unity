@@ -33,11 +33,9 @@ namespace STF.Serialisation
 			{
 				var buffers = new STFFile(ImportPath);
 				var unityContext = new EditorUnityImportContext(TargetLocation);
-				state = new STFImportState(Context, unityContext, JObject.Parse(buffers.Json));
+				state = new STFImportState(Context, unityContext, buffers);
 
 				EnsureFolderStructure(TargetLocation);
-
-				ParseBuffers(buffers);
 				ParseResources();
 				Utils.RunTasks(state.Tasks);
 				var Asset = ParseAsset();
@@ -66,6 +64,13 @@ namespace STF.Serialisation
 						UnityEngine.Object.DestroyImmediate(trashObject);
 					}
 				}
+				foreach(var trashObject in state.Nodes.Values)
+				{
+					if(trashObject != null)
+					{
+						UnityEngine.Object.DestroyImmediate(trashObject);
+					}
+				}
 			}
 		}
 
@@ -80,14 +85,6 @@ namespace STF.Serialisation
 			AssetDatabase.CreateFolder(TargetLocation, STFConstants.ResourceDirectoryName);
 			AssetDatabase.CreateFolder(TargetLocation, STFConstants.PreservedBuffersDirectoryName);
 			AssetDatabase.Refresh();
-		}
-
-		private void ParseBuffers(STFFile buffers)
-		{
-			for(int i = 0; i < buffers.Buffers.Count(); i++)
-			{
-				state.Buffers.Add((string)state.JsonRoot["buffers"][i], buffers.Buffers[i]);
-			}
 		}
 
 		private void ParseResources()
