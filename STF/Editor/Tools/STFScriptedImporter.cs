@@ -5,6 +5,7 @@ using System.IO;
 
 using STF.Serialisation;
 using UnityEditor;
+using UnityEngine;
 
 namespace STF.Tools
 {
@@ -14,15 +15,25 @@ namespace STF.Tools
 	{
 		public override void OnImportAsset(UnityEditor.AssetImporters.AssetImportContext ctx)
 		{
-			STFDirectoryUtil.EnsureUnpackLocation(assetPath);
-
 			var importInfo = STFImportInfo.CreateInstance(new STFFile(ctx.assetPath), ctx.assetPath);
-
 			ctx.AddObjectToAsset("main", importInfo);
 			if(importInfo.Preview) ctx.AddObjectToAsset("preview", importInfo.Preview);
 			ctx.SetMainObject(importInfo);
 
-			//new STFImporter(STFDirectoryUtil.GetUnpackLocation(assetPath), assetPath);
+			//new STFUnpackingImporter(STFDirectoryUtil.GetUnpackLocation(assetPath), assetPath);
+			
+			/*var Importer = new STFRuntimeImporter(ctx.assetPath);
+			Debug.Log(Importer.Asset);
+			ctx.AddObjectToAsset("main", Importer.Asset.gameObject);
+			foreach(var resource in Importer.STFResources)
+			{
+				ctx.AddObjectToAsset("resource", resource);
+			}
+			foreach(var resource in Importer.UnityResources)
+			{
+				if(resource != null) ctx.AddObjectToAsset("resource", resource);
+			}
+			ctx.SetMainObject(Importer.Asset.gameObject);*/
 		}
 	}
 }

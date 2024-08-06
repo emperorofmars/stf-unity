@@ -39,7 +39,6 @@ namespace STF.Serialisation
 
 		public void SaveResource(Object Resource, string FileExtension, string Id)
 		{
-			AssetCtxObjects.Add(Resource);
 			State.AddResource(Resource, Id);
 		}
 
@@ -47,7 +46,6 @@ namespace STF.Serialisation
 		{
 			Meta.Resource = Resource;
 			AssetCtxObjects.Add(Resource);
-			AssetCtxObjects.Add(Meta);
 			State.AddResource(Meta, Id);
 		}
 
@@ -55,7 +53,6 @@ namespace STF.Serialisation
 		{
 			Meta.Resource = Resource;
 			AssetCtxObjects.Add(Resource);
-			AssetCtxObjects.Add(Meta);
 			State.AddResource(Meta, Id);
 		}
 
@@ -65,7 +62,6 @@ namespace STF.Serialisation
 		{
 			var saved = SaveAndLoadResource(Resource, Meta.Name, FileExtension);
 			Meta.Resource = saved;
-			AssetCtxObjects.Add(Meta);
 			State.AddResource(Meta, Id);
 		}
 

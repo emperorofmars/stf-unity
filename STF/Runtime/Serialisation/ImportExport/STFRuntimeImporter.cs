@@ -1,55 +1,54 @@
-#if UNITY_EDITOR
 
 using UnityEngine;
 using System;
 using System.IO;
-using System.Linq;
 using Newtonsoft.Json.Linq;
-using UnityEditor;
 using STF.Util;
 using static STF.Serialisation.STFConstants;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace STF.Serialisation
 {
 	// The main star for import!
 	// Parses the Json and buffers based on the provided importers from the STFImportContext.
-	public class STFUnpackingImporter
+	public class STFRuntimeImporter
 	{
 		private STFImportState state;
+		private RuntimeUnityImportContext unityContext;
 
-		public STFUnpackingImporter(string TargetLocation, string Path)
+		public ISTFAsset Asset;
+		public List<UnityEngine.Object> STFResources => state.Resources.Values.ToList();
+		public List<UnityEngine.Object> UnityResources => unityContext.AssetCtxObjects;
+
+		public STFRuntimeImporter(string ImportPath)
 		{
-			Parse(STFRegistry.GetDefaultImportContext(), TargetLocation, Path);
+			Parse(STFRegistry.GetDefaultImportContext(), ImportPath);
 		}
 
-		public STFUnpackingImporter(STFImportContext Context, string TargetLocation, string Path)
+		public STFRuntimeImporter(STFImportContext Context, string ImportPath)
 		{
-			Parse(Context, TargetLocation, Path);
+			Parse(Context, ImportPath);
 		}
 
-		private void Parse(STFImportContext Context, string TargetLocation, string ImportPath)
+		private void Parse(STFImportContext Context, string ImportPath)
 		{
 			try
 			{
 				var buffers = new STFFile(ImportPath);
-				var unityContext = new EditorUnityImportContext(TargetLocation);
+				unityContext = new RuntimeUnityImportContext();
 				state = new STFImportState(Context, unityContext, buffers);
 
-				EnsureFolderStructure(TargetLocation);
 				ParseResources();
 				Utils.RunTasks(state.Tasks);
-				var Asset = ParseAsset();
+				Asset = ParseAsset();
 				Asset.OriginalFileName = Path.GetFileNameWithoutExtension(ImportPath);
 				Utils.RunTasks(state.Tasks);
 				Utils.RunTasks(state.PostprocessTasks);
 				RunPostProcessors();
 				Utils.RunTasks(state.Tasks);
 
-				var path = Path.Combine(TargetLocation, Asset.Name + ".Prefab");
-				PrefabUtility.SaveAsPrefabAsset(Asset.gameObject, path);
-
-				AssetDatabase.SaveAssets();
-				AssetDatabase.Refresh();
+				//PrefabUtility.SaveAsPrefabAsset(Asset.gameObject, path);
 			}
 			catch(Exception e)
 			{
@@ -64,27 +63,14 @@ namespace STF.Serialisation
 						UnityEngine.Object.DestroyImmediate(trashObject);
 					}
 				}
-				foreach(var trashObject in state.Nodes.Values)
+				/*foreach(var trashObject in state.Nodes.Values)
 				{
 					if(trashObject != null)
 					{
 						UnityEngine.Object.DestroyImmediate(trashObject);
 					}
-				}
+				}*/
 			}
-		}
-
-		private void EnsureFolderStructure(string TargetLocation)
-		{
-			var existingEntries = Directory.EnumerateFileSystemEntries(TargetLocation); foreach(var entry in existingEntries)
-			{
-				if(File.Exists(entry)) File.Delete(entry);
-				else Directory.Delete(entry, true);
-			}
-			AssetDatabase.Refresh();
-			AssetDatabase.CreateFolder(TargetLocation, STFConstants.ResourceDirectoryName);
-			AssetDatabase.CreateFolder(TargetLocation, STFConstants.PreservedBuffersDirectoryName);
-			AssetDatabase.Refresh();
 		}
 
 		private void ParseResources()
@@ -116,7 +102,7 @@ namespace STF.Serialisation
 			{
 				Debug.LogWarning($"Unrecognized Asset: {type}");
 				// Unrecognized Asset
-				return null;
+				throw new Exception($"Parsing Unrecognized Asset Not Yet Supported: {type}");
 			}
 		}
 
@@ -149,4 +135,3 @@ namespace STF.Serialisation
 	}
 }
 
-#endif

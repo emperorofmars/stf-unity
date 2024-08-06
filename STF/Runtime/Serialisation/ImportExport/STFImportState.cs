@@ -73,17 +73,5 @@ namespace STF.Serialisation
 			if(PostprocessContext.ContainsKey(Resource)) PostprocessContext[Resource] = Context;
 			else PostprocessContext.Add(Resource, Context);
 		}
-/*
-		public abstract void SaveSubResource(Object Component, Object Resource);
-		public abstract void SaveResource(Object Resource, string FileExtension, string Id);
-		public abstract void SaveResource<T>(Object Resource, string FileExtension, T Meta, string Id) where T: ISTFResource;
-		public abstract void SaveResource<T>(GameObject Resource, T Meta, string Id) where T: ISTFResource;
-		public abstract void SaveResource<M, R>(byte[] Resource, string FileExtension, M Meta, string Id) where M: ISTFResource where R: Object;
-		public abstract T SaveAndLoadResource<T>(byte[] Resource, string Name, string FileExtension) where T: Object;
-		public abstract void SaveResourceBelongingToId(Object Resource, string FileExtension, string OwnerId);
-		public abstract void SaveGeneratedResource(Object Resource, string FileExtension);
-
-		public abstract Object Instantiate(Object Resource);
-*/
 	}
 }

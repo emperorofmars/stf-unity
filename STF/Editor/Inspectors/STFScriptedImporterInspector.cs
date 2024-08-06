@@ -27,10 +27,10 @@ namespace STF.Tools
 			EditorGUILayout.EndHorizontal();
 
 			drawHLine();
-			//EditorGUI.indentLevel++;
+			
 			renderAsset(importInfo, importer);
+			
 			drawHLine();
-
 
 			if(importInfo != null && Directory.Exists(Path.Combine(STFDirectoryUtil.GetUnpackLocation(importer.assetPath))) && File.Exists(Path.Combine(STFDirectoryUtil.GetUnpackLocation(importer.assetPath), importInfo.Name + ".Prefab")))
 			{
@@ -40,20 +40,16 @@ namespace STF.Tools
 				}
 				GUILayout.Space(10f);
 				if(GUILayout.Button("Reimport", GUILayout.ExpandWidth(true))) {
-					STFDirectoryUtil.EnsureUnpackLocation(importer.assetPath);
-					var deserializer = new STFUnpackingImporter(STFDirectoryUtil.GetUnpackLocation(importer.assetPath), importer.assetPath);
+					import();
 				}
 			}
 			else
 			{
-				//EditorGUILayout.LabelField("Import", EditorStyles.whiteLargeLabel);
 				GUILayout.Space(10f);
 				if(GUILayout.Button("Import", GUILayout.ExpandWidth(true))) {
-					STFDirectoryUtil.EnsureUnpackLocation(importer.assetPath);
-					var deserializer = new STFUnpackingImporter(STFDirectoryUtil.GetUnpackLocation(importer.assetPath), importer.assetPath);
+					import();
 				}
 			}
-			//EditorGUI.indentLevel--;
 
 			drawHLine();
 
@@ -62,6 +58,12 @@ namespace STF.Tools
 				EditorUtility.SetDirty(importer);
 				importer.SaveAndReimport();
 			}
+		}
+
+		private void import() {
+			var importer = (STFScriptedImporter)target;
+			STFDirectoryUtil.EnsureUnpackLocation(importer.assetPath);
+			_ = new STFUnpackingImporter(STFDirectoryUtil.GetUnpackLocation(importer.assetPath), importer.assetPath);
 		}
 
 		private void drawHLine() {
