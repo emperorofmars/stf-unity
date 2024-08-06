@@ -32,11 +32,12 @@ namespace STF.Serialisation
 
 		// stuff to delete before the import finishes
 		public List<UnityEngine.Object> Trash = new List<UnityEngine.Object>();
+
 		public List<Task> Tasks = new List<Task>();
 
-		public Dictionary<UnityEngine.Object, ISTFResource> ResourceMeta = new Dictionary<UnityEngine.Object, ISTFResource>();
+		public STFResourceMeta ResourceMeta = new STFResourceMeta();
 
-		public STFExportState(STFExportContext Context, IUnityExportContext UnityContext, Dictionary<UnityEngine.Object, ISTFResource> ResourceMeta)
+		public STFExportState(STFExportContext Context, IUnityExportContext UnityContext, STFResourceMeta ResourceMeta)
 		{
 			this.Context = Context;
 			this.UnityContext = UnityContext;

@@ -17,17 +17,17 @@ namespace STF.Serialisation
 	{
 		private STFExportState state;
 
-		public STFExporter(ISTFAsset Asset, string ExportPath, Dictionary<UnityEngine.Object, ISTFResource> ResourceMeta = null, bool DebugExport = false)
+		public STFExporter(ISTFAsset Asset, string ExportPath, STFResourceMeta ResourceMeta = null, bool DebugExport = false)
 		{
 			export(STFRegistry.GetDefaultExportContext(), Asset, ExportPath, ResourceMeta, DebugExport);
 		}
 
-		public STFExporter(STFExportContext Context, ISTFAsset Asset, string ExportPath, Dictionary<UnityEngine.Object, ISTFResource> ResourceMeta = null, bool DebugExport = false)
+		public STFExporter(STFExportContext Context, ISTFAsset Asset, string ExportPath, STFResourceMeta ResourceMeta = null, bool DebugExport = false)
 		{
 			export(Context, Asset, ExportPath, ResourceMeta, DebugExport);
 		}
 
-		private void export(STFExportContext Context, ISTFAsset Asset, string ExportPath, Dictionary<UnityEngine.Object, ISTFResource> ResourceMeta = null, bool DebugExport = false)
+		private void export(STFExportContext Context, ISTFAsset Asset, string ExportPath, STFResourceMeta ResourceMeta = null, bool DebugExport = false)
 		{
 			try
 			{

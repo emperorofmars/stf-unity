@@ -18,7 +18,7 @@ namespace STF.Tools
 	**/
 	public static class STFSetup
 	{
-		public static (List<GameObject> CreatedGos, Dictionary<UnityEngine.Object, ISTFResource> ResourceMeta) SetupStandaloneAssetInplace(GameObject root)
+		public static (List<GameObject> CreatedGos, STFResourceMeta ResourceMeta) SetupStandaloneAssetInplace(GameObject root)
 		{
 			var CreatedGos = new List<GameObject>();
 			// Setup main asset info
@@ -54,8 +54,7 @@ namespace STF.Tools
 	{
 		public class Result
 		{
-			// Unity Object -> ISTFResource
-			public Dictionary<UnityEngine.Object, ISTFResource> ResourceMeta = new Dictionary<UnityEngine.Object, ISTFResource>();
+			public STFResourceMeta ResourceMeta = new STFResourceMeta();
 			public List<GameObject> CreatedGos = new List<GameObject>();
 		}
 

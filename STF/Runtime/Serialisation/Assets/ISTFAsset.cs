@@ -22,7 +22,11 @@ namespace STF.Serialisation
 
 		public string OriginalFileName;
 
-		public List<string> AppliedAddonIds;
+		[SerializeField]
+		public STFResourceMeta ImportMeta = new STFResourceMeta();
+
+		[Serializable] public class AppliedAddonMeta { public string AddonId; public STFResourceMeta AddonMeta = new STFResourceMeta(); }
+		public List<AppliedAddonMeta> AppliedAddonIds = new List<AppliedAddonMeta>();
 	}
 	
 	public interface ISTFAssetExporter
