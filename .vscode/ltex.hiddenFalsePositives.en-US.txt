@@ -1,1 +1,0 @@
-{"rule":"DT_JJ_NO_NOUN","sentence":"^\\QUsing those avatars as an end-user is prohibitively difficult as it requires the use of a Game-Engine like Unity.\\E$"}
