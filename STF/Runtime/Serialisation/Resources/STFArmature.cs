@@ -65,12 +65,12 @@ namespace STF.Serialisation
 	{
 		public const string _TYPE = "STF.armature";
 
-		public string ConvertPropertyPath(ISTFImportState State, UnityEngine.Object Resource, string STFProperty)
+		public string ConvertPropertyPath(STFImportState State, UnityEngine.Object Resource, string STFProperty)
 		{
 			throw new NotImplementedException();
 		}
 
-		public void ParseFromJson(ISTFImportState State, JObject Json, string Id)
+		public void ParseFromJson(STFImportState State, JObject Json, string Id)
 		{
 			var go = new GameObject();
 			State.AddTrash(go);
@@ -127,7 +127,7 @@ namespace STF.Serialisation
 			}
 			meta.Bindposes = bindposes;
 
-			State.SaveResource(go, meta, Id);
+			State.UnityContext.SaveResource(go, meta, Id);
 			SerdeUtil.ParseResourceComponents(State, meta, Json);
 			return;
 		}

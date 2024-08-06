@@ -280,12 +280,12 @@ namespace STF.Serialisation
 
 	public class STFMeshImporter : ISTFResourceImporter
 	{
-		public string ConvertPropertyPath(ISTFImportState State, UnityEngine.Object Resource, string STFProperty)
+		public string ConvertPropertyPath(STFImportState State, UnityEngine.Object Resource, string STFProperty)
 		{
 			throw new NotImplementedException();
 		}
 
-		public void ParseFromJson(ISTFImportState State, JObject Json, string Id)
+		public void ParseFromJson(STFImportState State, JObject Json, string Id)
 		{
 			var mesh = new Mesh { name = (string)Json["name"] };
 
@@ -476,7 +476,7 @@ namespace STF.Serialisation
 			mesh.UploadMeshData(false);
 			mesh.RecalculateBounds();
 
-			State.SaveResource(mesh, "mesh", meta, Id);
+			State.UnityContext.SaveResource(mesh, "mesh", meta, Id);
 			SerdeUtil.ParseResourceComponents(State, meta, Json);
 			return;
 		}

@@ -22,7 +22,7 @@ namespace STF.Serialisation
 
 	public class DontInvokeNodeImporter : ASTFNodeImporter
 	{
-		public override GameObject ParseFromJson(ISTFImportState State, JObject JsonAsset, string Id)
+		public override GameObject ParseFromJson(STFImportState State, JObject JsonAsset, string Id)
 		{
 			throw new System.Exception($"This method should never be invoked for type: {STFBoneNode._TYPE}");
 		}

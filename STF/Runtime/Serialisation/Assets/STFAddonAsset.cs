@@ -55,7 +55,7 @@ namespace STF.Serialisation
 	
 	public class STFAddonAssetImporter : ISTFAssetImporter
 	{
-		public ISTFAsset ParseFromJson(ISTFImportState State, JObject JsonAsset)
+		public ISTFAsset ParseFromJson(STFImportState State, JObject JsonAsset)
 		{
 			try
 			{

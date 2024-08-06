@@ -24,7 +24,7 @@ namespace STF.Serialisation
 		{
 			try
 			{
-				/*state = new STFImportState(Context, TargetLocation, JObject.Parse(Buffers.Json));
+				/*state = new RuntimeImportState(Context, JObject.Parse(Buffers.Json));
 
 				ParseBuffers(buffers);
 				ParseResources();

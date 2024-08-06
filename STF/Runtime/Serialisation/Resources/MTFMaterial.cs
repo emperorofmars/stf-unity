@@ -34,8 +34,8 @@ namespace STF.Serialisation
 
 	public class MTFPropertyValueImportState : MTF.IPropertyValueImportState
 	{
-		ISTFImportState State;
-		public MTFPropertyValueImportState(ISTFImportState State)
+		STFImportState State;
+		public MTFPropertyValueImportState(STFImportState State)
 		{
 			this.State = State;
 		}
@@ -52,9 +52,9 @@ namespace STF.Serialisation
 	}
 	public class MTFMaterialConvertState : MTF.IMaterialConvertState
 	{
-		ISTFImportState State;
+		STFImportState State;
 		string Name;
-		public MTFMaterialConvertState(ISTFImportState State, string Name)
+		public MTFMaterialConvertState(STFImportState State, string Name)
 		{
 			this.State = State;
 			this.Name = Name;
@@ -62,11 +62,11 @@ namespace STF.Serialisation
 		
 		public void SaveResource(UnityEngine.Object Resource, string FileExtension)
 		{
-			State.SaveGeneratedResource(Resource, FileExtension);
+			State.UnityContext.SaveGeneratedResource(Resource, FileExtension);
 		}
 		public Texture2D SaveImageResource(byte[] Bytes, string Name, string Extension)
 		{
-			return State.SaveAndLoadResource<Texture2D>(Bytes, this.Name + Name, Extension);
+			return State.UnityContext.SaveAndLoadResource<Texture2D>(Bytes, this.Name + Name, Extension);
 		}
 	}
 
@@ -151,7 +151,7 @@ namespace STF.Serialisation
 	{
 		public static string _TYPE = "MTF.material";
 
-		public string ConvertPropertyPath(ISTFImportState State, UnityEngine.Object Resource, string STFProperty)
+		public string ConvertPropertyPath(STFImportState State, UnityEngine.Object Resource, string STFProperty)
 		{
 			/*var material = (MTF.Material)Resource;
 			if(material.ConvertedMaterial != null) return MTF.ShaderConverterRegistry.MaterialConverters[material.ConvertedMaterial.shader.name].ConvertPropertyPath(STFProperty, material.ConvertedMaterial);
@@ -159,7 +159,7 @@ namespace STF.Serialisation
 			return "MTF." + STFProperty;
 		}
 
-		public void ParseFromJson(ISTFImportState State, JObject Json, string Id)
+		public void ParseFromJson(STFImportState State, JObject Json, string Id)
 		{
 			var mat = ScriptableObject.CreateInstance<MTF.Material>();
 			mat.Id = Id;
@@ -173,7 +173,7 @@ namespace STF.Serialisation
 			{
 				mat.StyleHints.Add(new MTF.Material.StyleHint {Name = entry.Key, Value = (string)entry.Value});
 			}
-			State.SaveResource(mat, "Asset", Id);
+			State.UnityContext.SaveResource(mat, "Asset", Id);
 			
 			var mtfImportState = new MTFPropertyValueImportState(State);
 			foreach(var propertyJson in (JObject)Json["properties"])
@@ -188,7 +188,7 @@ namespace STF.Serialisation
 						var propertyValue = MTF.PropertyValueRegistry.PropertyValueImporters[propertyValueType].ParseFromJson(mtfImportState, (JObject)valueJson);
 						propertyValue.name = propertyJson.Key + ":" + propertyValueType + ":" + mtfProperty.Values.Count();
 						mtfProperty.Values.Add(propertyValue);
-						State.SaveSubResource(propertyValue, mat);
+						State.UnityContext.SaveSubResource(propertyValue, mat);
 					}
 					else
 					{
@@ -213,7 +213,7 @@ namespace STF.Serialisation
 			var unityMaterial = converter.ConvertToUnityMaterial(mtfConvertState, mat);
 			unityMaterial.name = mat.MaterialName + "_Converted";
 			mat.ConvertedMaterial = unityMaterial;
-			State.SaveResourceBelongingToId(unityMaterial, "Asset", Id);
+			State.UnityContext.SaveResourceBelongingToId(unityMaterial, "Asset", Id);
 			return;
 		}
 	}

@@ -27,12 +27,13 @@ namespace STF.Serialisation
 			Parse(Context, TargetLocation, Path);
 		}
 
-		private void Parse(STFImportContext Context, string TargetLocation, string Path)
+		private void Parse(STFImportContext Context, string TargetLocation, string ImportPath)
 		{
 			try
 			{
-				var buffers = new STFFile(Path);
-				state = new STFImportState(Context, TargetLocation, JObject.Parse(buffers.Json));
+				var buffers = new STFFile(ImportPath);
+				var unityContext = new EditorUnityAssetImportContext(TargetLocation);
+				state = new STFImportState(Context, unityContext, JObject.Parse(buffers.Json));
 
 				EnsureFolderStructure(TargetLocation);
 
@@ -40,12 +41,13 @@ namespace STF.Serialisation
 				ParseResources();
 				Utils.RunTasks(state.Tasks);
 				var Asset = ParseAsset();
+				Asset.OriginalFileName = Path.GetFileNameWithoutExtension(ImportPath);
 				Utils.RunTasks(state.Tasks);
 				Utils.RunTasks(state.PostprocessTasks);
 				RunPostProcessors();
 				Utils.RunTasks(state.Tasks);
 
-				var path = System.IO.Path.Combine(TargetLocation, Asset.Name + ".Prefab");
+				var path = Path.Combine(TargetLocation, Asset.Name + ".Prefab");
 				PrefabUtility.SaveAsPrefabAsset(Asset.gameObject, path);
 
 				AssetDatabase.SaveAssets();

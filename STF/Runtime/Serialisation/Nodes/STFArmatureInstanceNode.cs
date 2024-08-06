@@ -73,10 +73,10 @@ namespace STF.Serialisation
 
 	public class STFArmatureInstanceImporter : ASTFNodeImporter
 	{
-		public override GameObject ParseFromJson(ISTFImportState State, JObject JsonAsset, string Id)
+		public override GameObject ParseFromJson(STFImportState State, JObject JsonAsset, string Id)
 		{
 			var armatureResource = (STFArmature)State.Resources[(string)JsonAsset["armature"]];
-			var go = (GameObject)State.Instantiate(armatureResource.Resource);
+			var go = (GameObject)State.UnityContext.Instantiate(armatureResource.Resource);
 			State.AddNode(go, Id);
 			var armatureInfo = go.GetComponent<STFArmatureNodeInfo>();
 

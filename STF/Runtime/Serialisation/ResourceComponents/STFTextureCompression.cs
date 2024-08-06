@@ -37,7 +37,7 @@ namespace STF.Serialisation
 			throw new System.NotImplementedException();
 		}
 
-		public void ParseFromJson(ISTFImportState State, JObject Json, string Id, ISTFResource Resource)
+		public void ParseFromJson(STFImportState State, JObject Json, string Id, ISTFResource Resource)
 		{
 			var ret = ScriptableObject.CreateInstance<STFTextureCompression>();
 			ret.Id = Id;

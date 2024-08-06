@@ -287,7 +287,7 @@ namespace STF.Serialisation
 			throw new System.NotImplementedException();
 		}
 
-		public void ParseFromJson(ISTFImportState State, JObject Json, string Id, ISTFResource Resource)
+		public void ParseFromJson(STFImportState State, JObject Json, string Id, ISTFResource Resource)
 		{
 			var ret = ScriptableObject.CreateInstance<STFHumanoidArmature>();
 			ret.Id = Id;
@@ -303,7 +303,7 @@ namespace STF.Serialisation
 			var avatar = STFHumanoidArmature.GenerateAvatar(ret, armature);
 			if(avatar != null)
 			{
-				State.SaveGeneratedResource(avatar, "asset");
+				State.UnityContext.SaveGeneratedResource(avatar, "asset");
 				ret.GeneratedAvatar = avatar;
 			}
 			State.AddResourceComponent(ret, Resource, Id);

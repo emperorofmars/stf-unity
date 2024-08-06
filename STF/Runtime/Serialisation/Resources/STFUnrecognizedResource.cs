@@ -13,13 +13,12 @@ namespace STF.Serialisation
 		public byte[] Data;
 	}
 
-	public class STFUnrecognizedResource : ScriptableObject
+	public class STFUnrecognizedResource : ISTFResource
 	{
-		public string Id;
 		[TextArea]
 		public string PreservedJson;
-		public List<STFBuffer> UsedBuffers;
-		public List<UnityEngine.Object> UsedResources;
+		public List<STFBuffer> UsedBuffers = new List<STFBuffer>();
+		public List<UnityEngine.Object> UsedResources = new List<Object>();
 		public List<(string, GameObject)> UsedNodes = new List<(string, GameObject)>();
 	}
 
@@ -38,7 +37,7 @@ namespace STF.Serialisation
 
 	public class STFUnrecognizedResourceImporter
 	{
-		public static void ParseFromJson(ISTFImportState State, JObject Json, string Id)
+		public static void ParseFromJson(STFImportState State, JObject Json, string Id)
 		{
 			var ret = ScriptableObject.CreateInstance<STFUnrecognizedResource>();
 			ret.Id = Id;
@@ -50,7 +49,7 @@ namespace STF.Serialisation
 				var buffer = ScriptableObject.CreateInstance<STFBuffer>();
 				buffer.Id = bufferId;
 				buffer.Data = State.Buffers[bufferId];
-				State.SaveResource(buffer, "Asset", bufferId);
+				State.UnityContext.SaveResource(buffer, "Asset", bufferId);
 				ret.UsedBuffers.Add(buffer);
 			}
 			if(Json["used_resources"] != null) foreach(string resourceId in Json["used_resources"])
@@ -65,10 +64,11 @@ namespace STF.Serialisation
 				if(type == null || type.Length == 0) type = STFNode._TYPE;
 				var go = State.Context.NodeImporters[type].ParseFromJson(State, (JObject)State.JsonRoot["nodes"][nodeId], nodeId);
 				go.name = (string)State.JsonRoot["nodes"][nodeId]["name"];
-				State.SaveResource(go, "Asset", nodeId);
+				State.UnityContext.SaveResource(go, "Asset", nodeId);
 				ret.UsedNodes.Add((nodeId, go));
 			}
-			State.SaveResource(ret, "Asset", Id);
+			SerdeUtil.ParseResourceComponents(State, ret, Json);
+			State.UnityContext.SaveResource(ret, "Asset", Id);
 		}
 	}
 }

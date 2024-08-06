@@ -28,8 +28,8 @@ namespace STF.Serialisation
 	
 	public interface ISTFNodeComponentImporter
 	{
-		string ConvertPropertyPath(ISTFImportState State, Component Component, string STFProperty);
-		void ParseFromJson(ISTFImportState State, JObject Json, string Id, GameObject Go);
+		string ConvertPropertyPath(STFImportState State, Component Component, string STFProperty);
+		void ParseFromJson(STFImportState State, JObject Json, string Id, GameObject Go);
 	}
 	
 	public abstract class ASTFNodeComponentExporter : ISTFNodeComponentExporter
@@ -47,8 +47,8 @@ namespace STF.Serialisation
 	
 	public abstract class ASTFNodeComponentImporter : ISTFNodeComponentImporter
 	{
-		public abstract string ConvertPropertyPath(ISTFImportState State, Component Component, string STFProperty);
-		abstract public void ParseFromJson(ISTFImportState State, JObject Json, string Id, GameObject Go);
+		public abstract string ConvertPropertyPath(STFImportState State, Component Component, string STFProperty);
+		abstract public void ParseFromJson(STFImportState State, JObject Json, string Id, GameObject Go);
 
 		public static void ParseRelationships(JObject Json, ISTFNodeComponent Component)
 		{

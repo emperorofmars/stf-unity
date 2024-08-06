@@ -6,52 +6,55 @@ using System.Threading.Tasks;
 
 namespace STF.Serialisation
 {
-	public class RuntimeImportState : ISTFImportState
+	public class RuntimeUnityAssetImportContext : IUnityAssetImportContext
 	{
+		public STFImportState State { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
 
-		public override T SaveAndLoadResource<T>(byte[] Resource, string Name, string FileExtension)
+		public Object Instantiate(Object Resource)
 		{
 			throw new System.NotImplementedException();
 		}
 
-		public override void SaveGeneratedResource(Object Resource, string FileExtension)
+		public T SaveAndLoadResource<T>(byte[] Resource, string Name, string FileExtension) where T : Object
 		{
 			throw new System.NotImplementedException();
 		}
 
-		public override void SaveResource(Object Resource, string FileExtension, string Id)
+		public void SaveGeneratedResource(Object Resource, string FileExtension)
 		{
 			throw new System.NotImplementedException();
 		}
 
-		public override void SaveResource<T>(Object Resource, string FileExtension, T Meta, string Id)
+		public void SaveResource(Object Resource, string FileExtension, string Id)
 		{
 			throw new System.NotImplementedException();
 		}
 
-		public override void SaveResource<T>(GameObject Resource, T Meta, string Id)
+		public void SaveResource<T>(Object Resource, string FileExtension, T Meta, string Id) where T : ISTFResource
 		{
 			throw new System.NotImplementedException();
 		}
 
-		public override void SaveResource<M, R>(byte[] Resource, string FileExtension, M Meta, string Id)
+		public void SaveResource<T>(GameObject Resource, T Meta, string Id) where T : ISTFResource
 		{
 			throw new System.NotImplementedException();
 		}
 
-		public override void SaveResourceBelongingToId(Object Resource, string FileExtension, string OwnerId)
+		public void SaveResource<M, R>(byte[] Resource, string FileExtension, M Meta, string Id)
+			where M : ISTFResource
+			where R : Object
 		{
 			throw new System.NotImplementedException();
 		}
 
-		public override void SaveSubResource(Object Component, Object Resource)
+		public void SaveResourceBelongingToId(Object Resource, string FileExtension, string OwnerId)
 		{
 			throw new System.NotImplementedException();
 		}
 
-		public override Object Instantiate(Object Resource)
+		public void SaveSubResource(Object Component, Object Resource)
 		{
-			return Object.Instantiate(Resource);
+			throw new System.NotImplementedException();
 		}
 	}
 }

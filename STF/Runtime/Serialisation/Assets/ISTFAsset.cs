@@ -20,7 +20,7 @@ namespace STF.Serialisation
 		public string LicenseLink;
 		public Texture2D Preview;
 
-		public string OriginalFileName { get; }
+		public string OriginalFileName;
 
 		//public string ImportPath;
 		public List<string> AppliedAddonIds;
@@ -33,6 +33,6 @@ namespace STF.Serialisation
 	
 	public interface ISTFAssetImporter
 	{
-		ISTFAsset ParseFromJson(ISTFImportState State, JObject JsonAsset);
+		ISTFAsset ParseFromJson(STFImportState State, JObject JsonAsset);
 	}
 }

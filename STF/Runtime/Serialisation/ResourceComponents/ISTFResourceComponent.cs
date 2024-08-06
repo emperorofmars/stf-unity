@@ -26,6 +26,6 @@ namespace STF.Serialisation
 	public interface ISTFResourceComponentImporter
 	{
 		string ConvertPropertyPath(string STFProperty);
-		void ParseFromJson(ISTFImportState State, JObject Json, string Id, ISTFResource Resource);
+		void ParseFromJson(STFImportState State, JObject Json, string Id, ISTFResource Resource);
 	}
 }

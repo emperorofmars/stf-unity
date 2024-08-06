@@ -149,12 +149,12 @@ namespace STF.Serialisation
 
 	public class STFAnimationImporter : ISTFResourceImporter
 	{
-		public string ConvertPropertyPath(ISTFImportState State, UnityEngine.Object Resource, string STFProperty)
+		public string ConvertPropertyPath(STFImportState State, UnityEngine.Object Resource, string STFProperty)
 		{
 			throw new NotImplementedException();
 		}
 
-		public void ParseFromJson(ISTFImportState State, JObject Json, string Id)
+		public void ParseFromJson(STFImportState State, JObject Json, string Id)
 		{
 			var meta = ScriptableObject.CreateInstance<STFAnimation>();
 			meta.Id = Id;
@@ -324,7 +324,7 @@ namespace STF.Serialisation
 					}
 				}));
 			}
-			State.SaveResource(ret, "anim", meta, Id);
+			State.UnityContext.SaveResource(ret, "anim", meta, Id);
 			return;
 		}
 	}

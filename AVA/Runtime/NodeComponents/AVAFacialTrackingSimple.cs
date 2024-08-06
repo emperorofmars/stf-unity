@@ -100,12 +100,12 @@ namespace AVA.Serialisation
 
 	public class AVAFacialTrackingSimpleImporter : ASTFNodeComponentImporter
 	{
-		public override string ConvertPropertyPath(ISTFImportState State, Component Component, string STFProperty)
+		public override string ConvertPropertyPath(STFImportState State, Component Component, string STFProperty)
 		{
 			throw new NotImplementedException();
 		}
 
-		override public void ParseFromJson(ISTFImportState State, JObject Json, string Id, GameObject Go)
+		override public void ParseFromJson(STFImportState State, JObject Json, string Id, GameObject Go)
 		{
 			var c = Go.AddComponent<AVAFacialTrackingSimple>();
 			State.AddNodeComponent(c, Id);

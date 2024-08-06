@@ -52,12 +52,12 @@ namespace STF.Serialisation
 	{
 		public const string _TYPE = "STF.texture";
 
-		public string ConvertPropertyPath(ISTFImportState State, UnityEngine.Object Resource, string STFProperty)
+		public string ConvertPropertyPath(STFImportState State, UnityEngine.Object Resource, string STFProperty)
 		{
 			throw new NotImplementedException();
 		}
 
-		public void ParseFromJson(ISTFImportState State, JObject Json, string Id)
+		public void ParseFromJson(STFImportState State, JObject Json, string Id)
 		{
 			var meta = ScriptableObject.CreateInstance<STFTexture>();
 			meta.Id = Id;
@@ -70,13 +70,8 @@ namespace STF.Serialisation
 			meta.OriginalBufferId = (string)Json["buffer"];
 			
 			var arrayBuffer = State.Buffers[meta.OriginalBufferId];
-
-			Debug.Log("REEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
-			Debug.Log((string)Json["image_format"]);
-			Debug.Log(meta.name);
-			Debug.Log(Id);
 			
-			State.SaveResource<STFTexture, Texture2D>(arrayBuffer, (string)Json["image_format"], meta, Id);
+			State.UnityContext.SaveResource<STFTexture, Texture2D>(arrayBuffer, (string)Json["image_format"], meta, Id);
 			SerdeUtil.ParseResourceComponents(State, meta, Json);
 			return;
 		}

@@ -40,7 +40,7 @@ namespace STF.Serialisation
 
 	public static class STFUnrecognizedNodeImporter
 	{
-		public static GameObject ParseFromJson(ISTFImportState State, JObject JsonAsset, string Id)
+		public static GameObject ParseFromJson(STFImportState State, JObject JsonAsset, string Id)
 		{
 			var ret = new GameObject();
 			State.AddNode(ret, Id);

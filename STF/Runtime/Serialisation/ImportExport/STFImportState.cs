@@ -6,9 +6,19 @@ using System.Threading.Tasks;
 
 namespace STF.Serialisation
 {
-	public abstract class ISTFImportState
+	public class STFImportState
 	{
+		public STFImportState(STFImportContext Context, IUnityAssetImportContext UnityContext, JObject JsonRoot)
+		{
+			this.Context = Context;
+			this.UnityContext = UnityContext;
+			UnityContext.State = this;
+			this.JsonRoot = JsonRoot;
+			this.AssetId = (string)JsonRoot["asset"]["id"];
+		}
+
 		public STFImportContext Context {protected set; get;}
+		public IUnityAssetImportContext UnityContext {protected set; get;}
 		public JObject JsonRoot {protected set; get;}
 
 		public string AssetId {protected set; get;}
@@ -48,7 +58,7 @@ namespace STF.Serialisation
 			Component.Resource = ResourceMeta;
 			ResourceMeta.Components.Add(Component);
 			if(string.IsNullOrWhiteSpace(Component.name)) Component.name = Component.Type + ":" + Id;
-			SaveSubResource(Component, ResourceMeta);
+			UnityContext.SaveSubResource(Component, ResourceMeta);
 		}
 
 		public virtual void AddTrash(Object Trash) { this.Trash.Add(Trash); }
@@ -58,7 +68,7 @@ namespace STF.Serialisation
 			if(PostprocessContext.ContainsKey(Resource)) PostprocessContext[Resource] = Context;
 			else PostprocessContext.Add(Resource, Context);
 		}
-
+/*
 		public abstract void SaveSubResource(Object Component, Object Resource);
 		public abstract void SaveResource(Object Resource, string FileExtension, string Id);
 		public abstract void SaveResource<T>(Object Resource, string FileExtension, T Meta, string Id) where T: ISTFResource;
@@ -69,5 +79,6 @@ namespace STF.Serialisation
 		public abstract void SaveGeneratedResource(Object Resource, string FileExtension);
 
 		public abstract Object Instantiate(Object Resource);
+*/
 	}
 }

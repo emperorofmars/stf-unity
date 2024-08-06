@@ -14,9 +14,9 @@ namespace STF.Serialisation
 	public class STFExportState : ISTFExportState
 	{
 		STFExportContext _Context;
-		public STFExportContext Context {get =>_Context;}
+		public STFExportContext Context {get => _Context;}
 		string _TargetLocation;
-		public string TargetLocation {get =>_TargetLocation;}
+		public string TargetLocation {get => _TargetLocation;}
 
 		public Dictionary<GameObject, (string Id, JObject JsonNode)> _Nodes = new Dictionary<GameObject, (string Id, JObject JsonNode)>();
 		public Dictionary<GameObject, (string Id, JObject JsonNode)> Nodes {get => _Nodes;}

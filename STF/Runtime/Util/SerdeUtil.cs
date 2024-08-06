@@ -6,7 +6,7 @@ namespace STF.Serialisation
 {
 	public class SerdeUtil
 	{
-		public static void ParseNodeChildren(ISTFImportState State, GameObject Go, JObject JsonAsset)
+		public static void ParseNodeChildren(STFImportState State, GameObject Go, JObject JsonAsset)
 		{
 			if(JsonAsset["children"] == null || JsonAsset["children"].Type == JTokenType.Null) return;
 			foreach(string childId in JsonAsset["children"])
@@ -28,7 +28,7 @@ namespace STF.Serialisation
 			}
 		}
 
-		public static void ParseNodeComponents(ISTFImportState State, GameObject Go, JObject JsonAsset)
+		public static void ParseNodeComponents(STFImportState State, GameObject Go, JObject JsonAsset)
 		{
 			if(JsonAsset["components"] == null || JsonAsset["components"].Type == JTokenType.Null) return;
 			foreach(var entry in (JObject)JsonAsset["components"])
@@ -46,13 +46,13 @@ namespace STF.Serialisation
 			}
 		}
 
-		public static void ParseNode(ISTFImportState State, GameObject Go, JObject JsonAsset)
+		public static void ParseNode(STFImportState State, GameObject Go, JObject JsonAsset)
 		{
 			ParseNodeChildren(State, Go, JsonAsset);
 			ParseNodeComponents(State, Go, JsonAsset);
 		}
 
-		public static void ParseResourceComponents(ISTFImportState State, ISTFResource Resource, JObject JsonResource)
+		public static void ParseResourceComponents(STFImportState State, ISTFResource Resource, JObject JsonResource)
 		{
 			if(JsonResource["components"] == null || JsonResource["components"].Type == JTokenType.Null) return;
 			foreach(var entry in (JObject)JsonResource["components"])

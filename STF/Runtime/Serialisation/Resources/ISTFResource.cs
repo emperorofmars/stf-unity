@@ -10,11 +10,7 @@ namespace STF.Serialisation
 	{
 		[Id] public string Id = System.Guid.NewGuid().ToString();
 		public string Name;
-		
-		public UnityEngine.Object Resource;
-
-		public string ResourceLocation;
-		
+		public Object Resource;
 		public List<ISTFResourceComponent> Components = new List<ISTFResourceComponent>();
 
 	}
@@ -27,7 +23,7 @@ namespace STF.Serialisation
 
 	public interface ISTFResourceImporter
 	{
-		void ParseFromJson(ISTFImportState State, JObject Json, string Id);
-		string ConvertPropertyPath(ISTFImportState State, UnityEngine.Object Resource, string STFProperty);
+		void ParseFromJson(STFImportState State, JObject Json, string Id);
+		string ConvertPropertyPath(STFImportState State, UnityEngine.Object Resource, string STFProperty);
 	}
 }

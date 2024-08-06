@@ -7,6 +7,6 @@ namespace STF.Serialisation
 	{
 		STFObjectType STFObjectType {get;}
 		Type TargetType {get;}
-		void PostProcess(ISTFImportState State, object Resource);
+		void PostProcess(STFImportState State, object Resource);
 	}
 }

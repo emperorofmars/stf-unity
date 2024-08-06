@@ -34,7 +34,7 @@ namespace STF.Serialisation
 			return STFProperty;
 		}
 
-		public static void ParseFromJson(ISTFImportState State, JObject Json, string Id, ISTFResource Resource)
+		public static void ParseFromJson(STFImportState State, JObject Json, string Id, ISTFResource Resource)
 		{
 			var ret = ScriptableObject.CreateInstance<STFUnrecognizedResourceComponent>();
 			ret.Id = Id;

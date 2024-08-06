@@ -89,12 +89,12 @@ namespace AVA.Serialisation
 
 	public class AVAAvatarImporter : ASTFNodeComponentImporter
 	{
-		public override string ConvertPropertyPath(ISTFImportState State, Component Component, string STFProperty)
+		public override string ConvertPropertyPath(STFImportState State, Component Component, string STFProperty)
 		{
 			throw new NotImplementedException();
 		}
 
-		public override void ParseFromJson(ISTFImportState State, JObject Json, string Id, GameObject Go)
+		public override void ParseFromJson(STFImportState State, JObject Json, string Id, GameObject Go)
 		{
 			var c = Go.AddComponent<AVAAvatar>();
 			c.Id = Id;
