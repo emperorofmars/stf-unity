@@ -15,12 +15,12 @@ namespace STF.Serialisation
 
 	public class STFArmatureExporter : ISTFResourceExporter
 	{
-		public string ConvertPropertyPath(ISTFExportState State, UnityEngine.Object Resource, string UnityProperty)
+		public string ConvertPropertyPath(STFExportState State, UnityEngine.Object Resource, string UnityProperty)
 		{
 			throw new NotImplementedException();
 		}
 
-		public string SerializeToJson(ISTFExportState State, UnityEngine.Object Resource, UnityEngine.Object Context = null)
+		public string SerializeToJson(STFExportState State, UnityEngine.Object Resource, UnityEngine.Object Context = null)
 		{
 			var meta = (STFArmature)Resource;
 			var armatureGo = (GameObject)meta.Resource;

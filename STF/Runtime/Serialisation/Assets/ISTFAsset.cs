@@ -28,7 +28,7 @@ namespace STF.Serialisation
 	
 	public interface ISTFAssetExporter
 	{
-		JObject SerializeToJson(ISTFExportState State, ISTFAsset Asset);
+		JObject SerializeToJson(STFExportState State, ISTFAsset Asset);
 	}
 	
 	public interface ISTFAssetImporter

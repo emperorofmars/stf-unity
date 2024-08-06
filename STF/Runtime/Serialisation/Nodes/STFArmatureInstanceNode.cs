@@ -19,7 +19,7 @@ namespace STF.Serialisation
 
 	public class STFArmatureInstanceExporter : ASTFNodeExporter
 	{
-		public override string SerializeToJson(ISTFExportState State, GameObject Go)
+		public override string SerializeToJson(STFExportState State, GameObject Go)
 		{
 			var node = Go.GetComponent<STFArmatureInstanceNode>();
 			var armatureInstanceChildren = new JArray();

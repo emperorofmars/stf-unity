@@ -14,7 +14,7 @@ namespace STF.Serialisation
 
 	public class STFNodeExporter : ASTFNodeExporter
 	{
-		public override string SerializeToJson(ISTFExportState State, GameObject Go)
+		public override string SerializeToJson(STFExportState State, GameObject Go)
 		{
 			var node = Go.GetComponent<STFNode>();
 			var ret = new JObject

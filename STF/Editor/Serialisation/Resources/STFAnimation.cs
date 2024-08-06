@@ -19,12 +19,12 @@ namespace STF.Serialisation
 
 	public class STFAnimationExporter : ISTFResourceExporter
 	{
-		public string ConvertPropertyPath(ISTFExportState State, UnityEngine.Object Resource, string UnityProperty)
+		public string ConvertPropertyPath(STFExportState State, UnityEngine.Object Resource, string UnityProperty)
 		{
 			throw new NotImplementedException();
 		}
 
-		public string SerializeToJson(ISTFExportState State, UnityEngine.Object Resource, UnityEngine.Object Context = null)
+		public string SerializeToJson(STFExportState State, UnityEngine.Object Resource, UnityEngine.Object Context = null)
 		{
 			if(!(Context is GameObject)) throw new Exception("AnimationClip requires Context!");
 
@@ -52,7 +52,7 @@ namespace STF.Serialisation
 			return State.AddResource(Resource, ret, meta ? meta.Id : Guid.NewGuid().ToString());
 		}
 
-		protected static JArray convertCurves(ISTFExportState State, EditorCurveBinding[] bindings, AnimationClip clip, GameObject root)
+		protected static JArray convertCurves(STFExportState State, EditorCurveBinding[] bindings, AnimationClip clip, GameObject root)
 		{
 			var curvesJson = new JArray();
 
@@ -100,7 +100,7 @@ namespace STF.Serialisation
 						{
 							var stfOwner = curveTarget.gameObject.GetComponents<ISTFNodeComponent>()?.FirstOrDefault(nc => nc.OwnedUnityComponent == curveTarget);
 							if(stfOwner != null) curveJson.Add("component_id", stfOwner.Id);
-							else curveJson.Add("component_id", State.Components[curveTarget].Id);
+							else curveJson.Add("component_id", State.NodeComponents[curveTarget].Id);
 						}
 						else
 						{

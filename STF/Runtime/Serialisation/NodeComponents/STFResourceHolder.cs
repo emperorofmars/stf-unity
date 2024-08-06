@@ -16,12 +16,12 @@ namespace STF.Serialisation
 
 	public class STFResourceHolderExporter : ASTFNodeComponentExporter
 	{
-		public override string ConvertPropertyPath(ISTFExportState State, Component Component, string UnityProperty)
+		public override string ConvertPropertyPath(STFExportState State, Component Component, string UnityProperty)
 		{
 			throw new System.NotImplementedException();
 		}
 
-		public override (string, JObject) SerializeToJson(ISTFExportState State, Component Component)
+		public override (string, JObject) SerializeToJson(STFExportState State, Component Component)
 		{
 			var c = (STFResourceHolder)Component;
 			var ret = new JObject {

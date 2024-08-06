@@ -24,7 +24,7 @@ namespace STF.Serialisation
 
 	public class STFUnrecognizedResourceExporter
 	{
-		public static string SerializeToJson(ISTFExportState State, UnityEngine.Object Resource)
+		public static string SerializeToJson(STFExportState State, UnityEngine.Object Resource)
 		{
 			var r = (STFUnrecognizedResource)Resource;
 			foreach(var resourceId in r.UsedResources) SerdeUtil.SerializeResource(State, resourceId);

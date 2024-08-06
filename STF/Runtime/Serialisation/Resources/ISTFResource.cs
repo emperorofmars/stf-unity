@@ -17,8 +17,8 @@ namespace STF.Serialisation
 
 	public interface ISTFResourceExporter
 	{
-		string SerializeToJson(ISTFExportState State, UnityEngine.Object Resource, UnityEngine.Object Context = null);
-		string ConvertPropertyPath(ISTFExportState State, UnityEngine.Object Resource, string UnityProperty);
+		string SerializeToJson(STFExportState State, UnityEngine.Object Resource, UnityEngine.Object Context = null);
+		string ConvertPropertyPath(STFExportState State, UnityEngine.Object Resource, string UnityProperty);
 	}
 
 	public interface ISTFResourceImporter

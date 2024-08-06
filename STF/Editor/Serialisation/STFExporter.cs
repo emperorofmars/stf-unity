@@ -31,7 +31,8 @@ namespace STF.Serialisation
 		{
 			try
 			{
-				state = new STFExportState(Context, ExportPath, ResourceMeta);
+				var unityContext = new EditorUnityExportContext(ExportPath);
+				state = new STFExportState(Context, unityContext, ResourceMeta);
 
 				JObject JsonAsset = null;
 				if(state.Context.AssetExporters.ContainsKey(Asset.Type))

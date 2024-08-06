@@ -21,7 +21,7 @@ namespace STF.Serialisation
 			return UnityProperty;
 		}
 
-		public static (string Id, JObject JsonComponent) SerializeToJson(ISTFExportState State, ISTFResourceComponent Component)
+		public static (string Id, JObject JsonComponent) SerializeToJson(STFExportState State, ISTFResourceComponent Component)
 		{
 			return (Component.Id, JObject.Parse(((STFUnrecognizedResourceComponent)Component).Json));
 		}

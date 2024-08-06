@@ -16,15 +16,15 @@ namespace STF.Serialisation
 
 	public class STFTexture2dExporter : ISTFResourceExporter
 	{
-		public string ConvertPropertyPath(ISTFExportState State, UnityEngine.Object Resource, string UnityProperty)
+		public string ConvertPropertyPath(STFExportState State, UnityEngine.Object Resource, string UnityProperty)
 		{
 			throw new NotImplementedException();
 		}
 
-		public string SerializeToJson(ISTFExportState State, UnityEngine.Object Resource, UnityEngine.Object Context = null)
+		public string SerializeToJson(STFExportState State, UnityEngine.Object Resource, UnityEngine.Object Context = null)
 		{
 			var texture = (Texture2D)Resource;
-			var (arrayBuffer, meta, fileName) = State.LoadAsset<STFTexture>(texture);
+			var (arrayBuffer, meta, fileName) = State.UnityContext.LoadAsset<STFTexture>(texture);
 
 			var ret = new JObject {
 				{ "type", STFTextureImporter._TYPE },

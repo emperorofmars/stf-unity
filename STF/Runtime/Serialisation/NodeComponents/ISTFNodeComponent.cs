@@ -22,8 +22,8 @@ namespace STF.Serialisation
 	
 	public interface ISTFNodeComponentExporter
 	{
-		string ConvertPropertyPath(ISTFExportState State, Component Component, string UnityProperty);
-		(string Id, JObject JsonComponent) SerializeToJson(ISTFExportState State, Component Component);
+		string ConvertPropertyPath(STFExportState State, Component Component, string UnityProperty);
+		(string Id, JObject JsonComponent) SerializeToJson(STFExportState State, Component Component);
 	}
 	
 	public interface ISTFNodeComponentImporter
@@ -34,8 +34,8 @@ namespace STF.Serialisation
 	
 	public abstract class ASTFNodeComponentExporter : ISTFNodeComponentExporter
 	{
-		public abstract string ConvertPropertyPath(ISTFExportState State, Component Component, string UnityProperty);
-		abstract public (string Id, JObject JsonComponent) SerializeToJson(ISTFExportState State, Component Component);
+		public abstract string ConvertPropertyPath(STFExportState State, Component Component, string UnityProperty);
+		abstract public (string Id, JObject JsonComponent) SerializeToJson(STFExportState State, Component Component);
 
 		public static void SerializeRelationships(ISTFNodeComponent Component, JObject Json)
 		{

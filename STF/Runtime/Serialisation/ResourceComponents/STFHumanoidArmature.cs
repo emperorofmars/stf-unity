@@ -263,7 +263,7 @@ namespace STF.Serialisation
 			throw new System.NotImplementedException();
 		}
 
-		public (string Id, JObject JsonComponent) SerializeToJson(ISTFExportState State, ISTFResourceComponent Component)
+		public (string Id, JObject JsonComponent) SerializeToJson(STFExportState State, ISTFResourceComponent Component)
 		{
 			var c = (STFHumanoidArmature)Component;
 			var jsonMappings = new JObject();

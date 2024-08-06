@@ -19,7 +19,7 @@ namespace STF.Serialisation
 
 	public static class STFUnrecognizedNodeExporter
 	{
-		public static string SerializeToJson(ISTFExportState State, GameObject Go)
+		public static string SerializeToJson(STFExportState State, GameObject Go)
 		{
 			var node = Go.GetComponent<STFUnrecognizedNode>();
 			var ret = new JObject

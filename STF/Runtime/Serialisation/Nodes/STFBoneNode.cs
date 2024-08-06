@@ -14,7 +14,7 @@ namespace STF.Serialisation
 	// These need to exist for the property path translation
 	public class DontInvokeNodeExporter : ASTFNodeExporter
 	{
-		public override string SerializeToJson(ISTFExportState State, GameObject Go)
+		public override string SerializeToJson(STFExportState State, GameObject Go)
 		{
 			throw new System.Exception($"This method should never be invoked for type: {STFBoneNode._TYPE}");
 		}

@@ -77,12 +77,12 @@ namespace AVA.Serialisation
 
 	public class AVAFacialTrackingSimpleExporter : ASTFNodeComponentExporter
 	{
-		public override string ConvertPropertyPath(ISTFExportState State, Component Component, string UnityProperty)
+		public override string ConvertPropertyPath(STFExportState State, Component Component, string UnityProperty)
 		{
 			throw new System.NotImplementedException();
 		}
 
-		public override (string Id, JObject JsonComponent) SerializeToJson(ISTFExportState State, Component Component)
+		public override (string Id, JObject JsonComponent) SerializeToJson(STFExportState State, Component Component)
 		{
 			var c = (AVAFacialTrackingSimple)Component;
 			var ret = new JObject {

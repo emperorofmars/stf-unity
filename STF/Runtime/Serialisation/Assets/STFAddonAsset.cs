@@ -20,7 +20,7 @@ namespace STF.Serialisation
 
 	public class STFAddonAssetExporter : ISTFAssetExporter
 	{
-		public JObject SerializeToJson(ISTFExportState State, ISTFAsset Asset)
+		public JObject SerializeToJson(STFExportState State, ISTFAsset Asset)
 		{
 			var ret = new JObject
 			{

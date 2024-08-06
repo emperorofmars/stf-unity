@@ -70,7 +70,7 @@ namespace STF.Serialisation
 			}
 		}
 
-		public static JArray SerializeChildren(ISTFExportState State, GameObject Go)
+		public static JArray SerializeChildren(STFExportState State, GameObject Go)
 		{
 			var ret = new JArray();
 			for(int childIdx = 0; childIdx < Go.transform.childCount; childIdx++)
@@ -82,7 +82,7 @@ namespace STF.Serialisation
 			return ret;
 		}
 
-		public static string SerializeNode(ISTFExportState State, GameObject Go)
+		public static string SerializeNode(STFExportState State, GameObject Go)
 		{
 			if(State.Nodes.ContainsKey(Go)) return State.Nodes[Go].Id;
 			var node = Go.GetComponent<ISTFNode>();
@@ -97,7 +97,7 @@ namespace STF.Serialisation
 			}
 		}
 
-		public static JObject SerializeNodeComponents(ISTFExportState State, Component[] NodeComponents)
+		public static JObject SerializeNodeComponents(STFExportState State, Component[] NodeComponents)
 		{
 			var ret = new JObject();
 			foreach(var component in NodeComponents)
@@ -110,7 +110,7 @@ namespace STF.Serialisation
 			return ret;
 		}
 
-		public static (string, JObject) SerializeNodeComponent(ISTFExportState State, Component NodeComponent)
+		public static (string, JObject) SerializeNodeComponent(STFExportState State, Component NodeComponent)
 		{
 			(string Id, JObject JsonComponent) ret;
 			if(State.Context.NodeComponentExporters.ContainsKey(NodeComponent.GetType()))
@@ -122,11 +122,11 @@ namespace STF.Serialisation
 				Debug.LogWarning($"Unrecognized Node: {NodeComponent.GetType()}");
 				ret = STFUnrecognizedNodeComponentExporter.SerializeToJson(State, NodeComponent);
 			}
-			State.AddComponent(NodeComponent, ret.JsonComponent, ret.Id);
+			State.AddNodeComponent(NodeComponent, ret.JsonComponent, ret.Id);
 			return ret;
 		}
 
-		public static string SerializeResource(ISTFExportState State, UnityEngine.Object Resource, UnityEngine.Object Context = null)
+		public static string SerializeResource(STFExportState State, UnityEngine.Object Resource, UnityEngine.Object Context = null)
 		{
 			if(State.Resources.ContainsKey(Resource)) return State.Resources[Resource].Id;
 			else if(State.Context.ResourceExporters.ContainsKey(Resource.GetType()))
@@ -140,7 +140,7 @@ namespace STF.Serialisation
 			}
 		}
 
-		public static JObject SerializeResourceComponents(ISTFExportState State, ISTFResource Resource)
+		public static JObject SerializeResourceComponents(STFExportState State, ISTFResource Resource)
 		{
 			var ret = new JObject();
 			if(Resource?.Components != null) foreach(var component in Resource.Components)
@@ -152,7 +152,7 @@ namespace STF.Serialisation
 			return ret;
 		}
 
-		public static (string, JObject) SerializeResourceComponent(ISTFExportState State, ISTFResourceComponent ResourceComponent)
+		public static (string, JObject) SerializeResourceComponent(STFExportState State, ISTFResourceComponent ResourceComponent)
 		{
 			if(State.Context.ResourceComponentExporters.ContainsKey(ResourceComponent.Type))
 			{

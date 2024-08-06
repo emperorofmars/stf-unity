@@ -20,7 +20,7 @@ namespace STF.Serialisation
 	public interface ISTFNodeExporter
 	{
 		string ConvertPropertyPath(string UnityProperty);
-		string SerializeToJson(ISTFExportState State, GameObject Go);
+		string SerializeToJson(STFExportState State, GameObject Go);
 	}
 
 	public interface ISTFNodeImporter
@@ -54,7 +54,7 @@ namespace STF.Serialisation
 			}
 			throw new Exception("Unrecognized animation property: " + UnityProperty);
 		}
-		public abstract string SerializeToJson(ISTFExportState State, GameObject Go);
+		public abstract string SerializeToJson(STFExportState State, GameObject Go);
 	}
 
 	public abstract class ASTFNodeImporter : ISTFNodeImporter

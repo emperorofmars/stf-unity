@@ -18,7 +18,7 @@ namespace STF.Serialisation
 
 	public class STFUnrecognizedNodeComponentExporter
 	{
-		public static (string, JObject) SerializeToJson(ISTFExportState State, Component Component)
+		public static (string, JObject) SerializeToJson(STFExportState State, Component Component)
 		{
 			var c = (STFUnrecognizedNodeComponent)Component;
 			var ret = JObject.Parse(c.PreservedJson);

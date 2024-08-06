@@ -20,7 +20,7 @@ namespace STF.Serialisation
 
 	public class STFMeshInstanceExporter : ASTFNodeComponentExporter
 	{
-		public override string ConvertPropertyPath(ISTFExportState State, Component Component, string UnityProperty)
+		public override string ConvertPropertyPath(STFExportState State, Component Component, string UnityProperty)
 		{
 			if(UnityProperty.StartsWith("blendShape"))
 			{
@@ -43,7 +43,7 @@ namespace STF.Serialisation
 			throw new Exception("Unrecognized animation property: " + UnityProperty);
 		}
 
-		public override (string, JObject) SerializeToJson(ISTFExportState State, Component Component)
+		public override (string, JObject) SerializeToJson(STFExportState State, Component Component)
 		{
 			Renderer renderer = Component as Renderer;
 			Mesh mesh;

@@ -20,7 +20,7 @@ namespace STF.Serialisation
 	public interface ISTFResourceComponentExporter
 	{
 		string ConvertPropertyPath(string UnityProperty);
-		(string Id, JObject JsonComponent) SerializeToJson(ISTFExportState State, ISTFResourceComponent Component);
+		(string Id, JObject JsonComponent) SerializeToJson(STFExportState State, ISTFResourceComponent Component);
 	}
 	
 	public interface ISTFResourceComponentImporter

@@ -10,9 +10,9 @@ namespace STF.Serialisation
 {
 	public class MTFPropertyValueExportState : MTF.IPropertyValueExportState
 	{
-		ISTFExportState State;
+		STFExportState State;
 		public List<string> UsedResources = new List<string>();
-		public MTFPropertyValueExportState(ISTFExportState State)
+		public MTFPropertyValueExportState(STFExportState State)
 		{
 			this.State = State;
 		}
@@ -72,13 +72,13 @@ namespace STF.Serialisation
 
 	public class UnityMaterialExporter : ISTFResourceExporter
 	{
-		public string ConvertPropertyPath(ISTFExportState State, UnityEngine.Object Resource, string UnityProperty)
+		public string ConvertPropertyPath(STFExportState State, UnityEngine.Object Resource, string UnityProperty)
 		{
 			if(UnityProperty.StartsWith("MTF.")) return UnityProperty.Substring(UnityProperty.IndexOf('.') + 1);
 			else return MTF.ShaderConverterRegistry.MaterialParsers[((Material)Resource).shader.name].ConvertPropertyPath(UnityProperty, (Material)Resource);
 		}
 
-		public string SerializeToJson(ISTFExportState State, UnityEngine.Object Resource, UnityEngine.Object Context = null)
+		public string SerializeToJson(STFExportState State, UnityEngine.Object Resource, UnityEngine.Object Context = null)
 		{
 			var mat = (Material)Resource;
 			// Convert to MTF.Material
@@ -101,12 +101,12 @@ namespace STF.Serialisation
 
 	public class MTFMaterialExporter : ISTFResourceExporter
 	{
-		public string ConvertPropertyPath(ISTFExportState State, UnityEngine.Object Resource, string UnityProperty)
+		public string ConvertPropertyPath(STFExportState State, UnityEngine.Object Resource, string UnityProperty)
 		{
 			return UnityProperty;
 		}
 
-		public string SerializeToJson(ISTFExportState State, UnityEngine.Object Resource, UnityEngine.Object Context = null)
+		public string SerializeToJson(STFExportState State, UnityEngine.Object Resource, UnityEngine.Object Context = null)
 		{
 			var mat = (MTF.Material)Resource;
 			var ret = new JObject{
