@@ -28,14 +28,6 @@ namespace STF.Serialisation
 		{
 			var mesh = (Mesh)Resource;
 			var meta = State.LoadMeta<STFMesh>(Resource);
-
-			Debug.Log(State.ResourceMeta.ContainsKey(Resource));
-
-			Debug.Log(meta);
-			Debug.Log(meta.Name);
-			Debug.Log(meta.name);
-			Debug.Log(mesh.name);
-
 			if(meta == null)
 			{
 				meta = ScriptableObject.CreateInstance<STFMesh>();
