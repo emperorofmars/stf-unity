@@ -15,7 +15,7 @@ namespace STF.Serialisation
 		public static string _MAGIC = "STF0";
 
 		public int VersionMajor = 0;
-		public int VersionMinor = 2;
+		public int VersionMinor = 3;
 		public string Json;
 		public List<byte[]> Buffers = new List<byte[]>();
 

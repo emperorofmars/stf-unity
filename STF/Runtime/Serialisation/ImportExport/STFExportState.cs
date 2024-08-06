@@ -34,9 +34,9 @@ namespace STF.Serialisation
 		public List<UnityEngine.Object> Trash = new List<UnityEngine.Object>();
 		public List<Task> Tasks = new List<Task>();
 
-		public Dictionary<UnityEngine.Object, UnityEngine.Object> ResourceMeta = new Dictionary<UnityEngine.Object, UnityEngine.Object>();
+		public Dictionary<UnityEngine.Object, ISTFResource> ResourceMeta = new Dictionary<UnityEngine.Object, ISTFResource>();
 
-		public STFExportState(STFExportContext Context, IUnityExportContext UnityContext, Dictionary<UnityEngine.Object, UnityEngine.Object> ResourceMeta)
+		public STFExportState(STFExportContext Context, IUnityExportContext UnityContext, Dictionary<UnityEngine.Object, ISTFResource> ResourceMeta)
 		{
 			this.Context = Context;
 			this.UnityContext = UnityContext;

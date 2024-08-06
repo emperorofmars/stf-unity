@@ -11,10 +11,14 @@ using UnityEngine;
 
 namespace STF.Tools
 {
-	// Utility to setup a non STF Unity scene into the STF Unity intermediary format. Adds uuid's to everything, determines armatures and places the appropriate STF components. Will be used by the default exporter automatically if the exported scene is not set up.
+	/**
+		Utility to setup a non STF Unity scene into the STF Unity intermediary format.
+		Adds uuid's to everything, determines armatures and places the appropriate STF components.
+		Will be used by the default exporter automatically if the exported scene is not set up.
+	**/
 	public static class STFSetup
 	{
-		public static (List<GameObject> CreatedGos, Dictionary<UnityEngine.Object, UnityEngine.Object> ResourceMeta) SetupStandaloneAssetInplace(GameObject root)
+		public static (List<GameObject> CreatedGos, Dictionary<UnityEngine.Object, ISTFResource> ResourceMeta) SetupStandaloneAssetInplace(GameObject root)
 		{
 			var CreatedGos = new List<GameObject>();
 			// Setup main asset info
@@ -30,27 +34,6 @@ namespace STF.Tools
 			SetupIds(root);
 			return (CreatedGos, armatureResult.ResourceMeta);
 		}
-
-		/*public static List<UnityEngine.Object> SetupAddonAssetInplace(GameObject root)
-		{
-			var ret = new List<UnityEngine.Object>();
-			if(root.GetComponent<STFAssetInfo>() == null)
-			{
-				var asset = root.AddComponent<STFAssetInfo>();
-				asset.assetId = Guid.NewGuid().ToString();
-				asset.assetType = STFAddonAssetExporter._TYPE;
-				asset.assetName = root.name;
-			}
-			for(int i = 0; i < root.transform.childCount; i++)
-			{
-				var child = root.transform.GetChild(i).gameObject;
-				SetupIds(child);
-			}
-
-			ret.AddRange(STFArmatureUtil.FindAndSetupArmatures(root));
-			STFArmatureUtil.FindAndSetupExternalArmatures(root);
-			return ret;
-		}*/
 
 		public static void SetupIds(GameObject root)
 		{
@@ -71,7 +54,8 @@ namespace STF.Tools
 	{
 		public class Result
 		{
-			public Dictionary<UnityEngine.Object, UnityEngine.Object> ResourceMeta = new Dictionary<UnityEngine.Object, UnityEngine.Object>();
+			// Unity Object -> ISTFResource
+			public Dictionary<UnityEngine.Object, ISTFResource> ResourceMeta = new Dictionary<UnityEngine.Object, ISTFResource>();
 			public List<GameObject> CreatedGos = new List<GameObject>();
 		}
 
@@ -116,6 +100,7 @@ namespace STF.Tools
 						var metaPath = Path.ChangeExtension(assetPath, "Asset");
 						ret.ResourceMeta.Add(smr.sharedMesh, AssetDatabase.LoadAssetAtPath<STFMesh>(metaPath));
 					}
+					// search in subassets, only then fall back on creating a new one
 					else
 					{
 						var stfMesh = ScriptableObject.CreateInstance<STFMesh>();

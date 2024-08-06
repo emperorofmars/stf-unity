@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace STF.Serialisation
 {
-	[CreateAssetMenu(fileName = "STFTextureCompression", menuName = "STF/Resource Components/Texture Comporession", order = 1)]
+	[CreateAssetMenu(fileName = "STFTextureCompression", menuName = "STF/Resource Components/Texture Compression", order = 1)]
 	public class STFTextureCompression : ISTFResourceComponent
 	{
 		public const string _TYPE = "STF.texture.compression";
