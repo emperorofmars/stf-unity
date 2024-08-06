@@ -28,7 +28,7 @@ namespace STF.Serialisation
 
 			var ret = new JObject {
 				{ "type", STFTextureImporter._TYPE },
-				{ "name", meta != null ? meta.Name : Path.GetFileNameWithoutExtension(fileName) },
+				{ "name", string.IsNullOrWhiteSpace(meta?.Name) ? meta.Name : Path.GetFileNameWithoutExtension(fileName) },
 				{ "image_format", Path.GetExtension(fileName) },
 				{ "texture_width", meta?.TextureSize != null ? meta.TextureSize.x : texture.width },
 				{ "texture_height", meta?.TextureSize != null ? meta.TextureSize.y : texture.height },
@@ -71,6 +71,11 @@ namespace STF.Serialisation
 			
 			var arrayBuffer = State.Buffers[meta.OriginalBufferId];
 
+			Debug.Log("REEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
+			Debug.Log((string)Json["image_format"]);
+			Debug.Log(meta.name);
+			Debug.Log(Id);
+			
 			State.SaveResource<STFTexture, Texture2D>(arrayBuffer, (string)Json["image_format"], meta, Id);
 			SerdeUtil.ParseResourceComponents(State, meta, Json);
 			return;

@@ -12,7 +12,6 @@ namespace STF.Serialisation
 		public JObject JsonRoot {protected set; get;}
 
 		public string AssetId {protected set; get;}
-		public Dictionary<Object, Object> PostprocessContext {protected set; get;} = new Dictionary<Object, Object>();
 
 		// id -> node
 		public Dictionary<string, GameObject> Nodes {protected set; get;} = new Dictionary<string, GameObject>();
@@ -31,11 +30,12 @@ namespace STF.Serialisation
 
 
 		// stuff to throw away before the import finishes
-		public List<UnityEngine.Object> Trash = new List<UnityEngine.Object>();
+		public List<Object> Trash = new List<Object>();
 
-		
 		public List<Task> Tasks = new List<Task>();
+
 		public List<Task> PostprocessTasks = new List<Task>();
+		public Dictionary<Object, Object> PostprocessContext {protected set; get;} = new Dictionary<Object, Object>();
 
 
 		public virtual void AddTask(Task task) { Tasks.Add(task); }
@@ -53,7 +53,11 @@ namespace STF.Serialisation
 
 		public virtual void AddTrash(Object Trash) { this.Trash.Add(Trash); }
 
-		public abstract void SetPostprocessContext(Object Resource, Object Context);
+		public virtual void SetPostprocessContext(Object Resource, Object Context)
+		{
+			if(PostprocessContext.ContainsKey(Resource)) PostprocessContext[Resource] = Context;
+			else PostprocessContext.Add(Resource, Context);
+		}
 
 		public abstract void SaveSubResource(Object Component, Object Resource);
 		public abstract void SaveResource(Object Resource, string FileExtension, string Id);

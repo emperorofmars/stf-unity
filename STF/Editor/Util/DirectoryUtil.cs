@@ -10,6 +10,7 @@ namespace STF.Tools
 	public static class STFDirectoryUtil
 	{
 		public const string DefaultUnpackFolder = "STF Imports";
+		public const string ResourceFolder = "Resources";
 
 		public static string GetFolderName(string assetPath)
 		{
@@ -32,6 +33,11 @@ namespace STF.Tools
 			if(!Directory.Exists(Path.Combine("Assets", DefaultUnpackFolder, foldername)))
 			{
 				AssetDatabase.CreateFolder(Path.Combine("Assets", DefaultUnpackFolder), foldername);
+				AssetDatabase.Refresh();
+			}
+			if(!Directory.Exists(Path.Combine("Assets", DefaultUnpackFolder, foldername, ResourceFolder)))
+			{
+				AssetDatabase.CreateFolder(Path.Combine("Assets", DefaultUnpackFolder, foldername), ResourceFolder);
 				AssetDatabase.Refresh();
 			}
 			return GetUnpackLocation(assetPath);

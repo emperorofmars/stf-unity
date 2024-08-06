@@ -26,7 +26,6 @@ namespace STF.Serialisation
 
 		public string SerializeToJson(ISTFExportState State, UnityEngine.Object Resource, UnityEngine.Object Context = null)
 		{
-			var ret = new JObject();
 			var mesh = (Mesh)Resource;
 			var meta = State.LoadMeta<STFMesh>(Resource);
 			if(meta == null)
@@ -35,11 +34,13 @@ namespace STF.Serialisation
 				meta.Name = mesh.name;
 				meta.Resource = mesh;
 			}
-			
 			var usedResources = new JArray();
 
-			ret.Add("type", STFMesh._TYPE);
-			ret.Add("name", meta != null && meta.Name != null && meta.Name.Length > 0 ? meta.Name : mesh.name);
+			var ret = new JObject
+			{
+				{"type", STFMesh._TYPE},
+				{"name", !string.IsNullOrWhiteSpace(meta?.name) ? meta.Name : mesh.name},
+			};
 
 			var bufferWidth = 3;
 			var numUVs = 0;
@@ -291,7 +292,7 @@ namespace STF.Serialisation
 			var meta = ScriptableObject.CreateInstance<STFMesh>();
 			//meta.ResourceLocation = Path.Combine(State.TargetLocation, STFConstants.ResourceDirectoryName, mesh.name + "_" + Id + ".mesh");
 			meta.OriginalBufferId = (string)Json["buffer"];
-			meta.Name = mesh.name;
+			meta.Name = (string)Json["name"];
 			meta.ArmatureId = (string)Json["armature"];
 
 			var bufferWidth = 3;

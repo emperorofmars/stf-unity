@@ -28,18 +28,7 @@ namespace STF.Serialisation
 			AddTrash(Node);
 		}
 
-		override public void AddTrash(UnityEngine.Object Trash)
-		{
-			this.Trash.Add(Trash);
-		}
-
-		override public void SetPostprocessContext(UnityEngine.Object Resource, UnityEngine.Object Context)
-		{
-			if(PostprocessContext.ContainsKey(Resource)) PostprocessContext[Resource] = Context;
-			else PostprocessContext.Add(Resource, Context);
-		}
-
-		override public void SaveSubResource(UnityEngine.Object Component, UnityEngine.Object Resource)
+		override public void SaveSubResource(Object Component, Object Resource)
 		{
 			var assetPath = AssetDatabase.GetAssetPath(Resource);
 			Debug.Assert(assetPath != null);
@@ -48,7 +37,7 @@ namespace STF.Serialisation
 			AssetDatabase.Refresh();
 		}
 
-		override public void SaveResource(UnityEngine.Object Resource, string FileExtension, string Id)
+		override public void SaveResource(Object Resource, string FileExtension, string Id)
 		{
 			if(!FileExtension.StartsWith(".")) FileExtension = "." + FileExtension;
 			var location = Path.Combine(TargetLocation, STFConstants.ResourceDirectoryName, Resource.name + "_" + Id + FileExtension);
@@ -56,7 +45,7 @@ namespace STF.Serialisation
 			AddResource(Resource, Id);
 			AssetDatabase.Refresh();
 		}
-		override public void SaveResource<T>(UnityEngine.Object Resource, string FileExtension, T Meta, string Id)
+		override public void SaveResource<T>(Object Resource, string FileExtension, T Meta, string Id)
 		{
 			if(!FileExtension.StartsWith(".")) FileExtension = "." + FileExtension;
 			var location = Path.Combine(TargetLocation, STFConstants.ResourceDirectoryName, Meta.Name + "_" + Id + FileExtension);
@@ -98,14 +87,14 @@ namespace STF.Serialisation
 			AssetDatabase.Refresh();
 			return AssetDatabase.LoadAssetAtPath<T>(location);
 		}
-		override public void SaveResourceBelongingToId(UnityEngine.Object Resource, string FileExtension, string OwnerId)
+		override public void SaveResourceBelongingToId(Object Resource, string FileExtension, string OwnerId)
 		{
 			if(!FileExtension.StartsWith(".")) FileExtension = "." + FileExtension;
 			var location = Path.Combine(TargetLocation, STFConstants.ResourceDirectoryName, Resource.name + "_" + OwnerId + FileExtension);
 			AssetDatabase.CreateAsset(Resource, location);
 			AssetDatabase.Refresh();
 		}
-		override public void SaveGeneratedResource(UnityEngine.Object Resource, string FileExtension)
+		override public void SaveGeneratedResource(Object Resource, string FileExtension)
 		{
 			if(!FileExtension.StartsWith(".")) FileExtension = "." + FileExtension;
 			var location = Path.Combine(TargetLocation, STFConstants.ResourceDirectoryName, Resource.name + FileExtension);
@@ -113,7 +102,7 @@ namespace STF.Serialisation
 			AssetDatabase.Refresh();
 		}
 		
-		override public UnityEngine.Object Instantiate(UnityEngine.Object Resource)
+		override public Object Instantiate(Object Resource)
 		{
 			if(Resource is GameObject) return PrefabUtility.InstantiatePrefab(Resource);
 			else return Object.Instantiate(Resource);

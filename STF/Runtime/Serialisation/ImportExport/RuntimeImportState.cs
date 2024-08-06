@@ -8,17 +8,6 @@ namespace STF.Serialisation
 {
 	public class RuntimeImportState : ISTFImportState
 	{
-		public List<UnityEngine.Object> Trash = new List<UnityEngine.Object>();
-
-		override public void AddTrash(UnityEngine.Object Trash)
-		{
-			this.Trash.Add(Trash);
-		}
-
-		public override Object Instantiate(Object Resource)
-		{
-			throw new System.NotImplementedException();
-		}
 
 		public override T SaveAndLoadResource<T>(byte[] Resource, string Name, string FileExtension)
 		{
@@ -60,9 +49,9 @@ namespace STF.Serialisation
 			throw new System.NotImplementedException();
 		}
 
-		public override void SetPostprocessContext(Object Resource, Object Context)
+		public override Object Instantiate(Object Resource)
 		{
-			throw new System.NotImplementedException();
+			return Object.Instantiate(Resource);
 		}
 	}
 }
