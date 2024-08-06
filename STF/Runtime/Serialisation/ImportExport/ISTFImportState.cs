@@ -6,49 +6,64 @@ using System.Threading.Tasks;
 
 namespace STF.Serialisation
 {
-	public interface ISTFImportState
+	public abstract class ISTFImportState
 	{
-		STFImportContext Context {get;}
-		string TargetLocation {get;}
-		JObject JsonRoot {get;}
+		public STFImportContext Context {protected set; get;}
+		public JObject JsonRoot {protected set; get;}
 
-		string AssetId {get;}
-		Dictionary<UnityEngine.Object, UnityEngine.Object> PostprocessContext {get;}
+		public string AssetId {protected set; get;}
+		public Dictionary<Object, Object> PostprocessContext {protected set; get;} = new Dictionary<Object, Object>();
 
 		// id -> node
-		Dictionary<string, UnityEngine.GameObject> Nodes {get;}
+		public Dictionary<string, GameObject> Nodes {protected set; get;} = new Dictionary<string, GameObject>();
 
 		// id -> node_component
-		Dictionary<string, Component> NodeComponents {get;}
+		public Dictionary<string, Component> NodeComponents {protected set; get;} = new Dictionary<string, Component>();
 
 		// id -> resource
-		Dictionary<string, UnityEngine.Object> Resources  {get;}
+		public Dictionary<string, Object> Resources {protected set; get;} = new Dictionary<string, Object>();
 
 		// id -> resource_component
-		Dictionary<string, UnityEngine.Object> ResourceComponents {get;}
+		public Dictionary<string, Object> ResourceComponents {protected set; get;} = new Dictionary<string, Object>();
 
 		// id -> buffer
-		Dictionary<string, byte[]> Buffers {get;}
+		public Dictionary<string, byte[]> Buffers {protected set; get;} = new Dictionary<string, byte[]>();
 
-		void AddTask(Task task);
-		void AddPostprocessTask(Task task);
-		void AddNode(GameObject Node, string Id);
-		void AddNodeComponent(Component Component, string Id);
-		void AddResource(UnityEngine.Object Resource, string Id);
-		void AddResourceComponent(ISTFResourceComponent Component, ISTFResource ResourceMeta, string Id);
-		void AddTrash(UnityEngine.Object Trash);
-		void SetPostprocessContext(UnityEngine.Object Resource, UnityEngine.Object Context);
 
-		void SaveSecondaryResource(UnityEngine.Object Component, UnityEngine.Object Resource);
-		void SaveResource(UnityEngine.Object Resource, string FileExtension, string Id);
-		void SaveResource<T>(UnityEngine.Object Resource, string FileExtension, T Meta, string Id) where T: ISTFResource;
-		void SaveResource<T>(GameObject Resource, T Meta, string Id) where T: ISTFResource;
-		void SaveResource<M, R>(byte[] Resource, string FileExtension, M Meta, string Id) where M: ISTFResource where R: UnityEngine.Object;
-		T SaveAndLoadResource<T>(byte[] Resource, string Name, string FileExtension) where T: UnityEngine.Object;
-		void SaveResourceBelongingToId(UnityEngine.Object Resource, string FileExtension, string OwnerId);
-		void SaveGeneratedResource(UnityEngine.Object Resource, string FileExtension);
+		// stuff to throw away before the import finishes
+		public List<UnityEngine.Object> Trash = new List<UnityEngine.Object>();
 
-		UnityEngine.Object LoadResource(ISTFResource Resource);
-		UnityEngine.Object Instantiate(UnityEngine.Object Resource);
+		
+		public List<Task> Tasks = new List<Task>();
+		public List<Task> PostprocessTasks = new List<Task>();
+
+
+		public virtual void AddTask(Task task) { Tasks.Add(task); }
+		public virtual void AddPostprocessTask(Task task) { PostprocessTasks.Add(task); }
+		public virtual void AddNode(GameObject Node, string Id) { Nodes.Add(Id, Node); }
+		public virtual void AddNodeComponent(Component Component, string Id) { NodeComponents.Add(Id, Component); }
+		public virtual void AddResource(Object Resource, string Id) { Resources.Add(Id, Resource); }
+		public virtual void AddResourceComponent(ISTFResourceComponent Component, ISTFResource ResourceMeta, string Id)
+		{
+			Component.Resource = ResourceMeta;
+			ResourceMeta.Components.Add(Component);
+			if(string.IsNullOrWhiteSpace(Component.name)) Component.name = Component.Type + ":" + Id;
+			SaveSubResource(Component, ResourceMeta);
+		}
+
+		public virtual void AddTrash(Object Trash) { this.Trash.Add(Trash); }
+
+		public abstract void SetPostprocessContext(Object Resource, Object Context);
+
+		public abstract void SaveSubResource(Object Component, Object Resource);
+		public abstract void SaveResource(Object Resource, string FileExtension, string Id);
+		public abstract void SaveResource<T>(Object Resource, string FileExtension, T Meta, string Id) where T: ISTFResource;
+		public abstract void SaveResource<T>(GameObject Resource, T Meta, string Id) where T: ISTFResource;
+		public abstract void SaveResource<M, R>(byte[] Resource, string FileExtension, M Meta, string Id) where M: ISTFResource where R: Object;
+		public abstract T SaveAndLoadResource<T>(byte[] Resource, string Name, string FileExtension) where T: Object;
+		public abstract void SaveResourceBelongingToId(Object Resource, string FileExtension, string OwnerId);
+		public abstract void SaveGeneratedResource(Object Resource, string FileExtension);
+
+		public abstract Object Instantiate(Object Resource);
 	}
 }

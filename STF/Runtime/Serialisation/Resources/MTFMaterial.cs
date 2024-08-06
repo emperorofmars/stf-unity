@@ -45,7 +45,7 @@ namespace STF.Serialisation
 			var r = State.Resources[Id];
 			if(r is ISTFResource resource)
 			{
-				return State.LoadResource(resource);
+				return (r as ISTFResource).Resource;
 			}
 			return r;
 		}
@@ -188,7 +188,7 @@ namespace STF.Serialisation
 						var propertyValue = MTF.PropertyValueRegistry.PropertyValueImporters[propertyValueType].ParseFromJson(mtfImportState, (JObject)valueJson);
 						propertyValue.name = propertyJson.Key + ":" + propertyValueType + ":" + mtfProperty.Values.Count();
 						mtfProperty.Values.Add(propertyValue);
-						State.SaveSecondaryResource(propertyValue, mat);
+						State.SaveSubResource(propertyValue, mat);
 					}
 					else
 					{

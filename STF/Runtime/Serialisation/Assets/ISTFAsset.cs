@@ -22,8 +22,7 @@ namespace STF.Serialisation
 
 		public string OriginalFileName { get; }
 
-
-		public string ImportPath;
+		//public string ImportPath;
 		public List<string> AppliedAddonIds;
 	}
 	

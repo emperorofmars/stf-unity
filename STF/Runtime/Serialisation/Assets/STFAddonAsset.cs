@@ -75,7 +75,7 @@ namespace STF.Serialisation
 				asset.License = (string)JsonAsset["license"];
 				asset.LicenseLink = (string)JsonAsset["license_link"];
 
-				asset.ImportPath = State.TargetLocation;
+				//asset.ImportPath = State.TargetLocation;
 
 				return asset;
 			}

@@ -71,8 +71,6 @@ namespace STF.Serialisation
 					asset.Preview = (Texture2D)(State.Resources[(string)JsonAsset["preview"]] as ISTFResource).Resource;
 				}
 
-				asset.ImportPath = State.TargetLocation;
-
 				return asset;
 			}
 			catch(Exception e)

@@ -6,40 +6,58 @@ using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using STF.Serialisation;
 using System;
+using System.Drawing;
+using UnityEditorInternal;
 
 namespace STF.Tools
 {
 	public class STFImportInfo : ScriptableObject
 	{
-		public string assetId = Guid.NewGuid().ToString();
-		public string assetType = "STF.asset";
+		public string Id = Guid.NewGuid().ToString();
+		public string Type = "STF.asset";
 
-		public string assetName;
-		public string assetVersion = "0.0.1";
-		public string assetAuthor;
-		public string assetURL;
-		public string assetLicense;
-		public string assetLicenseLink;
-		public Texture2D assetPreview;
+		public string Name;
+		public string Version = "0.0.1";
+		public string Author;
+		public string URL;
+		public string License;
+		public string LicenseLink;
+		public Texture2D Preview;
 
 		public STFFile Buffers;
-		public JObject jsonRoot;
+		public JObject JsonRoot;
 
-		public static STFImportInfo CreateInstance(STFFile Buffers)
+		public static STFImportInfo CreateInstance(STFFile Buffers, string path)
 		{
 			var ret = ScriptableObject.CreateInstance<STFImportInfo>();
 			ret.Buffers = Buffers;
-			var jsonRoot = JObject.Parse(Buffers.Json);
+			ret.JsonRoot = JObject.Parse(Buffers.Json);
 
-			var jsonAsset = (JObject)jsonRoot["asset"];
-			ret.assetId = (string)jsonAsset["id"];
-			ret.assetType = (string)jsonAsset["type"];
-			ret.assetName = (string)jsonAsset["name"];
-			ret.assetVersion = (string)jsonAsset["version"];
-			ret.assetAuthor = (string)jsonAsset["author"];
-			ret.assetURL = (string)jsonAsset["url"];
-			ret.assetLicense = (string)jsonAsset["license"];
-			ret.assetLicenseLink = (string)jsonAsset["license_link"];
+			var jsonAsset = ret.JsonRoot[STFKeywords.ObjectType.Asset];
+			ret.Id = (string)jsonAsset[STFKeywords.Keys.Id];
+			ret.Type = (string)jsonAsset[STFKeywords.Keys.Type];
+			ret.Name = (string)jsonAsset[STFKeywords.Keys.Name];
+			ret.Version = (string)jsonAsset["version"];
+			ret.Author = (string)jsonAsset["author"];
+			ret.URL = (string)jsonAsset["url"];
+			ret.License = (string)jsonAsset["license"];
+			ret.LicenseLink = (string)jsonAsset["license_link"];
+
+			var previewID = (string)jsonAsset["preview"];
+			if(!string.IsNullOrWhiteSpace(previewID))
+			{
+				var previewJson = (JObject)ret.JsonRoot[STFKeywords.ObjectType.Resources][previewID];
+				var previewImporter = STFRegistry.ResourceImporters[(string)previewJson[STFKeywords.Keys.Type]];
+				var importContext = new STFImportContext();
+				var importState = new STFImportState(importContext, STFDirectoryUtil.GetUnpackLocation(path), ret.JsonRoot);
+				for(int i = 0; i < Buffers.Buffers.Count; i++)
+				{
+					importState.Buffers.Add((string)importState.JsonRoot[STFKeywords.ObjectType.Buffers][i], Buffers.Buffers[i]);
+				}
+				previewImporter.ParseFromJson(importState, previewJson, previewID);
+				var previewResource = (STFTexture)importState.Resources[previewID];
+				ret.Preview = (Texture2D)previewResource.Resource;
+			}
 
 			return ret;
 		}

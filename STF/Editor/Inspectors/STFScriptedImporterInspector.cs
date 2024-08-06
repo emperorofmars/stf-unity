@@ -27,31 +27,35 @@ namespace STF.Tools
 			EditorGUILayout.EndHorizontal();
 
 			drawHLine();
-
-			EditorGUILayout.LabelField("Import", EditorStyles.whiteLargeLabel);
-
-			GUILayout.Space(10f);
-			if(GUILayout.Button("Import", GUILayout.ExpandWidth(true))) {
-				STFDirectoryUtil.EnsureUnpackLocation(importer.assetPath);
-				var deserializer = new STFImporter(STFDirectoryUtil.GetUnpackLocation(importer.assetPath), importer.assetPath);
-			}
-
+			//EditorGUI.indentLevel++;
+			renderAsset(importInfo, importer);
 			drawHLine();
 
-			if(Directory.Exists(Path.Combine(STFDirectoryUtil.GetUnpackLocation(importer.assetPath))) && File.Exists(Path.Combine(STFDirectoryUtil.GetUnpackLocation(importer.assetPath), importInfo.assetName + ".Prefab")))
-			{
-				EditorGUILayout.LabelField("STF Asset", EditorStyles.whiteLargeLabel);
 
-				EditorGUI.indentLevel++;
-				renderAsset(importInfo, importer);
-				if(GUILayout.Button("Instantiate", GUILayout.ExpandWidth(false))) {
-					var assetObject = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(Path.Combine(STFDirectoryUtil.GetUnpackLocation(importer.assetPath), importInfo.assetName + ".Prefab"));
+			if(importInfo != null && Directory.Exists(Path.Combine(STFDirectoryUtil.GetUnpackLocation(importer.assetPath))) && File.Exists(Path.Combine(STFDirectoryUtil.GetUnpackLocation(importer.assetPath), importInfo.Name + ".Prefab")))
+			{
+				if(GUILayout.Button("Instantiate", GUILayout.ExpandWidth(true))) {
+					var assetObject = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(Path.Combine(STFDirectoryUtil.GetUnpackLocation(importer.assetPath), importInfo.Name + ".Prefab"));
 					PrefabUtility.InstantiatePrefab(assetObject);
 				}
-				EditorGUI.indentLevel--;
-
-				drawHLine();
+				GUILayout.Space(10f);
+				if(GUILayout.Button("Reimport", GUILayout.ExpandWidth(true))) {
+					STFDirectoryUtil.EnsureUnpackLocation(importer.assetPath);
+					var deserializer = new STFImporter(STFDirectoryUtil.GetUnpackLocation(importer.assetPath), importer.assetPath);
+				}
 			}
+			else
+			{
+				//EditorGUILayout.LabelField("Import", EditorStyles.whiteLargeLabel);
+				GUILayout.Space(10f);
+				if(GUILayout.Button("Import", GUILayout.ExpandWidth(true))) {
+					STFDirectoryUtil.EnsureUnpackLocation(importer.assetPath);
+					var deserializer = new STFImporter(STFDirectoryUtil.GetUnpackLocation(importer.assetPath), importer.assetPath);
+				}
+			}
+			//EditorGUI.indentLevel--;
+
+			drawHLine();
 
 			if(GUILayout.Button("Refresh"))
 			{
@@ -73,48 +77,65 @@ namespace STF.Tools
 
 				EditorGUILayout.BeginHorizontal();
 				EditorGUILayout.PrefixLabel("Type");
-				EditorGUILayout.LabelField(asset.assetType);
+				EditorGUILayout.LabelField(asset.Type);
 				EditorGUILayout.EndHorizontal();
 
 				EditorGUILayout.BeginHorizontal();
 				EditorGUILayout.PrefixLabel("Name");
-				EditorGUILayout.LabelField(asset.assetName);
+				EditorGUILayout.LabelField(asset.Name);
 				EditorGUILayout.EndHorizontal();
 
 				EditorGUILayout.BeginHorizontal();
 				EditorGUILayout.PrefixLabel("Version");
-				EditorGUILayout.LabelField(asset.assetVersion);
+				EditorGUILayout.LabelField(asset.Version);
 				EditorGUILayout.EndHorizontal();
 
 				EditorGUILayout.BeginHorizontal();
 				EditorGUILayout.PrefixLabel("Author");
-				EditorGUILayout.LabelField(asset.assetAuthor);
+				EditorGUILayout.LabelField(asset.Author);
 				EditorGUILayout.EndHorizontal();
 
 				EditorGUILayout.BeginHorizontal();
 				EditorGUILayout.PrefixLabel("URL");
-				EditorGUILayout.LabelField(asset.assetURL);
+				EditorGUILayout.LabelField(asset.URL);
 				EditorGUILayout.EndHorizontal();
 
 				EditorGUILayout.BeginHorizontal();
 				EditorGUILayout.PrefixLabel("License");
-				EditorGUILayout.LabelField(asset.assetLicense);
+				EditorGUILayout.LabelField(asset.License);
 				EditorGUILayout.EndHorizontal();
 
 				EditorGUILayout.BeginHorizontal();
 				EditorGUILayout.PrefixLabel("License Link");
-				EditorGUILayout.LabelField(asset.assetLicenseLink);
+				EditorGUILayout.LabelField(asset.LicenseLink);
 				EditorGUILayout.EndHorizontal();
 
 				EditorGUILayout.BeginHorizontal();
 				EditorGUILayout.PrefixLabel("Id");
-				EditorGUILayout.LabelField(asset.assetId);
+				EditorGUILayout.LabelField(asset.Id);
 				EditorGUILayout.EndHorizontal();
 			}
 			else
 			{
 				EditorGUILayout.LabelField("Invalid Asset");
 			}
+		}
+		
+
+		public override Texture2D RenderStaticPreview(string assetPath, Object[] subAssets, int width, int height)
+		{
+			var importer = (STFScriptedImporter)target;
+			var importInfo = AssetDatabase.LoadAssetAtPath<STFImportInfo>(importer.assetPath);
+
+			if (importInfo == null || importInfo.Preview == null)
+				return null;
+
+			// example.PreviewIcon must be a supported format: ARGB32, RGBA32, RGB24,
+			// Alpha8 or one of float formats
+			Texture2D tex = new Texture2D (width, height);
+			EditorUtility.CopySerialized (importInfo.Preview, tex);
+
+			return tex;
 		}
 	}
 }

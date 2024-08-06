@@ -289,7 +289,7 @@ namespace STF.Serialisation
 			var mesh = new Mesh { name = (string)Json["name"] };
 
 			var meta = ScriptableObject.CreateInstance<STFMesh>();
-			meta.ResourceLocation = Path.Combine(State.TargetLocation, STFConstants.ResourceDirectoryName, mesh.name + "_" + Id + ".mesh");
+			//meta.ResourceLocation = Path.Combine(State.TargetLocation, STFConstants.ResourceDirectoryName, mesh.name + "_" + Id + ".mesh");
 			meta.OriginalBufferId = (string)Json["buffer"];
 			meta.Name = mesh.name;
 			meta.ArmatureId = (string)Json["armature"];

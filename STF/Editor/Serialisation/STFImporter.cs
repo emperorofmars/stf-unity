@@ -34,7 +34,7 @@ namespace STF.Serialisation
 				var buffers = new STFFile(Path);
 				state = new STFImportState(Context, TargetLocation, JObject.Parse(buffers.Json));
 
-				EnsureFolderStructure();
+				EnsureFolderStructure(TargetLocation);
 
 				ParseBuffers(buffers);
 				ParseResources();
@@ -67,16 +67,16 @@ namespace STF.Serialisation
 			}
 		}
 
-		private void EnsureFolderStructure()
+		private void EnsureFolderStructure(string TargetLocation)
 		{
-			var existingEntries = Directory.EnumerateFileSystemEntries(state.TargetLocation); foreach(var entry in existingEntries)
+			var existingEntries = Directory.EnumerateFileSystemEntries(TargetLocation); foreach(var entry in existingEntries)
 			{
 				if(File.Exists(entry)) File.Delete(entry);
 				else Directory.Delete(entry, true);
 			}
 			AssetDatabase.Refresh();
-			AssetDatabase.CreateFolder(state.TargetLocation, STFConstants.ResourceDirectoryName);
-			AssetDatabase.CreateFolder(state.TargetLocation, STFConstants.PreservedBuffersDirectoryName);
+			AssetDatabase.CreateFolder(TargetLocation, STFConstants.ResourceDirectoryName);
+			AssetDatabase.CreateFolder(TargetLocation, STFConstants.PreservedBuffersDirectoryName);
 			AssetDatabase.Refresh();
 		}
 
