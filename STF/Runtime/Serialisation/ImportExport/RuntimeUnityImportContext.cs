@@ -26,6 +26,7 @@ namespace STF.Serialisation
 				var tex = new Texture2D(2, 2);
 				tex.LoadImage(Resource);
 				tex.name = Name;
+				AssetCtxObjects.Add(tex);
 				return tex;
 			}
 			return null;
@@ -33,39 +34,49 @@ namespace STF.Serialisation
 
 		public void SaveGeneratedResource(Object Resource, string FileExtension)
 		{
-			throw new System.NotImplementedException();
+			AssetCtxObjects.Add(Resource);
 		}
 
 		public void SaveResource(Object Resource, string FileExtension, string Id)
 		{
-			throw new System.NotImplementedException();
+			AssetCtxObjects.Add(Resource);
+			State.AddResource(Resource, Id);
 		}
 
 		public void SaveResource<T>(Object Resource, string FileExtension, T Meta, string Id) where T : ISTFResource
 		{
-			throw new System.NotImplementedException();
+			Meta.Resource = Resource;
+			AssetCtxObjects.Add(Resource);
+			AssetCtxObjects.Add(Meta);
+			State.AddResource(Meta, Id);
 		}
 
 		public void SaveResource<T>(GameObject Resource, T Meta, string Id) where T : ISTFResource
 		{
-			throw new System.NotImplementedException();
+			Meta.Resource = Resource;
+			AssetCtxObjects.Add(Resource);
+			AssetCtxObjects.Add(Meta);
+			State.AddResource(Meta, Id);
 		}
 
 		public void SaveResource<M, R>(byte[] Resource, string FileExtension, M Meta, string Id)
 			where M : ISTFResource
 			where R : Object
 		{
-			throw new System.NotImplementedException();
+			var saved = SaveAndLoadResource(Resource, Meta.Name, FileExtension);
+			Meta.Resource = saved;
+			AssetCtxObjects.Add(Meta);
+			State.AddResource(Meta, Id);
 		}
 
 		public void SaveResourceBelongingToId(Object Resource, string FileExtension, string OwnerId)
 		{
-			throw new System.NotImplementedException();
+			AssetCtxObjects.Add(Resource);
 		}
 
 		public void SaveSubResource(Object Component, Object Resource)
 		{
-			throw new System.NotImplementedException();
+			AssetCtxObjects.Add(Component);
 		}
 	}
 }

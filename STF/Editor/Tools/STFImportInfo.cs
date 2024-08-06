@@ -49,7 +49,8 @@ namespace STF.Tools
 				var previewJson = (JObject)ret.JsonRoot[STFKeywords.ObjectType.Resources][previewID];
 				var previewImporter = STFRegistry.ResourceImporters[(string)previewJson[STFKeywords.Keys.Type]];
 				var importContext = new STFImportContext();
-				var unityContext = new EditorUnityImportContext(STFDirectoryUtil.GetUnpackLocation(path));
+				//var unityContext = new EditorUnityImportContext(STFDirectoryUtil.GetUnpackLocation(path));
+				var unityContext = new RuntimeUnityImportContext();
 				var importState = new STFImportState(importContext, unityContext, ret.JsonRoot);
 				for(int i = 0; i < Buffers.Buffers.Count; i++)
 				{
