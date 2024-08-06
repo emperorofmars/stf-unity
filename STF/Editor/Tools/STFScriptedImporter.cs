@@ -13,27 +13,42 @@ namespace STF.Tools
 	[UnityEditor.AssetImporters.ScriptedImporter(1, new string[] {"stf"})]
 	public class STFScriptedImporter : UnityEditor.AssetImporters.ScriptedImporter
 	{
+		public bool UnpackingImport = false;
+		public STFImportInfo AssetInfo;
+
 		public override void OnImportAsset(UnityEditor.AssetImporters.AssetImportContext ctx)
 		{
-			var importInfo = STFImportInfo.CreateInstance(new STFFile(ctx.assetPath), ctx.assetPath);
-			ctx.AddObjectToAsset("main", importInfo);
-			if(importInfo.Preview) ctx.AddObjectToAsset("preview", importInfo.Preview);
-			ctx.SetMainObject(importInfo);
-
-			//new STFUnpackingImporter(STFDirectoryUtil.GetUnpackLocation(assetPath), assetPath);
+			AssetInfo = new STFImportInfo(new STFFile(ctx.assetPath), ctx.assetPath);
 			
-			/*var Importer = new STFRuntimeImporter(ctx.assetPath);
-			Debug.Log(Importer.Asset);
-			ctx.AddObjectToAsset("main", Importer.Asset.gameObject);
-			foreach(var resource in Importer.STFResources)
+			if(UnpackingImport)
 			{
-				ctx.AddObjectToAsset("resource", resource);
+				AssetInfo = new STFImportInfo(new STFFile(ctx.assetPath), ctx.assetPath);
+				//ctx.AddObjectToAsset("main", AssetInfo);
+				if(AssetInfo.Preview)
+				{
+					ctx.AddObjectToAsset("preview", AssetInfo.Preview);
+					ctx.SetMainObject(AssetInfo.Preview);
+				}
+				//ctx.SetMainObject(AssetInfo);
+
+				// Auto Unpack?
+				// new STFUnpackingImporter(STFDirectoryUtil.GetUnpackLocation(assetPath), assetPath);
 			}
-			foreach(var resource in Importer.UnityResources)
+			else
 			{
-				if(resource != null) ctx.AddObjectToAsset("resource", resource);
+				var Importer = new STFRuntimeImporter(ctx.assetPath);
+				Debug.Log(Importer.Asset);
+				ctx.AddObjectToAsset("main", Importer.Asset.gameObject);
+				foreach(var resource in Importer.STFResources)
+				{
+					ctx.AddObjectToAsset("resource", resource);
+				}
+				foreach(var resource in Importer.UnityResources)
+				{
+					if(resource != null) ctx.AddObjectToAsset("resource", resource);
+				}
+				ctx.SetMainObject(Importer.Asset.gameObject);
 			}
-			ctx.SetMainObject(Importer.Asset.gameObject);*/
 		}
 	}
 }

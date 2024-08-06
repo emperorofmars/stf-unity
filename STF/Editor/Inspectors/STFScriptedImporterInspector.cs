@@ -14,53 +14,81 @@ namespace STF.Tools
 	[CustomEditor(typeof(STFScriptedImporter))]
 	public class STFScriptedImporterInspector : Editor
 	{
+		bool ChangedUnpackingImport = false;
+
+		public void OnEnable()
+		{
+			var importer = (STFScriptedImporter)target;
+			ChangedUnpackingImport = importer.UnpackingImport;
+		}
+
 		public override void OnInspectorGUI()
 		{
 			var importer = (STFScriptedImporter)target;
-			var importInfo = AssetDatabase.LoadAssetAtPath<STFImportInfo>(importer.assetPath);
+			//var importInfo = AssetDatabase.LoadAssetAtPath<STFImportInfo>(importer.assetPath);
 
 			GUILayout.Space(10f);
 			EditorGUILayout.BeginHorizontal();
-			EditorGUILayout.PrefixLabel("Binary Version");
-			if(importInfo != null && importInfo.Buffers != null) EditorGUILayout.LabelField(importInfo.Buffers.VersionMajor + "." + importInfo.Buffers.VersionMinor);
-			else EditorGUILayout.LabelField("-");
+			EditorGUILayout.PrefixLabel("Unpack into Filesystem");
+			ChangedUnpackingImport = EditorGUILayout.Toggle(ChangedUnpackingImport);
 			EditorGUILayout.EndHorizontal();
 
-			drawHLine();
-			
-			renderAsset(importInfo, importer);
-			
-			drawHLine();
-
-			if(importInfo != null && Directory.Exists(Path.Combine(STFDirectoryUtil.GetUnpackLocation(importer.assetPath))) && File.Exists(Path.Combine(STFDirectoryUtil.GetUnpackLocation(importer.assetPath), importInfo.Name + ".Prefab")))
+			if(ChangedUnpackingImport != importer.UnpackingImport && GUILayout.Button("Reimport to apply!"))
 			{
-				if(GUILayout.Button("Instantiate", GUILayout.ExpandWidth(true))) {
-					var assetObject = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(Path.Combine(STFDirectoryUtil.GetUnpackLocation(importer.assetPath), importInfo.Name + ".Prefab"));
-					PrefabUtility.InstantiatePrefab(assetObject);
-				}
-				GUILayout.Space(10f);
-				if(GUILayout.Button("Reimport", GUILayout.ExpandWidth(true))) {
-					import();
-				}
-			}
-			else
-			{
-				GUILayout.Space(10f);
-				if(GUILayout.Button("Import", GUILayout.ExpandWidth(true))) {
-					import();
-				}
-			}
-
-			drawHLine();
-
-			if(GUILayout.Button("Refresh"))
-			{
+				importer.UnpackingImport = ChangedUnpackingImport;
 				EditorUtility.SetDirty(importer);
 				importer.SaveAndReimport();
 			}
+
+			drawHLine();
+
+			if(importer.AssetInfo != null)
+			{
+				EditorGUILayout.BeginHorizontal();
+				EditorGUILayout.PrefixLabel("Binary Version");
+				if(importer.AssetInfo != null && importer.AssetInfo.Buffers != null) EditorGUILayout.LabelField(importer.AssetInfo.Buffers.VersionMajor + "." + importer.AssetInfo.Buffers.VersionMinor);
+				else EditorGUILayout.LabelField("-");
+				EditorGUILayout.EndHorizontal();
+			}
+
+			drawHLine();
+			
+			renderAsset(importer.AssetInfo);
+
+			if(importer.UnpackingImport && importer.UnpackingImport == ChangedUnpackingImport)
+			{
+				drawHLine();
+				
+				if(importer.AssetInfo != null && Directory.Exists(Path.Combine(STFDirectoryUtil.GetUnpackLocation(importer.assetPath))) && File.Exists(Path.Combine(STFDirectoryUtil.GetUnpackLocation(importer.assetPath), importer.AssetInfo.Name + ".Prefab")))
+				{
+					if(GUILayout.Button("Instantiate", GUILayout.ExpandWidth(true))) {
+						var assetObject = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(Path.Combine(STFDirectoryUtil.GetUnpackLocation(importer.assetPath), importer.AssetInfo.Name + ".Prefab"));
+						PrefabUtility.InstantiatePrefab(assetObject);
+					}
+					GUILayout.Space(10f);
+					if(GUILayout.Button("Reimport into filesystem", GUILayout.ExpandWidth(true))) {
+						importUnpacking();
+					}
+				}
+				else
+				{
+					GUILayout.Space(10f);
+					if(GUILayout.Button("Import into filesystem", GUILayout.ExpandWidth(true))) {
+						importUnpacking();
+					}
+				}
+
+				drawHLine();
+
+				if(GUILayout.Button("Refresh"))
+				{
+					EditorUtility.SetDirty(importer);
+					importer.SaveAndReimport();
+				}
+			}
 		}
 
-		private void import() {
+		private void importUnpacking() {
 			var importer = (STFScriptedImporter)target;
 			STFDirectoryUtil.EnsureUnpackLocation(importer.assetPath);
 			_ = new STFUnpackingImporter(STFDirectoryUtil.GetUnpackLocation(importer.assetPath), importer.assetPath);
@@ -72,7 +100,7 @@ namespace STF.Tools
 			GUILayout.Space(10);
 		}
 
-		private void renderAsset(STFImportInfo asset, STFScriptedImporter importer)
+		private void renderAsset(STFImportInfo asset)
 		{
 			if(asset != null)
 			{
@@ -127,15 +155,14 @@ namespace STF.Tools
 		public override Texture2D RenderStaticPreview(string assetPath, Object[] subAssets, int width, int height)
 		{
 			var importer = (STFScriptedImporter)target;
-			var importInfo = AssetDatabase.LoadAssetAtPath<STFImportInfo>(importer.assetPath);
 
-			if (importInfo == null || importInfo.Preview == null)
+			if (importer.AssetInfo == null || importer.AssetInfo.Preview == null)
 				return null;
 
 			// example.PreviewIcon must be a supported format: ARGB32, RGBA32, RGB24,
 			// Alpha8 or one of float formats
 			Texture2D tex = new Texture2D (width, height);
-			EditorUtility.CopySerialized (importInfo.Preview, tex);
+			EditorUtility.CopySerialized(importer.AssetInfo.Preview, tex);
 
 			return tex;
 		}
