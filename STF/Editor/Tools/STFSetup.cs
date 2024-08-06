@@ -1,9 +1,12 @@
+
+#if UNITY_EDITOR
+
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using STF.Serialisation;
-//using UnityEditor;
+using UnityEditor;
 using UnityEngine;
 
 namespace STF.Tools
@@ -66,29 +69,6 @@ namespace STF.Tools
 	// Determine armatures in a Unity gameobject tree.
 	public static class STFArmatureUtil
 	{
-		/*public static void FindAndSetupExternalArmatures(GameObject root)
-		{
-			var tree = root.GetComponentsInChildren<Transform>();
-			var skinnedMeshRenderers = root.GetComponentsInChildren<SkinnedMeshRenderer>();
-
-			var rootBones = new Dictionary<Transform, List<SkinnedMeshRenderer>>();
-
-			foreach(var smr in skinnedMeshRenderers)
-			{
-				// Not in tree
-				if(tree.FirstOrDefault(t => t == smr.rootBone) == null)
-				{
-					var externalArmatureInstance = smr.rootBone?.parent?.GetComponent<STFArmatureInstanceNode>();
-					if(externalArmatureInstance)
-					{
-						var smrAddon = smr.gameObject.AddComponent<STFSkinnedMeshRendererAddon>();
-						smrAddon.ArmatureInstanceId = externalArmatureInstance.GetComponent<ISTFNode>().NodeId;
-					}
-					continue;
-				}
-			}
-		}*/
-
 		public class Result
 		{
 			public Dictionary<UnityEngine.Object, UnityEngine.Object> ResourceMeta = new Dictionary<UnityEngine.Object, UnityEngine.Object>();
@@ -130,18 +110,18 @@ namespace STF.Tools
 				}
 				if(!ret.ResourceMeta.ContainsKey(smr.sharedMesh))
 				{
-					/*if(AssetDatabase.IsMainAsset(smr.sharedMesh))
+					if(AssetDatabase.IsMainAsset(smr.sharedMesh))
 					{
 						var assetPath = AssetDatabase.GetAssetPath(smr.sharedMesh);
 						var metaPath = Path.ChangeExtension(assetPath, "Asset");
 						ret.ResourceMeta.Add(smr.sharedMesh, AssetDatabase.LoadAssetAtPath<STFMesh>(metaPath));
 					}
 					else
-					{*/
+					{
 						var stfMesh = ScriptableObject.CreateInstance<STFMesh>();
 						stfMesh.ArmatureId = armatureInstance.armature.Id;
 						ret.ResourceMeta.Add(smr.sharedMesh, stfMesh);
-					//}
+					}
 				}
 			}
 			// TODO: compare bind poses to see if the same armature is used multiple times in the scene
@@ -235,3 +215,5 @@ namespace STF.Tools
 		}
 	}
 }
+
+#endif

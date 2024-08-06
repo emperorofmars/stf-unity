@@ -164,7 +164,7 @@ namespace STF.Serialisation
 			var mat = ScriptableObject.CreateInstance<MTF.Material>();
 			mat.Id = Id;
 			mat.MaterialName = (string)Json["name"];
-			mat.name = (string)Json["name"];
+			mat.name = mat.MaterialName;
 			foreach(var entry in (JObject)Json["targets"])
 			{
 				mat.PreferedShaderPerTarget.Add(new MTF.Material.ShaderTarget{Platform = entry.Key, Shaders = entry.Value.ToObject<List<string>>()});

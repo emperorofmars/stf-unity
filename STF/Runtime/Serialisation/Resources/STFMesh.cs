@@ -28,6 +28,14 @@ namespace STF.Serialisation
 		{
 			var mesh = (Mesh)Resource;
 			var meta = State.LoadMeta<STFMesh>(Resource);
+
+			Debug.Log(State.ResourceMeta.ContainsKey(Resource));
+
+			Debug.Log(meta);
+			Debug.Log(meta.Name);
+			Debug.Log(meta.name);
+			Debug.Log(mesh.name);
+
 			if(meta == null)
 			{
 				meta = ScriptableObject.CreateInstance<STFMesh>();
@@ -39,7 +47,7 @@ namespace STF.Serialisation
 			var ret = new JObject
 			{
 				{"type", STFMesh._TYPE},
-				{"name", !string.IsNullOrWhiteSpace(meta?.name) ? meta.Name : mesh.name},
+				{"name", !string.IsNullOrWhiteSpace(meta?.Name) ? meta.Name : mesh.name},
 			};
 
 			var bufferWidth = 3;
@@ -290,9 +298,9 @@ namespace STF.Serialisation
 			var mesh = new Mesh { name = (string)Json["name"] };
 
 			var meta = ScriptableObject.CreateInstance<STFMesh>();
-			//meta.ResourceLocation = Path.Combine(State.TargetLocation, STFConstants.ResourceDirectoryName, mesh.name + "_" + Id + ".mesh");
 			meta.OriginalBufferId = (string)Json["buffer"];
 			meta.Name = (string)Json["name"];
+			meta.name = meta.Name;
 			meta.ArmatureId = (string)Json["armature"];
 
 			var bufferWidth = 3;

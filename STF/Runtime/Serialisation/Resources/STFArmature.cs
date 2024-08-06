@@ -79,6 +79,7 @@ namespace STF.Serialisation
 			var meta = ScriptableObject.CreateInstance<STFArmature>();
 			meta.Id = Id;
 			meta.Name = (string)Json["name"];
+			meta.name = meta.Name;
 			go.name = meta.Name;
 
 			armatureInfo.ArmatureId = Id;

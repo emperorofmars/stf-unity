@@ -41,7 +41,8 @@ namespace STF.Serialisation
 		{
 			var ret = ScriptableObject.CreateInstance<STFUnrecognizedResource>();
 			ret.Id = Id;
-			ret.name = (string)Json["name"];
+			ret.Name = (string)Json["name"];
+			ret.name = ret.Name;
 			ret.PreservedJson = Json.ToString();
 
 			if(Json["used_buffers"] != null) foreach(string bufferId in Json["used_buffers"])

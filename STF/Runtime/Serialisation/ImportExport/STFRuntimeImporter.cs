@@ -43,15 +43,21 @@ namespace STF.Serialisation
 				Utils.RunTasks(state.Tasks);
 				Asset = ParseAsset();
 				Asset.OriginalFileName = Path.GetFileNameWithoutExtension(ImportPath);
+				Asset.gameObject.name = Asset.name;
 				Utils.RunTasks(state.Tasks);
 				Utils.RunTasks(state.PostprocessTasks);
 				RunPostProcessors();
 				Utils.RunTasks(state.Tasks);
-
-				//PrefabUtility.SaveAsPrefabAsset(Asset.gameObject, path);
 			}
 			catch(Exception e)
 			{
+				foreach(var trashObject in state.Nodes.Values)
+				{
+					if(trashObject != null)
+					{
+						UnityEngine.Object.DestroyImmediate(trashObject);
+					}
+				}
 				throw new Exception("Error during STF import: ", e);
 			}
 			finally
@@ -63,13 +69,6 @@ namespace STF.Serialisation
 						UnityEngine.Object.DestroyImmediate(trashObject);
 					}
 				}
-				/*foreach(var trashObject in state.Nodes.Values)
-				{
-					if(trashObject != null)
-					{
-						UnityEngine.Object.DestroyImmediate(trashObject);
-					}
-				}*/
 			}
 		}
 

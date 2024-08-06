@@ -23,8 +23,7 @@ namespace STF.Serialisation
 		public T LoadMeta<T>(UnityEngine.Object Resource) where T: ISTFResource
 		{
 			var assetPath = AssetDatabase.GetAssetPath(Resource);
-			var metaPath = Path.ChangeExtension(assetPath, "Asset");
-			return AssetDatabase.LoadAssetAtPath<T>(metaPath);
+			return AssetDatabase.LoadAssetAtPath<T>(Path.ChangeExtension(assetPath, "Asset"));
 		}
 		public (byte[], T, string) LoadAsset<T>(UnityEngine.Object Resource) where T: ISTFResource
 		{

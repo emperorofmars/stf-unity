@@ -56,9 +56,7 @@ namespace STF.Serialisation
 			State.AddResource(Meta, Id);
 		}
 
-		public void SaveResource<M, R>(byte[] Resource, string FileExtension, M Meta, string Id)
-			where M : ISTFResource
-			where R : Object
+		public void SaveResource<M, R>(byte[] Resource, string FileExtension, M Meta, string Id) where M: ISTFResource where R: Object
 		{
 			var saved = SaveAndLoadResource(Resource, Meta.Name, FileExtension);
 			Meta.Resource = saved;

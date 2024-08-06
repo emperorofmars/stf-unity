@@ -62,9 +62,11 @@ namespace STF.Serialisation
 		{
 			if(!FileExtension.StartsWith(".")) FileExtension = "." + FileExtension;
 			var location = Path.Combine(TargetLocation, STFConstants.ResourceDirectoryName, Meta.Name + "_" + Id + FileExtension);
+			
 			AssetDatabase.CreateAsset(Meta, Path.ChangeExtension(location, "Asset"));
 			File.WriteAllBytes(location, Resource);
 			AssetDatabase.Refresh();
+			
 			Meta.Resource = AssetDatabase.LoadAssetAtPath<R>(location);
 			State.AddResource(Meta, Id);
 			AssetDatabase.SaveAssets();

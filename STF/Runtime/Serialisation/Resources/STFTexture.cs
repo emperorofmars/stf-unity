@@ -28,7 +28,7 @@ namespace STF.Serialisation
 
 			var ret = new JObject {
 				{ "type", STFTextureImporter._TYPE },
-				{ "name", string.IsNullOrWhiteSpace(meta?.Name) ? meta.Name : Path.GetFileNameWithoutExtension(fileName) },
+				{ "name", !string.IsNullOrWhiteSpace(meta?.Name) ? meta.Name : Path.GetFileNameWithoutExtension(fileName) },
 				{ "image_format", Path.GetExtension(fileName) },
 				{ "texture_width", meta?.TextureSize != null ? meta.TextureSize.x : texture.width },
 				{ "texture_height", meta?.TextureSize != null ? meta.TextureSize.y : texture.height },
@@ -62,11 +62,10 @@ namespace STF.Serialisation
 			var meta = ScriptableObject.CreateInstance<STFTexture>();
 			meta.Id = Id;
 			meta.Name = (string)Json["name"];
+			meta.name = meta.Name;
 			meta.TextureType = (string)Json["texture_type"];
 
-			if(Json["texture_width"] != null && Json["texture_height"] != null)
-				meta.TextureSize = new Vector2Int((int)Json["texture_width"], (int)Json["texture_height"]);
-			//meta.Linear = Json["linear"] != null ? (bool)Json["linear"] : false;
+			if(Json["texture_width"] != null && Json["texture_height"] != null) meta.TextureSize = new Vector2Int((int)Json["texture_width"], (int)Json["texture_height"]);
 			meta.OriginalBufferId = (string)Json["buffer"];
 			
 			var arrayBuffer = State.Buffers[meta.OriginalBufferId];

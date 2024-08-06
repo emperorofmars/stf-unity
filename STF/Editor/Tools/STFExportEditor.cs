@@ -48,8 +48,16 @@ namespace STF.Tools
 
 			GUILayout.Space(10);
 			drawHLine();
+
+			string defaultExportFilaName = "new";
+			if(exportAsset)
+			{
+				var exportSTFAsset = exportAsset.GetComponent<ISTFAsset>();
+				defaultExportFilaName = exportSTFAsset != null && !string.IsNullOrWhiteSpace(exportSTFAsset.OriginalFileName) ? exportSTFAsset.OriginalFileName : exportAsset.name;
+			}
+
 			if(exportAsset && GUILayout.Button("Export", GUILayout.ExpandWidth(true))) {
-				var path = EditorUtility.SaveFilePanel("STF Export", "Assets", exportAsset.name + ".stf", "stf");
+				var path = EditorUtility.SaveFilePanel("STF Export", "Assets", defaultExportFilaName + ".stf", "stf");
 				if(path != null && path.Length > 0) {
 					SerializeAsSTFBinary(exportAsset, path, DebugExport);
 				}
