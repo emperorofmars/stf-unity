@@ -13,16 +13,16 @@ namespace STF.Serialisation
 {
 	// The main star for import!
 	// Parses the Json and buffers based on the provided importers from the STFImportContext.
-	public class STFImporter
+	public class STFUnpackingImporter
 	{
 		private STFImportState state;
 
-		public STFImporter(string TargetLocation, string Path)
+		public STFUnpackingImporter(string TargetLocation, string Path)
 		{
 			Parse(STFRegistry.GetDefaultImportContext(), TargetLocation, Path);
 		}
 
-		public STFImporter(STFImportContext Context, string TargetLocation, string Path)
+		public STFUnpackingImporter(STFImportContext Context, string TargetLocation, string Path)
 		{
 			Parse(Context, TargetLocation, Path);
 		}
@@ -32,7 +32,7 @@ namespace STF.Serialisation
 			try
 			{
 				var buffers = new STFFile(ImportPath);
-				var unityContext = new EditorUnityAssetImportContext(TargetLocation);
+				var unityContext = new EditorUnityImportContext(TargetLocation);
 				state = new STFImportState(Context, unityContext, JObject.Parse(buffers.Json));
 
 				EnsureFolderStructure(TargetLocation);

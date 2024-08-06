@@ -8,7 +8,7 @@ namespace STF.Serialisation
 {
 	public class STFImportState
 	{
-		public STFImportState(STFImportContext Context, IUnityAssetImportContext UnityContext, JObject JsonRoot)
+		public STFImportState(STFImportContext Context, IUnityImportContext UnityContext, JObject JsonRoot)
 		{
 			this.Context = Context;
 			this.UnityContext = UnityContext;
@@ -18,7 +18,7 @@ namespace STF.Serialisation
 		}
 
 		public STFImportContext Context {protected set; get;}
-		public IUnityAssetImportContext UnityContext {protected set; get;}
+		public IUnityImportContext UnityContext {protected set; get;}
 		public JObject JsonRoot {protected set; get;}
 
 		public string AssetId {protected set; get;}

@@ -41,7 +41,7 @@ namespace STF.Tools
 				GUILayout.Space(10f);
 				if(GUILayout.Button("Reimport", GUILayout.ExpandWidth(true))) {
 					STFDirectoryUtil.EnsureUnpackLocation(importer.assetPath);
-					var deserializer = new STFImporter(STFDirectoryUtil.GetUnpackLocation(importer.assetPath), importer.assetPath);
+					var deserializer = new STFUnpackingImporter(STFDirectoryUtil.GetUnpackLocation(importer.assetPath), importer.assetPath);
 				}
 			}
 			else
@@ -50,7 +50,7 @@ namespace STF.Tools
 				GUILayout.Space(10f);
 				if(GUILayout.Button("Import", GUILayout.ExpandWidth(true))) {
 					STFDirectoryUtil.EnsureUnpackLocation(importer.assetPath);
-					var deserializer = new STFImporter(STFDirectoryUtil.GetUnpackLocation(importer.assetPath), importer.assetPath);
+					var deserializer = new STFUnpackingImporter(STFDirectoryUtil.GetUnpackLocation(importer.assetPath), importer.assetPath);
 				}
 			}
 			//EditorGUI.indentLevel--;

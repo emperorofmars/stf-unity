@@ -66,7 +66,7 @@ namespace STF.Serialisation
 		}
 		public Texture2D SaveImageResource(byte[] Bytes, string Name, string Extension)
 		{
-			return State.UnityContext.SaveAndLoadResource<Texture2D>(Bytes, this.Name + Name, Extension);
+			return (Texture2D)State.UnityContext.SaveAndLoadResource(Bytes, this.Name + Name, Extension);
 		}
 	}
 

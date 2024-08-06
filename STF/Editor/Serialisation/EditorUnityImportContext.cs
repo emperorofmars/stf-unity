@@ -10,10 +10,10 @@ using System.IO;
 
 namespace STF.Serialisation
 {
-	public class EditorUnityAssetImportContext : IUnityAssetImportContext
+	public class EditorUnityImportContext : IUnityImportContext
 	{
 
-		public EditorUnityAssetImportContext(string TargetLocation)
+		public EditorUnityImportContext(string TargetLocation)
 		{
 			this.TargetLocation = TargetLocation;
 		}
@@ -70,13 +70,13 @@ namespace STF.Serialisation
 			AssetDatabase.SaveAssets();
 			AssetDatabase.Refresh();
 		}
-		public T SaveAndLoadResource<T>(byte[] Resource, string Name, string FileExtension) where T: Object
+		public Object SaveAndLoadResource(byte[] Resource, string Name, string FileExtension)
 		{
 			if(!FileExtension.StartsWith(".")) FileExtension = "." + FileExtension;
 			var location = Path.Combine(TargetLocation, STFConstants.ResourceDirectoryName, Name + FileExtension);
 			File.WriteAllBytes(location, Resource);
 			AssetDatabase.Refresh();
-			return AssetDatabase.LoadAssetAtPath<T>(location);
+			return AssetDatabase.LoadAssetAtPath<Object>(location);
 		}
 		public void SaveResourceBelongingToId(Object Resource, string FileExtension, string OwnerId)
 		{

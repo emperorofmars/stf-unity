@@ -6,18 +6,29 @@ using System.Threading.Tasks;
 
 namespace STF.Serialisation
 {
-	public class RuntimeUnityAssetImportContext : IUnityAssetImportContext
+	public class RuntimeUnityImportContext : IUnityImportContext
 	{
-		public STFImportState State { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+		STFImportState _State;
+		public STFImportState State { get => _State; set => _State = value; }
+
+		public List<Object> AssetCtxObjects = new List<Object>();
 
 		public Object Instantiate(Object Resource)
 		{
-			throw new System.NotImplementedException();
+			return Object.Instantiate(Resource);
 		}
 
-		public T SaveAndLoadResource<T>(byte[] Resource, string Name, string FileExtension) where T : Object
+		public Object SaveAndLoadResource(byte[] Resource, string Name, string FileExtension)
 		{
-			throw new System.NotImplementedException();
+			if(!FileExtension.StartsWith(".")) FileExtension = "." + FileExtension;
+			if(FileExtension == ".png")
+			{
+				var tex = new Texture2D(2, 2);
+				tex.LoadImage(Resource);
+				tex.name = Name;
+				return tex;
+			}
+			return null;
 		}
 
 		public void SaveGeneratedResource(Object Resource, string FileExtension)
