@@ -87,8 +87,9 @@ namespace AVA.Serialisation
 			var c = (AVAFacialTrackingSimple)Component;
 			var ret = new JObject {
 				{"type", AVAFacialTrackingSimple._TYPE},
-				{"target_mesh_instance", c.TargetMeshInstance?.GetComponent<STFMeshInstance>()?.Id},
 			};
+			var rf = new RefSerializer(ret);
+			ret.Add("target_mesh_instance", rf.NodeComponentRef(c.TargetMeshInstance?.GetComponent<STFMeshInstance>()?.Id));
 			SerializeRelationships(c, ret);
 			foreach(var m in c.Mappings)
 			{
@@ -112,8 +113,10 @@ namespace AVA.Serialisation
 			c.Id = Id;
 			ParseRelationships(Json, c);
 
+			var rf = new RefDeserializer(Json);
+
 			State.AddTask(new Task(() => {
-				c.TargetMeshInstance = (STFMeshInstance)State.NodeComponents[(string)Json["target_mesh_instance"]];
+				if(Json["target_mesh_instance"] != null) c.TargetMeshInstance = (STFMeshInstance)State.NodeComponents[rf.NodeComponentRef(Json["target_mesh_instance"])];
 			}));
 			foreach(var vis in AVAFacialTrackingSimple.VoiceVisemes15)
 			{

@@ -45,8 +45,9 @@ namespace AVA.Serialisation
 			var c = Go.AddComponent<AVAVRCPhysbones>();
 			c.Id = Id;
 			ParseRelationships(Json, c);
+			var rf = new RefDeserializer(Json);
 
-			if(State.Nodes.ContainsKey((string)Json["target"])) c.target = State.Nodes[(string)Json["target"]];
+			if(State.Nodes.ContainsKey((string)Json["target"])) c.target = State.Nodes[rf.NodeRef(Json["target"])];
 			c.targetId = (string)Json["target"];
 
 			c.version = (string)Json["version"];
@@ -75,8 +76,9 @@ namespace AVA.Serialisation
 			var c = (AVAVRCPhysbones)Component;
 			var ret = new JObject();
 			SerializeRelationships(c, ret);
+			var rf = new RefSerializer(ret);
 			ret.Add("type", AVAVRCPhysbones._TYPE);
-			ret.Add("target", c.target != null ? c.target?.GetComponents<ISTFNode>().OrderByDescending(c => c.PrefabHirarchy).FirstOrDefault()?.Id : c.targetId);
+			ret.Add("target", c.target != null ? rf.NodeRef(c.target.GetComponents<ISTFNode>().OrderByDescending(c => c.PrefabHirarchy).FirstOrDefault().Id) : rf.NodeRef(c.targetId));
 			ret.Add("version", c.version);
 			ret.Add("integration_type", c.integration_type);
 			ret.Add("pull", c.pull);

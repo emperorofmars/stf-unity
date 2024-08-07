@@ -4,6 +4,10 @@ using Newtonsoft.Json.Linq;
 using UnityEngine;
 using System.IO;
 
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
 namespace STF.Serialisation
 {
 	public class STFTexture : ISTFResource
@@ -36,8 +40,17 @@ namespace STF.Serialisation
 				{ "texture_height", meta?.TextureSize != null ? meta.TextureSize.y : texture.height },
 			};
 
+#if UNITY_EDITOR
+			TextureImporter textureImporter = (TextureImporter)TextureImporter.GetAtPath(AssetDatabase.GetAssetPath(texture));
+			switch(textureImporter.textureType)
+			{
+				case TextureImporterType.NormalMap: ret.Add("texture_type", "normal"); break;
+				default: ret.Add("texture_type", "color"); break;
+			}
+#else
 			if(meta != null && meta.TextureType != null && meta.TextureType.Length >= 0) ret.Add("texture_type", meta.TextureType);
 			else ret.Add("texture_type", texture.graphicsFormat.ToString().ToLower().EndsWith("unorm") ? "linear" : "color");
+#endif
 
 			ret.Add("buffer", rf.BufferRef(State.AddBuffer(arrayBuffer, meta?.OriginalBufferId)));
 

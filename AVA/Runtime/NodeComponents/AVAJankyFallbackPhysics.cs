@@ -40,8 +40,9 @@ namespace AVA.Serialisation
 			c.Id = Id;
 			ParseRelationships(Json, c);
 			c.Extends = Json["extends"]?.ToObject<List<string>>();
+			var rf = new RefDeserializer(Json);
 
-			if(State.Nodes.ContainsKey((string)Json["target"])) c.target = State.Nodes[(string)Json["target"]];
+			if(State.Nodes.ContainsKey((string)Json["target"])) c.target = State.Nodes[rf.NodeRef(Json["target"])];
 			c.targetId = (string)Json["target"];
 			c.pull = (float)Json["pull"];
 			c.spring = (float)Json["spring"];
@@ -62,9 +63,10 @@ namespace AVA.Serialisation
 		{
 			var c = (AVAJankyFallbackPhysics)Component;
 			var ret = new JObject();
+			var rf = new RefSerializer(ret);
 			SerializeRelationships(c, ret);
 			ret.Add("type", AVAJankyFallbackPhysics._TYPE);
-			ret.Add("target", c.target != null ? c.target?.GetComponents<ISTFNode>().OrderByDescending(c => c.PrefabHirarchy).FirstOrDefault()?.Id : c.targetId);
+			ret.Add("target", c.target != null ? rf.NodeRef(c.target.GetComponents<ISTFNode>().OrderByDescending(c => c.PrefabHirarchy).FirstOrDefault().Id) : rf.NodeRef(c.targetId));
 			ret.Add("pull", c.pull);
 			ret.Add("spring", c.spring);
 			ret.Add("stiffness", c.stiffness);
