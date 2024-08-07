@@ -72,58 +72,63 @@ namespace STF.Serialisation
 					c.Resource = (ISTFResource)EditorGUILayout.ObjectField("Parent Resource", c.Resource, typeof(STFArmature), false);
 				}
 			}
-			if(c.Resource != null && c.Resource.GetType() == typeof(STFArmature))
+			var stfArmatureValid = c.Resource != null && c.Resource.GetType() == typeof(STFArmature) && c.Mappings.Count > 0 && (c.Resource as STFArmature).Resource != null;
+			var stfArmature = c.Resource as STFArmature;
+
+			if(stfArmatureValid)
 			{
-				var armature = ((c.Resource as STFArmature).Resource as GameObject).GetComponent<STFArmatureNodeInfo>();
+				var armature = (stfArmature.Resource as GameObject).GetComponent<STFArmatureNodeInfo>();
 				if(GUILayout.Button("Map Humanoid Bones", GUILayout.ExpandWidth(false))) {
 					c.Map(armature.Bones.Select(b => b.transform).ToArray());
+				}
+
+				if(c.Mappings != null && c.Mappings.Count > 0)
+				{
+					GUILayout.Space(10f);
+					if(GUILayout.Button("Create Unity Avatar", GUILayout.ExpandWidth(false))) {
+						var path = EditorUtility.SaveFilePanel("Save Avatar", "Assets", "avatar", "asset");
+						var avatar = STFHumanoidArmature.GenerateAvatar(c, armature);
+						if (path.StartsWith(Application.dataPath)) {
+							path = "Assets" + path.Substring(Application.dataPath.Length);
+						}
+						AssetDatabase.CreateAsset(avatar, path);
+						c.GeneratedAvatar = avatar;
+					}
+				}
+				
+				GUILayout.Space(10f);
+
+				_foldoutMappings = EditorGUILayout.Foldout(_foldoutMappings, "Mappings", true, EditorStyles.foldoutHeader);
+				if(_foldoutMappings)
+				{
+					GUILayout.Space(5f);
+					//base.DrawDefaultInspector();
+
+					foreach(var mapping in STFHumanoidArmature.NameMappings)
+					{
+						EditorGUILayout.BeginHorizontal();
+						EditorGUILayout.PrefixLabel(mapping.Key);
+						var bone = c.Mappings.Find(m => m.humanoidName == mapping.Key);
+						if(bone != null)
+						{
+							bone.bone = (GameObject)EditorGUILayout.ObjectField(bone.bone, typeof(GameObject), true);
+						}
+						else
+						{
+							if(GUILayout.Button("Add Bone Mapping", GUILayout.ExpandWidth(false))) {
+								c.Mappings.Add(new STFHumanoidArmature.BoneMappingPair(mapping.Key, null));
+							}
+						}
+						EditorGUILayout.EndHorizontal();
+					}
 				}
 			}
 			else
 			{
-				EditorGUILayout.LabelField("This Resource Component can be placed only on an STFArmature!");
-			}
-
-			if(c.Resource != null && c.Resource.GetType() == typeof(STFArmature) && c.Mappings != null && c.Mappings.Count > 0)
-			{
-				var armature = ((c.Resource as STFArmature).Resource as GameObject).GetComponent<STFArmatureNodeInfo>();
-				GUILayout.Space(10f);
-				if(GUILayout.Button("Create Unity Avatar", GUILayout.ExpandWidth(false))) {
-					var path = EditorUtility.SaveFilePanel("Save Avatar", "Assets", "avatar", "asset");
-					var avatar = STFHumanoidArmature.GenerateAvatar(c, armature);
-					if (path.StartsWith(Application.dataPath)) {
-						path = "Assets" + path.Substring(Application.dataPath.Length);
-					}
-					AssetDatabase.CreateAsset(avatar, path);
-					c.GeneratedAvatar = avatar;
-				}
-			}
-
-			GUILayout.Space(10f);
-
-			_foldoutMappings = EditorGUILayout.Foldout(_foldoutMappings, "Mappings", true, EditorStyles.foldoutHeader);
-			if(_foldoutMappings)
-			{
-				GUILayout.Space(5f);
-				//base.DrawDefaultInspector();
-
-				foreach(var mapping in STFHumanoidArmature.NameMappings)
-				{
-					EditorGUILayout.BeginHorizontal();
-					EditorGUILayout.PrefixLabel(mapping.Key);
-					var bone = c.Mappings.Find(m => m.humanoidName == mapping.Key);
-					if(bone != null)
-					{
-						bone.bone = (GameObject)EditorGUILayout.ObjectField(bone.bone, typeof(GameObject), true);
-					}
-					else
-					{
-						if(GUILayout.Button("Add Bone Mapping", GUILayout.ExpandWidth(false))) {
-							c.Mappings.Add(new STFHumanoidArmature.BoneMappingPair(mapping.Key, null));
-						}
-					}
-					EditorGUILayout.EndHorizontal();
-				}
+				GUILayout.Space(20f);
+				EditorGUILayout.LabelField("STF Armature is missing its Unity resource!");
+				EditorGUILayout.LabelField("This can happen if its imported only into the AssetCtx of the ScriptedImporter.");
+				EditorGUILayout.LabelField("This can also happen if this Resource Component is not placed on an STFArmature!");
 			}
 
 			if(EditorGUI.EndChangeCheck())
