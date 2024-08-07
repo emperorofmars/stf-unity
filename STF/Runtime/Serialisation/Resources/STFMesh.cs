@@ -34,13 +34,14 @@ namespace STF.Serialisation
 				meta.Name = mesh.name;
 				meta.Resource = mesh;
 			}
-			var usedResources = new JArray();
 
 			var ret = new JObject
 			{
 				{"type", STFMesh._TYPE},
 				{"name", !string.IsNullOrWhiteSpace(meta?.Name) ? meta.Name : mesh.name},
 			};
+			
+			var rf = new RefSerializer(ret);
 
 			var bufferWidth = 3;
 			var numUVs = 0;
@@ -154,8 +155,7 @@ namespace STF.Serialisation
 			if(mesh.HasVertexAttribute(VertexAttribute.BlendIndices))
 			{
 				ret.Add("skinned", true);
-				ret.Add("armature", meta.ArmatureId);
-				usedResources.Add(meta.ArmatureId);
+				ret.Add("armature", rf.ResourceRef(meta.ArmatureId));
 
 				foreach(var num in mesh.GetBonesPerVertex()) weightLength += num;
 				weightBuffer = new byte[weightLength * (sizeof(float) + sizeof(int))];
@@ -267,13 +267,10 @@ namespace STF.Serialisation
 				}
 			}
 
-			var bufferId = State.AddBuffer(byteArray, meta.OriginalBufferId);
-			ret.Add("buffer", bufferId);
+			ret.Add("buffer", rf.BufferRef(State.AddBuffer(byteArray, meta.OriginalBufferId)));
 
 			ret.Add("components", SerdeUtil.SerializeResourceComponents(State, meta));
 			
-			ret.Add("used_resources", usedResources);
-			ret.Add("used_buffers", new JArray() {bufferId});
 			return State.AddResource(mesh, ret, meta.Id);
 		}
 	}
@@ -289,11 +286,13 @@ namespace STF.Serialisation
 		{
 			var mesh = new Mesh { name = (string)Json["name"] };
 
+			var rf = new RefDeserializer(Json);
+
 			var meta = ScriptableObject.CreateInstance<STFMesh>();
 			meta.OriginalBufferId = (string)Json["buffer"];
 			meta.Name = (string)Json["name"];
 			meta.name = meta.Name;
-			meta.ArmatureId = (string)Json["armature"];
+			meta.ArmatureId = Json.ContainsKey("armature") ? rf.ResourceRef(Json["armature"]) : null;
 
 			var bufferWidth = 3;
 			var numUVs = 0;
@@ -305,7 +304,7 @@ namespace STF.Serialisation
 			if(Json["color"] != null) bufferWidth += 4;
 			if(Json["uvs"] != null) { bufferWidth += 2 * (int)Json["uvs"]; numUVs = (int)Json["uvs"]; }
 
-			var arrayBuffer = State.Buffers[(string)Json["buffer"]];
+			var arrayBuffer = State.Buffers[rf.BufferRef(Json["buffer"])];
 
 			var vertexbuffer = new float[vertexCount * bufferWidth];
 			Buffer.BlockCopy(arrayBuffer, 0, vertexbuffer, 0, vertexCount * bufferWidth * sizeof(float));
@@ -415,9 +414,9 @@ namespace STF.Serialisation
 				mesh.SetBoneWeights(bonesPerVertexNat, weights);
 
 				State.AddTask(new Task(() => {
-					if(State.Resources.ContainsKey((string)Json["armature"]))
+					if(State.Resources.ContainsKey(meta.ArmatureId))
 					{
-						var armature = (STFArmature)State.Resources[(string)Json["armature"]];
+						var armature = (STFArmature)State.Resources[meta.ArmatureId];
 						mesh.bindposes = armature.Bindposes;
 					}
 				}));

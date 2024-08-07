@@ -26,10 +26,12 @@ namespace STF.Serialisation
 			var texture = (Texture2D)Resource;
 			var (arrayBuffer, meta, fileName) = State.UnityContext.LoadAsset<STFTexture>(texture);
 
+			var rf = new RefSerializer();
+
 			var ret = new JObject {
 				{ "type", STFTextureImporter._TYPE },
 				{ "name", !string.IsNullOrWhiteSpace(meta?.Name) ? meta.Name : Path.GetFileNameWithoutExtension(fileName) },
-				{ "image_format", Path.GetExtension(fileName) },
+				{ "image_format", Path.GetExtension(fileName).Remove(0, 1) },
 				{ "texture_width", meta?.TextureSize != null ? meta.TextureSize.x : texture.width },
 				{ "texture_height", meta?.TextureSize != null ? meta.TextureSize.y : texture.height },
 			};
@@ -37,13 +39,13 @@ namespace STF.Serialisation
 			if(meta != null && meta.TextureType != null && meta.TextureType.Length >= 0) ret.Add("texture_type", meta.TextureType);
 			else ret.Add("texture_type", texture.graphicsFormat.ToString().ToLower().EndsWith("unorm") ? "linear" : "color");
 
-			var bufferId = State.AddBuffer(arrayBuffer, meta?.OriginalBufferId);
-			ret.Add("buffer", bufferId);
+			ret.Add("buffer", rf.BufferRef(State.AddBuffer(arrayBuffer, meta?.OriginalBufferId)));
 
 			// serialize resource components
 			ret.Add("components", SerdeUtil.SerializeResourceComponents(State, meta));
 
-			ret.Add("used_buffers", new JArray() {bufferId});
+			//ret.Add("used_buffers", new JArray() {bufferId});
+			rf.MergeInto(ret);
 			return State.AddResource(Resource, ret, meta ? meta.Id : Guid.NewGuid().ToString());
 		}
 	}
@@ -65,8 +67,10 @@ namespace STF.Serialisation
 			meta.name = meta.Name;
 			meta.TextureType = (string)Json["texture_type"];
 
+			var rf = new RefDeserializer(Json);
+
 			if(Json["texture_width"] != null && Json["texture_height"] != null) meta.TextureSize = new Vector2Int((int)Json["texture_width"], (int)Json["texture_height"]);
-			meta.OriginalBufferId = (string)Json["buffer"];
+			meta.OriginalBufferId = rf.BufferRef(Json["buffer"]);
 			
 			var arrayBuffer = State.Buffers[meta.OriginalBufferId];
 			

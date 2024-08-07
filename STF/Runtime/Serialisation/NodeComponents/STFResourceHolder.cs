@@ -26,8 +26,14 @@ namespace STF.Serialisation
 			var c = (STFResourceHolder)Component;
 			var ret = new JObject {
 				{"type", c.Type},
-				{"resources_used", new JArray(c.Resources.Select(r => SerdeUtil.SerializeResource(State, r, r is AnimationClip ? c.gameObject : null)).ToList())},
 			};
+			var rf = new RefSerializer(ret);
+			foreach(var res in c.Resources)
+			{
+				var id = SerdeUtil.SerializeResource(State, res, res is AnimationClip ? c.gameObject : null);
+				rf.ResourceRef(id);
+			}
+
 			SerializeRelationships(c, ret);
 			return (c.Id, ret);
 		}
@@ -45,7 +51,8 @@ namespace STF.Serialisation
 			var c = Go.AddComponent<STFResourceHolder>();
 			ParseRelationships(Json, c);
 			c.Id = Id;
-			foreach(string r in Json["resources_used"])
+			var rf = new RefDeserializer(Json);
+			foreach(string r in rf.ResourceRefs())
 			{
 				var resource = State.Resources[r];
 				c.Resources.Add(resource is ISTFResource ? ((ISTFResource)resource).Resource : resource);

@@ -114,6 +114,8 @@ namespace STF.Serialisation
 				{"name", mat.MaterialName?.Length > 0 ? mat.MaterialName : mat.name},
 				{"targets", new JObject(mat.PreferedShaderPerTarget.Select(e => new JProperty(e.Platform, new JArray(e.Shaders))))},
 			};
+			var rf = new RefSerializer(ret);
+
 			var renderHints = new JObject();
 			foreach(var entry in mat.StyleHints)
 			{
@@ -141,6 +143,8 @@ namespace STF.Serialisation
 				propertiesJson.Add(property.Type, valuesJson);
 			}
 			ret.Add("properties", propertiesJson);
+
+			foreach(var res in mtfExportState.UsedResources) rf.ResourceRef(res);
 
 			ret.Add("used_resources", new JArray(mtfExportState.UsedResources));
 			return State.AddResource(Resource, ret, mat.Id);
@@ -182,7 +186,6 @@ namespace STF.Serialisation
 				foreach (var valueJson in propertyJson.Value)
 				{
 					var propertyValueType = (string)valueJson["type"];
-					// improve this, not just default ones & fall back to unrecognized
 					if(MTF.PropertyValueRegistry.PropertyValueImporters.ContainsKey(propertyValueType))
 					{
 						var propertyValue = MTF.PropertyValueRegistry.PropertyValueImporters[propertyValueType].ParseFromJson(mtfImportState, (JObject)valueJson);
@@ -192,6 +195,7 @@ namespace STF.Serialisation
 					}
 					else
 					{
+						// TODO unrecognized material property value
 						Debug.LogWarning($"Unrecognized Material PropertyValue: {propertyValueType}");
 					}
 				}

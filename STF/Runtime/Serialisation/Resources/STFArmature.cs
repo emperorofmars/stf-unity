@@ -29,8 +29,10 @@ namespace STF.Serialisation
 			var ret = new JObject {
 				{"type", STFArmatureImporter._TYPE},
 				{"name", armature.ArmatureName},
-				{"root", armature.Root.GetComponent<STFBoneNode>().Id}
 			};
+
+			var rf = new RefSerializer(ret);
+			ret.Add("root", rf.NodeRef(armature.Root.GetComponent<STFBoneNode>().Id));
 
 			var boneIds = new List<string>();
 			foreach(var bone in armature.Bones)
@@ -52,11 +54,12 @@ namespace STF.Serialisation
 				var boneId = bone.GetComponent<STFBoneNode>().Id;
 				boneIds.Add(boneId);
 				State.AddNode(bone.gameObject, boneJson, boneId);
+				rf.NodeRef(boneId);
 			}
-			ret.Add("bones", new JArray(boneIds));
+			//ret.Add("bones", new JArray(boneIds));
 			
 			ret.Add("components", SerdeUtil.SerializeResourceComponents(State, meta));
-			ret.Add("used_nodes", new JArray(boneIds));
+			//ret.Add("used_nodes", new JArray(boneIds));
 			return State.AddResource(armature, ret, armature.ArmatureId);
 		}
 	}
@@ -87,7 +90,8 @@ namespace STF.Serialisation
 
 			if(Json["trs"] != null) TRSUtil.ParseTRS(go, Json);
 
-			var boneIds = Json["bones"].ToObject<List<string>>();
+			var rf = new RefDeserializer(Json);
+			var boneIds = rf.NodeRefs();
 
 			var tasks = new List<Task>();
 			for(int i = 0; i < boneIds.Count; i++)
@@ -117,7 +121,7 @@ namespace STF.Serialisation
 				task.RunSynchronously();
 				if(task.Exception != null) throw task.Exception;
 			}
-			var root = armatureInfo.Bones.Find(b => b.GetComponent<STFBoneNode>().Id == (string)Json["root"]);
+			var root = armatureInfo.Bones.Find(b => b.GetComponent<STFBoneNode>().Id == rf.NodeRef(Json["root"]));
 			root.transform.SetParent(go.transform, false);
 			armatureInfo.Root = root;
 

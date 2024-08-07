@@ -206,7 +206,7 @@ namespace STF.Serialisation
 			{
 				var mappings = stfComponent.Mappings
 						.FindAll(mapping => !String.IsNullOrWhiteSpace(mapping.humanoidName) && mapping.bone != null)
-						.Select(mapping => new KeyValuePair<string, GameObject>(STFHumanoidArmature.translateHumanoidSTFtoUnity(mapping.humanoidName, stfComponent.LocomotionType), mapping.bone))
+						.Select(mapping => new KeyValuePair<string, GameObject>(translateHumanoidSTFtoUnity(mapping.humanoidName, stfComponent.LocomotionType), mapping.bone))
 						.Where(mapping => !String.IsNullOrWhiteSpace(mapping.Key)).ToList();
 				
 				var humanDescription = new HumanDescription

@@ -32,7 +32,7 @@ namespace STF.Serialisation
 				//var matIdx = int.Parse(UnityProperty.Split(':')[1].Split('.')[0]);
 				if(Component is Renderer)
 				{
-					// handle material index somehow
+					// handle material index somehow at some point despite unity
 					return "material." + State.Context.ResourceExporters[typeof(Material)].ConvertPropertyPath(State, ((Renderer)Component).sharedMaterial, materialProperty);
 				}
 				else if(Component is STFMeshInstance)
@@ -49,45 +49,43 @@ namespace STF.Serialisation
 			Mesh mesh;
 			if(Component is SkinnedMeshRenderer) mesh = (renderer as SkinnedMeshRenderer).sharedMesh;
 			else mesh = (renderer as MeshRenderer).gameObject.GetComponent<MeshFilter>().sharedMesh;
-			
-			var meshId = SerdeUtil.SerializeResource(State, mesh);
 
 			var ret = new JObject {
 				{"type", STFMeshInstance._TYPE},
-				{"mesh", meshId}
 			};
+			var rf = new RefSerializer(ret);
+			
+			ret.Add("mesh", rf.ResourceRef(SerdeUtil.SerializeResource(State, mesh)));
 
 			var meshInstance = Component.gameObject.GetComponent<STFMeshInstance>();
 			SerializeRelationships(meshInstance, ret);
 
 			if(Component is SkinnedMeshRenderer)
 			{
-				if(meshInstance.ArmatureInstanceId != null && meshInstance.ArmatureInstanceId.Length > 0) ret.Add("armature_instance", meshInstance.ArmatureInstanceId);
-				else ret.Add("armature_instance", (renderer as SkinnedMeshRenderer).rootBone.parent.GetComponent<STFArmatureInstanceNode>()?.Id);
+				if(meshInstance.ArmatureInstanceId != null && meshInstance.ArmatureInstanceId.Length > 0) ret.Add("armature_instance", rf.NodeRef(meshInstance.ArmatureInstanceId));
+				else ret.Add("armature_instance", rf.NodeRef((renderer as SkinnedMeshRenderer).rootBone.parent.GetComponent<STFArmatureInstanceNode>()?.Id));
 			}
 
 			var materials = new JArray();
 			for(int matIdx = 0; matIdx < renderer.sharedMaterials.Length; matIdx++)
 			{
-				if(meshInstance != null && meshInstance.Materials.Count > matIdx && meshInstance.Materials[matIdx] != null)
+				if(meshInstance.Materials.Count > matIdx && meshInstance.Materials[matIdx] != null)
 				{
-					materials.Add(SerdeUtil.SerializeResource(State, meshInstance.Materials[matIdx]));
+					materials.Add(rf.ResourceRef(SerdeUtil.SerializeResource(State, meshInstance.Materials[matIdx])));
+				}
+				else if(renderer.sharedMaterials[matIdx] != null)
+				{
+					materials.Add(rf.ResourceRef(SerdeUtil.SerializeResource(State, renderer.sharedMaterials[matIdx])));
 				}
 				else
 				{
-					materials.Add(SerdeUtil.SerializeResource(State, renderer.sharedMaterials[matIdx]));
+					materials.Add(null);
 				}
 			}
-			
 			ret.Add("materials", materials);
 			ret.Add("morphtarget_values", new JArray(Enumerable.Range(0, mesh.blendShapeCount).Select(i => Component is SkinnedMeshRenderer ? (renderer as SkinnedMeshRenderer).GetBlendShapeWeight(i) : 0)));
 
-			var resourcesUsed = new JArray(meshId);
-			foreach(var m in ret["materials"]) if(m != null) resourcesUsed.Add(m);
-			ret.Add("resources_used", resourcesUsed);
-			ret.Add("nodes_used", new JArray(ret["armature_instance"]));
-
-			return (meshInstance != null ? meshInstance.Id : Guid.NewGuid().ToString(), ret);
+			return (meshInstance.Id, ret);
 		}
 	}
 
@@ -110,7 +108,9 @@ namespace STF.Serialisation
 
 		public override void ParseFromJson(STFImportState State, JObject Json, string Id, GameObject Go)
 		{
-			var meta = (STFMesh)State.Resources[(string)Json["mesh"]];
+			var rf = new RefDeserializer(Json);
+
+			var meta = (STFMesh)State.Resources[rf.ResourceRef(Json["mesh"])];
 			var meshInstanceComponent = Go.AddComponent<STFMeshInstance>();
 			meshInstanceComponent.Id = Id;
 			ParseRelationships(Json, meshInstanceComponent);
@@ -127,11 +127,12 @@ namespace STF.Serialisation
 
 				c.sharedMesh = mesh;
 
-				if((string)Json["armature_instance"] != null)
+				if(Json.ContainsKey("armature_instance"))
 				{
-					if(State.Nodes.ContainsKey((string)Json["armature_instance"]))
+					var armatureInstanceId = rf.NodeRef(Json["armature_instance"]);
+					if(State.Nodes.ContainsKey(armatureInstanceId))
 					{
-						var armatureInstanceNode = State.Nodes[(string)Json["armature_instance"]];
+						var armatureInstanceNode = State.Nodes[armatureInstanceId];
 						var armatureInstance = armatureInstanceNode.GetComponent<STFArmatureInstanceNode>();
 						meshInstanceComponent.ArmatureInstance = armatureInstance;
 						c.rootBone = armatureInstance.root.transform;
@@ -140,7 +141,7 @@ namespace STF.Serialisation
 					}
 					else
 					{
-						meshInstanceComponent.ArmatureInstanceId = (string)Json["armature_instance"];
+						meshInstanceComponent.ArmatureInstanceId = armatureInstanceId;
 					}
 				}
 				
@@ -169,9 +170,9 @@ namespace STF.Serialisation
 			for(int i = 0; i < materials.Length; i++)
 			{
 				try{
-					if((string)Json["materials"][i] != null && State.Resources.ContainsKey((string)Json["materials"][i]))
+					if(Json["materials"][i] != null && Json["materials"][i].Type != JTokenType.Null && State.Resources.ContainsKey(rf.ResourceRef(Json["materials"][i])))
 					{
-						var mtfMaterial = (MTF.Material)State.Resources[(string)Json["materials"][i]];
+						var mtfMaterial = (MTF.Material)State.Resources[rf.ResourceRef(Json["materials"][i])];
 						meshInstanceComponent.Materials[i] = mtfMaterial;
 						materials[i] = mtfMaterial?.ConvertedMaterial;
 					}

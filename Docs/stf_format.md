@@ -1,11 +1,11 @@
 # STF Format
 The STF format is based on the concept of GLTF 2.0.
 
-It is a binary format made up of at least one chunk, which is always a UTF-8 encoded definition in the JSON format. All further chunks are optional buffers which have to be referenced by the JSON definition.
+It is a binary format made up of at least one buffer, which is always a UTF-8 encoded definition in the JSON format. All further buffer are optional and have to be referenced by the JSON definition.
 
 Every object in the JSON Definition is addressed by UUID. It must persist between import and export.
 
-Every object has a type. The importer/exporter for each object is selected by its type. Support for additional types can be hot-loaded.
+Every object has a `type`. The importer/exporter for each object is selected by its type. Support for additional types can be hot-loaded.
 If a type is not supported, the JSON and all referenced objects have to be preserved and re-exported unless manually removed.
 
 An STF file must stay the same between import and export, unless explicitly modified by the user.
@@ -18,81 +18,94 @@ An STF file must stay the same between import and export, unless explicitly modi
 
 ## JSON Definition
 The JSON definition consists of 6 properties in the root object.
-- `meta` Information about the file.
-- `main` UUID of the main asset.
-- `assets` A dict of UUID → asset pairs. Assets can list node UUID's, depending on the asset type. This will change in the future, an STF file will represent a single asset. The asset will still have a type.
-- `nodes` A dict of UUID → node pairs. Nodes can have a list of components and child-node UUID's.
+- `asset` Information about the file. Further properties are dependent on its `type`. The default type simply named `STF.asset` contains the ID of a single root node.
+- `nodes` A map of UUID → node pairs. Nodes can have a list of components and child-node UUID's.
 	- `components` A node's components describe additional information and behavior. For example mesh-instances or rotation constraints. Components can reference other nodes, resources and assets.
-- `resources` A list of UUID → resource pairs. Resources can reference nodes, other resources and buffers.
+- `resources` A map of UUID → resource pairs. Resources can reference nodes, other resources and buffers.
 	- `components` A resource's components describe additional information and behavior. For example humanoid definitions for armatures or LOD's for meshes.
 - `buffers` A list of buffer UUID's in the order of the binary chunks. The index of the buffer UUID corresponds to the index of the buffer in the STF file + 1. (The JSON definition is at the first index)
 
 Example:
-
-	{
-		"meta": {
-			"generator" : "stf-unity"
+```
+{
+	"asset": {
+		"id": "2895582c-b9e0-4c6b-93eb-e78d4a6f517e",
+		"type": "STF.asset",
+		"name": "Super Awesome Model",
+		"version": "1.0.0",
+		"author": "Emperor of Mars",
+		"preview": "dff26c0c-9fd7-4b52-a917-ce6e4055f4de",
+		"root_node": "4147da6b-e4ca-42db-826e-46a5dda9322f",
+		"generator": "stf-unity",
+		"timestamp": "8/6/2024 11:02:49 PM"
+	},
+	"nodes": {
+		"4147da6b-e4ca-42db-826e-46a5dda9322f": {
+			"name": "Super Awesome Model",
+			"type": "STF.node",
+			"trs": [...]
+			"children": [
+				"4147da6b-e4ca-42db-826e-46a5dda9322f",
+				"300799c5-0941-471f-b7a0-7cf17dcd1f10"
+			]
 		},
-		"main": "dc96ec16-17c2-4ac2-bd27-21f4c9a34bba",
-		"assets": {
-			"dc96ec16-17c2-4ac2-bd27-21f4c9a34bba": {
-				"name": "Test",
-				"type": "STF.asset",
-				"root": "4147da6b-e4ca-42db-826e-46a5dda9322f",
-				"author": "Emperor of Mars",
-				...
-			}
+		"4147da6b-e4ca-42db-826e-46a5dda9322f": {
+			"name": "armature"
+			"type": "STF.armature_instance",
+			"armature": "eb563e89-1e7c-40de-8c52-8a14e252f400",
+			"children": [...]
 		},
-		"nodes": {
-			"4147da6b-e4ca-42db-826e-46a5dda9322f": {
-				"name": "Super Awesome Model",
-				"type": "STF.node",
-				"trs": [...]
-				"children": [
-					"4147da6b-e4ca-42db-826e-46a5dda9322f",
-					"300799c5-0941-471f-b7a0-7cf17dcd1f10"
-				]
-			},
-			"4147da6b-e4ca-42db-826e-46a5dda9322f": {
-				"name": "armature"
-				"type": "STF.armature_instance",
-				"armature": "eb563e89-1e7c-40de-8c52-8a14e252f400",
-				"children": [...]
-			},
-			"300799c5-0941-471f-b7a0-7cf17dcd1f10": {
-				"name": "Super Awsome Mesh",
-				"type": "STF.node",
-				"components": {
-					"beeed3cb-9a6f-45ac-b41b-5bdf8e773ed3": {
-						"type": "STF.mesh_instance",
-						"mesh": "c152e896-aba8-44d8-a810-724bc619abb1",
-						"armature_instance": "4147da6b-e4ca-42db-826e-46a5dda9322f",
-						"materials": [...],
-						"morphtarget_values": [...]
-					}
+		"300799c5-0941-471f-b7a0-7cf17dcd1f10": {
+			"name": "Super Awsome Mesh",
+			"type": "STF.node",
+			"components": {
+				"beeed3cb-9a6f-45ac-b41b-5bdf8e773ed3": {
+					"type": "STF.mesh_instance",
+					"mesh": "c152e896-aba8-44d8-a810-724bc619abb1",
+					"armature_instance": "4147da6b-e4ca-42db-826e-46a5dda9322f",
+					"materials": [...],
+					"morphtarget_values": [...]
 				}
 			}
-		},
-		"resources": {
-			"c152e896-aba8-44d8-a810-724bc619abb1": {
-				"type": "STF.mesh",
-				"buffer": "4812027a-671e-42a2-8e29-187b08e8ce93",
-				...
-			},
-			"eb563e89-1e7c-40de-8c52-8a14e252f400": {
-				"type": "STF.armature",
-				...
+		}
+	},
+	"resources": {
+		"dff26c0c-9fd7-4b52-a917-ce6e4055f4de": {
+			"type": "STF.texture",
+			"name": "preview",
+			"image_format": "png",
+			"texture_width": 512,
+			"texture_height": 512,
+			"texture_type": "color",
+			"buffer": "db07e0ad-4f2b-4555-b61d-220fbf6397ac",
+			"references": {
+				"buffers": [
+					"db07e0ad-4f2b-4555-b61d-220fbf6397ac"
+				]
 			}
 		},
-		"buffers": [
-			"4812027a-671e-42a2-8e29-187b08e8ce93"
-		]
-	}
+		}
+		"c152e896-aba8-44d8-a810-724bc619abb1": {
+			"type": "STF.mesh",
+			"buffer": "4812027a-671e-42a2-8e29-187b08e8ce93",
+			...
+		},
+		"eb563e89-1e7c-40de-8c52-8a14e252f400": {
+			"type": "STF.armature",
+			...
+		}
+	},
+	"buffers": [
+		"db07e0ad-4f2b-4555-b61d-220fbf6397ac",
+		"4812027a-671e-42a2-8e29-187b08e8ce93"
+	]
+}
+```
 
 ## Extensibility
 The extensibility of the STF format is a first class feature. All implementations must provide an easy way to add and hot-load support for additional types.
 
-By default, STF supports only a limited set of features which can be expected from a common 3d file-format. These include support for meshes, armatures, animations, materials and textures.
+By default, STF supports only a limited set of features, which can be expected from a common 3d file-format. These include support for meshes, armatures, animations, materials and images/textures.
 
 Components can have defined relationships to other components and be specific to a target application.
 Components can extend or override others.

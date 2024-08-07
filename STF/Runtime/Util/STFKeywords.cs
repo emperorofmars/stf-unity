@@ -11,9 +11,7 @@ namespace STF.Serialisation
 			public static string Resources = "resources";
 			public static string ResourceComponents = "resource_components";
 			public static string Buffers = "buffers";
-		}
-		public struct ReferenceType
-		{
+			public static string Components = "components";
 		}
 		public struct Keys
 		{
@@ -21,12 +19,6 @@ namespace STF.Serialisation
 			public static string Type = "type";
 			public static string Name = "name";
 			public static string References = "references";
-			public static string Asset = ObjectType.Asset;
-			public static string Node = ObjectType.Nodes;
-			public static string NodeComponent = ObjectType.NodeComponents;
-			public static string Resource = ObjectType.Resources;
-			public static string ResourceComponent = ObjectType.ResourceComponents;
-			public static string Buffer = ObjectType.Buffers;
 		}
 	}
 }

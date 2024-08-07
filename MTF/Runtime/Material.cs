@@ -24,7 +24,9 @@ namespace MTF
 		{
 			var ret = CreateInstance<Material>();
 			ret.PreferedShaderPerTarget.Add(new ShaderTarget{ Platform = "unity3d", Shaders = new List<string>{ "Standard" } });
-			ret.Properties.Add(new Property { Type = "Albedo", Values = new List<IPropertyValue> { new ColorPropertyValue{ Color = Color.white } } } );
+			var defaultColor = ScriptableObject.CreateInstance<ColorPropertyValue>();
+			defaultColor.Color = Color.white;
+			ret.Properties.Add(new Property { Type = "Albedo", Values = new List<IPropertyValue> { defaultColor } } );
 			return ret;
 		}
 	}

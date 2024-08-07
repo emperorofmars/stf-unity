@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1.X509;
 using Newtonsoft.Json.Linq;
 using STF.ApplicationConversion;
 using UnityEngine;
@@ -31,9 +32,10 @@ namespace STF.Serialisation
 				{"type", STFTwistConstraint._TYPE},
 				{"weight", c.Weight}
 			};
+			var rf = new RefSerializer(ret);
 			if(c.Target == null && (c.TargetId == null || c.TargetId.Length == 0)) c.TargetId = c.transform.parent?.GetComponents<ISTFNode>().OrderByDescending(c => c.PrefabHirarchy).FirstOrDefault()?.Id;
 			State.AddTask(new Task(() => {
-				ret.Add("target", c.Target != null ? c.Target.GetComponent<ISTFNode>().Id : c.TargetId);
+				ret.Add("target", rf.NodeRef(c.Target != null ? c.Target.GetComponent<ISTFNode>().Id : c.TargetId));
 			}));
 			SerializeRelationships(c, ret);
 			return (c.Id, ret);
@@ -51,10 +53,13 @@ namespace STF.Serialisation
 		{
 			var c = Go.AddComponent<STFTwistConstraint>();
 			ParseRelationships(Json, c);
+			var rf = new RefDeserializer(Json);
+
 			c.Id = Id;
 			c.Weight = (float)Json["weight"];
-			c.Target = (string)Json["target"] != null && State.Nodes.ContainsKey((string)Json["target"]) ? State.Nodes[(string)Json["target"]] : null;
-			c.TargetId = (string)Json["target"];
+			c.TargetId = Json.ContainsKey("target") ? rf.NodeRef(Json["target"]) : null;
+			c.Target = State.Nodes.ContainsKey(c.TargetId) ? State.Nodes[c.TargetId] : null;
+
 			State.AddNodeComponent(c, Id);
 		}
 	}
