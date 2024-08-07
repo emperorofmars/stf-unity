@@ -24,6 +24,8 @@ namespace MTF
 		private Type[] PropertyOptions;
 		private int PropertyIndex;
 
+		private string NewPropertyName;
+
 		public void OnEnable()
 		{
 			var material = (Material)target;
@@ -72,7 +74,26 @@ namespace MTF
 			for(int i = 0; i < material.Properties.Count; i++)
 			{
 				var prop = material.Properties[i];
+				
+				EditorGUILayout.BeginHorizontal();
 				EditorGUILayout.LabelField(prop.Type);
+				GUILayout.FlexibleSpace();
+				if(GUILayout.Button("X", GUILayout.ExpandWidth(false)))
+				{
+					for(int j = 0; j < prop.Values.Count; j++)
+					{
+						if(!AssetDatabase.IsMainAsset(prop.Values[j]) && AssetDatabase.GetAssetPath(material) == AssetDatabase.GetAssetPath(prop.Values[j]))
+						{
+							AssetDatabase.RemoveObjectFromAsset(prop.Values[j]);
+							AssetDatabase.ImportAsset(AssetDatabase.GetAssetPath(material.GetInstanceID()));
+						}
+					}
+					material.Properties.RemoveAt(i);
+					i--;
+					continue;
+				}
+				EditorGUILayout.EndHorizontal();
+				
 				EditorGUI.indentLevel++;
 
 				for(int j = 0; j < prop.Values.Count; j++)
@@ -132,6 +153,16 @@ namespace MTF
 				EditorGUI.indentLevel--;
 
 				GUILayout.Space(20);
+			}
+
+			GUILayout.Space(20);
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.PrefixLabel("New Property Name");
+			NewPropertyName = EditorGUILayout.TextField(NewPropertyName);
+			EditorGUILayout.EndHorizontal();
+			if(!string.IsNullOrWhiteSpace(NewPropertyName) && GUILayout.Button("Add", GUILayout.ExpandWidth(false)))
+			{
+				material.Properties.Add(new Material.Property {Type = NewPropertyName});
 			}
 		}
 
