@@ -34,6 +34,7 @@ namespace STF.Serialisation
 				{"name", clip.name},
 				{"fps", clip.frameRate},
 			};
+			var rf = new RefSerializer(ret);
 			switch(clip.wrapMode)
 			{
 				case WrapMode.Loop: ret.Add("loop_type", "cycle"); break;
@@ -46,13 +47,13 @@ namespace STF.Serialisation
 			var meta = State.LoadMeta<STFAnimation>(clip);
 			
 			State.AddTask(new Task(() => {
-				curvesJson.Merge(convertCurves(State, AnimationUtility.GetCurveBindings(clip), clip, (GameObject)Context));
-				curvesJson.Merge(convertCurves(State, AnimationUtility.GetObjectReferenceCurveBindings(clip), clip, (GameObject)Context));
+				curvesJson.Merge(convertCurves(State, AnimationUtility.GetCurveBindings(clip), clip, (GameObject)Context, rf));
+				curvesJson.Merge(convertCurves(State, AnimationUtility.GetObjectReferenceCurveBindings(clip), clip, (GameObject)Context, rf));
 			}));
 			return State.AddResource(Resource, ret, meta ? meta.Id : Guid.NewGuid().ToString());
 		}
 
-		protected static JArray convertCurves(STFExportState State, EditorCurveBinding[] bindings, AnimationClip clip, GameObject root)
+		protected static JArray convertCurves(STFExportState State, EditorCurveBinding[] bindings, AnimationClip clip, GameObject root, RefSerializer rf)
 		{
 			var curvesJson = new JArray();
 
@@ -66,7 +67,7 @@ namespace STF.Serialisation
 					curveJson.Add("target_object_type", "node");
 					if(c.path.StartsWith("STF_NODE"))
 					{
-						curveJson.Add("node_id", c.path.Split(':').Skip(1).First());
+						curveJson.Add("node_id", rf.NodeRef(c.path.Split(':').Skip(1).First()));
 						curveJson.Add("property", c.propertyName);
 					}
 					else
@@ -76,7 +77,7 @@ namespace STF.Serialisation
 						nodes = nodes.OrderBy(k => k.PrefabHirarchy).ToArray();
 						var stfNode = nodes.FirstOrDefault();
 						
-						curveJson.Add("node_id", nodes.First().Id);
+						curveJson.Add("node_id", rf.NodeRef(nodes.First().Id));
 						curveJson.Add("property", State.Context.NodeExporters[stfNode.Type].ConvertPropertyPath(c.propertyName));
 					}
 				}
@@ -87,24 +88,24 @@ namespace STF.Serialisation
 					{
 						var pathSplit = c.path.Split(':').Skip(1).ToArray();
 						var componentId = pathSplit[pathSplit.Count() -1];
-						curveJson.Add("node_id", pathSplit[0]);
-						curveJson.Add("component_id", componentId);
+						curveJson.Add("node_id", rf.NodeRef(pathSplit[0]));
+						curveJson.Add("component_id", rf.NodeComponentRef(componentId));
 						curveJson.Add("property", c.propertyName);
 					}
 					else
 					{
 						var curveTarget = (Component)AnimationUtility.GetAnimatedObject(root, c);
 						var nodes = curveTarget.gameObject.GetComponents<ISTFNode>().OrderBy(k => k.PrefabHirarchy).ToArray();
-						curveJson.Add("node_id", nodes[0].Id);
+						curveJson.Add("node_id", rf.NodeRef(nodes[0].Id));
 						if(!c.type.IsSubclassOf(typeof(ISTFNodeComponent)))
 						{
 							var stfOwner = curveTarget.gameObject.GetComponents<ISTFNodeComponent>()?.FirstOrDefault(nc => nc.OwnedUnityComponent == curveTarget);
-							if(stfOwner != null) curveJson.Add("component_id", stfOwner.Id);
-							else curveJson.Add("component_id", State.NodeComponents[curveTarget].Id);
+							if(stfOwner != null) curveJson.Add("component_id", rf.NodeComponentRef(stfOwner.Id));
+							else curveJson.Add("component_id", rf.NodeComponentRef(State.NodeComponents[curveTarget].Id));
 						}
 						else
 						{
-							curveJson.Add("component_id", ((ISTFNodeComponent)curveTarget).Id);
+							curveJson.Add("component_id", rf.NodeComponentRef(((ISTFNodeComponent)curveTarget).Id));
 						}
 						curveJson.Add("property", State.Context.NodeComponentExporters[c.type].ConvertPropertyPath(State, curveTarget, c.propertyName));
 					}
@@ -163,6 +164,7 @@ namespace STF.Serialisation
 				name = meta.Name,
 				frameRate = (float)Json["fps"]
 			};
+			var rf = new RefDeserializer(Json);
 			switch ((string)Json["loop_type"])
 			{
 				case "cycle": ret.wrapMode = WrapMode.Loop; break;
@@ -209,7 +211,7 @@ namespace STF.Serialisation
 							}
 							if(targetObjectType == STFObjectType.Node) // node
 							{
-								var nodeId = (string)track["node_id"];
+								var nodeId = rf.NodeRef(track["node_id"]);
 								var targetType = (string)State.JsonRoot["nodes"][nodeId]["type"];
 
 								// Implement a way for a node implementation to give the proper unity type. If for example mesh-instances are implemented as a node, this will have to happen.
@@ -228,8 +230,8 @@ namespace STF.Serialisation
 							}
 							else if(targetObjectType == STFObjectType.NodeComponent) // component
 							{
-								var nodeId = (string)track["node_ids"];
-								var componentId = (string)track["component_id"];
+								var nodeId = rf.NodeRef(track["node_ids"]);
+								var componentId = rf.NodeComponentRef(track["component_id"]);
 								try
 								{
 									var targetNode = Root.GetComponentsInChildren<ISTFNode>().FirstOrDefault(n => n.Id == nodeId);
@@ -259,7 +261,7 @@ namespace STF.Serialisation
 
 							if(targetObjectType == STFObjectType.Node) // node
 							{
-								var nodeId = (string)track["node_id"];
+								var nodeId = rf.NodeRef(track["node_id"]);
 								var targetType = (string)State.JsonRoot["nodes"][nodeId]["type"];
 								var unityType = (property.StartsWith("translation") || property.StartsWith("rotation") || property.StartsWith("scale")) ? typeof(Transform) : typeof(GameObject);
 								try
@@ -285,10 +287,10 @@ namespace STF.Serialisation
 									AnimationUtility.SetObjectReferenceCurve(ret, newBinding, keyframes);
 								}
 							}
-							else if(targetObjectType == STFObjectType.NodeComponent) // component
+							else if(targetObjectType == STFObjectType.NodeComponent) // node component
 							{
-								var nodeId = (string)track["node_ids"];
-								var componentId = (string)track["component_id"];
+								var nodeId = rf.NodeRef(track["node_ids"]);
+								var componentId = rf.NodeComponentRef(track["component_id"]);
 								try
 								{
 									var targetNode = Root.GetComponentsInChildren<ISTFNode>().FirstOrDefault(n => n.Id == nodeId);
