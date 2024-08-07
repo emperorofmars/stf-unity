@@ -289,7 +289,7 @@ namespace STF.Serialisation
 			var rf = new RefDeserializer(Json);
 
 			var meta = ScriptableObject.CreateInstance<STFMesh>();
-			meta.OriginalBufferId = (string)Json["buffer"];
+			meta.OriginalBufferId = rf.BufferRef(Json["buffer"]);
 			meta.Name = (string)Json["name"];
 			meta.name = meta.Name;
 			meta.ArmatureId = Json.ContainsKey("armature") ? rf.ResourceRef(Json["armature"]) : null;

@@ -8,6 +8,8 @@ using System.Collections.Generic;
 using System;
 using System.IO;
 using System.CodeDom.Compiler;
+using STF_Util;
+using System.Linq;
 
 namespace MTF
 {
@@ -18,33 +20,119 @@ namespace MTF
 		int ShaderSelection = 0;
 		private Vector2 ShaderScrollPos;
 
+		private string[] PropertyOptionLabels;
+		private Type[] PropertyOptions;
+		private int PropertyIndex;
+
+		public void OnEnable()
+		{
+			var material = (Material)target;
+
+			PropertyOptions = ReflectionUtils.GetAllSubclasses(typeof(IPropertyValue));
+			PropertyOptionLabels = PropertyOptions.Select(t => t.Name).ToArray();
+		}
 
 		public override void OnInspectorGUI()
 		{
 			var material = (Material)target;
 
 			EditorGUILayout.PropertyField(serializedObject.FindProperty("Id"));
+			EditorGUILayout.PropertyField(serializedObject.FindProperty("MaterialName"));
 
-			EditorGUILayout.Space(20);
-
+			drawHLine();
+			
 			EditorGUILayout.BeginHorizontal();
-			EditorGUILayout.LabelField("Select Target Shader");
-			ShaderScrollPos = GUILayout.BeginScrollView(ShaderScrollPos, GUILayout.MaxHeight(100));
-			ShaderSelection = GUILayout.SelectionGrid(ShaderSelection, Converters, 1);
-			GUILayout.EndScrollView();
+			EditorGUILayout.PrefixLabel("Select Target Shader");
+			ShaderSelection = EditorGUILayout.Popup(ShaderSelection, Converters);
 			EditorGUILayout.EndHorizontal();
 
 			if(GUILayout.Button("Convert to Selected Shader"))
 			{
-				var convertState = new MTFEditorMaterialConvertState(Path.GetDirectoryName(AssetDatabase.GetAssetPath(material.ConvertedMaterial)), material.name);
-				var newUnityMaterial = MTF.ShaderConverterRegistry.MaterialConverters[Converters[ShaderSelection]].ConvertToUnityMaterial(convertState, material);
-				EditorUtility.CopySerialized(newUnityMaterial, material.ConvertedMaterial);
+				var convertState = new MTFEditorMaterialConvertState(Path.GetDirectoryName(AssetDatabase.GetAssetPath(material.ConvertedMaterial)), material.ConvertedMaterial != null ? material.ConvertedMaterial.name : material.name);
+				var newUnityMaterial = MTF.ShaderConverterRegistry.MaterialConverters[Converters[ShaderSelection]].ConvertToUnityMaterial(convertState, material, material.ConvertedMaterial);
+				if(material.ConvertedMaterial)
+				{
+					EditorUtility.CopySerialized(newUnityMaterial, material.ConvertedMaterial);
+				}
+				else
+				{
+					AssetDatabase.CreateAsset(newUnityMaterial, Path.Combine(Path.GetDirectoryName(AssetDatabase.GetAssetPath(material)), newUnityMaterial.name + ".Asset"));
+					material.ConvertedMaterial = newUnityMaterial;
+				}
 				AssetDatabase.SaveAssets();
+				AssetDatabase.Refresh();
 			}
+			GUILayout.Space(10);
+			EditorGUILayout.PropertyField(serializedObject.FindProperty("ConvertedMaterial"));
 
-			EditorGUILayout.Space(20);
+			drawHLine();
+			DrawPropertiesExcluding(serializedObject, "Id", "MaterialName", "ConvertedMaterial", "m_Script", "Properties");
+			drawHLine();
 
-			DrawPropertiesExcluding(serializedObject, "Id", "m_Script");
+			for(int i = 0; i < material.Properties.Count; i++)
+			{
+				var prop = material.Properties[i];
+				EditorGUILayout.LabelField(prop.Type);
+				EditorGUI.indentLevel++;
+
+				for(int j = 0; j < prop.Values.Count; j++)
+				{
+					EditorGUILayout.BeginHorizontal();
+					EditorGUILayout.PrefixLabel(prop.Values[j].Type);
+					prop.Values[j] = (IPropertyValue)EditorGUILayout.ObjectField(
+						prop.Values[j],
+						typeof(IPropertyValue),
+						true,
+						GUILayout.ExpandWidth(false)
+					);
+					
+					if(j > 0 && GUILayout.Button("Up", GUILayout.ExpandWidth(false)))
+					{
+						var tmp = prop.Values[j];
+						prop.Values[j] = prop.Values[j - 1];
+						prop.Values[j - 1] = tmp;
+					}
+					if(j < prop.Values.Count - 1 && GUILayout.Button("Down", GUILayout.ExpandWidth(false)))
+					{
+						var tmp = prop.Values[j];
+						prop.Values[j] = prop.Values[j + 1];
+						prop.Values[j + 1] = tmp;
+					}
+					GUILayout.Space(20);
+					GUILayout.FlexibleSpace();
+
+					if(GUILayout.Button("X", GUILayout.ExpandWidth(false)))
+					{
+						if(!AssetDatabase.IsMainAsset(prop.Values[j]) && AssetDatabase.GetAssetPath(material) == AssetDatabase.GetAssetPath(prop.Values[j]))
+						{
+							AssetDatabase.RemoveObjectFromAsset(prop.Values[j]);
+							AssetDatabase.ImportAsset(AssetDatabase.GetAssetPath(material.GetInstanceID()));
+						}
+						prop.Values.RemoveAt(j);
+						j--;
+					}
+					EditorGUILayout.EndHorizontal();
+				}
+
+				GUILayout.Space(5);
+
+				EditorGUILayout.BeginHorizontal();
+				PropertyIndex = EditorGUILayout.Popup(PropertyIndex, PropertyOptionLabels);
+				if(GUILayout.Button("Add New", GUILayout.ExpandWidth(true)))
+				{
+					var instance = (IPropertyValue)ScriptableObject.CreateInstance(PropertyOptions[PropertyIndex]);
+					prop.Values.Add(instance);
+					instance.name = PropertyOptions[PropertyIndex].Name + "_" + instance.GetInstanceID();
+					
+					AssetDatabase.AddObjectToAsset(instance, AssetDatabase.GetAssetPath(material.GetInstanceID()));
+					AssetDatabase.ImportAsset(AssetDatabase.GetAssetPath(material.GetInstanceID()));
+				}
+				EditorGUILayout.EndHorizontal();
+
+				EditorGUI.indentLevel--;
+
+				GUILayout.Space(20);
+			}
 		}
 
 		private static string[] DetectConverters()
@@ -55,6 +143,12 @@ namespace MTF
 				ret.Add(converter.Key);
 			}
 			return ret.ToArray();
+		}
+
+		private void drawHLine() {
+			GUILayout.Space(10);
+			EditorGUI.DrawRect(EditorGUILayout.GetControlRect(false, 2), Color.gray);
+			GUILayout.Space(10);
 		}
 	}
 

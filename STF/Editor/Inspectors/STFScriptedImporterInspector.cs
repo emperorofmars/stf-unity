@@ -25,7 +25,6 @@ namespace STF.Tools
 		public override void OnInspectorGUI()
 		{
 			var importer = (STFScriptedImporter)target;
-			//var importInfo = AssetDatabase.LoadAssetAtPath<STFImportInfo>(importer.assetPath);
 
 			GUILayout.Space(10f);
 			EditorGUILayout.BeginHorizontal();
@@ -104,7 +103,6 @@ namespace STF.Tools
 		{
 			if(asset != null)
 			{
-
 				EditorGUILayout.BeginHorizontal();
 				EditorGUILayout.PrefixLabel("Type");
 				EditorGUILayout.LabelField(asset.Type);

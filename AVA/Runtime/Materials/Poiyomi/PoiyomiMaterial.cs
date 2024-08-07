@@ -25,8 +25,8 @@ namespace MTF.Addons
 
 		public UnityEngine.Material ConvertToUnityMaterial(IMaterialConvertState State, Material MTFMaterial, UnityEngine.Material ExistingUnityMaterial = null)
 		{
-			var ret = ExistingUnityMaterial != null ? ExistingUnityMaterial : new UnityEngine.Material(Shader.Find(ShaderName));
-			ret.name = ExistingUnityMaterial != null ? ExistingUnityMaterial.name : MTFMaterial.name;
+			var ret = new UnityEngine.Material(Shader.Find(ShaderName));
+			ret.name = ExistingUnityMaterial != null ? ExistingUnityMaterial.name : MTFMaterial.name + "_Converted";
 
 			MaterialConverterUtil.SetTextureProperty(MTFMaterial, ret, "albedo", "_MainTex");
 			MaterialConverterUtil.SetColorProperty(MTFMaterial, ret, "albedo", "_Color");

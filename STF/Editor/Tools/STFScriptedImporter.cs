@@ -13,7 +13,7 @@ namespace STF.Tools
 	[UnityEditor.AssetImporters.ScriptedImporter(1, new string[] {"stf"})]
 	public class STFScriptedImporter : UnityEditor.AssetImporters.ScriptedImporter
 	{
-		public bool UnpackingImport = false;
+		public bool UnpackingImport = true;
 		public STFImportInfo AssetInfo;
 
 		public override void OnImportAsset(UnityEditor.AssetImporters.AssetImportContext ctx)
@@ -29,6 +29,7 @@ namespace STF.Tools
 					ctx.AddObjectToAsset("preview", AssetInfo.Preview);
 					ctx.SetMainObject(AssetInfo.Preview);
 				}
+				// TODO: else use a generic logo
 				//ctx.SetMainObject(AssetInfo);
 
 				// Auto Unpack?
@@ -41,11 +42,11 @@ namespace STF.Tools
 				ctx.AddObjectToAsset("main", Importer.Asset.gameObject);
 				foreach(var resource in Importer.STFResources)
 				{
-					ctx.AddObjectToAsset("resource", resource);
+					ctx.AddObjectToAsset("resource" + resource.GetInstanceID(), resource);
 				}
 				foreach(var resource in Importer.UnityResources)
 				{
-					if(resource != null) ctx.AddObjectToAsset("resource", resource);
+					if(resource != null) ctx.AddObjectToAsset("resource" + resource.GetInstanceID(), resource);
 				}
 				ctx.SetMainObject(Importer.Asset.gameObject);
 			}

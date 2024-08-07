@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace STF.Serialisation
+namespace STF_Util
 {
 	// from https://stackoverflow.com/questions/857705/get-all-derived-types-of-a-type
 	public static class ReflectionUtils
@@ -14,9 +14,9 @@ namespace STF.Serialisation
 			return AppDomain.CurrentDomain.GetAssemblies()
 					// alternative: .GetExportedTypes()
 					.SelectMany(domainAssembly => domainAssembly.GetTypes())
-					.Where(type => Superclass.IsAssignableFrom(type)
-					// alternative: => type.IsSubclassOf(typeof(B))
-					// alternative: && type != typeof(B)
+					.Where(type => Superclass.IsAssignableFrom(type) && !type.IsAbstract
+					// alternative: => type.IsSubclassOf(type)
+					// alternative: && type != type
 					// alternative: && ! type.IsAbstract
 					).ToArray();
 		}
