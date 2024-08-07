@@ -27,16 +27,16 @@ However, it is proprietary, undocumented and not extensible. Some open source im
 ## STF Format
 STF is a binary format based on the concept of glTF 2.0, consisting of a definition in JSON and a bunch of binary buffers.
 
-STF's JSON definition consists of `nodes` with a list of `node_components` and `resources` with a list of `resource_components`.
-All of these objects have a `type` property.
+The JSON definition consists of 6 properties in the root object, all of which must contain a `type` property.
+- `asset` Information about the file. Has to define one or more root-nodes, depending on the `type`. The default asset-type has a single root node.
+- `nodes` An object of UUID → node pairs. Nodes can have a list of components and child-node UUID's.
+	- `components` A node's components describe additional information and behavior. For example mesh-instances or rotation constraints. Components can reference other nodes, resources and assets.
+- `resources` An object of UUID → resource pairs. Resources can reference nodes, other resources and buffers.
+	- `components` A resource's components describe additional information and behavior. For example humanoid-mappings for armatures or LOD's for meshes.
+- `buffers` A list of buffer UUID's in the order of the binary chunks. The index of the buffer UUID corresponds to the index of the buffer in the STF file + 1. (The JSON definition is at the first index)
 
-By default, only the basic types a 3d format has to support are included.
+By default, only the basic types a 3d format has to support are included. These include for example meshes, armatures, images/textures, and a shader agnostic material.
 Support for additional types can be easily hot-loaded.
-
-Currently, an STF file can consist of multiple `assets`. This will change in the next version. An STF file will represent a single asset.
-
-The `asset` also has a `type`. The default asset-type consists of a single root node. A 'scene' asset-type may be added in the future, and a 'patch' asset-type exists in a rudimentary form to experiment with the ability for third parties to create addons for other models.
-For VR avatars this is very common, however the process of delivering and applying such addons is difficult for the creator and especially the end-user.
 
 ### [Read up on how the STF Format works in more detail here.](./Docs/stf_format.md)
 

@@ -17,12 +17,12 @@ An STF file must stay the same between import and export, unless explicitly modi
 - [Material Format](#material-format)
 
 ## JSON Definition
-The JSON definition consists of 6 properties in the root object.
-- `asset` Information about the file. Further properties are dependent on its `type`. The default type simply named `STF.asset` contains the ID of a single root node.
-- `nodes` A map of UUID → node pairs. Nodes can have a list of components and child-node UUID's.
+The JSON definition consists of 6 properties in the root object, all of which must contain a `type` property.
+- `asset` Information about the file. Has to define one or more root-nodes, depending on the `type`. The default asset-type has a single root node.
+- `nodes` An object of UUID → node pairs. Nodes can have a list of components and child-node UUID's.
 	- `components` A node's components describe additional information and behavior. For example mesh-instances or rotation constraints. Components can reference other nodes, resources and assets.
-- `resources` A map of UUID → resource pairs. Resources can reference nodes, other resources and buffers.
-	- `components` A resource's components describe additional information and behavior. For example humanoid definitions for armatures or LOD's for meshes.
+- `resources` An object of UUID → resource pairs. Resources can reference nodes, other resources and buffers.
+	- `components` A resource's components describe additional information and behavior. For example humanoid-mappings for armatures or LOD's for meshes.
 - `buffers` A list of buffer UUID's in the order of the binary chunks. The index of the buffer UUID corresponds to the index of the buffer in the STF file + 1. (The JSON definition is at the first index)
 
 Example:
