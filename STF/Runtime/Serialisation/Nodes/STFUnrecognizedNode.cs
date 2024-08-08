@@ -1,5 +1,6 @@
 
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using STF.Util;
 using UnityEngine;
@@ -13,8 +14,8 @@ namespace STF.Serialisation
 
 		[TextArea]
 		public string PreservedJson;
-		public List<Object> usedResources = new List<Object>();
-		public List<(string, GameObject)> usedNodes = new List<(string, GameObject)>();
+		public List<Object> ReferencedResources = new List<Object>();
+		public List<GameObject> ReferencedNodes = new List<GameObject>();
 	}
 
 	public static class STFUnrecognizedNodeExporter
@@ -22,18 +23,9 @@ namespace STF.Serialisation
 		public static string SerializeToJson(STFExportState State, GameObject Go)
 		{
 			var node = Go.GetComponent<STFUnrecognizedNode>();
-			var ret = new JObject
-			{
-				{"type", node._TYPE},
-				{"name", Go.name},
-				{"trs", TRSUtil.SerializeTRS(Go)},
-				{"children", SerdeUtil.SerializeChildren(State, Go)},
-				{"components", SerdeUtil.SerializeNodeComponents(State, Go.GetComponents<Component>())}
-			};
-			ret.Merge(JObject.Parse(node.PreservedJson));
-			foreach(var usedResource in node.usedResources) SerdeUtil.SerializeResource(State, usedResource);
-			foreach(var usedNode in node.usedNodes) SerdeUtil.SerializeNode(State, usedNode.Item2);
-
+			var ret = JObject.Parse(node.PreservedJson);
+			foreach(var usedResource in node.ReferencedResources) SerdeUtil.SerializeResource(State, usedResource);
+			foreach(var usedNode in node.ReferencedNodes) SerdeUtil.SerializeNode(State, usedNode);
 			return State.AddNode(Go, ret, node.Id);
 		}
 	}
@@ -52,14 +44,19 @@ namespace STF.Serialisation
 			
 			node._TYPE = (string)JsonAsset["type"];
 			node.PreservedJson = JsonAsset.ToString();
-			if(JsonAsset["used_resources"] != null) foreach(string resourceId in JsonAsset["used_resources"])
-			{
-				node.usedResources.Add(State.Resources[resourceId]);
-			}
-			if(JsonAsset["used_nodes"] != null) foreach(string nodeId in JsonAsset["used_nodes"])
-			{
-				node.usedNodes.Add((nodeId, State.Nodes.ContainsKey(nodeId) ? State.Nodes[nodeId] : null));
-			}
+			State.AddTask(new Task(() => {
+				if(JsonAsset[STFKeywords.Keys.References] != null)
+				{
+					if(JsonAsset[STFKeywords.Keys.References][STFKeywords.ObjectType.Resources] != null) foreach(string resourceId in JsonAsset[STFKeywords.Keys.References][STFKeywords.ObjectType.Resources])
+					{
+						node.ReferencedResources.Add(State.Resources[resourceId]);
+					}
+					if(JsonAsset[STFKeywords.Keys.References][STFKeywords.ObjectType.Nodes] != null) foreach(string nodeId in JsonAsset[STFKeywords.Keys.References][STFKeywords.ObjectType.Nodes])
+					{
+						node.ReferencedNodes.Add(State.Nodes[nodeId]);
+					}
+				}
+			}));
 
 			TRSUtil.ParseTRS(ret, JsonAsset);
 			SerdeUtil.ParseNode(State, ret, JsonAsset);

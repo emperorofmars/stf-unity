@@ -17,9 +17,9 @@ namespace STF.Serialisation
 	{
 		[TextArea]
 		public string PreservedJson;
-		public List<STFBuffer> UsedBuffers = new List<STFBuffer>();
-		public List<UnityEngine.Object> UsedResources = new List<Object>();
-		public List<(string, GameObject)> UsedNodes = new List<(string, GameObject)>();
+		public List<STFBuffer> ReferencedBuffers = new List<STFBuffer>();
+		public List<Object> ReferencedResources = new List<Object>();
+		public List<GameObject> ReferencedNodes = new List<GameObject>();
 	}
 
 	public class STFUnrecognizedResourceExporter
@@ -27,9 +27,9 @@ namespace STF.Serialisation
 		public static string SerializeToJson(STFExportState State, UnityEngine.Object Resource)
 		{
 			var r = (STFUnrecognizedResource)Resource;
-			foreach(var resourceId in r.UsedResources) SerdeUtil.SerializeResource(State, resourceId);
-			foreach(var usedNode in r.UsedNodes) SerdeUtil.SerializeNode(State, usedNode.Item2);
-			foreach(var usedbuffer in r.UsedBuffers) State.AddBuffer(usedbuffer.Data, usedbuffer.Id);
+			foreach(var usedResource in r.ReferencedResources) SerdeUtil.SerializeResource(State, usedResource);
+			foreach(var usedNode in r.ReferencedNodes) SerdeUtil.SerializeNode(State, usedNode);
+			foreach(var usedbuffer in r.ReferencedBuffers) State.AddBuffer(usedbuffer.Data, usedbuffer.Id);
 
 			return State.AddResource(r, JObject.Parse(r.PreservedJson), r.Id);
 		}
@@ -45,29 +45,41 @@ namespace STF.Serialisation
 			ret.name = ret.Name;
 			ret.PreservedJson = Json.ToString();
 
-			if(Json["used_buffers"] != null) foreach(string bufferId in Json["used_buffers"])
-			{
-				var buffer = ScriptableObject.CreateInstance<STFBuffer>();
-				buffer.Id = bufferId;
-				buffer.Data = State.Buffers[bufferId];
-				State.UnityContext.SaveResource(buffer, "Asset", bufferId);
-				ret.UsedBuffers.Add(buffer);
-			}
-			if(Json["used_resources"] != null) foreach(string resourceId in Json["used_resources"])
-			{
-				State.AddTask(new Task(() => {
-					ret.UsedResources.Add(State.Resources[resourceId]);
-				}));
-			}
-			if(Json["used_nodes"] != null) foreach(string nodeId in Json["used_nodes"])
-			{
-				var type = (string)State.JsonRoot["nodes"][nodeId]["type"];
-				if(type == null || type.Length == 0) type = STFNode._TYPE;
-				var go = State.Context.NodeImporters[type].ParseFromJson(State, (JObject)State.JsonRoot["nodes"][nodeId], nodeId);
-				go.name = (string)State.JsonRoot["nodes"][nodeId]["name"];
-				State.UnityContext.SaveResource(go, "Asset", nodeId);
-				ret.UsedNodes.Add((nodeId, go));
-			}
+			
+			State.AddPostprocessTask(new Task(() => {
+				if(Json[STFKeywords.Keys.References] != null)
+				{
+					if(Json[STFKeywords.Keys.References][STFKeywords.ObjectType.Resources] != null) foreach(string resourceId in Json[STFKeywords.Keys.References][STFKeywords.ObjectType.Resources])
+					{
+						ret.ReferencedResources.Add(State.Resources[resourceId]);
+					}
+					if(Json[STFKeywords.Keys.References][STFKeywords.ObjectType.Nodes] != null) foreach(string nodeId in Json[STFKeywords.Keys.References][STFKeywords.ObjectType.Nodes])
+					{
+						if(State.Nodes.ContainsKey(nodeId))
+						{
+							ret.ReferencedNodes.Add(State.Nodes[nodeId]);
+						}
+						else
+						{
+							var type = (string)State.JsonRoot[STFKeywords.ObjectType.Nodes][nodeId][STFKeywords.Keys.Type];
+							if(type == null || type.Length == 0) type = STFNode._TYPE;
+							var go = State.Context.NodeImporters[type].ParseFromJson(State, (JObject)State.JsonRoot[STFKeywords.ObjectType.Nodes][nodeId], nodeId);
+							go.name = (string)State.JsonRoot[STFKeywords.ObjectType.Nodes][nodeId]["name"];
+							State.UnityContext.SaveResource(go, "Asset", nodeId);
+						}
+
+						ret.ReferencedNodes.Add(State.Nodes[nodeId]);
+					}
+					if(Json[STFKeywords.Keys.References][STFKeywords.ObjectType.Buffers] != null) foreach(string bufferId in Json[STFKeywords.Keys.References][STFKeywords.ObjectType.Buffers])
+					{
+						var buffer = ScriptableObject.CreateInstance<STFBuffer>();
+						buffer.Id = bufferId;
+						buffer.Data = State.Buffers[bufferId];
+						State.UnityContext.SaveResource(buffer, "Asset", bufferId);
+						ret.ReferencedBuffers.Add(buffer);
+					}
+				}
+			}));
 			SerdeUtil.ParseResourceComponents(State, ret, Json);
 			State.UnityContext.SaveResource(ret, "Asset", Id);
 		}

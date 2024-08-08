@@ -1,5 +1,6 @@
 
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 
@@ -12,8 +13,9 @@ namespace STF.Serialisation
 
 		[TextArea]
 		public string PreservedJson;
-		public List<Object> usedResources = new List<Object>();
-		public List<(string, GameObject)> usedNodes = new List<(string, GameObject)>();
+		public List<Object> ReferencedResources = new List<Object>();
+		public List<GameObject> ReferencedNodes = new List<GameObject>();
+		public List<Component> ReferencedNodeComponentss = new List<Component>();
 	}
 
 	public class STFUnrecognizedNodeComponentExporter
@@ -23,8 +25,9 @@ namespace STF.Serialisation
 			var c = (STFUnrecognizedNodeComponent)Component;
 			var ret = JObject.Parse(c.PreservedJson);
 			//ASTFNodeComponentExporter.SerializeRelationships(c, ret);
-			foreach(var usedResource in c.usedResources) SerdeUtil.SerializeResource(State, usedResource);
-			foreach(var usedNode in c.usedNodes) SerdeUtil.SerializeNode(State, usedNode.Item2);
+			foreach(var usedResource in c.ReferencedResources) SerdeUtil.SerializeResource(State, usedResource);
+			foreach(var usedNode in c.ReferencedNodes) SerdeUtil.SerializeNode(State, usedNode);
+			// no need to explicitely export node components
 			return (c.Id, ret);
 		}
 	}
@@ -38,14 +41,24 @@ namespace STF.Serialisation
 			//ASTFNodeComponentImporter.ParseRelationships(Json, c);
 			c._TYPE = (string)Json["type"];
 			c.PreservedJson = Json.ToString();
-			if(Json["used_resources"] != null) foreach(string resourceId in Json["used_resources"])
-			{
-				c.usedResources.Add(State.Resources[resourceId]);
-			}
-			if(Json["used_nodes"] != null) foreach(string nodeId in Json["used_nodes"])
-			{
-				c.usedNodes.Add((nodeId, State.Nodes.ContainsKey(nodeId) ? State.Nodes[nodeId] : null));
-			}
+			State.AddTask(new Task(() => {
+				if(Json[STFKeywords.Keys.References] != null)
+				{
+					if(Json[STFKeywords.Keys.References][STFKeywords.ObjectType.Resources] != null) foreach(string resourceId in Json[STFKeywords.Keys.References][STFKeywords.ObjectType.Resources])
+					{
+						c.ReferencedResources.Add(State.Resources[resourceId]);
+					}
+					if(Json[STFKeywords.Keys.References][STFKeywords.ObjectType.Nodes] != null) foreach(string nodeId in Json[STFKeywords.Keys.References][STFKeywords.ObjectType.Nodes])
+					{
+						c.ReferencedNodes.Add(State.Nodes[nodeId]);
+					}
+					if(Json[STFKeywords.Keys.References][STFKeywords.ObjectType.NodeComponents] != null) foreach(string nodeComponentId in Json[STFKeywords.Keys.References][STFKeywords.ObjectType.NodeComponents])
+					{
+						c.ReferencedNodeComponentss.Add(State.NodeComponents[nodeComponentId]);
+					}
+				}
+			}));
+			State.AddNodeComponent(c, Id);
 		}
 	}
 }
