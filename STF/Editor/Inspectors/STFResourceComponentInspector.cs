@@ -78,8 +78,9 @@ namespace STF.Serialisation
 			if(GUILayout.Button("Add New Component"))
 			{
 				var instance = (ISTFResourceComponent)ScriptableObject.CreateInstance(ComponentOptions[ComponentSelection]);
-				c.Components.Add(instance);
 				instance.name = ComponentOptions[ComponentSelection].Name + "_" + instance.Id;
+				instance.Resource = c;
+				c.Components.Add(instance);
 				
 				AssetDatabase.AddObjectToAsset(instance, AssetDatabase.GetAssetPath(c.GetInstanceID()));
 				AssetDatabase.ImportAsset(AssetDatabase.GetAssetPath(c.GetInstanceID()));

@@ -72,7 +72,7 @@ namespace STF.Serialisation
 					c.Resource = (ISTFResource)EditorGUILayout.ObjectField("Parent Resource", c.Resource, typeof(STFArmature), false);
 				}
 			}
-			var stfArmatureValid = c.Resource != null && c.Resource.GetType() == typeof(STFArmature) && c.Mappings.Count > 0 && (c.Resource as STFArmature).Resource != null;
+			var stfArmatureValid = c.Resource != null && c.Resource.GetType() == typeof(STFArmature) && (c.Resource as STFArmature).Resource != null;
 			var stfArmature = c.Resource as STFArmature;
 
 			if(stfArmatureValid)
