@@ -109,7 +109,7 @@ namespace STF.Addon
 				}
 			}
 			Utils.RunTasks(ApplierContext.Tasks);
-			ret.GetComponent<ISTFAsset>().AppliedAddonIds.Add(new ISTFAsset.AppliedAddonMeta { AddonId = Addon.Id });
+			ret.GetComponent<ISTFAsset>().AppliedAddonMetas.Add(new ISTFAsset.AppliedAddonMeta { AddonId = Addon.Id });
 			return ret;
 		}
 	}

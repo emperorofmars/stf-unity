@@ -44,6 +44,7 @@ namespace STF.Serialisation
 				Asset = ParseAsset();
 				Asset.OriginalFileName = Path.GetFileNameWithoutExtension(ImportPath);
 				Asset.gameObject.name = Asset.name;
+				Asset.Degraded = true;
 				Utils.RunTasks(state.Tasks);
 				Utils.RunTasks(state.PostprocessTasks);
 				RunPostProcessors();

@@ -4,6 +4,7 @@ using UnityEngine;
 using STF_Util;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
+using Unity.Collections;
 
 namespace STF.Serialisation
 {
@@ -21,12 +22,12 @@ namespace STF.Serialisation
 		public Texture2D Preview;
 
 		public string OriginalFileName;
+		public bool Degraded = false;
 
-		[SerializeField]
-		public STFResourceMeta ImportMeta = new STFResourceMeta();
+		[SerializeField, ReadOnly] public STFResourceMeta ImportMeta = new STFResourceMeta();
 
 		[Serializable] public class AppliedAddonMeta { public string AddonId; public STFResourceMeta AddonMeta = new STFResourceMeta(); }
-		public List<AppliedAddonMeta> AppliedAddonIds = new List<AppliedAddonMeta>();
+		[ReadOnly] public List<AppliedAddonMeta> AppliedAddonMetas = new List<AppliedAddonMeta>();
 	}
 	
 	public interface ISTFAssetExporter
