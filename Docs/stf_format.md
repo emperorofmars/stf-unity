@@ -15,15 +15,21 @@ An STF file must stay the same between import and export, unless explicitly modi
 - [Extensibility](#extensibility)
 - [Addons](#addons)
 - [Material Format](#material-format)
+- [STF-Unity Specific Notes](#stf-unity-specific-notes)
 
 ## JSON Definition
-The JSON definition consists of 6 properties in the root object, all of which must contain a `type` property.
+The JSON definition consists of 4 properties in the root object, all of which must contain a `type` property.
 - `asset` Information about the file. Has to define one or more root-nodes, depending on the `type`. The default asset-type has a single root node.
-- `nodes` An object of UUID → node pairs. Nodes can have a list of components and child-node UUID's.
-	- `components` A node's components describe additional information and behavior. For example mesh-instances or rotation constraints. Components can reference other nodes, resources and assets.
-- `resources` An object of UUID → resource pairs. Resources can reference nodes, other resources and buffers.
-	- `components` A resource's components describe additional information and behavior. For example humanoid-mappings for armatures or LOD's for meshes.
-- `buffers` A list of buffer UUID's in the order of the binary chunks. The index of the buffer UUID corresponds to the index of the buffer in the STF file + 1. (The JSON definition is at the first index)
+- `nodes` An object of UUID → node pairs. Nodes can have a list of components and child-node UUID's.\
+Nodes can reference: `node_components`, `resources`, `resource_components`
+	- `components` A node's components describe additional information and behavior. For example mesh-instances or rotation constraints.\
+	Node Components can reference: `nodes`, `node_components`, `resources`, `resource_components`
+- `resources` An object of UUID → resource pairs.\
+Resources can reference: `nodes`, `node_components`, `resources`, `resource_components`, `buffers`.
+	- `components` A resource's components describe additional information and behavior. For example humanoid-mappings for armatures or LOD's for meshes.\
+	Resource Components can reference: `nodes`, `node_components`, `resources`, `resource_components`, `buffers`
+- `buffers` A list of buffer UUID's in the order of the binary chunks. The index of the buffer UUID corresponds to the index of the buffer in the STF file + 1. (The JSON definition is at the first index)\
+A buffer can be only referenced once. Should the need arise for a buffer to be referenced in multiple places, it should be represented as a resource or resource component. The resource or resource component can be referenced multiple times.
 
 Example:
 ```
@@ -35,12 +41,12 @@ Example:
 		"version": "1.0.0",
 		"author": "Emperor of Mars",
 		"preview": "dff26c0c-9fd7-4b52-a917-ce6e4055f4de",
-		"root_node": "4147da6b-e4ca-42db-826e-46a5dda9322f",
+		"root_node": "adf46b0b-5083-404c-9da1-624bf347ca8c",
 		"generator": "stf-unity",
 		"timestamp": "8/6/2024 11:02:49 PM"
 	},
 	"nodes": {
-		"4147da6b-e4ca-42db-826e-46a5dda9322f": {
+		"adf46b0b-5083-404c-9da1-624bf347ca8c": {
 			"name": "Super Awesome Model",
 			"type": "STF.node",
 			"trs": [...]
@@ -145,7 +151,7 @@ Even if a perfect conversion is not possible, the hope is that at least the best
 	...
 	"resources": {
 		"d2a3568f-0116-4f3d-866d-9ce420035de6": {
-			"type": "STF.material",
+			"type": "MTF.material",
 			"name": "Body",
 			"targets": {
 				"unity3d": [

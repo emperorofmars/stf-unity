@@ -16,7 +16,7 @@ Unfortunately, such a format does not exist.
 `fbx` is the next best thing, being the most widely supported and able to store the most of my models.
 However, it is proprietary, undocumented and not extensible. Some open source implementations are unfortunately faulty. Blender for example won't export animation curves, baking animations instead and making them useless for further editing. The paid [Better Fbx Importer & Exporter](https://blendermarket.com/products/better-fbx-importer--exporter) addon for Blender does the job.
 
-`glTF 2.0` was originally designed as a distribution format, intended to be easily loaded into GPU memory. Some projects are trying to use it as an authoring/interchange format. Apparently this is a matter of a somewhat active debate. After trying to work with glTF 2.0 in this manner and analyzing its spec I don't think it can work for interchange/authoring. [Read in detail why here!](./Docs/gltf_fails_as_an_interchange_format.md)
+`glTF 2.0` was originally designed as a distribution format, intended to be easily loaded into GPU memory. Some projects are trying to use it as an authoring/interchange format. Apparently this is a matter of a somewhat active debate. After trying to work with glTF 2.0 in this manner and analyzing its spec I don't think it can work for interchange/authoring. [Read in detail why here!](./Docs/gltf_doesnt_work_as_an_interchange_format.md)
 
 **My core requirements for an open & extensible 3d interchange format are:**
 * Extensions must be hot loadable and trivial to implement, enabling rapid prototyping of extensions.
@@ -29,9 +29,9 @@ STF is a binary format based on the concept of glTF 2.0, consisting of a definit
 
 The JSON definition consists of 6 properties in the root object, all of which must contain a `type` property.
 - `asset` Information about the file. Has to define one or more root-nodes, depending on the `type`. The default asset-type has a single root node.
-- `nodes` An object of UUID → node pairs. Nodes can have a list of components and child-node UUID's.
-	- `components` A node's components describe additional information and behavior. For example mesh-instances or rotation constraints. Components can reference other nodes, resources and assets.
-- `resources` An object of UUID → resource pairs. Resources can reference nodes, other resources and buffers.
+- `nodes` An object of UUID → node pairs.
+	- `components` A node's components describe additional information and behavior. For example mesh-instances or rotation constraints.
+- `resources` An object of UUID → resource pairs.
 	- `components` A resource's components describe additional information and behavior. For example humanoid-mappings for armatures or LOD's for meshes.
 - `buffers` A list of buffer UUID's in the order of the binary chunks. The index of the buffer UUID corresponds to the index of the buffer in the STF file + 1. (The JSON definition is at the first index)
 
@@ -73,14 +73,14 @@ STF should be able to easily host an extension for application agnostic & fully 
 Once such a format exists, I hope a sort of 'Character Editor' application can be created. End-users would be able to adapt their avatars as easily as in a video-game character creation screen and easily use them in applications like VRChat and VSeeFace. Currently, there is not even a 3d asset interchange format that satisfies basic needs, so this lies in the far future.
 
 # Current Status
-* This codebase, as well as the format itself, are the result of a lot of experimentation and could use a bit of cleanup.
-* The functionality which can be expected of a 3d model format is implemented, not to full production readiness, but enough to show how the format is supposed to work.
-* The UI/UX of STF tooling is at a bare minimum level.
+* This codebase, as well as the format itself, are the result of a lot of experimentation.
+* Most functionality which can be expected of a 3d model format is implemented, not to full production readiness, but enough to show how the format is supposed to work. The focus is to make the 'container' format work. Specific types can be perfected at a later date.
+* The UI/UX of STF tooling is not a priority, but some work has been done to make it reasonable.
 * The codebase is tested only in a 'good weather flight' manner.
 
 Alone, I can't bring a project like this to completion, as I can work on this only in my free time, while also making VR avatars as a hobby.
 
-**I can only try to prove that this works and is very possible.**
+**I alone can only try to prove that this works and is very possible.**
 
 I am available for questions and discussions.
 
