@@ -18,7 +18,7 @@ An STF file must stay the same between import and export, unless explicitly modi
 - [STF-Unity Specific Notes](#stf-unity-specific-notes)
 
 ## JSON Definition
-The JSON definition consists of 4 properties in the root object, all of which must contain a `type` property.
+The JSON definition consists of 4 `UUID → object` dictionaries in the root object. All objects must contain a `type` property.
 - `asset` Information about the file. Has to define one or more root-nodes, depending on the `type`. The default asset-type has a single root node.
 - `nodes` An object of UUID → node pairs. Nodes can have a list of components and child-node UUID's.\
 Nodes can reference: `node_components`, `resources`, `resource_components`

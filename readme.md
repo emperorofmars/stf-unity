@@ -27,7 +27,7 @@ However, it is proprietary, undocumented and not extensible. Some open source im
 ## STF Format
 STF is a binary format based on the concept of glTF 2.0, consisting of a definition in JSON and a bunch of binary buffers.
 
-The JSON definition consists of 6 properties in the root object, all of which must contain a `type` property.
+The JSON definition consists of 4 `UUID → object` dictionaries in the root object. All objects must contain a `type` property.
 - `asset` Information about the file. Has to define one or more root-nodes, depending on the `type`. The default asset-type has a single root node.
 - `nodes` An object of UUID → node pairs.
 	- `components` A node's components describe additional information and behavior. For example mesh-instances or rotation constraints.
