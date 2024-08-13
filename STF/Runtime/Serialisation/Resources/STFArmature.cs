@@ -10,6 +10,9 @@ namespace STF.Serialisation
 {
 	public class STFArmature : ISTFResource
 	{
+		public const string _TYPE = "STF.armature";
+		public override string Type => _TYPE;
+
 		public Matrix4x4[] Bindposes;
 	}
 
@@ -27,7 +30,7 @@ namespace STF.Serialisation
 			var armature = armatureGo.GetComponent<STFArmatureNodeInfo>();
 			
 			var ret = new JObject {
-				{"type", STFArmatureImporter._TYPE},
+				{"type", STFArmature._TYPE},
 				{"name", armature.ArmatureName},
 			};
 
@@ -66,8 +69,6 @@ namespace STF.Serialisation
 
 	public class STFArmatureImporter : ISTFResourceImporter
 	{
-		public const string _TYPE = "STF.armature";
-
 		public string ConvertPropertyPath(STFImportState State, UnityEngine.Object Resource, string STFProperty)
 		{
 			throw new NotImplementedException();

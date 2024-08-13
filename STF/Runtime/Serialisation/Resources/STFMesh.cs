@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
+using STF.Util;
 using Unity.Collections;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -13,8 +14,10 @@ namespace STF.Serialisation
 	public class STFMesh : ISTFResource
 	{
 		public const string _TYPE = "STF.mesh";
+		public override string Type => _TYPE;
 		public string OriginalBufferId;
 		public string ArmatureId;
+
 	}
 
 	public class STFMeshExporter : ISTFResourceExporter

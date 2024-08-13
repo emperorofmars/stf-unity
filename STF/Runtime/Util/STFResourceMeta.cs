@@ -1,9 +1,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using STF.Serialisation;
 
-namespace STF.Serialisation
+namespace STF.Util
 {
 	[Serializable]
 	public class STFResourceMeta

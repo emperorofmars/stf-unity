@@ -2,11 +2,9 @@
 #if UNITY_EDITOR
 
 using System;
-using System.IO;
 using System.Linq;
 using UnityEditor;
-using UnityEngine;
-using static STF.Serialisation.STFConstants;
+using static STF.Util.STFConstants;
 
 namespace STF.Serialisation
 {

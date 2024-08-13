@@ -5,6 +5,7 @@ using STF_Util;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using Unity.Collections;
+using STF.Util;
 
 namespace STF.Serialisation
 {

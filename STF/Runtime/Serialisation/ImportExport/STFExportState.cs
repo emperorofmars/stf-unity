@@ -2,10 +2,9 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
 using Newtonsoft.Json.Linq;
 using System.Threading.Tasks;
-using System.IO;
+using STF.Util;
 
 namespace STF.Serialisation
 {
@@ -65,7 +64,9 @@ namespace STF.Serialisation
 		}
 		public string AddResourceComponent(ISTFResourceComponent ResourceComponent, JObject Serialized, string Id = null)
 		{
-			throw new NotImplementedException();
+			if(string.IsNullOrWhiteSpace(Id)) Id = Guid.NewGuid().ToString();
+			ResourceComponents.Add(ResourceComponent, (Id, Serialized));
+			return Id;
 		}
 		public string AddBuffer(byte[] Data, string Id = null)
 		{

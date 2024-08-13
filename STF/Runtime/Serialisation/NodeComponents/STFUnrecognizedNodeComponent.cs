@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
+using STF.Util;
 using UnityEngine;
 
 namespace STF.Serialisation
@@ -13,9 +14,9 @@ namespace STF.Serialisation
 
 		[TextArea]
 		public string PreservedJson;
-		public List<Object> ReferencedResources = new List<Object>();
-		public List<GameObject> ReferencedNodes = new List<GameObject>();
-		public List<Component> ReferencedNodeComponentss = new List<Component>();
+		public List<ISTFResource> ReferencedResources = new List<ISTFResource>();
+		public List<ISTFNode> ReferencedNodes = new List<ISTFNode>();
+		public List<ISTFNodeComponent> ReferencedNodeComponentss = new List<ISTFNodeComponent>();
 	}
 
 	public class STFUnrecognizedNodeComponentExporter

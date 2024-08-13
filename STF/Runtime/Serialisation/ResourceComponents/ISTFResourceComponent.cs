@@ -13,7 +13,7 @@ namespace STF.Serialisation
 		public abstract string Type {get;}
 		public string Id = Guid.NewGuid().ToString();
 		public List<string> Targets = new List<string>();
-
+		public string Name;
 		[HideInInspector] public ISTFResource Resource;
 	}
 	

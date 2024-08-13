@@ -1,8 +1,6 @@
 
 using System.Collections.Generic;
 using UnityEngine;
-using Newtonsoft.Json.Linq;
-using System.Threading.Tasks;
 
 namespace STF.Serialisation
 {
@@ -16,6 +14,12 @@ namespace STF.Serialisation
 		public Object Instantiate(Object Resource)
 		{
 			return Object.Instantiate(Resource);
+		}
+
+		public void SaveResource(ISTFResource Resource, string Id)
+		{
+			State.AddResource(Resource, Id);
+			AssetCtxObjects.Add(Resource);
 		}
 
 		public Object SaveAndLoadResource(byte[] Resource, string Name, string FileExtension)
@@ -37,10 +41,10 @@ namespace STF.Serialisation
 			AssetCtxObjects.Add(Resource);
 		}
 
-		public void SaveResource(Object Resource, string FileExtension, string Id)
+		/*public void SaveResource(Object Resource, string FileExtension, string Id)
 		{
 			State.AddResource(Resource, Id);
-		}
+		}*/
 
 		public void SaveResource<T>(Object Resource, string FileExtension, T Meta, string Id) where T : ISTFResource
 		{

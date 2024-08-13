@@ -1,9 +1,7 @@
 using System;
-using System.Linq;
-using System.Threading.Tasks;
-using BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1.X509;
 using Newtonsoft.Json.Linq;
 using STF.ApplicationConversion;
+using STF.Util;
 using UnityEngine;
 using UnityEngine.Animations;
 
@@ -13,8 +11,9 @@ namespace STF.Serialisation
 	{
 		public const string _TYPE = "STF.constraint.twist";
 		public override string Type => _TYPE;
-		public GameObject Target;
-		public string TargetId;
+		public NodeReference Source;
+		//public GameObject Target;
+		//public string TargetId;
 		public float Weight = 0.5f;
 	}
 
@@ -33,10 +32,13 @@ namespace STF.Serialisation
 				{"weight", c.Weight}
 			};
 			var rf = new RefSerializer(ret);
-			if(c.Target == null && (c.TargetId == null || c.TargetId.Length == 0)) c.TargetId = c.transform.parent?.GetComponents<ISTFNode>().OrderByDescending(c => c.PrefabHirarchy).FirstOrDefault()?.Id;
+
+			ret.Add("source", rf.NodeRef(c.Source.Id));
+
+			/*if(c.Target == null && (c.TargetId == null || c.TargetId.Length == 0)) c.TargetId = c.transform.parent?.GetComponents<ISTFNode>().OrderByDescending(c => c.PrefabHirarchy).FirstOrDefault()?.Id;
 			State.AddTask(new Task(() => {
 				ret.Add("target", rf.NodeRef(c.Target != null ? c.Target.GetComponent<ISTFNode>().Id : c.TargetId));
-			}));
+			}));*/
 			SerializeRelationships(c, ret);
 			return (c.Id, ret);
 		}
@@ -57,8 +59,9 @@ namespace STF.Serialisation
 
 			c.Id = Id;
 			c.Weight = (float)Json["weight"];
-			c.TargetId = Json.ContainsKey("target") ? rf.NodeRef(Json["target"]) : null;
-			c.Target = State.Nodes.ContainsKey(c.TargetId) ? State.Nodes[c.TargetId] : null;
+			c.Source = Json.ContainsKey("source") ? State.GetNodeReference(rf.NodeRef(Json["source"])) : new NodeReference(Utils.GetNodeComponent(Go.transform.parent?.parent?.gameObject));
+			//c.TargetId = Json.ContainsKey("target") ? rf.NodeRef(Json["target"]) : null;
+			//c.Target = State.Nodes.ContainsKey(c.TargetId) ? State.Nodes[c.TargetId] : null;
 
 			State.AddNodeComponent(c, Id);
 		}
@@ -87,7 +90,7 @@ namespace STF.Serialisation
 
 			var source = new ConstraintSource {
 				weight = 1,
-				sourceTransform = stfComponent.Target != null ? stfComponent.Target.transform : Component.transform.parent.parent,
+				sourceTransform = stfComponent.Source.Node != null ? stfComponent.Source.Node.transform : Component.transform.parent.parent,
 			};
 			converted.AddSource(source);
 

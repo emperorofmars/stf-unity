@@ -40,9 +40,9 @@ namespace STF.Serialisation
 		public override GameObject ParseFromJson(STFImportState State, JObject JsonAsset, string Id)
 		{
 			var ret = new GameObject();
-			State.AddNode(ret, Id);
-			
 			var node = ret.AddComponent<STFAppendageNode>();
+			State.AddNode(node, Id);
+
 			node.Id = Id;
 			node.name = (string)JsonAsset["name"];
 			node.Origin = State.AssetId;

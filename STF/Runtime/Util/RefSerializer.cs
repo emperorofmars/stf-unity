@@ -1,9 +1,8 @@
 
 using System.Linq;
 using Newtonsoft.Json.Linq;
-using UnityEngine;
 
-namespace STF.Serialisation
+namespace STF.Util
 {
 	public class RefSerializer
 	{

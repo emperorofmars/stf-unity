@@ -9,13 +9,13 @@ namespace STF.Serialisation
 {
 	public class STFUnrecognizedNode : ISTFNode
 	{
-		public string _TYPE;
-		public override string Type => _TYPE;
+		public string _Type;
+		public override string Type => _Type;
 
 		[TextArea]
 		public string PreservedJson;
-		public List<Object> ReferencedResources = new List<Object>();
-		public List<GameObject> ReferencedNodes = new List<GameObject>();
+		public List<ISTFResource> ReferencedResources = new List<ISTFResource>();
+		public List<ISTFNode> ReferencedNodes = new List<ISTFNode>();
 	}
 
 	public static class STFUnrecognizedNodeExporter
@@ -35,14 +35,14 @@ namespace STF.Serialisation
 		public static GameObject ParseFromJson(STFImportState State, JObject JsonAsset, string Id)
 		{
 			var ret = new GameObject();
-			State.AddNode(ret, Id);
-			
 			var node = ret.AddComponent<STFUnrecognizedNode>();
+			State.AddNode(node, Id);
+
 			node.Id = Id;
 			node.name = (string)JsonAsset["name"];
 			node.Origin = State.AssetId;
 			
-			node._TYPE = (string)JsonAsset["type"];
+			node._Type = (string)JsonAsset["type"];
 			node.PreservedJson = JsonAsset.ToString();
 			State.AddTask(new Task(() => {
 				if(JsonAsset[STFKeywords.Keys.References] != null)

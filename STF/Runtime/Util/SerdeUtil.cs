@@ -1,8 +1,9 @@
 
 using Newtonsoft.Json.Linq;
+using STF.Serialisation;
 using UnityEngine;
 
-namespace STF.Serialisation
+namespace STF.Util
 {
 	public class SerdeUtil
 	{
@@ -80,6 +81,11 @@ namespace STF.Serialisation
 				else Debug.LogWarning($"Skipping Unrecognized Unity Node: {Go.transform.GetChild(childIdx)}");
 			}
 			return ret;
+		}
+
+		public static string SerializeNode(STFExportState State, ISTFNode Node)
+		{
+			return SerializeNode(State, Node.gameObject);
 		}
 
 		public static string SerializeNode(STFExportState State, GameObject Go)

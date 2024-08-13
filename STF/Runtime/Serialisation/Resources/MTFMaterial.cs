@@ -5,9 +5,18 @@ using UnityEngine;
 using System.Linq;
 using System.Collections.Generic;
 using STF.ApplicationConversion;
+using STF.Util;
 
 namespace STF.Serialisation
 {
+	public class MTFMaterial : ISTFResource
+	{
+		public const string _TYPE = "MTF.material";
+		public override string Type => _TYPE;
+
+		public MTF.Material Material;
+	}
+
 	public class MTFPropertyValueExportState : MTF.IPropertyValueExportState
 	{
 		STFExportState State;
@@ -110,7 +119,7 @@ namespace STF.Serialisation
 		{
 			var mat = (MTF.Material)Resource;
 			var ret = new JObject{
-				{"type", MTFMaterialImporter._TYPE},
+				{"type", MTFMaterial._TYPE},
 				{"name", mat.MaterialName?.Length > 0 ? mat.MaterialName : mat.name},
 				{"targets", new JObject(mat.PreferedShaderPerTarget.Select(e => new JProperty(e.Platform, new JArray(e.Shaders))))},
 			};
@@ -153,8 +162,6 @@ namespace STF.Serialisation
 
 	public class MTFMaterialImporter : ISTFResourceImporter
 	{
-		public static string _TYPE = "MTF.material";
-
 		public string ConvertPropertyPath(STFImportState State, UnityEngine.Object Resource, string STFProperty)
 		{
 			/*var material = (MTF.Material)Resource;
@@ -165,19 +172,23 @@ namespace STF.Serialisation
 
 		public void ParseFromJson(STFImportState State, JObject Json, string Id)
 		{
-			var mat = ScriptableObject.CreateInstance<MTF.Material>();
+			var mat = ScriptableObject.CreateInstance<MTFMaterial>();
+			mat.Material = ScriptableObject.CreateInstance<MTF.Material>();
 			mat.Id = Id;
-			mat.MaterialName = (string)Json["name"];
-			mat.name = mat.MaterialName;
+			mat.Material.Id = Id;
+			mat.Material.MaterialName = (string)Json["name"];
+			mat.name = mat.Material.MaterialName;
+
+
 			foreach(var entry in (JObject)Json["targets"])
 			{
-				mat.PreferedShaderPerTarget.Add(new MTF.Material.ShaderTarget{Platform = entry.Key, Shaders = entry.Value.ToObject<List<string>>()});
+				mat.Material.PreferedShaderPerTarget.Add(new MTF.Material.ShaderTarget{Platform = entry.Key, Shaders = entry.Value.ToObject<List<string>>()});
 			}
 			foreach(var entry in (JObject)Json["hints"])
 			{
-				mat.StyleHints.Add(new MTF.Material.StyleHint {Name = entry.Key, Value = (string)entry.Value});
+				mat.Material.StyleHints.Add(new MTF.Material.StyleHint {Name = entry.Key, Value = (string)entry.Value});
 			}
-			State.UnityContext.SaveResource(mat, "Asset", Id);
+			State.UnityContext.SaveResource(mat, Id);
 			
 			var mtfImportState = new MTFPropertyValueImportState(State);
 			foreach(var propertyJson in (JObject)Json["properties"])
@@ -199,11 +210,11 @@ namespace STF.Serialisation
 						Debug.LogWarning($"Unrecognized Material PropertyValue: {propertyValueType}");
 					}
 				}
-				mat.Properties.Add(mtfProperty);
+				mat.Material.Properties.Add(mtfProperty);
 			}
 
 			// Convert to MTF.Material
-			var shaderTargets = mat.PreferedShaderPerTarget.Find(t => t.Platform == "unity3d");
+			var shaderTargets = mat.Material.PreferedShaderPerTarget.Find(t => t.Platform == "unity3d");
 			MTF.IMaterialConverter converter = MTF.ShaderConverterRegistry.MaterialConverters[MTF.StandardConverter._SHADER_NAME];
 			if(shaderTargets != null) foreach(var shaderTarget in shaderTargets.Shaders)
 			{
@@ -214,9 +225,10 @@ namespace STF.Serialisation
 				}
 			}
 			var mtfConvertState = new MTFMaterialConvertState(State, mat.name + Id);
-			var unityMaterial = converter.ConvertToUnityMaterial(mtfConvertState, mat);
-			unityMaterial.name = mat.MaterialName + "_Converted";
-			mat.ConvertedMaterial = unityMaterial;
+			var unityMaterial = converter.ConvertToUnityMaterial(mtfConvertState, mat.Material);
+			unityMaterial.name = mat.Material.MaterialName + "_Converted";
+			mat.Material.ConvertedMaterial = unityMaterial;
+
 			State.UnityContext.SaveResourceBelongingToId(unityMaterial, "Asset", Id);
 			return;
 		}

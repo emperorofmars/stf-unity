@@ -26,7 +26,7 @@ namespace AVA.ApplicationConversion
 			var avaAvatar = (AVAAvatar)Component;
 
 			var vrcAvatar = Component.gameObject.AddComponent<VRCAvatarDescriptor>();
-			if(avaAvatar.viewport_parent != null && avaAvatar.viewport_position != null) vrcAvatar.ViewPosition = avaAvatar.viewport_parent.transform.position - State.Root.transform.position + avaAvatar.viewport_position;
+			if(avaAvatar.viewport_parent != null && avaAvatar.viewport_position != null) vrcAvatar.ViewPosition = avaAvatar.viewport_parent.Node.transform.position - State.Root.transform.position + avaAvatar.viewport_position;
 
 			if(avaAvatar.GetComponent<Animator>() == null)
 			{

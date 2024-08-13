@@ -7,7 +7,7 @@ using System.Linq;
 using Newtonsoft.Json.Linq;
 using UnityEditor;
 using STF.Util;
-using static STF.Serialisation.STFConstants;
+using static STF.Util.STFConstants;
 
 namespace STF.Serialisation
 {

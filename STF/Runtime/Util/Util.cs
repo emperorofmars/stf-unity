@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using STF.Serialisation;
 using UnityEngine;
@@ -7,7 +8,7 @@ namespace STF.Util
 {
 	public static class Utils
 	{
-		public static string getPath(Transform transform, bool relative = false)
+		/*public static string getPath(Transform transform, bool relative = false)
 		{
 			string path = "/" + transform.name;
 			while (transform.parent != null)
@@ -17,7 +18,7 @@ namespace STF.Util
 			}
 			if(relative) path = path.Substring(1);
 			return path;
-		}
+		}*/
 		public static string getPath(Transform root, Transform transform, bool relative = false)
 		{
 			string path = "/" + transform.name;
@@ -55,6 +56,11 @@ namespace STF.Util
 			}
 			while(Tasks.Count > 0);
 			originalTasks.Clear();
+		}
+
+		public static ISTFNode GetNodeComponent(GameObject Go)
+		{
+			return Go?.GetComponents<ISTFNode>()?.OrderByDescending(c => c.PrefabHirarchy).FirstOrDefault();
 		}
 	}
 }

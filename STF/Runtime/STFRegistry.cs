@@ -89,9 +89,9 @@ namespace STF.Serialisation
 		};
 		public static readonly Dictionary<string, ISTFResourceImporter> DefaultResourceImporters = new Dictionary<string, ISTFResourceImporter>() {
 			{STFMesh._TYPE, new STFMeshImporter()},
-			{STFTextureImporter._TYPE, new STFTextureImporter()},
-			{STFArmatureImporter._TYPE, new STFArmatureImporter()},
-			{MTFMaterialImporter._TYPE, new MTFMaterialImporter()},
+			{STFTexture._TYPE, new STFTextureImporter()},
+			{STFArmature._TYPE, new STFArmatureImporter()},
+			{MTFMaterial._TYPE, new MTFMaterialImporter()},
 		};
 		public static readonly Dictionary<Type, ISTFResourceExporter> DefaultResourceExporters = new Dictionary<Type, ISTFResourceExporter>() {
 			{typeof(Mesh), new STFMeshExporter()},

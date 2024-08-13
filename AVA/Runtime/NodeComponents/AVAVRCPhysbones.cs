@@ -6,6 +6,8 @@ using UnityEngine;
 using System.Threading.Tasks;
 using STF.Serialisation;
 using System.Linq;
+using STF.Util;
+
 
 
 
@@ -47,7 +49,7 @@ namespace AVA.Serialisation
 			ParseRelationships(Json, c);
 			var rf = new RefDeserializer(Json);
 
-			if(State.Nodes.ContainsKey((string)Json["target"])) c.target = State.Nodes[rf.NodeRef(Json["target"])];
+			if(State.Nodes.ContainsKey((string)Json["target"])) c.target = State.Nodes[rf.NodeRef(Json["target"])].gameObject;
 			c.targetId = (string)Json["target"];
 
 			c.version = (string)Json["version"];

@@ -65,10 +65,10 @@ namespace AVA.Serialisation
 		{
 			var c = (AVAAvatar)target;
 			
-			if(c.viewport_parent && editPosition)
+			if(c.viewport_parent?.Node && editPosition)
 			{
-				Handles.Label(c.viewport_parent.transform.position + c.viewport_position, "Viewport");
-				c.viewport_position = Handles.DoPositionHandle(c.viewport_parent.transform.position + c.viewport_position, Quaternion.identity) - c.viewport_parent.transform.position;
+				Handles.Label(c.viewport_parent.Node.transform.position + c.viewport_position, "Viewport");
+				c.viewport_position = Handles.DoPositionHandle(c.viewport_parent.Node.transform.position + c.viewport_position, Quaternion.identity) - c.viewport_parent.Node.transform.position;
 			}
 		}
 		
@@ -77,9 +77,9 @@ namespace AVA.Serialisation
 		{
 			var c = (AVAAvatar)target;
 
-			if(c && c.viewport_parent)
+			if(c && c.viewport_parent.Node)
 			{
-				Gizmos.DrawSphere(c.viewport_parent.transform.position + c.viewport_position, 0.01f);
+				Gizmos.DrawSphere(c.viewport_parent.Node.transform.position + c.viewport_position, 0.01f);
 			}
 		}
 	}

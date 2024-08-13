@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 
-namespace STF.Serialisation
+namespace STF.Util
 {
 	public class RefDeserializer
 	{

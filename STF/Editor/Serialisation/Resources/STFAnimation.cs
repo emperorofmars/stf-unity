@@ -5,16 +5,16 @@ using UnityEngine;
 using System.Threading.Tasks;
 using UnityEditor;
 using System.Linq;
-using static STF.Serialisation.STFConstants;
-using System.Collections.Generic;
 using STF.Util;
 using STF.ApplicationConversion;
+using static STF.Util.STFConstants;
 
 namespace STF.Serialisation
 {
 	public class STFAnimation : ISTFResource
 	{
 		public const string _TYPE = "STF.animation";
+		public override string Type => _TYPE;
 	}
 
 	public class STFAnimationExporter : ISTFResourceExporter

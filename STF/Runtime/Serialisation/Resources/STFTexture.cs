@@ -3,6 +3,8 @@ using System;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 using System.IO;
+using STF.Util;
+
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -12,6 +14,9 @@ namespace STF.Serialisation
 {
 	public class STFTexture : ISTFResource
 	{
+		public const string _TYPE = "STF.texture";
+		public override string Type => _TYPE;
+
 		public string TextureType = "color"; // linear | normal
 		public Vector2Int TextureSize;
 		//public bool Linear;
@@ -33,7 +38,7 @@ namespace STF.Serialisation
 			var rf = new RefSerializer();
 
 			var ret = new JObject {
-				{ "type", STFTextureImporter._TYPE },
+				{ "type", STFTexture._TYPE },
 				{ "name", !string.IsNullOrWhiteSpace(meta?.Name) ? meta.Name : Path.GetFileNameWithoutExtension(fileName) },
 				{ "image_format", Path.GetExtension(fileName).Remove(0, 1) },
 				{ "texture_width", meta?.TextureSize != null ? meta.TextureSize.x : texture.width },
@@ -65,8 +70,6 @@ namespace STF.Serialisation
 
 	public class STFTextureImporter : ISTFResourceImporter
 	{
-		public const string _TYPE = "STF.texture";
-
 		public string ConvertPropertyPath(STFImportState State, UnityEngine.Object Resource, string STFProperty)
 		{
 			throw new NotImplementedException();

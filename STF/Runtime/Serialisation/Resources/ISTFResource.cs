@@ -8,11 +8,12 @@ namespace STF.Serialisation
 {
 	public abstract class ISTFResource : ScriptableObject
 	{
+		public abstract string Type { get; }
 		[Id] public string Id = System.Guid.NewGuid().ToString();
 		public string Name;
 		public Object Resource;
 		public List<ISTFResourceComponent> Components = new List<ISTFResourceComponent>();
-
+		public ISTFResource Fallback;
 	}
 
 	public interface ISTFResourceExporter

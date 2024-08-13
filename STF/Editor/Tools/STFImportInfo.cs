@@ -8,6 +8,7 @@ using STF.Serialisation;
 using System;
 using System.Drawing;
 using UnityEditorInternal;
+using STF.Util;
 
 namespace STF.Tools
 {

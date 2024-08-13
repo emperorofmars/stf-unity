@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Newtonsoft.Json.Linq;
 using System.Threading.Tasks;
+using STF.Util;
 
 namespace STF.Serialisation
 {
@@ -29,16 +30,16 @@ namespace STF.Serialisation
 		public string AssetId {protected set; get;}
 
 		// id -> node
-		public Dictionary<string, GameObject> Nodes {protected set; get;} = new Dictionary<string, GameObject>();
+		public Dictionary<string, ISTFNode> Nodes {protected set; get;} = new Dictionary<string, ISTFNode>();
 
 		// id -> node_component
-		public Dictionary<string, Component> NodeComponents {protected set; get;} = new Dictionary<string, Component>();
+		public Dictionary<string, ISTFNodeComponent> NodeComponents {protected set; get;} = new Dictionary<string, ISTFNodeComponent>();
 
 		// id -> resource
-		public Dictionary<string, Object> Resources {protected set; get;} = new Dictionary<string, Object>();
+		public Dictionary<string, ISTFResource> Resources {protected set; get;} = new Dictionary<string, ISTFResource>();
 
 		// id -> resource_component
-		public Dictionary<string, Object> ResourceComponents {protected set; get;} = new Dictionary<string, Object>();
+		public Dictionary<string, ISTFResourceComponent> ResourceComponents {protected set; get;} = new Dictionary<string, ISTFResourceComponent>();
 
 		// id -> buffer
 		public Dictionary<string, byte[]> Buffers {protected set; get;} = new Dictionary<string, byte[]>();
@@ -55,9 +56,9 @@ namespace STF.Serialisation
 
 		public virtual void AddTask(Task task) { Tasks.Add(task); }
 		public virtual void AddPostprocessTask(Task task) { PostprocessTasks.Add(task); }
-		public virtual void AddNode(GameObject Node, string Id) { Nodes.Add(Id, Node); }
-		public virtual void AddNodeComponent(Component Component, string Id) { NodeComponents.Add(Id, Component); }
-		public virtual void AddResource(Object Resource, string Id) { Resources.Add(Id, Resource); }
+		public virtual void AddNode(ISTFNode Node, string Id) { Nodes.Add(Id, Node); }
+		public virtual void AddNodeComponent(ISTFNodeComponent Component, string Id) { NodeComponents.Add(Id, Component); }
+		public virtual void AddResource(ISTFResource Resource, string Id) { Resources.Add(Id, Resource); }
 		public virtual void AddResourceComponent(ISTFResourceComponent Component, ISTFResource ResourceMeta, string Id)
 		{
 			Component.Resource = ResourceMeta;
@@ -72,6 +73,21 @@ namespace STF.Serialisation
 		{
 			if(PostprocessContext.ContainsKey(Resource)) PostprocessContext[Resource] = Context;
 			else PostprocessContext.Add(Resource, Context);
+		}
+
+		public virtual NodeReference GetNodeReference(string Id)
+		{
+			return Nodes.ContainsKey(Id) ? new NodeReference(Nodes[Id]) : new NodeReference(Id);
+		}
+
+		public virtual NodeReference GetNodeComponentReference(string Id)
+		{
+			return Nodes.ContainsKey(Id) ? new NodeReference(Nodes[Id]) : new NodeReference(Id);
+		}
+
+		internal void AddResource(Object resource, string id)
+		{
+			throw new System.NotImplementedException();
 		}
 	}
 }

@@ -1,5 +1,5 @@
 using System;
-using static STF.Serialisation.STFConstants;
+using static STF.Util.STFConstants;
 
 namespace STF.Serialisation
 {

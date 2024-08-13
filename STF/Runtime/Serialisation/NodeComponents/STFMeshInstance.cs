@@ -5,6 +5,7 @@ using System.Linq;
 using Newtonsoft.Json.Linq;
 using STF.Addon;
 using STF.ApplicationConversion;
+using STF.Util;
 using UnityEngine;
 
 namespace STF.Serialisation
@@ -101,7 +102,7 @@ namespace STF.Serialisation
 			{
 				var matIdx = int.Parse(STFProperty.Split(':')[1].Split('.')[0]);
 
-				return "material." + State.Context.ResourceImporters[MTFMaterialImporter._TYPE].ConvertPropertyPath(State, ((STFMeshInstance)Component).Materials[matIdx], STFProperty.Substring(STFProperty.IndexOf('.') + 1));
+				return "material." + State.Context.ResourceImporters[MTFMaterial._TYPE].ConvertPropertyPath(State, ((STFMeshInstance)Component).Materials[matIdx], STFProperty.Substring(STFProperty.IndexOf('.') + 1));
 			}
 			throw new Exception("Unrecognized animation property: " + STFProperty);
 		}
@@ -172,9 +173,9 @@ namespace STF.Serialisation
 				try{
 					if(Json["materials"][i] != null && Json["materials"][i].Type != JTokenType.Null && State.Resources.ContainsKey(rf.ResourceRef(Json["materials"][i])))
 					{
-						var mtfMaterial = (MTF.Material)State.Resources[rf.ResourceRef(Json["materials"][i])];
-						meshInstanceComponent.Materials[i] = mtfMaterial;
-						materials[i] = mtfMaterial?.ConvertedMaterial;
+						var mtfMaterial = (MTFMaterial)State.Resources[rf.ResourceRef(Json["materials"][i])];
+						meshInstanceComponent.Materials[i] = mtfMaterial.Material;
+						materials[i] = mtfMaterial.Material?.ConvertedMaterial;
 					}
 					else
 					{

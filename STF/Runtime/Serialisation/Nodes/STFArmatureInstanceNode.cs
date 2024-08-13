@@ -82,12 +82,13 @@ namespace STF.Serialisation
 			var rf = new RefDeserializer(JsonAsset);
 			var armatureResource = (STFArmature)State.Resources[rf.ResourceRef(JsonAsset["armature"])];
 			var go = (GameObject)State.UnityContext.Instantiate(armatureResource.Resource);
-			State.AddNode(go, Id);
 			var armatureInfo = go.GetComponent<STFArmatureNodeInfo>();
 
 			go.name = (string)JsonAsset["name"];
 
 			var armatureInstance = go.AddComponent<STFArmatureInstanceNode>();
+			State.AddNode(armatureInstance, Id);
+
 			armatureInstance.Id = Id;
 			armatureInstance.name = (string)JsonAsset["name"];
 			armatureInstance.PrefabHirarchy = 1;
@@ -114,7 +115,7 @@ namespace STF.Serialisation
 				armatureInstance.bones[i] = boneInstance.gameObject;
 
 				TRSUtil.ParseTRS(boneInstance.gameObject, boneInstanceJson);
-				State.AddNode(boneInstance.gameObject, boneInstance.Id);
+				State.AddNode(boneInstance, boneInstance.Id);
 
 				SerdeUtil.ParseNode(State, boneInstance.gameObject, boneInstanceJson);
 			}

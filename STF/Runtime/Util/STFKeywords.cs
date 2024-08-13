@@ -1,5 +1,5 @@
 
-namespace STF.Serialisation
+namespace STF.Util
 {
 	public struct STFKeywords
 	{

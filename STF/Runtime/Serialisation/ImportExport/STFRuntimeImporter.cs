@@ -3,10 +3,10 @@ using UnityEngine;
 using System;
 using System.IO;
 using Newtonsoft.Json.Linq;
-using STF.Util;
-using static STF.Serialisation.STFConstants;
+using static STF.Util.STFConstants;
 using System.Collections.Generic;
 using System.Linq;
+using STF.Util;
 
 namespace STF.Serialisation
 {
@@ -18,7 +18,7 @@ namespace STF.Serialisation
 		private RuntimeUnityImportContext unityContext;
 
 		public ISTFAsset Asset;
-		public List<UnityEngine.Object> STFResources => state.Resources.Values.ToList();
+		public List<ISTFResource> STFResources => state.Resources.Values.ToList();
 		public List<UnityEngine.Object> UnityResources => unityContext.AssetCtxObjects;
 
 		public STFRuntimeImporter(string ImportPath)

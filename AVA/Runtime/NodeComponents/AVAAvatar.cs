@@ -18,7 +18,7 @@ namespace AVA.Serialisation
 		public const string _TYPE = "AVA.avatar";
 		public override string Type => _TYPE;
 		public STFMeshInstance MainMeshInstance;
-		public GameObject viewport_parent;
+		public NodeReference viewport_parent;
 		public Vector3 viewport_position = Vector3.zero;
 
 		public void TrySetup()
@@ -49,12 +49,12 @@ namespace AVA.Serialisation
 
 		public void SetupViewport(STFHumanoidArmature HumanoidDefinition)
 		{
-			viewport_parent = FindBoneInstance(HumanoidDefinition, "Head");
+			viewport_parent = new NodeReference(FindBoneInstance(HumanoidDefinition, "Head"));
 			var eyeLeft = FindBoneInstance(HumanoidDefinition, "EyeLeft");
 			var eyeRight = FindBoneInstance(HumanoidDefinition, "EyeRight");
 			if(eyeLeft && eyeRight)
 			{
-				viewport_position = ((eyeLeft.transform.position + eyeRight.transform.position) / 2) - viewport_parent.transform.position;
+				viewport_position = ((eyeLeft.transform.position + eyeRight.transform.position) / 2) - viewport_parent.Node.transform.position;
 				viewport_position.x = Math.Abs(viewport_position.x) < 0.0001 ? 0 : viewport_position.x;
 				viewport_position.y = Math.Abs(viewport_position.y) < 0.0001 ? 0 : viewport_position.y;
 				viewport_position.z = Math.Abs(viewport_position.z) < 0.0001 ? 0 : viewport_position.z;
@@ -83,7 +83,7 @@ namespace AVA.Serialisation
 			SerializeRelationships(c, ret);
 			State.AddTask(new Task(() => {
 				if(c.MainMeshInstance) ret.Add("main_mesh", rf.NodeComponentRef(c.MainMeshInstance.Id));
-				ret.Add("viewport_parent", c.viewport_parent != null ? rf.NodeRef(State.Nodes[c.viewport_parent].Id) : null);
+				ret.Add("viewport_parent", c.viewport_parent != null ? rf.NodeRef(c.viewport_parent.Id) : null);
 				ret.Add("viewport_position", new JArray() {c.viewport_position.x, c.viewport_position.y, c.viewport_position.z});
 			}));
 			return (c.Id, ret);
@@ -105,7 +105,7 @@ namespace AVA.Serialisation
 			ParseRelationships(Json, c);
 			State.AddTask(new Task(() => {
 				c.MainMeshInstance = Json["main_mesh"] != null ? (STFMeshInstance)State.NodeComponents[rf.NodeComponentRef(Json["main_mesh"])] : null;
-				c.viewport_parent = Json["viewport_parent"] != null ? State.Nodes[rf.NodeRef(Json["viewport_parent"])] : null;
+				c.viewport_parent = State.GetNodeComponentReference(rf.NodeRef(Json["viewport_parent"]));
 				c.viewport_position = TRSUtil.ParseLocation((JArray)Json["viewport_position"]);
 			}));
 			State.AddNodeComponent(c, Id);

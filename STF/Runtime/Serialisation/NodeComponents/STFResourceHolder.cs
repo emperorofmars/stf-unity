@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json.Linq;
 using STF.ApplicationConversion;
+using STF.Util;
 using UnityEngine;
 
 namespace STF.Serialisation
@@ -55,9 +56,8 @@ namespace STF.Serialisation
 			foreach(string r in rf.ResourceRefs())
 			{
 				var resource = State.Resources[r];
-				c.Resources.Add(resource is ISTFResource ? ((ISTFResource)resource).Resource : resource);
-				if(resource is AnimationClip) State.SetPostprocessContext(resource, Go);
-				else if(resource is ISTFResource && ((ISTFResource)resource).Resource is AnimationClip) State.SetPostprocessContext(((ISTFResource)resource).Resource, Go);
+				c.Resources.Add(resource);
+				if(resource.Resource is AnimationClip) State.SetPostprocessContext(resource, Go);
 			}
 		}
 	}

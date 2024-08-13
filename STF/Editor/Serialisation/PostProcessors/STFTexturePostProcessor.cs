@@ -3,7 +3,7 @@
 
 using System;
 using UnityEditor;
-using static STF.Serialisation.STFConstants;
+using static STF.Util.STFConstants;
 
 namespace STF.Serialisation
 {

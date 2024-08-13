@@ -6,6 +6,8 @@ using UnityEngine;
 using System.Threading.Tasks;
 using STF.Serialisation;
 using System.Linq;
+using STF.Util;
+
 
 
 
@@ -42,7 +44,7 @@ namespace AVA.Serialisation
 			c.Extends = Json["extends"]?.ToObject<List<string>>();
 			var rf = new RefDeserializer(Json);
 
-			if(State.Nodes.ContainsKey((string)Json["target"])) c.target = State.Nodes[rf.NodeRef(Json["target"])];
+			if(State.Nodes.ContainsKey((string)Json["target"])) c.target = State.Nodes[rf.NodeRef(Json["target"])].gameObject;
 			c.targetId = (string)Json["target"];
 			c.pull = (float)Json["pull"];
 			c.spring = (float)Json["spring"];
