@@ -9,6 +9,11 @@ namespace STF.Serialisation
 {
 	public class STFImportState
 	{
+		public STFImportContext Context {protected set; get;}
+		public IUnityImportContext UnityContext {protected set; get;}
+		public JObject JsonRoot {protected set; get;}
+		public string AssetId {protected set; get;}
+
 		public STFImportState(STFImportContext Context, IUnityImportContext UnityContext, STFFile Buffers)
 		{
 			this.Context = Context;
@@ -21,13 +26,7 @@ namespace STF.Serialisation
 				this.Buffers.Add((string)JsonRoot[STFKeywords.ObjectType.Buffers][i], Buffers.Buffers[i]);
 			}
 		}
-
-		public STFImportContext Context {protected set; get;}
-		public IUnityImportContext UnityContext {protected set; get;}
-		public JObject JsonRoot {protected set; get;}
-
-		public string AssetId {protected set; get;}
-
+		
 		// id -> node
 		public Dictionary<string, ISTFNode> Nodes {protected set; get;} = new Dictionary<string, ISTFNode>();
 

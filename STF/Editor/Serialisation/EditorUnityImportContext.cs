@@ -18,6 +18,20 @@ namespace STF.Serialisation
 		public EditorUnityImportContext(string TargetLocation)
 		{
 			this.TargetLocation = TargetLocation;
+			EnsureFolderStructure(TargetLocation);
+		}
+		
+		private void EnsureFolderStructure(string TargetLocation)
+		{
+			var existingEntries = Directory.EnumerateFileSystemEntries(TargetLocation); foreach(var entry in existingEntries)
+			{
+				if(File.Exists(entry)) File.Delete(entry);
+				else Directory.Delete(entry, true);
+			}
+			AssetDatabase.Refresh();
+			AssetDatabase.CreateFolder(TargetLocation, STFConstants.ResourceDirectoryName);
+			AssetDatabase.CreateFolder(TargetLocation, STFConstants.PreservedBuffersDirectoryName);
+			AssetDatabase.Refresh();
 		}
 
 		public Object SaveResource(ISTFResource Resource)

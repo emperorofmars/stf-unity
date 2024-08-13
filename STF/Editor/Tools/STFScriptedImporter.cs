@@ -1,8 +1,6 @@
 
 #if UNITY_EDITOR
 
-using System.IO;
-
 using STF.Serialisation;
 using UnityEditor;
 using UnityEngine;
@@ -37,14 +35,17 @@ namespace STF.Tools
 			}
 			else
 			{
-				var Importer = new STFRuntimeImporter(ctx.assetPath);
-				Debug.Log(Importer.Asset);
-				ctx.AddObjectToAsset("main", Importer.Asset.gameObject);
-				foreach(var resource in Importer.UnityResources)
+				var unityContext = new RuntimeUnityImportContext();
+				var (asset, _state) = Importer.Parse(unityContext, ctx.assetPath);
+				ctx.AddObjectToAsset("main", asset.gameObject);
+				
+				Debug.Log(unityContext.AssetCtxObjects.Count);
+				
+				foreach(var resource in unityContext.AssetCtxObjects)
 				{
 					if(resource != null) ctx.AddObjectToAsset("resource" + resource.GetInstanceID(), resource);
 				}
-				ctx.SetMainObject(Importer.Asset.gameObject);
+				ctx.SetMainObject(asset.gameObject);
 			}
 		}
 	}

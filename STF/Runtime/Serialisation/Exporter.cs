@@ -13,27 +13,18 @@ using STF.Util;
 namespace STF.Serialisation
 {
 	// The main star for export!
-	public class STFExporter
+	public class Exporter
 	{
-		private STFExportState state;
-
-		public STFExporter(ISTFAsset Asset, string ExportPath, STFResourceMeta ResourceMeta = null, bool DebugExport = false)
+		public static (STFFile stfFIle, JObject Json) Export(IUnityExportContext UnityContext, ISTFAsset Asset, STFResourceMeta ResourceMeta = null)
 		{
-			export(STFRegistry.GetDefaultExportContext(), Asset, ExportPath, ResourceMeta, DebugExport);
+			return Export(STFRegistry.GetDefaultExportContext(), UnityContext, Asset, ResourceMeta);
 		}
 
-		public STFExporter(STFExportContext Context, ISTFAsset Asset, string ExportPath, STFResourceMeta ResourceMeta = null, bool DebugExport = false)
+		public static (STFFile stfFIle, JObject Json) Export(STFExportContext STFContext, IUnityExportContext UnityContext, ISTFAsset Asset, STFResourceMeta ResourceMeta = null)
 		{
-			export(Context, Asset, ExportPath, ResourceMeta, DebugExport);
-		}
-
-		private void export(STFExportContext Context, ISTFAsset Asset, string ExportPath, STFResourceMeta ResourceMeta = null, bool DebugExport = false)
-		{
+			var state = new STFExportState(STFContext, UnityContext, ResourceMeta);
 			try
 			{
-				var unityContext = new EditorUnityExportContext(ExportPath);
-				state = new STFExportState(Context, unityContext, ResourceMeta);
-
 				JObject JsonAsset = null;
 				if(state.Context.AssetExporters.ContainsKey(Asset.Type))
 				{
@@ -42,8 +33,7 @@ namespace STF.Serialisation
 				}
 				else
 				{
-					Debug.LogWarning($"Unrecognized Asset Type: {Asset.Type}");
-					// Unrecognized Asset
+					//Debug.LogWarning($"Unrecognized Asset Type: {Asset.Type}");
 					throw new Exception($"Can't export unrecognized Asset Type: {Asset.Type}");
 				}
 				Utils.RunTasks(state.Tasks);
@@ -58,9 +48,7 @@ namespace STF.Serialisation
 					{"buffers", new JArray(state.Buffers.Select(entry => entry.Key))}
 				};
 				
-				var file = new STFFile(Json.ToString(Formatting.None), new List<byte[]>(state.Buffers.Select(entry => entry.Value)));
-				File.WriteAllBytes(ExportPath, file.CreateBinaryFromBuffers());
-				if(DebugExport) File.WriteAllText(ExportPath + ".json", Json.ToString(Formatting.Indented));
+				return (new STFFile(Json.ToString(Formatting.None), new List<byte[]>(state.Buffers.Select(entry => entry.Value))), Json);
 			}
 			catch(Exception e)
 			{

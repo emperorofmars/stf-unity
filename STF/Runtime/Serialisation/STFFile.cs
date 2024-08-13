@@ -4,7 +4,6 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Diagnostics;
 
 namespace STF.Serialisation
 {
@@ -18,6 +17,7 @@ namespace STF.Serialisation
 		public int VersionMinor = 3;
 		public string Json;
 		public List<byte[]> Buffers = new List<byte[]>();
+		public string OriginalFileName;
 
 		public STFFile(string Json, List<byte[]> Buffers)
 		{
@@ -25,9 +25,10 @@ namespace STF.Serialisation
 			this.Buffers = Buffers;
 		}
 
-		public STFFile(string path)
+		public STFFile(string ImportPath)
 		{
-			this.parse(File.ReadAllBytes(path));
+			this.OriginalFileName = Path.GetFileNameWithoutExtension(ImportPath);
+			this.parse(File.ReadAllBytes(ImportPath));
 		}
 
 		public STFFile(byte[] ByteArray)

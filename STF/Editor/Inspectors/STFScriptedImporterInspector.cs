@@ -89,8 +89,20 @@ namespace STF.Tools
 
 		private void importUnpacking() {
 			var importer = (STFScriptedImporter)target;
+
 			STFDirectoryUtil.EnsureUnpackLocation(importer.assetPath);
-			_ = new STFUnpackingImporter(STFDirectoryUtil.GetUnpackLocation(importer.assetPath), importer.assetPath);
+			var unpackLocation = STFDirectoryUtil.GetUnpackLocation(importer.assetPath);
+
+			var unityContext = new EditorUnityImportContext(unpackLocation);
+			var (asset, _state) = Importer.Parse(unityContext, importer.assetPath);
+
+			var path = Path.Combine(unpackLocation, asset.Name + ".Prefab");
+			PrefabUtility.SaveAsPrefabAsset(asset.gameObject, path);
+
+			DestroyImmediate(asset.gameObject);
+
+			AssetDatabase.SaveAssets();
+			AssetDatabase.Refresh();
 		}
 
 		private void drawHLine() {

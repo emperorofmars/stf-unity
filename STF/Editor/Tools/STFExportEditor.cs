@@ -3,6 +3,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
+using Newtonsoft.Json;
 using STF.Serialisation;
 using UnityEditor;
 using UnityEngine;
@@ -84,7 +86,11 @@ namespace STF.Tools
 				trash.Add(exportInstance);
 				var setupAsset = STFSetup.SetupStandaloneAssetInplace(exportInstance);
 				trash.AddRange(setupAsset.CreatedGos);
-				var exporter = new STFExporter(exportInstance.GetComponent<ISTFAsset>(), ExportPath, setupAsset.ResourceMeta, DebugExport);
+
+				var unityContext = new EditorUnityExportContext(ExportPath);
+				var (stfFile, json) = Exporter.Export(unityContext, exportInstance.GetComponent<ISTFAsset>(), setupAsset.ResourceMeta);
+				File.WriteAllBytes(ExportPath, stfFile.CreateBinaryFromBuffers());
+				if(DebugExport) File.WriteAllText(ExportPath + ".json", json.ToString(Formatting.Indented));
 			}
 			catch(Exception e)
 			{
