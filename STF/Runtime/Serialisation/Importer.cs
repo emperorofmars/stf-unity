@@ -31,11 +31,11 @@ namespace STF.Serialisation
 				var Asset = ParseAsset(state);
 				Asset.OriginalFileName = Buffers.OriginalFileName;
 				Asset.gameObject.name = Asset.name;
-				Asset.Degraded = UnityContext.IsDegraded;
 				Utils.RunTasks(state.Tasks);
 				Utils.RunTasks(state.PostprocessTasks);
 				RunPostProcessors(state);
 				Utils.RunTasks(state.Tasks);
+				Asset.Degraded = UnityContext.IsDegraded;
 
 				return (Asset, state);
 			}
