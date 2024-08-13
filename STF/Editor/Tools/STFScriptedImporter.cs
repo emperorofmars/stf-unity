@@ -2,12 +2,14 @@
 #if UNITY_EDITOR
 
 using STF.Serialisation;
-using UnityEditor;
-using UnityEngine;
 
 namespace STF.Tools
 {
-	// A scripted importer for STF files. It only parses the basic info about the contained assets, the full import happens on an explicit user action. Full import puts everything into the Assets folder.
+	/*
+		The scripted importer for STF files.
+		By default it only parses the basic info about the contained assets, the full import happens on an explicit user action. Full import puts everything under the Assets/STF Imports/ folder.
+		If `UnpackingImport` is set to false, it will import the file immediately into the asset context. Due to Unity limitations this will degrade the import. It may be perfectly usable for further use in Unity, but not for authoring STF files.
+	*/
 	[UnityEditor.AssetImporters.ScriptedImporter(1, new string[] {"stf"})]
 	public class STFScriptedImporter : UnityEditor.AssetImporters.ScriptedImporter
 	{
@@ -27,8 +29,6 @@ namespace STF.Tools
 					ctx.SetMainObject(AssetInfo.Preview);
 				}
 				// TODO: else use a generic logo
-
-				// Auto Unpack?
 			}
 			else
 			{

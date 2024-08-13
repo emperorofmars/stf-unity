@@ -1,16 +1,20 @@
 
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
+using STF.Types;
 using STF_Util;
 using UnityEngine;
 
 namespace STF.Serialisation
 {
-	public abstract class ISTFResource : ScriptableObject
+	public abstract class ISTFResource : ScriptableObject, ISTFType
 	{
 		public abstract string Type { get; }
-		[Id] public string Id = System.Guid.NewGuid().ToString();
-		public string Name;
+		public string Id { get => _Id; set => _Id = value; }
+		[Id] public string _Id = System.Guid.NewGuid().ToString();
+		public string Name { get => _Name; set => _Name = value; }
+		public string _Name;
+		
 		public Object Resource;
 		public List<ISTFResourceComponent> Components = new List<ISTFResourceComponent>();
 		public ISTFResource Fallback;

@@ -13,6 +13,7 @@ namespace STF.Serialisation
 {
 	public class EditorUnityImportContext : IUnityImportContext
 	{
+		public bool IsDegraded => false;
 		string TargetLocation;
 
 		public EditorUnityImportContext(string TargetLocation)

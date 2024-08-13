@@ -3,14 +3,18 @@ using System;
 using UnityEngine;
 using Newtonsoft.Json.Linq;
 using STF_Util;
+using STF.Types;
 
 namespace STF.Serialisation
 {
-	public abstract class ISTFNode : MonoBehaviour
+	public abstract class ISTFNode : MonoBehaviour, ISTFType
 	{
 		public abstract string Type { get; }
-		[Id] public string _Id = Guid.NewGuid().ToString();
-		public string Id {get => _Id; set => _Id = value;}
+		public string Id { get => _Id; set => _Id = value; }
+		[Id] public string _Id = System.Guid.NewGuid().ToString();
+		public string Name { get => _Name; set => _Name = value; }
+		public string _Name;
+		
 		public int _PrefabHirarchy = 0;
 		public int PrefabHirarchy {get => _PrefabHirarchy; set => _PrefabHirarchy = value;}
 		public string _Origin;

@@ -21,7 +21,7 @@ namespace AVA.Serialisation
 
 			EditorGUI.BeginChangeCheck();
 			
-			EditorGUILayout.PropertyField(serializedObject.FindProperty("Id"));
+			EditorGUILayout.PropertyField(serializedObject.FindProperty("_Id"));
 
 			var avatar = c.GetComponent<AVAAvatar>();
 			var humanoid = avatar.TryGetHumanoidDefinition();

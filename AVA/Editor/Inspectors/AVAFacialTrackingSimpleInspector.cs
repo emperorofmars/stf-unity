@@ -17,7 +17,7 @@ namespace AVA.Serialisation
 
 			EditorGUI.BeginChangeCheck();
 
-			EditorGUILayout.PropertyField(serializedObject.FindProperty("Id"));
+			EditorGUILayout.PropertyField(serializedObject.FindProperty("_Id"));
 
 			if((c.Extends != null || c.Extends.Count == 0) && c.GetComponent<AVAAvatar>() && GUILayout.Button("Setup Extends", GUILayout.ExpandWidth(false)))
 			{

@@ -31,7 +31,7 @@ namespace STF.Serialisation
 				var Asset = ParseAsset(state);
 				Asset.OriginalFileName = Buffers.OriginalFileName;
 				Asset.gameObject.name = Asset.name;
-				Asset.Degraded = true;
+				Asset.Degraded = UnityContext.IsDegraded;
 				Utils.RunTasks(state.Tasks);
 				Utils.RunTasks(state.PostprocessTasks);
 				RunPostProcessors(state);

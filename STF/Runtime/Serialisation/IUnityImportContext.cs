@@ -8,6 +8,8 @@ namespace STF.Serialisation
 {
 	public interface IUnityImportContext
 	{
+		bool IsDegraded {get;}
+
 		Object SaveResource(ISTFResource Resource);
 		Object SaveSubResource(Object SubResource, Object Resource);
 		Object SaveGeneratedResource(GameObject Resource);

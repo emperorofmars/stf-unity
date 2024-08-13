@@ -2,15 +2,19 @@
 using System;
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
+using STF.Types;
 using STF_Util;
 using UnityEngine;
 
 namespace STF.Serialisation
 {
-	public abstract class ISTFNodeComponent : MonoBehaviour
+	public abstract class ISTFNodeComponent : MonoBehaviour, ISTFType
 	{
-		[Id] public string Id = Guid.NewGuid().ToString();
 		public abstract string Type { get; }
+		public string Id { get => _Id; set => _Id = value; }
+		[Id] public string _Id = System.Guid.NewGuid().ToString();
+		public string Name { get => _Name; set => _Name = value; }
+		public string _Name;
 
 		public string ParentNodeId;
 		public List<string> Extends = new List<string>();

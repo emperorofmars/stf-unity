@@ -20,7 +20,7 @@ namespace AVA.Serialisation
 
 			EditorGUI.BeginChangeCheck();
 			
-			EditorGUILayout.PropertyField(serializedObject.FindProperty("Id"));
+			EditorGUILayout.PropertyField(serializedObject.FindProperty("_Id"));
 
 			var humanoidDefinition = c.TryGetHumanoidDefinition();
 			if(humanoidDefinition == null)
