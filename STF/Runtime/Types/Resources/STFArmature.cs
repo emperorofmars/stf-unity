@@ -59,10 +59,8 @@ namespace STF.Serialisation
 				State.AddNode(bone.gameObject, boneJson, boneId);
 				rf.NodeRef(boneId);
 			}
-			//ret.Add("bones", new JArray(boneIds));
 			
 			ret.Add("components", SerdeUtil.SerializeResourceComponents(State, meta));
-			//ret.Add("used_nodes", new JArray(boneIds));
 			return State.AddResource(armature, ret, armature.ArmatureId);
 		}
 	}
@@ -83,7 +81,7 @@ namespace STF.Serialisation
 			var meta = ScriptableObject.CreateInstance<STFArmature>();
 			meta.Id = Id;
 			meta.Name = (string)Json["name"];
-			meta.name = meta.Name;
+			meta.name = meta.Name + "_" + Id;
 			go.name = meta.Name;
 
 			armatureInfo.ArmatureId = Id;
@@ -133,7 +131,8 @@ namespace STF.Serialisation
 			}
 			meta.Bindposes = bindposes;
 
-			State.UnityContext.SaveResource(go, meta, Id);
+			meta.Resource = State.UnityContext.SaveGeneratedResource(go);
+			State.AddResource(meta);
 			SerdeUtil.ParseResourceComponents(State, meta, Json);
 			return;
 		}

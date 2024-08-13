@@ -68,7 +68,7 @@ namespace STF.Serialisation
 				{
 					if(trashObject != null)
 					{
-						UnityEngine.Object.DestroyImmediate(trashObject);
+						UnityEngine.Object.DestroyImmediate(trashObject.gameObject);
 					}
 				}
 			}

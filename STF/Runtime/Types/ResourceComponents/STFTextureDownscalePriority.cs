@@ -42,7 +42,7 @@ namespace STF.Serialisation
 			var ret = ScriptableObject.CreateInstance<STFTextureDownscalePriority>();
 			ret.Id = Id;
 			ret.DownscalePriority = (int)Json["downscale_priority"];
-			State.AddResourceComponent(ret, Resource, Id);
+			State.AddResourceComponent(ret, Resource);
 		}
 	}
 }

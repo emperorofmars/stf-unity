@@ -13,7 +13,6 @@ namespace STF.Serialisation
 		{
 			this.Context = Context;
 			this.UnityContext = UnityContext;
-			UnityContext.State = this;
 			JsonRoot = JObject.Parse(Buffers.Json);
 			AssetId = (string)JsonRoot["asset"]["id"];
 			
@@ -53,20 +52,24 @@ namespace STF.Serialisation
 		public List<Task> PostprocessTasks = new List<Task>();
 		public Dictionary<Object, Object> PostprocessContext {protected set; get;} = new Dictionary<Object, Object>();
 
+		public virtual void AddNode(ISTFNode Node) { Nodes.Add(Node.Id, Node); }
+		public virtual void AddNodeComponent(ISTFNodeComponent Component) { NodeComponents.Add(Component.Id, Component); }
+		public virtual void AddResource(ISTFResource Resource)
+		{
+			var saved = (ISTFResource)UnityContext.SaveResource(Resource);
+			Resources.Add(saved.Id, saved);
+		}
+		public virtual void AddResourceComponent(ISTFResourceComponent Component, ISTFResource Resource)
+		{
+			Component.Resource = Resource;
+			Resource.Components.Add(Component);
+			if(string.IsNullOrWhiteSpace(Component.name)) Component.name = Component.Type + ":" + Component.Id;
+			UnityContext.SaveSubResource(Component, Resource);
+			ResourceComponents.Add(Component.Id, Component);
+		}
 
 		public virtual void AddTask(Task task) { Tasks.Add(task); }
 		public virtual void AddPostprocessTask(Task task) { PostprocessTasks.Add(task); }
-		public virtual void AddNode(ISTFNode Node, string Id) { Nodes.Add(Id, Node); }
-		public virtual void AddNodeComponent(ISTFNodeComponent Component, string Id) { NodeComponents.Add(Id, Component); }
-		public virtual void AddResource(ISTFResource Resource, string Id) { Resources.Add(Id, Resource); }
-		public virtual void AddResourceComponent(ISTFResourceComponent Component, ISTFResource ResourceMeta, string Id)
-		{
-			Component.Resource = ResourceMeta;
-			ResourceMeta.Components.Add(Component);
-			if(string.IsNullOrWhiteSpace(Component.name)) Component.name = Component.Type + ":" + Id;
-			UnityContext.SaveSubResource(Component, ResourceMeta);
-		}
-
 		public virtual void AddTrash(Object Trash) { this.Trash.Add(Trash); }
 
 		public virtual void SetPostprocessContext(Object Resource, Object Context)
@@ -85,9 +88,9 @@ namespace STF.Serialisation
 			return Nodes.ContainsKey(Id) ? new NodeReference(Nodes[Id]) : new NodeReference(Id);
 		}
 
-		internal void AddResource(Object resource, string id)
+		internal ResourceReference GetResourceReference(string Id)
 		{
-			throw new System.NotImplementedException();
+			return Resources.ContainsKey(Id) ? new ResourceReference(Resources[Id]) : new ResourceReference(Id);
 		}
 	}
 }

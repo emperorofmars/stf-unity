@@ -104,7 +104,7 @@ namespace STF.Tools
 					else
 					{
 						var stfMesh = ScriptableObject.CreateInstance<STFMesh>();
-						stfMesh.ArmatureId = armatureInstance.armature.Id;
+						stfMesh.Armature = new ResourceReference(armatureInstance.armature.Id);
 						ret.ResourceMeta.Add(smr.sharedMesh, stfMesh);
 					}
 				}

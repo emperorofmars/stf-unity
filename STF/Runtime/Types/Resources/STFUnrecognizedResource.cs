@@ -45,7 +45,7 @@ namespace STF.Serialisation
 			var ret = ScriptableObject.CreateInstance<STFUnrecognizedResource>();
 			ret.Id = Id;
 			ret.Name = (string)Json["name"];
-			ret.name = ret.Name;
+			ret.name = ret.Name + "_" + Id;
 			ret._Type = (string)Json["type"];
 			ret.PreservedJson = Json.ToString();
 			
@@ -86,8 +86,8 @@ namespace STF.Serialisation
 					}
 				}
 			}));
+			State.AddResource(ret);
 			SerdeUtil.ParseResourceComponents(State, ret, Json);
-			State.UnityContext.SaveResource(ret, Id);
 		}
 	}
 }

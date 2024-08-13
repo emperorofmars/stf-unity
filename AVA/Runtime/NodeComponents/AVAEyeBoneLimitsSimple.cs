@@ -50,7 +50,7 @@ namespace AVA.Serialisation
 		public override void ParseFromJson(STFImportState State, JObject Json, string Id, GameObject Go)
 		{
 			var c = Go.AddComponent<AVAEyeBoneLimitsSimple>();
-			State.AddNodeComponent(c, Id);
+			State.AddNodeComponent(c);
 			c.Id = Id;
 			ParseRelationships(Json, c);
 

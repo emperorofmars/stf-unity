@@ -108,7 +108,7 @@ namespace AVA.Serialisation
 				c.viewport_parent = State.GetNodeComponentReference(rf.NodeRef(Json["viewport_parent"]));
 				c.viewport_position = TRSUtil.ParseLocation((JArray)Json["viewport_position"]);
 			}));
-			State.AddNodeComponent(c, Id);
+			State.AddNodeComponent(c);
 		}
 	}
 

@@ -306,7 +306,7 @@ namespace STF.Serialisation
 				State.UnityContext.SaveGeneratedResource(avatar, "asset");
 				ret.GeneratedAvatar = avatar;
 			}
-			State.AddResourceComponent(ret, Resource, Id);
+			State.AddResourceComponent(ret, Resource);
 		}
 	}
 }

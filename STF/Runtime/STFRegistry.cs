@@ -97,7 +97,7 @@ namespace STF.Serialisation
 			{typeof(Mesh), new STFMeshExporter()},
 			{typeof(Texture2D), new STFTexture2dExporter()},
 			{typeof(STFArmature), new STFArmatureExporter()},
-			{typeof(MTF.Material), new MTFMaterialExporter()},
+			{typeof(MTFMaterial), new MTFMaterialExporter()},
 			{typeof(Material), new UnityMaterialExporter()},
 		};
 		public static readonly Dictionary<string, ISTFResourceComponentImporter> DefaultResourceComponentImporters = new Dictionary<string, ISTFResourceComponentImporter>() {

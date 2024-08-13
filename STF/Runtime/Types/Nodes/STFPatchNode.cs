@@ -41,7 +41,7 @@ namespace STF.Serialisation
 		{
 			var ret = new GameObject();
 			var node = ret.AddComponent<STFPatchNode>();
-			State.AddNode(node, Id);
+			State.AddNode(node);
 
 			node.Id = Id;
 			node.name = (string)JsonAsset["name"];

@@ -18,7 +18,6 @@ namespace STF.Serialisation
 		private RuntimeUnityImportContext unityContext;
 
 		public ISTFAsset Asset;
-		public List<ISTFResource> STFResources => state.Resources.Values.ToList();
 		public List<UnityEngine.Object> UnityResources => unityContext.AssetCtxObjects;
 
 		public STFRuntimeImporter(string ImportPath)

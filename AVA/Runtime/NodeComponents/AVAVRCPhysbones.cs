@@ -62,7 +62,7 @@ namespace AVA.Serialisation
 			c.immobile_type = (string)Json["immobile_type"];
 			c.immobile = (float)Json["immobile"];
 
-			State.AddNodeComponent(c, Id);
+			State.AddNodeComponent(c);
 		}
 	}
 

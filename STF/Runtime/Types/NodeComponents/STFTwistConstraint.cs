@@ -63,7 +63,7 @@ namespace STF.Serialisation
 			//c.TargetId = Json.ContainsKey("target") ? rf.NodeRef(Json["target"]) : null;
 			//c.Target = State.Nodes.ContainsKey(c.TargetId) ? State.Nodes[c.TargetId] : null;
 
-			State.AddNodeComponent(c, Id);
+			State.AddNodeComponent(c);
 		}
 	}
 	

@@ -43,7 +43,6 @@ namespace STF.Serialisation
 			var rf = new RefSerializer(ret);
 			ret.Add("armature", rf.ResourceRef(SerdeUtil.SerializeResource(State, node.armature)));
 
-			//var boneInstances = new JArray();
 			foreach(var entry in node.bones)
 			{
 				var boneInstance = entry.GetComponent<STFBoneInstanceNode>();
@@ -64,13 +63,9 @@ namespace STF.Serialisation
 					{"children", boneInstanceChildren},
 					{"components", SerdeUtil.SerializeNodeComponents(State, boneInstance.GetComponents<Component>())},
 				};
-				//boneInstances.Add(State.AddNode(boneInstance.gameObject, boneInstanceJson, boneInstance.Id));
 
 				rf.NodeRef(State.AddNode(boneInstance.gameObject, boneInstanceJson, boneInstance.Id));
 			}
-			//ret.Add("bone_instances", boneInstances);
-
-			//ret.Add("used_nodes", new JArray{ret["bone_instances"]});
 			return State.AddNode(Go, ret, node.Id);
 		}
 	}
@@ -87,9 +82,10 @@ namespace STF.Serialisation
 			go.name = (string)JsonAsset["name"];
 
 			var armatureInstance = go.AddComponent<STFArmatureInstanceNode>();
-			State.AddNode(armatureInstance, Id);
-
 			armatureInstance.Id = Id;
+
+			State.AddNode(armatureInstance);
+
 			armatureInstance.name = (string)JsonAsset["name"];
 			armatureInstance.PrefabHirarchy = 1;
 			armatureInstance.Origin = State.AssetId;
@@ -115,11 +111,11 @@ namespace STF.Serialisation
 				armatureInstance.bones[i] = boneInstance.gameObject;
 
 				TRSUtil.ParseTRS(boneInstance.gameObject, boneInstanceJson);
-				State.AddNode(boneInstance, boneInstance.Id);
+				State.AddNode(boneInstance);
 
 				SerdeUtil.ParseNode(State, boneInstance.gameObject, boneInstanceJson);
 			}
-
+			Object.DestroyImmediate(armatureInfo);
 			SerdeUtil.ParseNode(State, go, JsonAsset);
 			return go;
 		}

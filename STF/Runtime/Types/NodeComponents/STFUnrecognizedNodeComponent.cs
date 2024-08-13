@@ -59,7 +59,7 @@ namespace STF.Serialisation
 					}
 				}
 			}));
-			State.AddNodeComponent(c, Id);
+			State.AddNodeComponent(c);
 		}
 	}
 }

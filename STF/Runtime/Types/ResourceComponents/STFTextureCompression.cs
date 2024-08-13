@@ -42,7 +42,7 @@ namespace STF.Serialisation
 			var ret = ScriptableObject.CreateInstance<STFTextureCompression>();
 			ret.Id = Id;
 			ret.Compression = (string)Json["compression"];
-			State.AddResourceComponent(ret, Resource, Id);
+			State.AddResourceComponent(ret, Resource);
 		}
 	}
 }

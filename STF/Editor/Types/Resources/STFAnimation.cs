@@ -326,7 +326,7 @@ namespace STF.Serialisation
 					}
 				}));
 			}
-			State.UnityContext.SaveResource(ret, "anim", meta, Id);
+			State.UnityContext.SaveGeneratedResource(ret, "anim");
 			return;
 		}
 	}

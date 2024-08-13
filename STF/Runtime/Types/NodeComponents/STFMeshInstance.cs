@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using STF.Addon;
 using STF.ApplicationConversion;
@@ -16,7 +17,7 @@ namespace STF.Serialisation
 		public override string Type => _TYPE;
 		public STFArmatureInstanceNode ArmatureInstance;
 		public string ArmatureInstanceId;
-		public List<MTF.Material> Materials = new List<MTF.Material>();
+		public List<MTFMaterial> Materials = new List<MTFMaterial>();
 	}
 
 	public class STFMeshInstanceExporter : ASTFNodeComponentExporter
@@ -115,82 +116,86 @@ namespace STF.Serialisation
 			var meshInstanceComponent = Go.AddComponent<STFMeshInstance>();
 			meshInstanceComponent.Id = Id;
 			ParseRelationships(Json, meshInstanceComponent);
-			State.AddNodeComponent(meshInstanceComponent, Id);
+			State.AddNodeComponent(meshInstanceComponent);
 
 			Mesh mesh = (Mesh)meta.Resource;
 			Renderer renderer;
 
-			if(meta.ArmatureId != null && meta.ArmatureId.Length > 0)
-			{
-				var c = Go.AddComponent<SkinnedMeshRenderer>();
-				renderer = c;
-				meshInstanceComponent.OwnedUnityComponent = c;
-
-				c.sharedMesh = mesh;
-
-				if(Json.ContainsKey("armature_instance"))
+			State.AddTask(new Task(() => {
+				if(!string.IsNullOrWhiteSpace(meta.Armature.Id))
 				{
-					var armatureInstanceId = rf.NodeRef(Json["armature_instance"]);
-					if(State.Nodes.ContainsKey(armatureInstanceId))
+					var c = Go.AddComponent<SkinnedMeshRenderer>();
+					renderer = c;
+					meshInstanceComponent.OwnedUnityComponent = c;
+
+					c.sharedMesh = mesh;
+
+					if(Json.ContainsKey("armature_instance"))
 					{
-						var armatureInstanceNode = State.Nodes[armatureInstanceId];
-						var armatureInstance = armatureInstanceNode.GetComponent<STFArmatureInstanceNode>();
-						meshInstanceComponent.ArmatureInstance = armatureInstance;
-						c.rootBone = armatureInstance.root.transform;
-						c.bones = armatureInstance.bones.Select(b => b.transform).ToArray();
-						c.updateWhenOffscreen = true;
+						var armatureInstanceId = rf.NodeRef(Json["armature_instance"]);
+						if(State.Nodes.ContainsKey(armatureInstanceId))
+						{
+							var armatureInstanceNode = State.Nodes[armatureInstanceId];
+							var armatureInstance = armatureInstanceNode.GetComponent<STFArmatureInstanceNode>();
+							meshInstanceComponent.ArmatureInstance = armatureInstance;
+							c.rootBone = armatureInstance.root.transform;
+							c.bones = armatureInstance.bones.Select(b => b.transform).ToArray();
+							c.updateWhenOffscreen = true;
+						}
+						else
+						{
+							meshInstanceComponent.ArmatureInstanceId = armatureInstanceId;
+						}
 					}
-					else
+					
+					if(c.sharedMesh.blendShapeCount > 0 && Json["morphtarget_values"] != null)
 					{
-						meshInstanceComponent.ArmatureInstanceId = armatureInstanceId;
+						for(int i = 0; i < c.sharedMesh.blendShapeCount; i++)
+						{
+							c.SetBlendShapeWeight(i, (float)Json["morphtarget_values"][i]);
+						}
+
 					}
+					c.localBounds = c.sharedMesh.bounds;
 				}
-				
-				if(c.sharedMesh.blendShapeCount > 0 && Json["morphtarget_values"] != null)
+				else // Non skinned mesh
 				{
-					for(int i = 0; i < c.sharedMesh.blendShapeCount; i++)
-					{
-						c.SetBlendShapeWeight(i, (float)Json["morphtarget_values"][i]);
-					}
+					var c = Go.AddComponent<MeshRenderer>();
+					renderer = c;
+					var meshFilter = Go.AddComponent<MeshFilter>();
+					meshInstanceComponent.OwnedUnityComponent = c;
 
+					meshFilter.sharedMesh = mesh;
 				}
-				c.localBounds = c.sharedMesh.bounds;
-			}
-			else // Non skinned mesh
-			{
-				var c = Go.AddComponent<MeshRenderer>();
-				renderer = c;
-				var meshFilter = Go.AddComponent<MeshFilter>();
-				meshInstanceComponent.OwnedUnityComponent = c;
 
-				meshFilter.sharedMesh = mesh;
-			}
-
-			var materials = new UnityEngine.Material[mesh.subMeshCount];
-			meshInstanceComponent.Materials = new List<MTF.Material>(new MTF.Material[mesh.subMeshCount]);
-			for(int i = 0; i < materials.Length; i++)
-			{
-				try{
-					if(Json["materials"][i] != null && Json["materials"][i].Type != JTokenType.Null && State.Resources.ContainsKey(rf.ResourceRef(Json["materials"][i])))
-					{
-						var mtfMaterial = (MTFMaterial)State.Resources[rf.ResourceRef(Json["materials"][i])];
-						meshInstanceComponent.Materials[i] = mtfMaterial.Material;
-						materials[i] = mtfMaterial.Material?.ConvertedMaterial;
-					}
-					else
-					{
-						Debug.LogWarning("Material Import Error, Falling back to default material.");
-						var mtfMaterial = MTF.Material.CreateDefaultMaterial();
-						meshInstanceComponent.Materials[i] = mtfMaterial;
-						materials[i] = mtfMaterial?.ConvertedMaterial;
-					}
-				}
-				catch(Exception)
+				var materials = new UnityEngine.Material[mesh.subMeshCount];
+				meshInstanceComponent.Materials = new List<MTFMaterial>(new MTFMaterial[mesh.subMeshCount]);
+				for(int i = 0; i < materials.Length; i++)
 				{
-					Debug.LogWarning("Material Import Error, Skipping.");
+					//try{
+						if(Json["materials"].Count() > i && Json["materials"][i] != null && Json["materials"][i].Type != JTokenType.Null && State.Resources.ContainsKey(rf.ResourceRef(Json["materials"][i])))
+						{
+							var mtfMaterial = (MTFMaterial)State.Resources[rf.ResourceRef(Json["materials"][i])];
+							meshInstanceComponent.Materials[i] = mtfMaterial;
+							materials[i] = (mtfMaterial.Resource as MTF.Material)?.ConvertedMaterial;
+						}
+						else
+						{
+							Debug.LogWarning("Material Import Error, Falling back to default material.");
+							var mtfMaterial = MTF.Material.CreateDefaultMaterial();
+							var stfMtfMaterial = ScriptableObject.CreateInstance<MTFMaterial>();
+							stfMtfMaterial.Resource = mtfMaterial;
+							meshInstanceComponent.Materials[i] = stfMtfMaterial;
+							materials[i] = mtfMaterial.ConvertedMaterial;
+						}
+					/*}
+					catch(Exception e)
+					{
+						Debug.LogWarning("Material Import Error, Skipping.", e);
+					}*/
 				}
-			}
-			renderer.sharedMaterials = materials;
+				renderer.sharedMaterials = materials;
+			}));
 		}
 	}
 

@@ -13,86 +13,44 @@ namespace STF.Serialisation
 {
 	public class EditorUnityImportContext : IUnityImportContext
 	{
+		string TargetLocation;
 
 		public EditorUnityImportContext(string TargetLocation)
 		{
 			this.TargetLocation = TargetLocation;
 		}
 
-		string TargetLocation;
-		STFImportState _State;
-		public STFImportState State { get => _State; set => _State = value; }
-		
-		public void SaveResource(ISTFResource Resource, string Id)
+		public Object SaveResource(ISTFResource Resource)
 		{
-			var location = Path.Combine(TargetLocation, STFConstants.ResourceDirectoryName, Resource.name + "_" + Id + ".Asset");
+			var location = Path.Combine(TargetLocation, STFConstants.ResourceDirectoryName, Resource.name + ".Asset");
 			AssetDatabase.CreateAsset(Resource, location);
-			State.AddResource(Resource, Id);
 			AssetDatabase.Refresh();
+			return Resource;
 		}
-		
-		/*public void SavePrefab(ISTFNode Resource, string Id)
-		{
-			var location = Path.Combine(TargetLocation, STFConstants.ResourceDirectoryName, Meta.Name + "_" + Id + ".Prefab");
-			var saved = PrefabUtility.SaveAsPrefabAsset(Resource, location);
-			Meta.Resource = saved;
-			AssetDatabase.CreateAsset(Meta, Path.ChangeExtension(location, "Asset"));
-			State.AddResource(Meta, Id);
-			AssetDatabase.Refresh();
-		}*/
-
-		public void SaveSubResource(Object Component, Object Resource)
+		public Object SaveSubResource(Object SubResource, Object Resource)
 		{
 			var assetPath = AssetDatabase.GetAssetPath(Resource);
 			Debug.Assert(assetPath != null);
-			AssetDatabase.AddObjectToAsset(Component, assetPath);
+			AssetDatabase.AddObjectToAsset(SubResource, assetPath);
 			AssetDatabase.ImportAsset(assetPath);
 			AssetDatabase.Refresh();
+			return SubResource;
 		}
-
-		/*public void SaveResource(Object Resource, string FileExtension, string Id)
+		public Object SaveGeneratedResource(GameObject Resource)
+		{
+			var location = Path.Combine(TargetLocation, STFConstants.ResourceDirectoryName, Resource.name + ".Prefab");
+			var prefabGo =  PrefabUtility.SaveAsPrefabAsset(Resource, location);
+			return prefabGo;
+		}
+		public Object SaveGeneratedResource(Object Resource, string FileExtension)
 		{
 			if(!FileExtension.StartsWith(".")) FileExtension = "." + FileExtension;
-			var location = Path.Combine(TargetLocation, STFConstants.ResourceDirectoryName, Resource.name + "_" + Id + FileExtension);
+			var location = Path.Combine(TargetLocation, STFConstants.ResourceDirectoryName, Resource.name + FileExtension);
 			AssetDatabase.CreateAsset(Resource, location);
-			State.AddResource(Resource, Id);
 			AssetDatabase.Refresh();
-		}*/
-
-		public void SaveResource<T>(Object Resource, string FileExtension, T Meta, string Id) where T: ISTFResource
-		{
-			if(!FileExtension.StartsWith(".")) FileExtension = "." + FileExtension;
-			var location = Path.Combine(TargetLocation, STFConstants.ResourceDirectoryName, Meta.Name + "_" + Id + FileExtension);
-			AssetDatabase.CreateAsset(Resource, location);
-			Meta.Resource = Resource;
-			AssetDatabase.CreateAsset(Meta, Path.ChangeExtension(location, "Asset"));
-			State.AddResource(Meta, Id);
-			AssetDatabase.Refresh();
+			return Resource;
 		}
-		public void SaveResource<T>(GameObject Resource, T Meta, string Id) where T: ISTFResource
-		{
-			var location = Path.Combine(TargetLocation, STFConstants.ResourceDirectoryName, Meta.Name + "_" + Id + ".Prefab");
-			var saved = PrefabUtility.SaveAsPrefabAsset(Resource, location);
-			Meta.Resource = saved;
-			AssetDatabase.CreateAsset(Meta, Path.ChangeExtension(location, "Asset"));
-			State.AddResource(Meta, Id);
-			AssetDatabase.Refresh();
-		}
-		public void SaveResource<M, R>(byte[] Resource, string FileExtension, M Meta, string Id) where M: ISTFResource where R: Object
-		{
-			if(!FileExtension.StartsWith(".")) FileExtension = "." + FileExtension;
-			var location = Path.Combine(TargetLocation, STFConstants.ResourceDirectoryName, Meta.Name + "_" + Id + FileExtension);
-			File.WriteAllBytes(location, Resource);
-			AssetDatabase.Refresh();
-			
-			Meta.Resource = AssetDatabase.LoadAssetAtPath<R>(location);
-			AssetDatabase.CreateAsset(Meta, Path.ChangeExtension(location, "Asset"));
-			AssetDatabase.SaveAssets();
-			AssetDatabase.Refresh();
-			
-			State.AddResource(Meta, Id);
-		}
-		public Object SaveAndLoadResource(byte[] Resource, string Name, string FileExtension)
+		public Object SaveGeneratedResource(byte[] Resource, string Name, string FileExtension)
 		{
 			if(!FileExtension.StartsWith(".")) FileExtension = "." + FileExtension;
 			var location = Path.Combine(TargetLocation, STFConstants.ResourceDirectoryName, Name + FileExtension);
@@ -100,21 +58,6 @@ namespace STF.Serialisation
 			AssetDatabase.Refresh();
 			return AssetDatabase.LoadAssetAtPath<Object>(location);
 		}
-		public void SaveResourceBelongingToId(Object Resource, string FileExtension, string OwnerId)
-		{
-			if(!FileExtension.StartsWith(".")) FileExtension = "." + FileExtension;
-			var location = Path.Combine(TargetLocation, STFConstants.ResourceDirectoryName, Resource.name + "_" + OwnerId + FileExtension);
-			AssetDatabase.CreateAsset(Resource, location);
-			AssetDatabase.Refresh();
-		}
-		public void SaveGeneratedResource(Object Resource, string FileExtension)
-		{
-			if(!FileExtension.StartsWith(".")) FileExtension = "." + FileExtension;
-			var location = Path.Combine(TargetLocation, STFConstants.ResourceDirectoryName, Resource.name + FileExtension);
-			AssetDatabase.CreateAsset(Resource, location);
-			AssetDatabase.Refresh();
-		}
-		
 		public Object Instantiate(Object Resource)
 		{
 			if(Resource is GameObject) return PrefabUtility.InstantiatePrefab(Resource);

@@ -50,7 +50,7 @@ namespace AVA.Serialisation
 			c.spring = (float)Json["spring"];
 			c.stiffness = (float)Json["stiffness"];
 			
-			State.AddNodeComponent(c, Id);
+			State.AddNodeComponent(c);
 		}
 	}
 

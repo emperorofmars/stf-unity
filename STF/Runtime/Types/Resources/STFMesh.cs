@@ -16,7 +16,7 @@ namespace STF.Serialisation
 		public const string _TYPE = "STF.mesh";
 		public override string Type => _TYPE;
 		public string OriginalBufferId;
-		public string ArmatureId;
+		public ResourceReference Armature;
 
 	}
 
@@ -158,7 +158,7 @@ namespace STF.Serialisation
 			if(mesh.HasVertexAttribute(VertexAttribute.BlendIndices))
 			{
 				ret.Add("skinned", true);
-				ret.Add("armature", rf.ResourceRef(meta.ArmatureId));
+				ret.Add("armature", rf.ResourceRef(meta.Armature.Id));
 
 				foreach(var num in mesh.GetBonesPerVertex()) weightLength += num;
 				weightBuffer = new byte[weightLength * (sizeof(float) + sizeof(int))];
@@ -287,15 +287,18 @@ namespace STF.Serialisation
 
 		public void ParseFromJson(STFImportState State, JObject Json, string Id)
 		{
-			var mesh = new Mesh { name = (string)Json["name"] };
+			var mesh = new Mesh();
 
 			var rf = new RefDeserializer(Json);
 
 			var meta = ScriptableObject.CreateInstance<STFMesh>();
-			meta.OriginalBufferId = rf.BufferRef(Json["buffer"]);
+			meta.Id = Id;
 			meta.Name = (string)Json["name"];
-			meta.name = meta.Name;
-			meta.ArmatureId = Json.ContainsKey("armature") ? rf.ResourceRef(Json["armature"]) : null;
+			meta.name = meta.Name + "_" + Id;
+			mesh.name = meta.name;
+
+			meta.OriginalBufferId = rf.BufferRef(Json["buffer"]);
+			meta.Armature = Json.ContainsKey("armature") ? State.GetResourceReference(rf.ResourceRef(Json["armature"])) : null;
 
 			var bufferWidth = 3;
 			var numUVs = 0;
@@ -417,9 +420,9 @@ namespace STF.Serialisation
 				mesh.SetBoneWeights(bonesPerVertexNat, weights);
 
 				State.AddTask(new Task(() => {
-					if(State.Resources.ContainsKey(meta.ArmatureId))
+					if(State.Resources.ContainsKey(meta.Armature.Id))
 					{
-						var armature = (STFArmature)State.Resources[meta.ArmatureId];
+						var armature = (STFArmature)State.Resources[meta.Armature.Id];
 						mesh.bindposes = armature.Bindposes;
 					}
 				}));
@@ -477,7 +480,8 @@ namespace STF.Serialisation
 			mesh.UploadMeshData(false);
 			mesh.RecalculateBounds();
 
-			State.UnityContext.SaveResource(mesh, "mesh", meta, Id);
+			meta.Resource = State.UnityContext.SaveGeneratedResource(mesh, "mesh");
+			State.AddResource(meta);
 			SerdeUtil.ParseResourceComponents(State, meta, Json);
 			return;
 		}

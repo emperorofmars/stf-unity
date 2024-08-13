@@ -13,8 +13,6 @@ namespace STF.Serialisation
 	{
 		public const string _TYPE = "MTF.material";
 		public override string Type => _TYPE;
-
-		public MTF.Material Material;
 	}
 
 	public class MTFPropertyValueExportState : MTF.IPropertyValueExportState
@@ -51,12 +49,7 @@ namespace STF.Serialisation
 
 		public UnityEngine.Object GetResource(string Id)
 		{
-			var r = State.Resources[Id];
-			if(r is ISTFResource resource)
-			{
-				return (r as ISTFResource).Resource;
-			}
-			return r;
+			return State.Resources[Id].Resource;
 		}
 	}
 	public class MTFMaterialConvertState : MTF.IMaterialConvertState
@@ -75,7 +68,7 @@ namespace STF.Serialisation
 		}
 		public Texture2D SaveImageResource(byte[] Bytes, string Name, string Extension)
 		{
-			return (Texture2D)State.UnityContext.SaveAndLoadResource(Bytes, this.Name + Name, Extension);
+			return (Texture2D)State.UnityContext.SaveGeneratedResource(Bytes, this.Name + Name, Extension);
 		}
 	}
 
@@ -117,7 +110,8 @@ namespace STF.Serialisation
 
 		public string SerializeToJson(STFExportState State, UnityEngine.Object Resource, UnityEngine.Object Context = null)
 		{
-			var mat = (MTF.Material)Resource;
+			var meta = (MTFMaterial)Resource;
+			var mat = (MTF.Material)meta.Resource;
 			var ret = new JObject{
 				{"type", MTFMaterial._TYPE},
 				{"name", mat.MaterialName?.Length > 0 ? mat.MaterialName : mat.name},
@@ -172,23 +166,25 @@ namespace STF.Serialisation
 
 		public void ParseFromJson(STFImportState State, JObject Json, string Id)
 		{
-			var mat = ScriptableObject.CreateInstance<MTFMaterial>();
-			mat.Material = ScriptableObject.CreateInstance<MTF.Material>();
-			mat.Id = Id;
-			mat.Material.Id = Id;
-			mat.Material.MaterialName = (string)Json["name"];
-			mat.name = mat.Material.MaterialName;
+			var meta = ScriptableObject.CreateInstance<MTFMaterial>();
+			var mat = ScriptableObject.CreateInstance<MTF.Material>();
+			
+			meta.Id = mat.Id = Id;
+			meta.Name = mat.MaterialName = (string)Json["name"];
 
+			mat.name = mat.MaterialName + "_" + Id + "_MTF";
+			meta.name = mat.MaterialName + "_" + Id;
+
+			meta.Resource = State.UnityContext.SaveGeneratedResource(mat, "Asset");
 
 			foreach(var entry in (JObject)Json["targets"])
 			{
-				mat.Material.PreferedShaderPerTarget.Add(new MTF.Material.ShaderTarget{Platform = entry.Key, Shaders = entry.Value.ToObject<List<string>>()});
+				mat.PreferedShaderPerTarget.Add(new MTF.Material.ShaderTarget{Platform = entry.Key, Shaders = entry.Value.ToObject<List<string>>()});
 			}
 			foreach(var entry in (JObject)Json["hints"])
 			{
-				mat.Material.StyleHints.Add(new MTF.Material.StyleHint {Name = entry.Key, Value = (string)entry.Value});
+				mat.StyleHints.Add(new MTF.Material.StyleHint {Name = entry.Key, Value = (string)entry.Value});
 			}
-			State.UnityContext.SaveResource(mat, Id);
 			
 			var mtfImportState = new MTFPropertyValueImportState(State);
 			foreach(var propertyJson in (JObject)Json["properties"])
@@ -210,11 +206,11 @@ namespace STF.Serialisation
 						Debug.LogWarning($"Unrecognized Material PropertyValue: {propertyValueType}");
 					}
 				}
-				mat.Material.Properties.Add(mtfProperty);
+				mat.Properties.Add(mtfProperty);
 			}
 
 			// Convert to MTF.Material
-			var shaderTargets = mat.Material.PreferedShaderPerTarget.Find(t => t.Platform == "unity3d");
+			var shaderTargets = mat.PreferedShaderPerTarget.Find(t => t.Platform == "unity3d");
 			MTF.IMaterialConverter converter = MTF.ShaderConverterRegistry.MaterialConverters[MTF.StandardConverter._SHADER_NAME];
 			if(shaderTargets != null) foreach(var shaderTarget in shaderTargets.Shaders)
 			{
@@ -225,11 +221,10 @@ namespace STF.Serialisation
 				}
 			}
 			var mtfConvertState = new MTFMaterialConvertState(State, mat.name + Id);
-			var unityMaterial = converter.ConvertToUnityMaterial(mtfConvertState, mat.Material);
-			unityMaterial.name = mat.Material.MaterialName + "_Converted";
-			mat.Material.ConvertedMaterial = unityMaterial;
-
-			State.UnityContext.SaveResourceBelongingToId(unityMaterial, "Asset", Id);
+			var unityMaterial = converter.ConvertToUnityMaterial(mtfConvertState, mat);
+			unityMaterial.name = mat.name + "_Converted";
+			mat.ConvertedMaterial = (Material)State.UnityContext.SaveGeneratedResource(unityMaterial, "Asset");
+			State.AddResource(meta);
 			return;
 		}
 	}

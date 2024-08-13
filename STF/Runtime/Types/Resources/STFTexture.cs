@@ -19,7 +19,6 @@ namespace STF.Serialisation
 
 		public string TextureType = "color"; // linear | normal
 		public Vector2Int TextureSize;
-		//public bool Linear;
 		public string OriginalBufferId;
 	}
 
@@ -62,7 +61,6 @@ namespace STF.Serialisation
 			// serialize resource components
 			ret.Add("components", SerdeUtil.SerializeResourceComponents(State, meta));
 
-			//ret.Add("used_buffers", new JArray() {bufferId});
 			rf.MergeInto(ret);
 			return State.AddResource(Resource, ret, meta ? meta.Id : Guid.NewGuid().ToString());
 		}
@@ -80,7 +78,7 @@ namespace STF.Serialisation
 			var meta = ScriptableObject.CreateInstance<STFTexture>();
 			meta.Id = Id;
 			meta.Name = (string)Json["name"];
-			meta.name = meta.Name;
+			meta.name = meta.Name + "_" + Id;
 			meta.TextureType = (string)Json["texture_type"];
 
 			var rf = new RefDeserializer(Json);
@@ -90,7 +88,8 @@ namespace STF.Serialisation
 			
 			var arrayBuffer = State.Buffers[meta.OriginalBufferId];
 			
-			State.UnityContext.SaveResource<STFTexture, Texture2D>(arrayBuffer, (string)Json["image_format"], meta, Id);
+			meta.Resource = (Texture2D)State.UnityContext.SaveGeneratedResource(arrayBuffer, meta.name, (string)Json["image_format"]);
+			State.AddResource(meta);
 			SerdeUtil.ParseResourceComponents(State, meta, Json);
 			return;
 		}

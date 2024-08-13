@@ -111,7 +111,7 @@ namespace AVA.Serialisation
 		override public void ParseFromJson(STFImportState State, JObject Json, string Id, GameObject Go)
 		{
 			var c = Go.AddComponent<AVAFacialTrackingSimple>();
-			State.AddNodeComponent(c, Id);
+			State.AddNodeComponent(c);
 			c.Id = Id;
 			ParseRelationships(Json, c);
 

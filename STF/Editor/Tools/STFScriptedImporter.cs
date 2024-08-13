@@ -40,10 +40,6 @@ namespace STF.Tools
 				var Importer = new STFRuntimeImporter(ctx.assetPath);
 				Debug.Log(Importer.Asset);
 				ctx.AddObjectToAsset("main", Importer.Asset.gameObject);
-				foreach(var resource in Importer.STFResources)
-				{
-					ctx.AddObjectToAsset("resource" + resource.GetInstanceID(), resource);
-				}
 				foreach(var resource in Importer.UnityResources)
 				{
 					if(resource != null) ctx.AddObjectToAsset("resource" + resource.GetInstanceID(), resource);
