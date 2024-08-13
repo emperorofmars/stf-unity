@@ -18,8 +18,8 @@ namespace AVA.Types
 		public const string _TYPE = "AVA.avatar";
 		public override string Type => _TYPE;
 		//public STFMeshInstance MainMeshInstance;
-		public NodeComponentReference<STFMeshInstance> MainMeshInstance;
-		public NodeReference viewport_parent;
+		public NodeComponentReference<STFMeshInstance> MainMeshInstance = new();
+		public NodeReference viewport_parent = new();
 		public Vector3 viewport_position = Vector3.zero;
 
 		public void TrySetup()

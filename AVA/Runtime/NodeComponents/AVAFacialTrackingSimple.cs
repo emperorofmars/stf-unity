@@ -34,7 +34,7 @@ namespace AVA.Types
 		};
 
 		public NodeComponentReference<STFMeshInstance> TargetMeshInstance = new();
-		public List<BlendshapeMapping> Mappings = new List<BlendshapeMapping>();
+		public List<BlendshapeMapping> Mappings = new();
 
 		public void Map()
 		{

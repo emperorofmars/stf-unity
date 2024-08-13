@@ -12,7 +12,7 @@ namespace STF.Types
 		public const string _TYPE = "STF.resource_holder";
 		public override string Type => _TYPE;
 
-		public List<ResourceReference> Resources = new List<ResourceReference>();
+		public List<ResourceReference> Resources = new();
 	}
 
 	public class STFResourceHolderExporter : ASTFNodeComponentExporter

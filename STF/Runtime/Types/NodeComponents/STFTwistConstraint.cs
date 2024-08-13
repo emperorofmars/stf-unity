@@ -12,7 +12,7 @@ namespace STF.Types
 	{
 		public const string _TYPE = "STF.constraint.twist";
 		public override string Type => _TYPE;
-		public NodeReference Source;
+		public NodeReference Source = new();
 		//public GameObject Target;
 		//public string TargetId;
 		public float Weight = 0.5f;

@@ -17,7 +17,7 @@ namespace AVA.Types
 	{
 		public static string _TYPE = "AVA.VRC.physbones";
 		public override string Type => _TYPE;
-		public NodeReference target;
+		public NodeReference target = new();
 		public string targetId;
 		public string version = "1.1";
 		public string integration_type = "simplified";

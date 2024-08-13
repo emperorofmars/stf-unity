@@ -16,8 +16,8 @@ namespace STF.Types
 	{
 		public const string _TYPE = "STF.mesh_instance";
 		public override string Type => _TYPE;
-		public NodeReference<STFArmatureInstanceNode> ArmatureInstance;
-		public List<MTFMaterial> Materials = new List<MTFMaterial>();
+		public NodeReference<STFArmatureInstanceNode> ArmatureInstance = new();
+		public List<ResourceReference<MTFMaterial>> Materials = new();
 	}
 
 	public class STFMeshInstanceExporter : ASTFNodeComponentExporter
@@ -168,8 +168,8 @@ namespace STF.Types
 					meshFilter.sharedMesh = mesh;
 				}
 
-				var materials = new UnityEngine.Material[mesh.subMeshCount];
-				meshInstanceComponent.Materials = new List<MTFMaterial>(new MTFMaterial[mesh.subMeshCount]);
+				var materials = new Material[mesh.subMeshCount];
+				meshInstanceComponent.Materials = new List<ResourceReference<MTFMaterial>>(new ResourceReference<MTFMaterial>[mesh.subMeshCount]);
 				for(int i = 0; i < materials.Length; i++)
 				{
 					//try{

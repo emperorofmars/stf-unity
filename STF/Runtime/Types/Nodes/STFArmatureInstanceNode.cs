@@ -13,7 +13,7 @@ namespace STF.Types
 		public const string _TYPE = "STF.armature_instance";
 		public override string Type => _TYPE;
 
-		public ResourceReference Armature;
+		public ResourceReference Armature = new();
 		public GameObject Root;
 		public List<GameObject> Bones;
 	}

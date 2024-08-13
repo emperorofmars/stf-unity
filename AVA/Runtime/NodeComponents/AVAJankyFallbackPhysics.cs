@@ -19,7 +19,7 @@ namespace AVA.Types
 	{
 		public static string _TYPE = "AVA.janky_fallback_physics";
 		public override string Type => _TYPE;
-		public NodeReference target;
+		public NodeReference target = new();
 		public string targetId;
 		public float pull = 0.2f;
 		public float spring = 0.2f;
