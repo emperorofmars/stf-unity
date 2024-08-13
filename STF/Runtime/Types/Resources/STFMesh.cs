@@ -272,7 +272,7 @@ namespace STF.Serialisation
 
 			ret.Add("buffer", rf.BufferRef(State.AddBuffer(byteArray, meta.OriginalBufferId)));
 
-			ret.Add("components", SerdeUtil.SerializeResourceComponents(State, meta));
+			ret.Add("components", ExportUtil.SerializeResourceComponents(State, meta));
 			
 			return State.AddResource(mesh, ret, meta.Id);
 		}
@@ -482,7 +482,7 @@ namespace STF.Serialisation
 
 			meta.Resource = State.UnityContext.SaveGeneratedResource(mesh, "mesh");
 			State.AddResource(meta);
-			SerdeUtil.ParseResourceComponents(State, meta, Json);
+			ImportUtil.ParseResourceComponents(State, meta, Json);
 			return;
 		}
 	}

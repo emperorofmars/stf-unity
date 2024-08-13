@@ -59,7 +59,7 @@ namespace STF.Serialisation
 			ret.Add("buffer", rf.BufferRef(State.AddBuffer(arrayBuffer, meta?.OriginalBufferId)));
 
 			// serialize resource components
-			ret.Add("components", SerdeUtil.SerializeResourceComponents(State, meta));
+			ret.Add("components", ExportUtil.SerializeResourceComponents(State, meta));
 
 			rf.MergeInto(ret);
 			return State.AddResource(Resource, ret, meta ? meta.Id : Guid.NewGuid().ToString());
@@ -90,7 +90,7 @@ namespace STF.Serialisation
 			
 			meta.Resource = (Texture2D)State.UnityContext.SaveGeneratedResource(arrayBuffer, meta.name, (string)Json["image_format"]);
 			State.AddResource(meta);
-			SerdeUtil.ParseResourceComponents(State, meta, Json);
+			ImportUtil.ParseResourceComponents(State, meta, Json);
 			return;
 		}
 	}

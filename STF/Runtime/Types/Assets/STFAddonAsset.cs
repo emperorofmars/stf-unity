@@ -34,7 +34,7 @@ namespace STF.Serialisation
 				{"license", Asset.License},
 				{"license_link", Asset.LicenseLink}
 			};
-			if(Asset.Preview) ret.Add("preview", SerdeUtil.SerializeResource(State, Asset.Preview));
+			if(Asset.Preview) ret.Add("preview", ExportUtil.SerializeResource(State, Asset.Preview));
 
 			for(int i = 0; i < Asset.gameObject.transform.childCount; i++)
 			{
@@ -48,7 +48,7 @@ namespace STF.Serialisation
 					}
 				}
 			}
-			ret.Add("root_node", SerdeUtil.SerializeNode(State, Asset.gameObject));
+			ret.Add("root_node", ExportUtil.SerializeNode(State, Asset.gameObject));
 
 			return ret;
 		}

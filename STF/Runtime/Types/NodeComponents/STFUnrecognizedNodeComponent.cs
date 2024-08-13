@@ -26,8 +26,8 @@ namespace STF.Serialisation
 			var c = (STFUnrecognizedNodeComponent)Component;
 			var ret = JObject.Parse(c.PreservedJson);
 			//ASTFNodeComponentExporter.SerializeRelationships(c, ret);
-			foreach(var usedResource in c.ReferencedResources) SerdeUtil.SerializeResource(State, usedResource);
-			foreach(var usedNode in c.ReferencedNodes) SerdeUtil.SerializeNode(State, usedNode);
+			foreach(var usedResource in c.ReferencedResources) ExportUtil.SerializeResource(State, usedResource);
+			foreach(var usedNode in c.ReferencedNodes) ExportUtil.SerializeNode(State, usedNode);
 			// no need to explicitely export node components
 			return (c.Id, ret);
 		}

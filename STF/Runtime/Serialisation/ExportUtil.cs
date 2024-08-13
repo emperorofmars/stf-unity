@@ -1,77 +1,12 @@
 
 using Newtonsoft.Json.Linq;
-using STF.Serialisation;
 using UnityEngine;
 
-namespace STF.Util
+namespace STF.Serialisation
 {
-	public class SerdeUtil
+	public static class ExportUtil
 	{
-		/*public static void ParseNodeChildren(STFImportState State, GameObject Go, JObject JsonAsset)
-		{
-			if(JsonAsset["children"] == null || JsonAsset["children"].Type == JTokenType.Null) return;
-			foreach(string childId in JsonAsset["children"])
-			{
-				var childJson = (JObject)State.JsonRoot["nodes"][childId];
-				var type = (string)childJson["type"];
-				if(type == null || type.Length == 0) type = STFNode._TYPE;
-				if(State.Context.NodeImporters.ContainsKey(type))
-				{
-					var childGo = State.Context.NodeImporters[type].ParseFromJson(State, childJson, childId);
-					childGo.transform.SetParent(Go.transform, false);
-				}
-				else
-				{
-					Debug.LogWarning($"Unrecognized Node: {type}");
-					var childGo = STFUnrecognizedNodeImporter.ParseFromJson(State, childJson, childId);
-					childGo.transform.SetParent(Go.transform, false);
-				}
-			}
-		}
-
-		public static void ParseNodeComponents(STFImportState State, GameObject Go, JObject JsonAsset)
-		{
-			if(JsonAsset["components"] == null || JsonAsset["components"].Type == JTokenType.Null) return;
-			foreach(var entry in (JObject)JsonAsset["components"])
-			{
-				var type = (string)entry.Value["type"];
-				if(type != null && State.Context.NodeComponentImporters.ContainsKey(type))
-				{
-					State.Context.NodeComponentImporters[type].ParseFromJson(State, (JObject)entry.Value, entry.Key, Go);
-				}
-				else
-				{
-					Debug.LogWarning($"Unrecognized Component: {type}");
-					STFUnrecognizedNodeComponentImporter.ParseFromJson(State, (JObject)entry.Value, entry.Key, Go);
-				}
-			}
-		}
-
-		public static void ParseNode(STFImportState State, GameObject Go, JObject JsonAsset)
-		{
-			ParseNodeChildren(State, Go, JsonAsset);
-			ParseNodeComponents(State, Go, JsonAsset);
-		}
-
-		public static void ParseResourceComponents(STFImportState State, ISTFResource Resource, JObject JsonResource)
-		{
-			if(JsonResource.ContainsKey("components") || JsonResource["components"].Type == JTokenType.Null) return;
-			foreach(var entry in (JObject)JsonResource["components"])
-			{
-				var type = (string)entry.Value["type"];
-				if(type != null && State.Context.ResourceComponentImporters.ContainsKey(type))
-				{
-					State.Context.ResourceComponentImporters[type].ParseFromJson(State, (JObject)entry.Value, entry.Key, Resource);
-				}
-				else
-				{
-					Debug.LogWarning($"Unrecognized Component: {type}");
-					STFUnrecognizedResourceComponentImporter.ParseFromJson(State, (JObject)entry.Value, entry.Key, Resource);
-				}
-			}
-		}*/
-
-		/*public static JArray SerializeChildren(STFExportState State, GameObject Go)
+		public static JArray SerializeNodeChildren(STFExportState State, GameObject Go)
 		{
 			var ret = new JArray();
 			for(int childIdx = 0; childIdx < Go.transform.childCount; childIdx++)
@@ -169,6 +104,6 @@ namespace STF.Util
 				Debug.LogWarning($"Unrecognized Resource Component: {ResourceComponent.Type}");
 				return STFUnrecognizedResourceComponentExporter.SerializeToJson(State, ResourceComponent);
 			}
-		}*/
+		}
 	}
 }

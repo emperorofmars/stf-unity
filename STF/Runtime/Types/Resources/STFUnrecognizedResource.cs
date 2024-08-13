@@ -29,9 +29,9 @@ namespace STF.Serialisation
 		public static string SerializeToJson(STFExportState State, Object Resource)
 		{
 			var r = (STFUnrecognizedResource)Resource;
-			foreach(var usedResource in r.ReferencedResources) SerdeUtil.SerializeResource(State, usedResource);
-			foreach(var referencedResourceComponent in r.ReferencedResourceComponents) SerdeUtil.SerializeResourceComponent(State, referencedResourceComponent);
-			foreach(var usedNode in r.ReferencedNodes) SerdeUtil.SerializeNode(State, usedNode);
+			foreach(var usedResource in r.ReferencedResources) ExportUtil.SerializeResource(State, usedResource);
+			foreach(var referencedResourceComponent in r.ReferencedResourceComponents) ExportUtil.SerializeResourceComponent(State, referencedResourceComponent);
+			foreach(var usedNode in r.ReferencedNodes) ExportUtil.SerializeNode(State, usedNode);
 			foreach(var usedbuffer in r.PreservedBuffers) State.AddBuffer(usedbuffer.Data, usedbuffer.Id);
 
 			return State.AddResource(r, JObject.Parse(r.PreservedJson), r.Id);
@@ -87,7 +87,7 @@ namespace STF.Serialisation
 				}
 			}));
 			State.AddResource(ret);
-			SerdeUtil.ParseResourceComponents(State, ret, Json);
+			ImportUtil.ParseResourceComponents(State, ret, Json);
 		}
 	}
 }

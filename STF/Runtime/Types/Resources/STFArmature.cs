@@ -60,7 +60,7 @@ namespace STF.Serialisation
 				rf.NodeRef(boneId);
 			}
 			
-			ret.Add("components", SerdeUtil.SerializeResourceComponents(State, meta));
+			ret.Add("components", ExportUtil.SerializeResourceComponents(State, meta));
 			return State.AddResource(armature, ret, armature.ArmatureId);
 		}
 	}
@@ -133,7 +133,7 @@ namespace STF.Serialisation
 
 			meta.Resource = State.UnityContext.SaveGeneratedResource(go);
 			State.AddResource(meta);
-			SerdeUtil.ParseResourceComponents(State, meta, Json);
+			ImportUtil.ParseResourceComponents(State, meta, Json);
 			return;
 		}
 	}

@@ -28,9 +28,9 @@ namespace STF.Serialisation
 		public static (string Id, JObject JsonComponent) SerializeToJson(STFExportState State, ISTFResourceComponent Component)
 		{
 			var r = (STFUnrecognizedResourceComponent)Component;
-			foreach(var usedResource in r.ReferencedResources) SerdeUtil.SerializeResource(State, usedResource);
-			foreach(var referencedResourceComponent in r.ReferencedResourceComponents) SerdeUtil.SerializeResourceComponent(State, referencedResourceComponent);
-			foreach(var usedNode in r.ReferencedNodes) SerdeUtil.SerializeNode(State, usedNode);
+			foreach(var usedResource in r.ReferencedResources) ExportUtil.SerializeResource(State, usedResource);
+			foreach(var referencedResourceComponent in r.ReferencedResourceComponents) ExportUtil.SerializeResourceComponent(State, referencedResourceComponent);
+			foreach(var usedNode in r.ReferencedNodes) ExportUtil.SerializeNode(State, usedNode);
 			foreach(var usedbuffer in r.PreservedBuffers) State.AddBuffer(usedbuffer.Data, usedbuffer.Id);
 
 			return (r.Id, JObject.Parse(r.PreservedJson));

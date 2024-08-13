@@ -31,7 +31,7 @@ namespace STF.Serialisation
 			var rf = new RefSerializer(ret);
 			foreach(var res in c.Resources)
 			{
-				var id = SerdeUtil.SerializeResource(State, res, res is AnimationClip ? c.gameObject : null);
+				var id = ExportUtil.SerializeResource(State, res, res is AnimationClip ? c.gameObject : null);
 				rf.ResourceRef(id);
 			}
 

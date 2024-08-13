@@ -139,7 +139,7 @@ namespace STF.Serialisation
 					var keyframes = AnimationUtility.GetObjectReferenceCurve(clip, c);
 					foreach(var keyframe in keyframes)
 					{
-						var resourceId = SerdeUtil.SerializeResource(State, keyframe.value);
+						var resourceId = ExportUtil.SerializeResource(State, keyframe.value);
 						keysJson.Add(new JObject() {{"time", keyframe.time}, {"value", resourceId}});
 					}
 				}

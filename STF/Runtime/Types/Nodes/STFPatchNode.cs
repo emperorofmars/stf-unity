@@ -25,8 +25,8 @@ namespace STF.Serialisation
 				{"type", STFPatchNode._TYPE},
 				{"name", Go.name},
 				{"trs", TRSUtil.SerializeTRS(Go)},
-				{"children", SerdeUtil.SerializeChildren(State, Go)},
-				{"components", SerdeUtil.SerializeNodeComponents(State, Go.GetComponents<Component>())},
+				{"children", ExportUtil.SerializeNodeChildren(State, Go)},
+				{"components", ExportUtil.SerializeNodeComponents(State, Go.GetComponents<Component>())},
 				{"target", node.TargetId},
 			};
 
@@ -49,7 +49,7 @@ namespace STF.Serialisation
 			node.TargetId = (string)JsonAsset["target"];
 
 			TRSUtil.ParseTRS(ret, JsonAsset);
-			SerdeUtil.ParseNode(State, ret, JsonAsset);
+			ImportUtil.ParseNodeChildrenAndComponents(State, ret, JsonAsset);
 			return ret;
 		}
 	}

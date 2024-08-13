@@ -25,7 +25,7 @@ namespace STF.Serialisation
 		}
 		public string AddResource(UnityEngine.Object Resource)
 		{
-			string id = SerdeUtil.SerializeResource(State, Resource);
+			string id = ExportUtil.SerializeResource(State, Resource);
 			UsedResources.Add(id);
 			return id;
 		}
@@ -89,14 +89,14 @@ namespace STF.Serialisation
 			{
 				var mtfMaterial = MTF.ShaderConverterRegistry.MaterialParsers[mat.shader.name].ParseFromUnityMaterial(mtfExportState, mat);
 				mtfMaterial.MaterialName = Resource.name;
-				return SerdeUtil.SerializeResource(State, mtfMaterial);
+				return ExportUtil.SerializeResource(State, mtfMaterial);
 			}
 			else
 			{
 				Debug.LogWarning("Material Converter Not registered for shader: " + mat.shader.name + ", falling back.");
 				var mtfMaterial = MTF.ShaderConverterRegistry.MaterialParsers[MTF.StandardConverter._SHADER_NAME].ParseFromUnityMaterial(mtfExportState, mat);
 				mtfMaterial.MaterialName = Resource.name;
-				return SerdeUtil.SerializeResource(State, mtfMaterial);
+				return ExportUtil.SerializeResource(State, mtfMaterial);
 			}
 		}
 	}

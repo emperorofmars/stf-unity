@@ -28,7 +28,7 @@ namespace STF.Serialisation
 				var child = Go.transform.GetChild(childIdx);
 				if(child.GetComponent<STFBoneNode>() == null && child.GetComponent<STFBoneInstanceNode>() == null)
 				{
-					armatureInstanceChildren.Add(SerdeUtil.SerializeNode(State, child.gameObject));
+					armatureInstanceChildren.Add(ExportUtil.SerializeNode(State, child.gameObject));
 				}
 			}
 			var ret = new JObject
@@ -37,11 +37,11 @@ namespace STF.Serialisation
 				{"name", Go.name},
 				{"trs", TRSUtil.SerializeTRS(Go)},
 				{"children", armatureInstanceChildren},
-				{"components", SerdeUtil.SerializeNodeComponents(State, Go.GetComponents<Component>())},
+				{"components", ExportUtil.SerializeNodeComponents(State, Go.GetComponents<Component>())},
 			};
 
 			var rf = new RefSerializer(ret);
-			ret.Add("armature", rf.ResourceRef(SerdeUtil.SerializeResource(State, node.armature)));
+			ret.Add("armature", rf.ResourceRef(ExportUtil.SerializeResource(State, node.armature)));
 
 			foreach(var entry in node.bones)
 			{
@@ -52,7 +52,7 @@ namespace STF.Serialisation
 					var child = boneInstance.transform.GetChild(childIdx);
 					if(child.GetComponent<STFBoneNode>() == null && child.GetComponent<STFBoneInstanceNode>() == null)
 					{
-						boneInstanceChildren.Add(SerdeUtil.SerializeNode(State, child.gameObject));
+						boneInstanceChildren.Add(ExportUtil.SerializeNode(State, child.gameObject));
 					}
 				}
 				var boneInstanceJson = new JObject {
@@ -61,7 +61,7 @@ namespace STF.Serialisation
 					{"bone", boneInstance.BoneId},
 					{"trs", TRSUtil.SerializeTRS(boneInstance.gameObject)},
 					{"children", boneInstanceChildren},
-					{"components", SerdeUtil.SerializeNodeComponents(State, boneInstance.GetComponents<Component>())},
+					{"components", ExportUtil.SerializeNodeComponents(State, boneInstance.GetComponents<Component>())},
 				};
 
 				rf.NodeRef(State.AddNode(boneInstance.gameObject, boneInstanceJson, boneInstance.Id));
@@ -113,10 +113,10 @@ namespace STF.Serialisation
 				TRSUtil.ParseTRS(boneInstance.gameObject, boneInstanceJson);
 				State.AddNode(boneInstance);
 
-				SerdeUtil.ParseNode(State, boneInstance.gameObject, boneInstanceJson);
+				ImportUtil.ParseNodeChildrenAndComponents(State, boneInstance.gameObject, boneInstanceJson);
 			}
 			Object.DestroyImmediate(armatureInfo);
-			SerdeUtil.ParseNode(State, go, JsonAsset);
+			ImportUtil.ParseNodeChildrenAndComponents(State, go, JsonAsset);
 			return go;
 		}
 	}

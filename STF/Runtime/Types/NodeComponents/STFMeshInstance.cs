@@ -57,7 +57,7 @@ namespace STF.Serialisation
 			};
 			var rf = new RefSerializer(ret);
 			
-			ret.Add("mesh", rf.ResourceRef(SerdeUtil.SerializeResource(State, mesh)));
+			ret.Add("mesh", rf.ResourceRef(ExportUtil.SerializeResource(State, mesh)));
 
 			var meshInstance = Component.gameObject.GetComponent<STFMeshInstance>();
 			SerializeRelationships(meshInstance, ret);
@@ -73,11 +73,11 @@ namespace STF.Serialisation
 			{
 				if(meshInstance.Materials.Count > matIdx && meshInstance.Materials[matIdx] != null)
 				{
-					materials.Add(rf.ResourceRef(SerdeUtil.SerializeResource(State, meshInstance.Materials[matIdx])));
+					materials.Add(rf.ResourceRef(ExportUtil.SerializeResource(State, meshInstance.Materials[matIdx])));
 				}
 				else if(renderer.sharedMaterials[matIdx] != null)
 				{
-					materials.Add(rf.ResourceRef(SerdeUtil.SerializeResource(State, renderer.sharedMaterials[matIdx])));
+					materials.Add(rf.ResourceRef(ExportUtil.SerializeResource(State, renderer.sharedMaterials[matIdx])));
 				}
 				else
 				{

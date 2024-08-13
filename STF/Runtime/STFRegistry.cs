@@ -37,6 +37,12 @@ namespace STF.Serialisation
 		public Dictionary<string, ISTFResourceImporter> ResourceImporters = new Dictionary<string, ISTFResourceImporter>();
 		public Dictionary<string, ISTFResourceComponentImporter> ResourceComponentImporters = new Dictionary<string, ISTFResourceComponentImporter>();
 		public List<ISTFImportPostProcessor> ImportPostProcessors = new List<ISTFImportPostProcessor>();
+
+		/*public ISTFAssetImporter ParseAsset(string Type) => AssetImporters.ContainsKey(Type) ? AssetImporters[Type] : null;
+		public ISTFNodeImporter GetNodeImporter(string Type) => NodeImporters.ContainsKey(Type) ? NodeImporters[Type] : new STFUnrecognizedNodeImporter();
+		public ISTFNodeComponentImporter GetComponentImporter(string Type) => NodeComponentImporters.ContainsKey(Type) ? NodeComponentImporters[Type] : null;
+		public ISTFResourceImporter GetResourceImporter(string Type) => ResourceImporters.ContainsKey(Type) ? ResourceImporters[Type] : null;
+		public ISTFResourceComponentImporter GetResourceComponentImporter(string Type) => ResourceComponentImporters.ContainsKey(Type) ? ResourceComponentImporters[Type] : null;*/
 	}
 
 	public class STFExportContext

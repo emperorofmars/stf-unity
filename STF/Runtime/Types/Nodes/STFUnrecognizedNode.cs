@@ -24,8 +24,8 @@ namespace STF.Serialisation
 		{
 			var node = Go.GetComponent<STFUnrecognizedNode>();
 			var ret = JObject.Parse(node.PreservedJson);
-			foreach(var usedResource in node.ReferencedResources) SerdeUtil.SerializeResource(State, usedResource);
-			foreach(var usedNode in node.ReferencedNodes) SerdeUtil.SerializeNode(State, usedNode);
+			foreach(var usedResource in node.ReferencedResources) ExportUtil.SerializeResource(State, usedResource);
+			foreach(var usedNode in node.ReferencedNodes) ExportUtil.SerializeNode(State, usedNode);
 			return State.AddNode(Go, ret, node.Id);
 		}
 	}
@@ -59,7 +59,7 @@ namespace STF.Serialisation
 			}));
 
 			TRSUtil.ParseTRS(ret, JsonAsset);
-			SerdeUtil.ParseNode(State, ret, JsonAsset);
+			ImportUtil.ParseNodeChildrenAndComponents(State, ret, JsonAsset);
 			return ret;
 		}
 	}
