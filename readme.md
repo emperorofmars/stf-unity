@@ -1,4 +1,4 @@
-# STF - Scene Transfer Format [v0.2]
+# STF - Scene Transfer Format [v0.3]
 **Extensible Interchange Format for 3d Assets**
 
 Implementation for Unity 2022.3 or higher.

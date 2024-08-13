@@ -5,6 +5,8 @@ using UnityEngine;
 using System.IO;
 using STF.Util;
 using STF.Serialisation;
+using System.Threading.Tasks;
+
 
 
 
@@ -36,8 +38,6 @@ namespace STF.Types
 			var texture = (Texture2D)Resource;
 			var (arrayBuffer, meta, fileName) = State.UnityContext.LoadAsset<STFTexture>(texture);
 
-			var rf = new RefSerializer();
-
 			var ret = new JObject {
 				{ "type", STFTexture._TYPE },
 				{ "name", !string.IsNullOrWhiteSpace(meta?.Name) ? meta.Name : Path.GetFileNameWithoutExtension(fileName) },
@@ -45,6 +45,7 @@ namespace STF.Types
 				{ "texture_width", meta?.TextureSize != null ? meta.TextureSize.x : texture.width },
 				{ "texture_height", meta?.TextureSize != null ? meta.TextureSize.y : texture.height },
 			};
+			var rf = new RefSerializer(ret);
 
 #if UNITY_EDITOR
 			TextureImporter textureImporter = (TextureImporter)TextureImporter.GetAtPath(AssetDatabase.GetAssetPath(texture));
@@ -63,7 +64,8 @@ namespace STF.Types
 			// serialize resource components
 			ret.Add("components", ExportUtil.SerializeResourceComponents(State, meta));
 
-			rf.MergeInto(ret);
+			ret.Add("fallback", rf.ResourceRef(ExportUtil.SerializeResource(State, meta.Fallback.Ref)));
+
 			return State.AddResource(Resource, ret, meta ? meta.Id : Guid.NewGuid().ToString());
 		}
 	}
@@ -84,6 +86,7 @@ namespace STF.Types
 			meta.TextureType = (string)Json["texture_type"];
 
 			var rf = new RefDeserializer(Json);
+			State.AddTask(new Task(() => meta.Fallback = State.GetResourceReference(rf.ResourceRef(Json["fallback"]))));
 
 			if(Json["texture_width"] != null && Json["texture_height"] != null) meta.TextureSize = new Vector2Int((int)Json["texture_width"], (int)Json["texture_height"]);
 			meta.OriginalBufferId = rf.BufferRef(Json["buffer"]);

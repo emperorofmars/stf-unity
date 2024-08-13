@@ -1,4 +1,4 @@
-# STF Format
+# STF Format [v0.3]
 The STF format is based on the concept of GLTF 2.0.
 
 It is a binary format made up of at least one buffer, which is always a UTF-8 encoded definition in the JSON format. All further buffer are optional and have to be referenced by the JSON definition.

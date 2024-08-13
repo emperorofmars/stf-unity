@@ -114,18 +114,18 @@ namespace STF.Types
 		public string ResourceId;
 		public string Id => Resource ? Resource.Id : ResourceId;
 		public ISTFResource Resource;
-		public UnityEngine.Object Ref => Resource;
-		public ResourceReference Fallback;
+		public UnityEngine.Object Ref => !IsFallback ? Resource : Fallback.Ref;
+		public ResourceReference Fallback = null;
 
-		public bool IsFallback => Fallback != null;
+		public bool IsFallback => Fallback != null && Fallback.IsRef;
 
 		public ResourceReference() {}
 		public ResourceReference(string ResourceId) {this.ResourceId = ResourceId;}
-		public ResourceReference(ISTFResource Resource) { this.Resource = Resource; ResourceId = Resource?.Id; }
+		public ResourceReference(ISTFResource Resource) { this.Resource = Resource; ResourceId = Resource?.Id; if(Resource is STFUnrecognizedResource) Fallback = Resource.Fallback; }
 
-		public T GetRef<T>() where T : UnityEngine.Object => (T)Ref;
+		public T GetRef<T>() where T : UnityEngine.Object => !IsFallback ? (T)Ref : Fallback.GetRef<T>();
 		public bool IsId {get => !string.IsNullOrWhiteSpace(Id); }
-		public bool IsRef {get => Ref != null || IsFallback && Fallback.IsRef; }
+		public bool IsRef {get => Ref != null || IsFallback; }
 
 		public static implicit operator ResourceReference(ISTFResource Resource) => new ResourceReference(Resource);
 		public static implicit operator ResourceReference(string Id) => new ResourceReference(Id);
@@ -140,18 +140,18 @@ namespace STF.Types
 		public string ResourceId;
 		public string Id => Resource ? Resource.Id : ResourceId;
 		public T Resource;
-		public UnityEngine.Object Ref => Resource;
-		public ResourceReference Fallback;
+		public UnityEngine.Object Ref => !IsFallback ? Resource : Fallback.Ref;
+		public ResourceReference Fallback = null;
 
-		public bool IsFallback => Fallback != null;
+		public bool IsFallback => Fallback != null && Fallback.IsRef;
 
 		public ResourceReference() {}
 		public ResourceReference(string ResourceId) {this.ResourceId = ResourceId;}
-		public ResourceReference(T Resource) { this.Resource = Resource; ResourceId = Resource?.Id; }
+		public ResourceReference(T Resource) { this.Resource = Resource; ResourceId = Resource?.Id; if(Resource is STFUnrecognizedResource) Fallback = Resource.Fallback; }
 
-		public T GetRef() => (T)Ref;
+		public T GetRef() => !IsFallback ? (T)Ref : Fallback.GetRef<T>();
 		public bool IsId {get => !string.IsNullOrWhiteSpace(Id); }
-		public bool IsRef {get => Ref != null || IsFallback && Fallback.IsRef; }
+		public bool IsRef {get => Ref != null || IsFallback; }
 
 		public static implicit operator ResourceReference<T>(T Resource) => new ResourceReference<T>(Resource);
 		public static implicit operator ResourceReference<T>(string Id) => new ResourceReference<T>(Id);

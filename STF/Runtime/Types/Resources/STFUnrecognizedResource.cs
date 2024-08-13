@@ -49,8 +49,12 @@ namespace STF.Types
 			ret.name = ret.Name + "_" + Id;
 			ret._Type = (string)Json["type"];
 			ret.PreservedJson = Json.ToString();
+
+			var rf = new RefDeserializer(Json);
 			
 			State.AddPostprocessTask(new Task(() => {
+				ret.Fallback = State.GetResourceReference(rf.ResourceRef(Json["fallback"]));
+
 				if(Json[STFKeywords.Keys.References] != null)
 				{
 					if(Json[STFKeywords.Keys.References][STFKeywords.ObjectType.Resources] != null) foreach(string resourceId in Json[STFKeywords.Keys.References][STFKeywords.ObjectType.Resources])
