@@ -4,12 +4,10 @@
 using UnityEngine;
 using System.Linq;
 using UnityEditor;
-using STF.Util;
-using System.Reflection;
 using System;
 using STF_Util;
 
-namespace STF.Serialisation
+namespace STF.Types
 {
 	[CustomEditor(typeof(ISTFResource), true)]
 	public class STFResourceComponentInspector : Editor

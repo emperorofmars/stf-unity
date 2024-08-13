@@ -1,19 +1,18 @@
 using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 using System.Threading.Tasks;
 using STF.Serialisation;
 using STF.Util;
-
+using STF.Types;
 
 
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 
-namespace AVA.Serialisation
+namespace AVA.Types
 {
 	public class AVAFacialTrackingSimple : ISTFNodeComponent
 	{

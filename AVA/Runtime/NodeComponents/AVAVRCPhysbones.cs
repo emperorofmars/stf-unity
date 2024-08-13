@@ -1,21 +1,16 @@
 using System;
-using System.Collections.Generic;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
-using System.Threading.Tasks;
 using STF.Serialisation;
 using System.Linq;
 using STF.Util;
-
-
-
+using STF.Types;
 
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 
-namespace AVA.Serialisation
+namespace AVA.Types
 {
 	// partial implementation, to be completed whenever, currently exists only for proof of concept purposes
 	public class AVAVRCPhysbones : ISTFNodeComponent

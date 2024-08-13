@@ -1,9 +1,8 @@
 
 #if UNITY_EDITOR
 
-using System.IO;
 using STF.Addon;
-using STF.Serialisation;
+using STF.Types;
 using UnityEditor;
 using UnityEngine;
 

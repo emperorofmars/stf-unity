@@ -1,8 +1,9 @@
-using System.Collections.Generic;
+
 using Newtonsoft.Json.Linq;
+using STF.Serialisation;
 using UnityEngine;
 
-namespace STF.Serialisation
+namespace STF.Types
 {
 	[CreateAssetMenu(fileName = "STFTextureCompression", menuName = "STF/Resource Components/Texture Compression", order = 1)]
 	public class STFTextureCompression : ISTFResourceComponent

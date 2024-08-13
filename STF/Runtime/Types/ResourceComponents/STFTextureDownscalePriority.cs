@@ -1,8 +1,9 @@
-using System.Collections.Generic;
+
 using Newtonsoft.Json.Linq;
+using STF.Serialisation;
 using UnityEngine;
 
-namespace STF.Serialisation
+namespace STF.Types
 {
 	[CreateAssetMenu(fileName = "STFTextureDownscalePriority", menuName = "STF/Resource Components/Texture Downscale Priority", order = 1)]
 	public class STFTextureDownscalePriority : ISTFResourceComponent

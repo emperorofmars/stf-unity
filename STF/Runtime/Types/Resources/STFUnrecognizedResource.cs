@@ -4,8 +4,9 @@ using UnityEngine;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using STF.Util;
+using STF.Serialisation;
 
-namespace STF.Serialisation
+namespace STF.Types
 {
 	public class STFBuffer : ScriptableObject
 	{

@@ -2,6 +2,7 @@
 #if UNITY_EDITOR
 
 using System;
+using STF.Types;
 using UnityEditor;
 using static STF.Util.STFConstants;
 

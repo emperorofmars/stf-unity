@@ -2,6 +2,7 @@
 #if UNITY_EDITOR
 
 using STF.Serialisation;
+using STF.Types;
 using UnityEditor;
 using UnityEngine;
 

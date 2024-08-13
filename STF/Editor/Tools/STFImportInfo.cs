@@ -2,13 +2,11 @@
 #if UNITY_EDITOR
 
 using UnityEngine;
-using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using STF.Serialisation;
 using System;
-using System.Drawing;
-using UnityEditorInternal;
 using STF.Util;
+using STF.Types;
 
 namespace STF.Tools
 {

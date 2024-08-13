@@ -4,7 +4,7 @@
 
 using System.Linq;
 using System.Threading.Tasks;
-using AVA.Serialisation;
+using AVA.Types;
 using STF.ApplicationConversion;
 using UnityEngine;
 using VRC.SDK3.Avatars.Components;

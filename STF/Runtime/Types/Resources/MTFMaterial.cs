@@ -6,8 +6,9 @@ using System.Linq;
 using System.Collections.Generic;
 using STF.ApplicationConversion;
 using STF.Util;
+using STF.Serialisation;
 
-namespace STF.Serialisation
+namespace STF.Types
 {
 	public class MTFMaterial : ISTFResource
 	{

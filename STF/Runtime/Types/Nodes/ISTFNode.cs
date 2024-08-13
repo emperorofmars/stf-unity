@@ -3,9 +3,9 @@ using System;
 using UnityEngine;
 using Newtonsoft.Json.Linq;
 using STF_Util;
-using STF.Types;
+using STF.Serialisation;
 
-namespace STF.Serialisation
+namespace STF.Types
 {
 	public abstract class ISTFNode : MonoBehaviour, ISTFType
 	{

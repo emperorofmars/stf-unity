@@ -2,9 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json.Linq;
+using STF.Serialisation;
 using UnityEngine;
 
-namespace STF.Serialisation
+namespace STF.Types
 {
 	[CreateAssetMenu(fileName = "STFHumanoidArmature", menuName = "STF/Resource Components/Humanoid Armature", order = 1)]
 	public class STFHumanoidArmature : ISTFResourceComponent

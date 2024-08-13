@@ -1,12 +1,11 @@
 
-using System;
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
-using STF.Types;
+using STF.Serialisation;
 using STF_Util;
 using UnityEngine;
 
-namespace STF.Serialisation
+namespace STF.Types
 {
 	public abstract class ISTFNodeComponent : MonoBehaviour, ISTFType
 	{

@@ -1,15 +1,10 @@
 
 #if UNITY_EDITOR
 
-using System;
 using System.Collections.Generic;
-using UnityEngine;
-using Newtonsoft.Json.Linq;
-using System.Threading.Tasks;
-using System.Linq;
 using UnityEditor;
 
-namespace AVA.Serialisation
+namespace AVA.Types.Editors
 {
 	[CustomEditor(typeof(AVAEyeBoneLimitsSimple))]
 	public class AVAEyeBoneLimitsSimpleInspector : Editor

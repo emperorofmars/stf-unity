@@ -1,12 +1,12 @@
 
-using System;
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
+using STF.Serialisation;
 using STF.Types;
 using STF_Util;
 using UnityEngine;
 
-namespace STF.Serialisation
+namespace STF.Types
 {
 	public class ResourceIdPair { public string Id; public UnityEngine.Object Resource;}
 

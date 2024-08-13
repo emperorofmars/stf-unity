@@ -4,6 +4,7 @@ using System;
 using Newtonsoft.Json.Linq;
 using static STF.Util.STFConstants;
 using STF.Util;
+using STF.Types;
 
 namespace STF.Serialisation
 {

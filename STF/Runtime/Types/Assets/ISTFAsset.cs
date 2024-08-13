@@ -6,9 +6,9 @@ using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using Unity.Collections;
 using STF.Util;
-using STF.Types;
+using STF.Serialisation;
 
-namespace STF.Serialisation
+namespace STF.Types
 {
 	public abstract class ISTFAsset : MonoBehaviour, ISTFType
 	{

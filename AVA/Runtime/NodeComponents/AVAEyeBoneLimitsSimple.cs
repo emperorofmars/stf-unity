@@ -1,12 +1,14 @@
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 using STF.Serialisation;
+using STF.Types;
+
 
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 
-namespace AVA.Serialisation
+namespace AVA.Types
 {
 	public class AVAEyeBoneLimitsSimple : ISTFNodeComponent
 	{

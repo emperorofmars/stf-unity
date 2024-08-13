@@ -1,11 +1,11 @@
 using System.Collections.Generic;
-using System.Linq;
 using Newtonsoft.Json.Linq;
 using STF.ApplicationConversion;
+using STF.Serialisation;
 using STF.Util;
 using UnityEngine;
 
-namespace STF.Serialisation
+namespace STF.Types
 {
 	public class STFResourceHolder : ISTFNodeComponent
 	{

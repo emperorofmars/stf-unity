@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json;
 using STF.Serialisation;
+using STF.Types;
 using UnityEditor;
 using UnityEngine;
 

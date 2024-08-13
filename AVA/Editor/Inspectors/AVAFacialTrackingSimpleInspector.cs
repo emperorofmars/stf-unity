@@ -3,9 +3,9 @@
 
 using UnityEngine;
 using UnityEditor;
-using STF.Serialisation;
+using STF.Types;
 
-namespace AVA.Serialisation
+namespace AVA.Types.Editors
 {
 	[CustomEditor(typeof(AVAFacialTrackingSimple))]
 	public class AVAFacialTrackingSimpleInspector : Editor

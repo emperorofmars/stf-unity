@@ -4,6 +4,7 @@ using UnityEngine;
 using Newtonsoft.Json.Linq;
 using System.Threading.Tasks;
 using STF.Util;
+using STF.Types;
 
 namespace STF.Serialisation
 {

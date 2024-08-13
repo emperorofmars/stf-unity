@@ -1,11 +1,11 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
+using STF.Serialisation;
 using STF.Util;
 using UnityEngine;
 
-namespace STF.Serialisation
+namespace STF.Types
 {
 	public class STFUnrecognizedResourceComponent : ISTFResourceComponent
 	{

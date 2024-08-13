@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace STF.Serialisation
+namespace STF.Types
 {
 	/*
 		Utility Component to store Armature Info.

@@ -4,9 +4,8 @@
 using UnityEngine;
 using System.Linq;
 using UnityEditor;
-using STF.Util;
 
-namespace STF.Serialisation
+namespace STF.Types
 {
 	[CustomEditor(typeof(STFHumanoidArmature))]
 	public class STFHumanoidArmatureInspector : Editor

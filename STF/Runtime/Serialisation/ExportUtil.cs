@@ -1,5 +1,6 @@
 
 using Newtonsoft.Json.Linq;
+using STF.Types;
 using UnityEngine;
 
 namespace STF.Serialisation

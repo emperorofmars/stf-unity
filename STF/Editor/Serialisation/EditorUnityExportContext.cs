@@ -1,13 +1,9 @@
 
 #if UNITY_EDITOR
 
-using System;
-using System.Collections.Generic;
-using UnityEngine;
-using Newtonsoft.Json.Linq;
 using UnityEditor;
-using System.Threading.Tasks;
 using System.IO;
+using STF.Types;
 
 namespace STF.Serialisation
 {

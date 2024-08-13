@@ -1,13 +1,10 @@
 
 #if UNITY_EDITOR
 
-using System;
 using UnityEngine;
-using System.Linq;
 using UnityEditor;
-using STF.Serialisation;
 
-namespace AVA.Serialisation
+namespace AVA.Types.Editors
 {
 	[CustomEditor(typeof(AVAAvatar))]
 	public class AVAAvatarInspector : Editor

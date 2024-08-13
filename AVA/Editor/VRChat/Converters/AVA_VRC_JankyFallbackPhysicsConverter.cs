@@ -2,7 +2,7 @@
 #if UNITY_EDITOR
 #if AVA_VRCSDK3_FOUND
 
-using AVA.Serialisation;
+using AVA.Types;
 using STF.ApplicationConversion;
 using UnityEngine;
 using VRC.SDK3.Dynamics.PhysBone.Components;

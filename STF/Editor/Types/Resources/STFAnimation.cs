@@ -8,6 +8,7 @@ using System.Linq;
 using STF.Util;
 using STF.ApplicationConversion;
 using static STF.Util.STFConstants;
+using STF.Types;
 
 namespace STF.Serialisation
 {

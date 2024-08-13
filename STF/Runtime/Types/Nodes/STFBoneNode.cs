@@ -1,9 +1,9 @@
 
 using Newtonsoft.Json.Linq;
-using STF.Util;
+using STF.Serialisation;
 using UnityEngine;
 
-namespace STF.Serialisation
+namespace STF.Types
 {
 	public class STFBoneNode : ISTFNode
 	{

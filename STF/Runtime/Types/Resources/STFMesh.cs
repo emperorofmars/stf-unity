@@ -4,12 +4,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
+using STF.Serialisation;
 using STF.Util;
 using Unity.Collections;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-namespace STF.Serialisation
+namespace STF.Types
 {
 	public class STFMesh : ISTFResource
 	{

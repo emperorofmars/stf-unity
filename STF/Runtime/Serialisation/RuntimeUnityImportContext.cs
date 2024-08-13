@@ -1,5 +1,6 @@
 
 using System.Collections.Generic;
+using STF.Types;
 using UnityEngine;
 
 namespace STF.Serialisation

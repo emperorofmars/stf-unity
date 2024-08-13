@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using STF.Serialisation;
+using STF.Types;
 using UnityEngine;
 using UnityEngine.Animations;
 

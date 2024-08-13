@@ -4,13 +4,15 @@ using Newtonsoft.Json.Linq;
 using UnityEngine;
 using System.IO;
 using STF.Util;
+using STF.Serialisation;
+
 
 
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 
-namespace STF.Serialisation
+namespace STF.Types
 {
 	public class STFTexture : ISTFResource
 	{

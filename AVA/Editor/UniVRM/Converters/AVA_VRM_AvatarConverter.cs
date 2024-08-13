@@ -1,9 +1,9 @@
 #if UNITY_EDITOR
 #if AVA_UNIVRM_FOUND
 
-using AVA.Serialisation;
+using AVA.Types;
 using STF.ApplicationConversion;
-using STF.Serialisation;
+using STF.Types;
 using UnityEngine;
 using VRM;
 

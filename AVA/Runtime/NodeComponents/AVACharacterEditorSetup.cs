@@ -1,18 +1,14 @@
 using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using UnityEngine;
-using System.Threading.Tasks;
-using STF.Serialisation;
-
+using STF.Types;
 
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 
 // This exists for now purely to showcase how data could be stored to populate the ui of a character editor application
-namespace AVA.Serialisation
+namespace AVA.Types
 {
 	[Serializable]
 	public class CharacterEditorEntry

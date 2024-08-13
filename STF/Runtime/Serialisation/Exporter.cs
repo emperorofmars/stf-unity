@@ -1,14 +1,12 @@
 
-#if UNITY_EDITOR
-
 using UnityEngine;
 using System.Collections.Generic;
 using System;
-using System.IO;
 using System.Linq;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using STF.Util;
+using STF.Types;
 
 namespace STF.Serialisation
 {
@@ -75,5 +73,3 @@ namespace STF.Serialisation
 		}
 	}
 }
-
-#endif

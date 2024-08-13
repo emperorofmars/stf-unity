@@ -1,11 +1,10 @@
 
-using System;
 using Newtonsoft.Json.Linq;
-using STF.Util;
+using STF.Serialisation;
 using STF_Util;
 using UnityEngine;
 
-namespace STF.Serialisation
+namespace STF.Types
 {
 	public class STFPatchNode : ISTFNode
 	{

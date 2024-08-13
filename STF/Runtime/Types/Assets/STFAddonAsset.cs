@@ -2,10 +2,9 @@
 using System;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
-using UnityEngine;
-using STF.Util;
+using STF.Serialisation;
 
-namespace STF.Serialisation
+namespace STF.Types
 {
 	public class STFAddonAsset : ISTFAsset
 	{

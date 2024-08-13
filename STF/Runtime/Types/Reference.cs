@@ -1,8 +1,8 @@
 using System;
-using STF.Serialisation;
+using STF.Util;
 using UnityEngine;
 
-namespace STF.Util
+namespace STF.Types
 {
 	public interface IReference
 	{

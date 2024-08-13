@@ -5,13 +5,13 @@ using System.Threading.Tasks;
 using STF.Serialisation;
 using STF.Util;
 using System.Linq;
-
+using STF.Types;
 
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 
-namespace AVA.Serialisation
+namespace AVA.Types
 {
 	public class AVAAvatar : ISTFNodeComponent
 	{

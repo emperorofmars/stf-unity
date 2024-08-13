@@ -1,5 +1,5 @@
 
-namespace STF.Serialisation
+namespace STF.Types
 {
 	public class STFBoneInstanceNode : ISTFNode
 	{

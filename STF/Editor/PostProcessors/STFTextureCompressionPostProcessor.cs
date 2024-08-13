@@ -3,6 +3,7 @@
 
 using System;
 using System.Linq;
+using STF.Types;
 using UnityEditor;
 using static STF.Util.STFConstants;
 

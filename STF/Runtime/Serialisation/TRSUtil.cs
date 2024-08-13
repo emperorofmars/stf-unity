@@ -1,9 +1,7 @@
-#if UNITY_EDITOR
-
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 
-namespace STF.Util
+namespace STF.Serialisation
 {
 	public class TRSUtil
 	{
@@ -56,5 +54,3 @@ namespace STF.Util
 		}
 	}
 }
-
-#endif
