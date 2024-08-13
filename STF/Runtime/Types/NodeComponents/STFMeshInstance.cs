@@ -64,7 +64,7 @@ namespace STF.Types
 
 			if(Component is SkinnedMeshRenderer)
 			{
-				if(meshInstance.ArmatureInstance.IsValid()) ret.Add("armature_instance", rf.NodeRef(meshInstance.ArmatureInstance.Id));
+				if(meshInstance.ArmatureInstance.IsId) ret.Add("armature_instance", rf.NodeRef(meshInstance.ArmatureInstance.Id));
 				else ret.Add("armature_instance", rf.NodeRef((renderer as SkinnedMeshRenderer).rootBone.parent.GetComponent<STFArmatureInstanceNode>()?.Id));
 			}
 

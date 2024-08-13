@@ -71,7 +71,7 @@ namespace STF.Types
 					c.Resource = new ResourceReference((ISTFResource)EditorGUILayout.ObjectField("Parent Resource", c.Resource.Resource, typeof(STFArmature), false));
 				}
 			}
-			var stfArmatureValid = c.Resource.IsValid() && c.Resource.Ref.GetType() == typeof(STFArmature) && (c.Resource.Ref as STFArmature).Resource != null;
+			var stfArmatureValid = c.Resource.IsRef && c.Resource.Resource.GetType() == typeof(STFArmature) && c.Resource.Resource.Resource != null;
 			var stfArmature = c.Resource.Ref as STFArmature;
 
 			if(stfArmatureValid)

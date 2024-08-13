@@ -17,7 +17,6 @@ namespace AVA.Types
 	{
 		public const string _TYPE = "AVA.avatar";
 		public override string Type => _TYPE;
-		//public STFMeshInstance MainMeshInstance;
 		public NodeComponentReference<STFMeshInstance> MainMeshInstance = new();
 		public NodeReference viewport_parent = new();
 		public Vector3 viewport_position = Vector3.zero;
@@ -28,7 +27,7 @@ namespace AVA.Types
 			if(meshInstances.Count() == 1) MainMeshInstance = (NodeComponentReference)meshInstances[0];
 			else MainMeshInstance = (NodeComponentReference)meshInstances.FirstOrDefault(m => m.name.ToLower().Contains("body"));
 			
-			if(MainMeshInstance.IsValid())
+			if(MainMeshInstance.IsRef)
 			{
 				var humanoidDefinition = TryGetHumanoidDefinition();
 				if(humanoidDefinition) SetupViewport(humanoidDefinition);
@@ -83,7 +82,7 @@ namespace AVA.Types
 			var rf = new RefSerializer(ret);
 			SerializeRelationships(c, ret);
 			State.AddTask(new Task(() => {
-				if(c.MainMeshInstance.IsValid()) ret.Add("main_mesh", rf.NodeComponentRef(c.MainMeshInstance.Id));
+				if(c.MainMeshInstance.IsId) ret.Add("main_mesh", rf.NodeComponentRef(c.MainMeshInstance.Id));
 				ret.Add("viewport_parent", c.viewport_parent != null ? rf.NodeRef(c.viewport_parent.Id) : null);
 				ret.Add("viewport_position", new JArray() {c.viewport_position.x, c.viewport_position.y, c.viewport_position.z});
 			}));

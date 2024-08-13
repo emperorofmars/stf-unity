@@ -90,7 +90,7 @@ namespace AVA.Types
 				{"type", AVAFacialTrackingSimple._TYPE},
 			};
 			var rf = new RefSerializer(ret);
-			if(c.TargetMeshInstance.IsValid()) ret.Add("target_mesh_instance", rf.NodeComponentRef(c.TargetMeshInstance.GetRef().GetComponent<STFMeshInstance>().Id));
+			if(c.TargetMeshInstance.IsRef) ret.Add("target_mesh_instance", rf.NodeComponentRef(c.TargetMeshInstance.GetRef().GetComponent<STFMeshInstance>().Id));
 			SerializeRelationships(c, ret);
 			foreach(var m in c.Mappings)
 			{

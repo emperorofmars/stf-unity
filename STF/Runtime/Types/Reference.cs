@@ -9,7 +9,8 @@ namespace STF.Types
 		string Id {get;}
 		UnityEngine.Object Ref {get;}
 		public T GetRef<T>() where T : UnityEngine.Object => (T)Ref;
-		public bool IsValid() => !string.IsNullOrWhiteSpace(Id) && Ref != null;
+		public bool IsId {get;}
+		public bool IsRef {get;}
 	}
 
 	[Serializable]
@@ -20,6 +21,8 @@ namespace STF.Types
 		public ISTFNode Node;
 		public UnityEngine.Object Ref => Node;
 		public T GetRef<T>() where T : UnityEngine.Object => (T)Ref;
+		public bool IsId {get => !string.IsNullOrWhiteSpace(Id); }
+		public bool IsRef {get => Ref != null; }
 		public bool IsValid() => !string.IsNullOrWhiteSpace(Id) && Ref != null;
 
 		public NodeReference() {}
@@ -42,7 +45,8 @@ namespace STF.Types
 		public T Node;
 		public UnityEngine.Object Ref => Node;
 		public T GetRef() => (T)Ref;
-		public bool IsValid() => !string.IsNullOrWhiteSpace(Id) && Ref != null;
+		public bool IsId {get => !string.IsNullOrWhiteSpace(Id); }
+		public bool IsRef {get => Ref != null; }
 
 		public NodeReference() {}
 		public NodeReference(string NodeId) {Node = null; this.NodeId = NodeId;}
@@ -66,7 +70,8 @@ namespace STF.Types
 		public ISTFNodeComponent NodeComponent;
 		public UnityEngine.Object Ref => NodeComponent;
 		public T GetRef<T>() where T : UnityEngine.Object => (T)Ref;
-		public bool IsValid() => !string.IsNullOrWhiteSpace(Id) && Ref != null;
+		public bool IsId {get => !string.IsNullOrWhiteSpace(Id); }
+		public bool IsRef {get => Ref != null; }
 
 		public NodeComponentReference() {}
 		public NodeComponentReference(string NodeComponentId) {this.NodeComponentId = NodeComponentId; NodeComponent = null;}
@@ -87,7 +92,8 @@ namespace STF.Types
 		public T NodeComponent;
 		public UnityEngine.Object Ref => NodeComponent;
 		public T GetRef() => (T)Ref;
-		public bool IsValid() => !string.IsNullOrWhiteSpace(Id) && Ref != null;
+		public bool IsId {get => !string.IsNullOrWhiteSpace(Id); }
+		public bool IsRef {get => Ref != null; }
 
 		public NodeComponentReference() {}
 		public NodeComponentReference(string NodeComponentId) {this.NodeComponentId = NodeComponentId; NodeComponent = null;}
@@ -118,7 +124,8 @@ namespace STF.Types
 		public ResourceReference(ISTFResource Resource) { this.Resource = Resource; ResourceId = Resource?.Id; }
 
 		public T GetRef<T>() where T : UnityEngine.Object => (T)Ref;
-		public bool IsValid() => !string.IsNullOrWhiteSpace(Id) && (Ref != null || IsFallback && Fallback.IsValid());
+		public bool IsId {get => !string.IsNullOrWhiteSpace(Id); }
+		public bool IsRef {get => Ref != null || IsFallback && Fallback.IsRef; }
 
 		public static implicit operator ResourceReference(ISTFResource Resource) => new ResourceReference(Resource);
 		public static implicit operator ResourceReference(string Id) => new ResourceReference(Id);
@@ -143,7 +150,8 @@ namespace STF.Types
 		public ResourceReference(T Resource) { this.Resource = Resource; ResourceId = Resource?.Id; }
 
 		public T GetRef() => (T)Ref;
-		public bool IsValid() => !string.IsNullOrWhiteSpace(Id) && (Ref != null || IsFallback && Fallback.IsValid());
+		public bool IsId {get => !string.IsNullOrWhiteSpace(Id); }
+		public bool IsRef {get => Ref != null || IsFallback && Fallback.IsRef; }
 
 		public static implicit operator ResourceReference<T>(T Resource) => new ResourceReference<T>(Resource);
 		public static implicit operator ResourceReference<T>(string Id) => new ResourceReference<T>(Id);
@@ -162,7 +170,8 @@ namespace STF.Types
 		public ISTFResourceComponent ResourceComponent;
 		public UnityEngine.Object Ref => ResourceComponent;
 		public T GetRef<T>() where T : UnityEngine.Object => (T)Ref;
-		public bool IsValid() => !string.IsNullOrWhiteSpace(Id) && Ref != null;
+		public bool IsId {get => !string.IsNullOrWhiteSpace(Id); }
+		public bool IsRef {get => Ref != null; }
 
 		public ResourceComponentReference() {}
 		public ResourceComponentReference(string ResourceComponentId) {this.ResourceComponentId = ResourceComponentId; ResourceComponent = null;}
@@ -183,7 +192,8 @@ namespace STF.Types
 		public T ResourceComponent;
 		public UnityEngine.Object Ref => ResourceComponent;
 		public T GetRef() => (T)Ref;
-		public bool IsValid() => !string.IsNullOrWhiteSpace(Id) && Ref != null;
+		public bool IsId {get => !string.IsNullOrWhiteSpace(Id); }
+		public bool IsRef {get => Ref != null; }
 
 		public ResourceComponentReference() {}
 		public ResourceComponentReference(string ResourceComponentId) {this.ResourceComponentId = ResourceComponentId; ResourceComponent = null;}

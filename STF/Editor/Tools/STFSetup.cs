@@ -87,7 +87,7 @@ namespace STF.Tools
 				if(smr.bones != null) armatureInstance.Bones = new List<GameObject>(smr.bones.Select(b => b?.gameObject));
 
 				// If the armatureInstance doesn't have an armature (eg was just created), then determine the armature from the smr bone hirarchy and the smr bind poses
-				if(armatureInstance.Armature.IsValid() && !armatureInstancesToSetup.Contains(armatureInstance))
+				if(armatureInstance.Armature.IsRef && !armatureInstancesToSetup.Contains(armatureInstance))
 				{
 					armatureInstancesToSetup.Add(armatureInstance);
 					ret.CreatedGos.Add(SetupArmature(smr, armatureInstance));
