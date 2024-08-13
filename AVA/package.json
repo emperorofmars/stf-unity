@@ -1,0 +1,25 @@
+{
+  "name": "com.squirrelbite.ava-unity",
+  "version": "0.3.0",
+  "displayName": "AVA Unity",
+  "description": "Extensions for STF to support VR avatars.",
+  "unity": "2022.3",
+  "unityRelease": "6f1",
+  "license": "MIT",
+  "dependencies": {
+    "com.unity.nuget.newtonsoft-json": "2.0.2",
+    "com.squirrelbite.stf-unity": "0.3.0"
+  },
+  "keywords": [
+    "stf",
+    "file",
+    "import",
+    "export"
+  ],
+  "author": {
+    "name": "Emperor of Mars",
+    "email": "mars@squirrel.pub",
+    "url": "https://github.com/emperorofmars/stf-unity"
+  },
+  "type": "library"
+}

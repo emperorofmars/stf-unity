@@ -1,8 +1,8 @@
 {
-  "name": "org.emperorofmars.stf-unity",
+  "name": "com.squirrelbite.mtf-unity",
   "version": "0.3.0",
-  "displayName": "STF Unity",
-  "description": "Import and export support for STF files.",
+  "displayName": "MTF Unity",
+  "description": "Shader & Engine Agnostic Material Format",
   "unity": "2022.3",
   "unityRelease": "6f1",
   "license": "MIT",
@@ -10,8 +10,9 @@
     "com.unity.nuget.newtonsoft-json": "2.0.2"
   },
   "keywords": [
-    "stf",
+    "mtf",
     "file",
+	"material",
     "import",
     "export"
   ],
