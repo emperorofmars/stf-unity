@@ -82,7 +82,7 @@ namespace STF.Serialisation
 			meta.Id = Id;
 			meta.Name = (string)Json["name"];
 			meta.name = meta.Name + "_" + Id;
-			go.name = meta.Name;
+			go.name = meta.name;
 
 			armatureInfo.ArmatureId = Id;
 			armatureInfo.ArmatureName = meta.Name;

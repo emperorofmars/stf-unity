@@ -8,7 +8,6 @@ namespace STF.Serialisation
 {
 	public interface IUnityImportContext
 	{
-		//STFImportState State {get; set;}
 		Object SaveResource(ISTFResource Resource);
 		Object SaveSubResource(Object SubResource, Object Resource);
 		Object SaveGeneratedResource(GameObject Resource);

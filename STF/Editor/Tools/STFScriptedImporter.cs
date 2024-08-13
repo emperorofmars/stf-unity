@@ -21,31 +21,25 @@ namespace STF.Tools
 			if(UnpackingImport)
 			{
 				AssetInfo = new STFImportInfo(new STFFile(ctx.assetPath), ctx.assetPath);
-				//ctx.AddObjectToAsset("main", AssetInfo);
 				if(AssetInfo.Preview)
 				{
 					ctx.AddObjectToAsset("preview", AssetInfo.Preview);
 					ctx.SetMainObject(AssetInfo.Preview);
 				}
 				// TODO: else use a generic logo
-				//ctx.SetMainObject(AssetInfo);
 
 				// Auto Unpack?
-				// new STFUnpackingImporter(STFDirectoryUtil.GetUnpackLocation(assetPath), assetPath);
 			}
 			else
 			{
 				var unityContext = new RuntimeUnityImportContext();
 				var (asset, _state) = Importer.Parse(unityContext, ctx.assetPath);
 				ctx.AddObjectToAsset("main", asset.gameObject);
-				
-				Debug.Log(unityContext.AssetCtxObjects.Count);
-				
+				ctx.SetMainObject(asset.gameObject);
 				foreach(var resource in unityContext.AssetCtxObjects)
 				{
 					if(resource != null) ctx.AddObjectToAsset("resource" + resource.GetInstanceID(), resource);
 				}
-				ctx.SetMainObject(asset.gameObject);
 			}
 		}
 	}
