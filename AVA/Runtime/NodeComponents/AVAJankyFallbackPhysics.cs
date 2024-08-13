@@ -19,7 +19,7 @@ namespace AVA.Types
 	{
 		public static string _TYPE = "AVA.janky_fallback_physics";
 		public override string Type => _TYPE;
-		public GameObject target;
+		public NodeReference target;
 		public string targetId;
 		public float pull = 0.2f;
 		public float spring = 0.2f;
@@ -41,7 +41,7 @@ namespace AVA.Types
 			c.Extends = Json["extends"]?.ToObject<List<string>>();
 			var rf = new RefDeserializer(Json);
 
-			if(State.Nodes.ContainsKey((string)Json["target"])) c.target = State.Nodes[rf.NodeRef(Json["target"])].gameObject;
+			if(State.Nodes.ContainsKey((string)Json["target"])) c.target = State.Nodes[rf.NodeRef(Json["target"])];
 			c.targetId = (string)Json["target"];
 			c.pull = (float)Json["pull"];
 			c.spring = (float)Json["spring"];
@@ -65,7 +65,7 @@ namespace AVA.Types
 			var rf = new RefSerializer(ret);
 			SerializeRelationships(c, ret);
 			ret.Add("type", AVAJankyFallbackPhysics._TYPE);
-			ret.Add("target", c.target != null ? rf.NodeRef(c.target.GetComponents<ISTFNode>().OrderByDescending(c => c.PrefabHirarchy).FirstOrDefault().Id) : rf.NodeRef(c.targetId));
+			ret.Add("target", c.target != null ? rf.NodeRef(c.target.Node.GetComponents<ISTFNode>().OrderByDescending(c => c.PrefabHirarchy).FirstOrDefault().Id) : rf.NodeRef(c.targetId));
 			ret.Add("pull", c.pull);
 			ret.Add("spring", c.spring);
 			ret.Add("stiffness", c.stiffness);

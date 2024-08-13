@@ -17,7 +17,7 @@ namespace STF.Types
 		public const string _TYPE = "STF.mesh";
 		public override string Type => _TYPE;
 		public string OriginalBufferId;
-		public ResourceReference Armature;
+		public ResourceReference<STFArmature> Armature;
 
 	}
 

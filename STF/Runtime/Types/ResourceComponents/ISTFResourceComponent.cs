@@ -19,7 +19,7 @@ namespace STF.Types
 		public string _Name;
 		
 		public List<string> Targets = new List<string>();
-		[HideInInspector] public ISTFResource Resource;
+		[HideInInspector] public ResourceReference Resource = new();
 	}
 	
 	public interface ISTFResourceComponentExporter

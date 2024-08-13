@@ -13,9 +13,9 @@ namespace STF.Types
 		public const string _TYPE = "STF.armature_instance";
 		public override string Type => _TYPE;
 
-		public STFArmature armature;
-		public GameObject root;
-		public List<GameObject> bones;
+		public ResourceReference Armature;
+		public GameObject Root;
+		public List<GameObject> Bones;
 	}
 
 	public class STFArmatureInstanceExporter : ASTFNodeExporter
@@ -42,9 +42,9 @@ namespace STF.Types
 			};
 
 			var rf = new RefSerializer(ret);
-			ret.Add("armature", rf.ResourceRef(ExportUtil.SerializeResource(State, node.armature)));
+			ret.Add("armature", rf.ResourceRef(ExportUtil.SerializeResource(State, node.Armature.Ref)));
 
-			foreach(var entry in node.bones)
+			foreach(var entry in node.Bones)
 			{
 				var boneInstance = entry.GetComponent<STFBoneInstanceNode>();
 				var boneInstanceChildren = new JArray();
@@ -96,9 +96,9 @@ namespace STF.Types
 			go.transform.SetParent(go.transform, false);
 			var boneInstanceIds = rf.NodeRefs();
 
-			armatureInstance.armature = armatureResource;
-			armatureInstance.root = armatureInfo.Root;
-			armatureInstance.bones = new List<GameObject>(new GameObject[boneInstanceIds.Count]);
+			armatureInstance.Armature = new ResourceReference(armatureResource);
+			armatureInstance.Root = armatureInfo.Root;
+			armatureInstance.Bones = new List<GameObject>(new GameObject[boneInstanceIds.Count]);
 
 			for(int i = 0; i < boneInstanceIds.Count; i++)
 			{
@@ -109,7 +109,7 @@ namespace STF.Types
 				boneInstance.BoneId = bone.Id;
 				boneInstance.PrefabHirarchy = 1;
 				boneInstance.Origin = State.AssetId;
-				armatureInstance.bones[i] = boneInstance.gameObject;
+				armatureInstance.Bones[i] = boneInstance.gameObject;
 
 				TRSUtil.ParseTRS(boneInstance.gameObject, boneInstanceJson);
 				State.AddNode(boneInstance);

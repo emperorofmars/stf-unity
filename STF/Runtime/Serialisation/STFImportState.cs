@@ -61,7 +61,7 @@ namespace STF.Serialisation
 		}
 		public virtual void AddResourceComponent(ISTFResourceComponent Component, ISTFResource Resource)
 		{
-			Component.Resource = Resource;
+			Component.Resource = new ResourceReference(Resource);
 			Resource.Components.Add(Component);
 			if(string.IsNullOrWhiteSpace(Component.name)) Component.name = Component.Type + ":" + Component.Id;
 			UnityContext.SaveSubResource(Component, Resource);
@@ -83,14 +83,19 @@ namespace STF.Serialisation
 			return Nodes.ContainsKey(Id) ? new NodeReference(Nodes[Id]) : new NodeReference(Id);
 		}
 
-		public virtual NodeReference GetNodeComponentReference(string Id)
+		public virtual NodeComponentReference GetNodeComponentReference(string Id)
 		{
-			return Nodes.ContainsKey(Id) ? new NodeReference(Nodes[Id]) : new NodeReference(Id);
+			return NodeComponents.ContainsKey(Id) ? new NodeComponentReference(NodeComponents[Id]) : new NodeComponentReference(Id);
 		}
 
-		internal ResourceReference GetResourceReference(string Id)
+		public virtual ResourceReference GetResourceReference(string Id)
 		{
 			return Resources.ContainsKey(Id) ? new ResourceReference(Resources[Id]) : new ResourceReference(Id);
+		}
+
+		public virtual ResourceComponentReference GetResourceComponentReference(string Id)
+		{
+			return ResourceComponents.ContainsKey(Id) ? new ResourceComponentReference(ResourceComponents[Id]) : new ResourceComponentReference(Id);
 		}
 	}
 }

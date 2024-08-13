@@ -17,17 +17,18 @@ namespace AVA.Types
 	{
 		public const string _TYPE = "AVA.avatar";
 		public override string Type => _TYPE;
-		public STFMeshInstance MainMeshInstance;
+		//public STFMeshInstance MainMeshInstance;
+		public NodeComponentReference<STFMeshInstance> MainMeshInstance;
 		public NodeReference viewport_parent;
 		public Vector3 viewport_position = Vector3.zero;
 
 		public void TrySetup()
 		{
 			var meshInstances = GetComponentsInChildren<STFMeshInstance>();
-			if(meshInstances.Count() == 1) MainMeshInstance = meshInstances[0];
-			else MainMeshInstance = meshInstances.FirstOrDefault(m => m.name.ToLower().Contains("body"));
+			if(meshInstances.Count() == 1) MainMeshInstance = (NodeComponentReference)meshInstances[0];
+			else MainMeshInstance = (NodeComponentReference)meshInstances.FirstOrDefault(m => m.name.ToLower().Contains("body"));
 			
-			if(MainMeshInstance != null)
+			if(MainMeshInstance.IsValid())
 			{
 				var humanoidDefinition = TryGetHumanoidDefinition();
 				if(humanoidDefinition) SetupViewport(humanoidDefinition);
@@ -36,14 +37,14 @@ namespace AVA.Types
 
 		public STFHumanoidArmature TryGetHumanoidDefinition()
 		{
-			return (STFHumanoidArmature)MainMeshInstance?.ArmatureInstance?.armature?.Components?.FirstOrDefault(comp => comp.Type == STFHumanoidArmature._TYPE);
+			return (STFHumanoidArmature)MainMeshInstance.GetRef()?.ArmatureInstance.GetRef()?.Armature.Resource?.Components?.FirstOrDefault(comp => comp.Type == STFHumanoidArmature._TYPE);
 		}
 
 		public GameObject FindBoneInstance(STFHumanoidArmature HumanoidDefinition, string HumanoidBoneName)
 		{
 			var humanoidBone = HumanoidDefinition.Mappings.Find(m => m.humanoidName == HumanoidBoneName)?.bone;
 			return humanoidBone != null ?
-				MainMeshInstance?.ArmatureInstance.bones.Find(b => b.GetComponent<STFBoneInstanceNode>().BoneId == humanoidBone?.GetComponent<STFBoneNode>().Id)
+				MainMeshInstance.GetRef()?.ArmatureInstance.GetRef()?.Bones.Find(b => b.GetComponent<STFBoneInstanceNode>().BoneId == humanoidBone?.GetComponent<STFBoneNode>().Id)
 				: null;
 		}
 
@@ -82,7 +83,7 @@ namespace AVA.Types
 			var rf = new RefSerializer(ret);
 			SerializeRelationships(c, ret);
 			State.AddTask(new Task(() => {
-				if(c.MainMeshInstance) ret.Add("main_mesh", rf.NodeComponentRef(c.MainMeshInstance.Id));
+				if(c.MainMeshInstance.IsValid()) ret.Add("main_mesh", rf.NodeComponentRef(c.MainMeshInstance.Id));
 				ret.Add("viewport_parent", c.viewport_parent != null ? rf.NodeRef(c.viewport_parent.Id) : null);
 				ret.Add("viewport_position", new JArray() {c.viewport_position.x, c.viewport_position.y, c.viewport_position.z});
 			}));
@@ -104,8 +105,8 @@ namespace AVA.Types
 			c.Id = Id;
 			ParseRelationships(Json, c);
 			State.AddTask(new Task(() => {
-				c.MainMeshInstance = Json["main_mesh"] != null ? (STFMeshInstance)State.NodeComponents[rf.NodeComponentRef(Json["main_mesh"])] : null;
-				c.viewport_parent = State.GetNodeComponentReference(rf.NodeRef(Json["viewport_parent"]));
+				c.MainMeshInstance = (NodeComponentReference)(Json["main_mesh"] != null ? (STFMeshInstance)State.NodeComponents[rf.NodeComponentRef(Json["main_mesh"])] : null);
+				c.viewport_parent = State.GetNodeReference(rf.NodeRef(Json["viewport_parent"]));
 				c.viewport_position = TRSUtil.ParseLocation((JArray)Json["viewport_position"]);
 			}));
 			State.AddNodeComponent(c);

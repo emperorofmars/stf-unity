@@ -16,8 +16,7 @@ namespace STF.Types
 	{
 		public const string _TYPE = "STF.mesh_instance";
 		public override string Type => _TYPE;
-		public STFArmatureInstanceNode ArmatureInstance;
-		public string ArmatureInstanceId;
+		public NodeReference<STFArmatureInstanceNode> ArmatureInstance;
 		public List<MTFMaterial> Materials = new List<MTFMaterial>();
 	}
 
@@ -65,7 +64,7 @@ namespace STF.Types
 
 			if(Component is SkinnedMeshRenderer)
 			{
-				if(meshInstance.ArmatureInstanceId != null && meshInstance.ArmatureInstanceId.Length > 0) ret.Add("armature_instance", rf.NodeRef(meshInstance.ArmatureInstanceId));
+				if(meshInstance.ArmatureInstance.IsValid()) ret.Add("armature_instance", rf.NodeRef(meshInstance.ArmatureInstance.Id));
 				else ret.Add("armature_instance", rf.NodeRef((renderer as SkinnedMeshRenderer).rootBone.parent.GetComponent<STFArmatureInstanceNode>()?.Id));
 			}
 
@@ -139,13 +138,13 @@ namespace STF.Types
 							var armatureInstanceNode = State.Nodes[armatureInstanceId];
 							var armatureInstance = armatureInstanceNode.GetComponent<STFArmatureInstanceNode>();
 							meshInstanceComponent.ArmatureInstance = armatureInstance;
-							c.rootBone = armatureInstance.root.transform;
-							c.bones = armatureInstance.bones.Select(b => b.transform).ToArray();
+							c.rootBone = armatureInstance.Root.transform;
+							c.bones = armatureInstance.Bones.Select(b => b.transform).ToArray();
 							c.updateWhenOffscreen = true;
 						}
 						else
 						{
-							meshInstanceComponent.ArmatureInstanceId = armatureInstanceId;
+							meshInstanceComponent.ArmatureInstance = armatureInstanceId;
 						}
 					}
 					
@@ -208,13 +207,13 @@ namespace STF.Types
 			var meshInstance = SourceComponent.GetComponent<STFMeshInstance>();
 			var smr = SourceComponent as SkinnedMeshRenderer;
 
-			var armatureInstanceNode = Context.Root.GetComponentsInChildren<STFArmatureInstanceNode>().FirstOrDefault(c => c.Id == meshInstance.ArmatureInstanceId);
+			var armatureInstanceNode = Context.Root.GetComponentsInChildren<STFArmatureInstanceNode>().FirstOrDefault(c => c.Id == meshInstance.ArmatureInstance.Id);
 			if(armatureInstanceNode != null)
 			{
-				smr.sharedMesh.bindposes = armatureInstanceNode.armature.Bindposes;
+				smr.sharedMesh.bindposes = armatureInstanceNode.Armature.GetRef<STFArmature>().Bindposes;
 
-				smr.rootBone = armatureInstanceNode.root.transform;
-				smr.bones = armatureInstanceNode.bones.Select(b => b.transform).ToArray();
+				smr.rootBone = armatureInstanceNode.Root.transform;
+				smr.bones = armatureInstanceNode.Bones.Select(b => b.transform).ToArray();
 			}
 			else
 			{

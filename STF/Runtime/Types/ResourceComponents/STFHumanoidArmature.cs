@@ -15,7 +15,8 @@ namespace STF.Types
 
 		[Serializable] public class BoneMappingPair { public BoneMappingPair(string humanoidName, GameObject bone) { this.humanoidName = humanoidName; this.bone = bone; } public string humanoidName; public GameObject bone; }
 
-		public static readonly Dictionary<string, string> _Translations = new Dictionary<string, string> {
+		public static readonly Dictionary<string, string> _Translations = new()
+		{
 			{"Hip", HumanBodyBones.Hips.ToString()},
 			{"Spine", HumanBodyBones.Spine.ToString()},
 			{"Chest", HumanBodyBones.Chest.ToString()},
@@ -73,9 +74,10 @@ namespace STF.Types
 			{"ToesRight", HumanBodyBones.RightToes.ToString()}
 		};
 
-		public static readonly List<string> _MappingsLeftList = new List<string>{"left", "_l", ".l", "-l"};
-		public static readonly List<string> _MappingsRightList = new List<string>{"right", "_r", ".r", "-r"};
-		public static readonly Dictionary<string, List<List<string>>> NameMappings = new Dictionary<string, List<List<string>>> {
+		public static readonly List<string> _MappingsLeftList = new() { "left", "_l", ".l", "-l" };
+		public static readonly List<string> _MappingsRightList = new() { "right", "_r", ".r", "-r" };
+		public static readonly Dictionary<string, List<List<string>>> NameMappings = new()
+		{
 			{"Hip", new List<List<string>>{new List<string>{"hip", "hips"}}},
 			{"Spine", new List<List<string>>{new List<string>{"spine"}}},
 			{"Chest", new List<List<string>>{new List<string>{"chest"}}},
@@ -134,7 +136,7 @@ namespace STF.Types
 		};
 
 		public string LocomotionType;
-		public List<BoneMappingPair> Mappings = new List<BoneMappingPair>();
+		public List<BoneMappingPair> Mappings = new();
 		public Avatar GeneratedAvatar;
 
 		public static string translateHumanoidSTFtoUnity(string STFName, string LocomotionType)
@@ -285,7 +287,7 @@ namespace STF.Types
 	{
 		public string ConvertPropertyPath(string STFProperty)
 		{
-			throw new System.NotImplementedException();
+			throw new NotImplementedException();
 		}
 
 		public void ParseFromJson(STFImportState State, JObject Json, string Id, ISTFResource Resource)

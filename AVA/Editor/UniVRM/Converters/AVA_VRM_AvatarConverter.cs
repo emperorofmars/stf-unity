@@ -39,7 +39,7 @@ namespace AVA.ApplicationConversion
 			vrmMeta.Thumbnail = asset.Preview;
 			
 			var vrmFirstPerson = Component.gameObject.AddComponent<VRMFirstPerson>();
-			vrmFirstPerson.FirstPersonBone = avaAvatar.viewport_parent?.Node?.transform;
+			vrmFirstPerson.FirstPersonBone = avaAvatar.viewport_parent.Node?.transform;
 			vrmFirstPerson.FirstPersonOffset = avaAvatar.viewport_position;
 
 			var secondary = new GameObject();

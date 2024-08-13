@@ -64,15 +64,15 @@ namespace STF.Types
 				var mainAsset = AssetDatabase.LoadMainAssetAtPath(AssetDatabase.GetAssetPath(target));
 				if(mainAsset != null && mainAsset is ISTFResource)
 				{
-					c.Resource = (ISTFResource)AssetDatabase.LoadMainAssetAtPath(AssetDatabase.GetAssetPath(target));
+					c.Resource = new ResourceReference((ISTFResource)AssetDatabase.LoadMainAssetAtPath(AssetDatabase.GetAssetPath(target)));
 				}
 				else
 				{
-					c.Resource = (ISTFResource)EditorGUILayout.ObjectField("Parent Resource", c.Resource, typeof(STFArmature), false);
+					c.Resource = new ResourceReference((ISTFResource)EditorGUILayout.ObjectField("Parent Resource", c.Resource.Resource, typeof(STFArmature), false));
 				}
 			}
-			var stfArmatureValid = c.Resource != null && c.Resource.GetType() == typeof(STFArmature) && (c.Resource as STFArmature).Resource != null;
-			var stfArmature = c.Resource as STFArmature;
+			var stfArmatureValid = c.Resource.IsValid() && c.Resource.Ref.GetType() == typeof(STFArmature) && (c.Resource.Ref as STFArmature).Resource != null;
+			var stfArmature = c.Resource.Ref as STFArmature;
 
 			if(stfArmatureValid)
 			{

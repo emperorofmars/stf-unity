@@ -33,15 +33,15 @@ namespace AVA.Types
 			"eye_closed", "look_up", "look_down" // add all the facial tracking ones
 		};
 
-		public STFMeshInstance TargetMeshInstance;
+		public NodeComponentReference<STFMeshInstance> TargetMeshInstance = new();
 		public List<BlendshapeMapping> Mappings = new List<BlendshapeMapping>();
 
 		public void Map()
 		{
-			var renderer = TargetMeshInstance.GetComponent<Renderer>();
+			var renderer = TargetMeshInstance.GetRef().GetComponent<Renderer>();
 			if(TargetMeshInstance == null || renderer == null) throw new Exception("Meshinstance must be mapped!");
 
-			Mesh mesh = renderer is SkinnedMeshRenderer ? (renderer as SkinnedMeshRenderer).sharedMesh : TargetMeshInstance.GetComponent<MeshFilter>().sharedMesh;
+			Mesh mesh = renderer is SkinnedMeshRenderer ? (renderer as SkinnedMeshRenderer).sharedMesh : TargetMeshInstance.GetRef().GetComponent<MeshFilter>().sharedMesh;
 
 			Mappings = new List<BlendshapeMapping>();
 			foreach(var v in VoiceVisemes15)
@@ -90,7 +90,7 @@ namespace AVA.Types
 				{"type", AVAFacialTrackingSimple._TYPE},
 			};
 			var rf = new RefSerializer(ret);
-			if(c.TargetMeshInstance) ret.Add("target_mesh_instance", rf.NodeComponentRef(c.TargetMeshInstance.GetComponent<STFMeshInstance>().Id));
+			if(c.TargetMeshInstance.IsValid()) ret.Add("target_mesh_instance", rf.NodeComponentRef(c.TargetMeshInstance.GetRef().GetComponent<STFMeshInstance>().Id));
 			SerializeRelationships(c, ret);
 			foreach(var m in c.Mappings)
 			{

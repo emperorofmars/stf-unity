@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using STF.Types;
+using STF.Serialisation;
+
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -17,7 +19,7 @@ namespace AVA.Types
 		public string display_name;
 		public string tooltip;
 		public Texture2D icon;
-		public List<AnimationClip> options;
+		public List<ResourceReference<STFAnimation>> options;
 	}
 	/*public class CharacterEditorSliderEntry : ACharacterEditorEntry
 	{

@@ -26,7 +26,7 @@ namespace AVA.ApplicationConversion
 			var c = (AVAJankyFallbackPhysics)Component;
 			var physbone = Component.gameObject.AddComponent<VRCPhysBone>();
 			
-			physbone.rootTransform = c.target ? c.target.transform : c.transform;
+			physbone.rootTransform = c.target.IsValid() ? c.target.Node.transform : c.transform;
 			physbone.pull = c.pull;
 			physbone.spring = c.spring;
 			physbone.limitType = VRC.Dynamics.VRCPhysBoneBase.LimitType.Angle;

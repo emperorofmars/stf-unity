@@ -24,7 +24,7 @@ namespace AVA.Types.Editors
 				c.Extends.Clear();
 				var avatar = c.GetComponent<AVAAvatar>();
 				c.Extends.Add(avatar?.Id);
-				c.TargetMeshInstance = avatar?.MainMeshInstance;
+				c.TargetMeshInstance = (STFMeshInstance)avatar.MainMeshInstance.Ref;
 			}
 
 			EditorGUILayout.BeginHorizontal();

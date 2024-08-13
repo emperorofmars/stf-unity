@@ -12,7 +12,7 @@ namespace STF.Types
 		public const string _TYPE = "STF.resource_holder";
 		public override string Type => _TYPE;
 
-		public List<Object> Resources = new List<Object>();
+		public List<ResourceReference> Resources = new List<ResourceReference>();
 	}
 
 	public class STFResourceHolderExporter : ASTFNodeComponentExporter
@@ -31,7 +31,7 @@ namespace STF.Types
 			var rf = new RefSerializer(ret);
 			foreach(var res in c.Resources)
 			{
-				var id = ExportUtil.SerializeResource(State, res, res is AnimationClip ? c.gameObject : null);
+				var id = ExportUtil.SerializeResource(State, res, res.Ref is AnimationClip ? c.gameObject : null);
 				rf.ResourceRef(id);
 			}
 
@@ -79,12 +79,12 @@ namespace STF.Types
 
 		public void Convert(ISTFApplicationConvertState State, Component Component)
 		{
-			List<Object> newResources = new List<Object>();
+			//var newResources = new List<ResourceReference>();
 			foreach(var r in (Component as STFResourceHolder).Resources)
 			{
-				newResources.Add(State.ConvertedResources.ContainsKey(r) ? State.ConvertedResources[r] : r);
+				//newResources.Add((ResourceReference)(State.ConvertedResources.ContainsKey(r.Ref) ? State.ConvertedResources[r.Ref] : r));
 			}
-			(Component as STFResourceHolder).Resources = newResources;
+			//(Component as STFResourceHolder).Resources = newResources;
 		}
 	}
 }

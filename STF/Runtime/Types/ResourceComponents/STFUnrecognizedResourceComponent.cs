@@ -12,10 +12,10 @@ namespace STF.Types
 		public string _Type;
 		public override string Type => _Type;
 		public string PreservedJson;
-		public List<STFBuffer> PreservedBuffers = new List<STFBuffer>();
-		public List<ISTFResource> ReferencedResources = new List<ISTFResource>();
-		public List<ISTFResourceComponent> ReferencedResourceComponents = new List<ISTFResourceComponent>();
-		public List<ISTFNode> ReferencedNodes = new List<ISTFNode>();
+		public List<STFBuffer> PreservedBuffers = new();
+		public List<ISTFResource> ReferencedResources = new();
+		public List<ISTFResourceComponent> ReferencedResourceComponents = new();
+		public List<ISTFNode> ReferencedNodes = new();
 	}
 	
 	public static class STFUnrecognizedResourceComponentExporter
@@ -51,7 +51,7 @@ namespace STF.Types
 			ret.PreservedJson = Json.ToString();
 			ret.Name = (string)Json["name"];
 			ret.name = ret.Name;
-			ret.Resource = Resource;
+			ret.Resource = new ResourceReference(Resource);
 			Resource.Components.Add(ret);
 
 			State.AddPostprocessTask(new Task(() => {

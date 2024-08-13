@@ -17,7 +17,7 @@ namespace AVA.Types
 	{
 		public static string _TYPE = "AVA.VRC.physbones";
 		public override string Type => _TYPE;
-		public GameObject target;
+		public NodeReference target;
 		public string targetId;
 		public string version = "1.1";
 		public string integration_type = "simplified";
@@ -44,7 +44,7 @@ namespace AVA.Types
 			ParseRelationships(Json, c);
 			var rf = new RefDeserializer(Json);
 
-			if(State.Nodes.ContainsKey((string)Json["target"])) c.target = State.Nodes[rf.NodeRef(Json["target"])].gameObject;
+			if(State.Nodes.ContainsKey((string)Json["target"])) c.target = State.Nodes[rf.NodeRef(Json["target"])];
 			c.targetId = (string)Json["target"];
 
 			c.version = (string)Json["version"];
@@ -75,7 +75,7 @@ namespace AVA.Types
 			SerializeRelationships(c, ret);
 			var rf = new RefSerializer(ret);
 			ret.Add("type", AVAVRCPhysbones._TYPE);
-			ret.Add("target", c.target != null ? rf.NodeRef(c.target.GetComponents<ISTFNode>().OrderByDescending(c => c.PrefabHirarchy).FirstOrDefault().Id) : rf.NodeRef(c.targetId));
+			ret.Add("target", c.target != null ? rf.NodeRef(c.target.Node.GetComponents<ISTFNode>().OrderByDescending(c => c.PrefabHirarchy).FirstOrDefault().Id) : rf.NodeRef(c.targetId));
 			ret.Add("version", c.version);
 			ret.Add("integration_type", c.integration_type);
 			ret.Add("pull", c.pull);

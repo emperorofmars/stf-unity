@@ -19,7 +19,7 @@ namespace AVA.ApplicationConversion
 				var secondary = State.Root.transform.Find("VRM_secondary");
 				var springbone = secondary.gameObject.AddComponent<VRMSpringBone>();
 
-				springbone.RootBones.Add(c.target.transform);
+				springbone.RootBones.Add(c.target.Node.transform);
 				springbone.m_dragForce = c.pull;
 				springbone.m_stiffnessForce = c.stiffness;
 				

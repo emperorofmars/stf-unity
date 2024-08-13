@@ -17,7 +17,7 @@ namespace STF.Types
 		
 		public Object Resource;
 		public List<ISTFResourceComponent> Components = new List<ISTFResourceComponent>();
-		public ISTFResource Fallback;
+		public ResourceReference Fallback;
 	}
 
 	public interface ISTFResourceExporter

@@ -82,7 +82,7 @@ namespace STF.Serialisation
 
 		public static void ParseResourceComponents(STFImportState State, ISTFResource Resource, JObject JsonResource)
 		{
-			if(JsonResource.ContainsKey("components") || JsonResource["components"].Type == JTokenType.Null) return;
+			if(!JsonResource.ContainsKey("components") || JsonResource["components"].Type == JTokenType.Null) return;
 			foreach(var entry in (JObject)JsonResource["components"])
 			{
 				var type = (string)entry.Value["type"];

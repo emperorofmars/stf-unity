@@ -26,7 +26,7 @@ namespace AVA.ApplicationConversion
 			var c = (AVAVRCPhysbones)Component;
 			var physbone = Component.gameObject.AddComponent<VRCPhysBone>();
 			
-			physbone.rootTransform = c.target ? c.target.transform : c.transform;
+			physbone.rootTransform = c.target.IsValid() ? c.target.Node.transform : c.transform;
 			physbone.version = c.version == "1.1" ? VRC.Dynamics.VRCPhysBoneBase.Version.Version_1_1 : VRC.Dynamics.VRCPhysBoneBase.Version.Version_1_0;
 			physbone.integrationType = c.integration_type == "simplified" ? VRC.Dynamics.VRCPhysBoneBase.IntegrationType.Simplified : VRC.Dynamics.VRCPhysBoneBase.IntegrationType.Advanced;
 			physbone.pull = c.pull;

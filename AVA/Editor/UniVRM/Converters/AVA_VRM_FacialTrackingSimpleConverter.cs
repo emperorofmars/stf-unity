@@ -19,9 +19,9 @@ namespace AVA.ApplicationConversion
 			clip.Preset = blendshapePreset;
 			var bindingsList = new BlendShapeBinding[1];
 			BlendShapeBinding binding = new BlendShapeBinding();
-			Mesh mesh = c.TargetMeshInstance.GetComponent<SkinnedMeshRenderer>() != null ? c.TargetMeshInstance.GetComponent<SkinnedMeshRenderer>().sharedMesh : c.TargetMeshInstance.GetComponent<MeshFilter>().sharedMesh;
+			Mesh mesh = c.TargetMeshInstance.NodeComponent.GetComponent<SkinnedMeshRenderer>() != null ? c.TargetMeshInstance.NodeComponent.GetComponent<SkinnedMeshRenderer>().sharedMesh : c.TargetMeshInstance.NodeComponent.GetComponent<MeshFilter>().sharedMesh;
 			binding.Index = mesh.GetBlendShapeIndex(clip.BlendShapeName);
-			binding.RelativePath = STF.Util.Utils.getPath(c.transform, c.TargetMeshInstance.transform)?.Substring(1);
+			binding.RelativePath = STF.Util.Utils.getPath(c.transform, c.TargetMeshInstance.NodeComponent.transform)?.Substring(1);
 			binding.Weight = 100;
 			bindingsList[0] = binding;
 			clip.Values = bindingsList;

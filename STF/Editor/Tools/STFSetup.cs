@@ -82,12 +82,12 @@ namespace STF.Tools
 
 				// Setup armatureInstance to the definetively correct values
 				meshInstance.ArmatureInstance = armatureInstance;
-				armatureInstance.root = smr.rootBone?.gameObject;
+				armatureInstance.Root = smr.rootBone?.gameObject;
 
-				if(smr.bones != null) armatureInstance.bones = new List<GameObject>(smr.bones.Select(b => b?.gameObject));
+				if(smr.bones != null) armatureInstance.Bones = new List<GameObject>(smr.bones.Select(b => b?.gameObject));
 
 				// If the armatureInstance doesn't have an armature (eg was just created), then determine the armature from the smr bone hirarchy and the smr bind poses
-				if(armatureInstance.armature == null && !armatureInstancesToSetup.Contains(armatureInstance))
+				if(armatureInstance.Armature.IsValid() && !armatureInstancesToSetup.Contains(armatureInstance))
 				{
 					armatureInstancesToSetup.Add(armatureInstance);
 					ret.CreatedGos.Add(SetupArmature(smr, armatureInstance));
@@ -104,7 +104,7 @@ namespace STF.Tools
 					else
 					{
 						var stfMesh = ScriptableObject.CreateInstance<STFMesh>();
-						stfMesh.Armature = new ResourceReference(armatureInstance.armature.Id);
+						stfMesh.Armature = new ResourceReference(armatureInstance.Armature.Id);
 						ret.ResourceMeta.Add(smr.sharedMesh, stfMesh);
 					}
 				}
@@ -126,7 +126,7 @@ namespace STF.Tools
 			armatureMeta.Bindposes = Smr.sharedMesh.bindposes;
 			armatureMeta.Resource = armatureGo;
 
-			ArmatureInstance.armature = armatureMeta;
+			ArmatureInstance.Armature = new ResourceReference(armatureMeta);
 
 			for(int i = 0; i < armatureMeta.Bindposes.Length; i++)
 			{

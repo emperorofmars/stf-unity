@@ -62,7 +62,7 @@ namespace AVA.Types.Editors
 		{
 			var c = (AVAAvatar)target;
 			
-			if(c.viewport_parent?.Node && editPosition)
+			if(c.viewport_parent.Node && editPosition)
 			{
 				Handles.Label(c.viewport_parent.Node.transform.position + c.viewport_position, "Viewport");
 				c.viewport_position = Handles.DoPositionHandle(c.viewport_parent.Node.transform.position + c.viewport_position, Quaternion.identity) - c.viewport_parent.Node.transform.position;

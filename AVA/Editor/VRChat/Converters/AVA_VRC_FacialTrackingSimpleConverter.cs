@@ -30,7 +30,7 @@ namespace AVA.ApplicationConversion
 
 				var avatar = (VRCAvatarDescriptor)State.RelMat.GetConverted(avaAvatar).Find(c => c is VRCAvatarDescriptor);
 
-				var smr = c.TargetMeshInstance.GetComponent<SkinnedMeshRenderer>();
+				var smr = c.TargetMeshInstance.NodeComponent.GetComponent<SkinnedMeshRenderer>();
 
 				avatar.VisemeSkinnedMesh = smr;
 				avatar.lipSync = VRC.SDKBase.VRC_AvatarDescriptor.LipSyncStyle.VisemeBlendShape;

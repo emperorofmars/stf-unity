@@ -24,7 +24,7 @@ namespace STF.Types
 
 		public override void OnInspectorGUI()
 		{
-			var c = (ISTFResource)target;
+			var resource = (ISTFResource)target;
 			EditorGUI.BeginChangeCheck();
 			DrawPropertiesExcluding(serializedObject, "Components");
 			
@@ -33,11 +33,11 @@ namespace STF.Types
 			drawHLine();
 			EditorGUILayout.LabelField("Resource Components");
 
-			for(int i = 0; i < c.Components.Count; i++)
+			for(int i = 0; i < resource.Components.Count; i++)
 			{
 				EditorGUILayout.BeginHorizontal();
-				c.Components[i] = (ISTFResourceComponent)EditorGUILayout.ObjectField(
-					c.Components[i],
+				resource.Components[i] = (ISTFResourceComponent)EditorGUILayout.ObjectField(
+					resource.Components[i],
 					typeof(ISTFResourceComponent),
 					true,
 					GUILayout.ExpandWidth(true)
@@ -45,25 +45,25 @@ namespace STF.Types
 					
 				if(i > 0 && GUILayout.Button("Up", GUILayout.ExpandWidth(false)))
 				{
-					var tmp = c.Components[i];
-					c.Components[i] = c.Components[i - 1];
-					c.Components[i - 1] = tmp;
+					var tmp = resource.Components[i];
+					resource.Components[i] = resource.Components[i - 1];
+					resource.Components[i - 1] = tmp;
 				}
-				if(i < c.Components.Count - 1 && GUILayout.Button("Down", GUILayout.ExpandWidth(false)))
+				if(i < resource.Components.Count - 1 && GUILayout.Button("Down", GUILayout.ExpandWidth(false)))
 				{
-					var tmp = c.Components[i];
-					c.Components[i] = c.Components[i + 1];
-					c.Components[i + 1] = tmp;
+					var tmp = resource.Components[i];
+					resource.Components[i] = resource.Components[i + 1];
+					resource.Components[i + 1] = tmp;
 				}
 				GUILayout.Space(20);
 				if(GUILayout.Button("x", GUILayout.ExpandWidth(false)))
 				{
-					if(!AssetDatabase.IsMainAsset(c.Components[i]) && AssetDatabase.GetAssetPath(c) == AssetDatabase.GetAssetPath(c.Components[i]))
+					if(!AssetDatabase.IsMainAsset(resource.Components[i]) && AssetDatabase.GetAssetPath(resource) == AssetDatabase.GetAssetPath(resource.Components[i]))
 					{
-						AssetDatabase.RemoveObjectFromAsset(c.Components[i]);
-						AssetDatabase.ImportAsset(AssetDatabase.GetAssetPath(c.GetInstanceID()));
+						AssetDatabase.RemoveObjectFromAsset(resource.Components[i]);
+						AssetDatabase.ImportAsset(AssetDatabase.GetAssetPath(resource.GetInstanceID()));
 					}
-					c.Components.RemoveAt(i);
+					resource.Components.RemoveAt(i);
 					i--;
 				}
 				EditorGUILayout.EndHorizontal();
@@ -77,17 +77,17 @@ namespace STF.Types
 			{
 				var instance = (ISTFResourceComponent)ScriptableObject.CreateInstance(ComponentOptions[ComponentSelection]);
 				instance.name = ComponentOptions[ComponentSelection].Name + "_" + instance.Id;
-				instance.Resource = c;
-				c.Components.Add(instance);
+				instance.Resource = new ResourceReference(resource);
+				resource.Components.Add(instance);
 				
-				AssetDatabase.AddObjectToAsset(instance, AssetDatabase.GetAssetPath(c.GetInstanceID()));
-				AssetDatabase.ImportAsset(AssetDatabase.GetAssetPath(c.GetInstanceID()));
+				AssetDatabase.AddObjectToAsset(instance, AssetDatabase.GetAssetPath(resource.GetInstanceID()));
+				AssetDatabase.ImportAsset(AssetDatabase.GetAssetPath(resource.GetInstanceID()));
 			}
 			EditorGUILayout.EndHorizontal();
 
 			if(EditorGUI.EndChangeCheck())
 			{
-				EditorUtility.SetDirty(c);
+				EditorUtility.SetDirty(resource);
 			}
 		}
 
