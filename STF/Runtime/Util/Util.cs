@@ -58,6 +58,11 @@ namespace STF.Util
 			originalTasks.Clear();
 		}
 
+		public static ISTFNode GetNodeComponent(Transform T)
+		{
+			return GetNodeComponent(T.gameObject);
+		}
+
 		public static ISTFNode GetNodeComponent(GameObject Go)
 		{
 			return Go?.GetComponents<ISTFNode>()?.OrderByDescending(c => c.PrefabHirarchy).FirstOrDefault();

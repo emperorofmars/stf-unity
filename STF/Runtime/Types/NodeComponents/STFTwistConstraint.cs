@@ -13,8 +13,6 @@ namespace STF.Types
 		public const string _TYPE = "STF.constraint.twist";
 		public override string Type => _TYPE;
 		public NodeReference Source = new();
-		//public GameObject Target;
-		//public string TargetId;
 		public float Weight = 0.5f;
 	}
 
@@ -36,10 +34,6 @@ namespace STF.Types
 
 			ret.Add("source", rf.NodeRef(c.Source.Id));
 
-			/*if(c.Target == null && (c.TargetId == null || c.TargetId.Length == 0)) c.TargetId = c.transform.parent?.GetComponents<ISTFNode>().OrderByDescending(c => c.PrefabHirarchy).FirstOrDefault()?.Id;
-			State.AddTask(new Task(() => {
-				ret.Add("target", rf.NodeRef(c.Target != null ? c.Target.GetComponent<ISTFNode>().Id : c.TargetId));
-			}));*/
 			SerializeRelationships(c, ret);
 			return (c.Id, ret);
 		}
@@ -61,8 +55,6 @@ namespace STF.Types
 			c.Id = Id;
 			c.Weight = (float)Json["weight"];
 			c.Source = Json.ContainsKey("source") ? State.GetNodeReference(rf.NodeRef(Json["source"])) : new NodeReference(Utils.GetNodeComponent(Go.transform.parent?.parent?.gameObject));
-			//c.TargetId = Json.ContainsKey("target") ? rf.NodeRef(Json["target"]) : null;
-			//c.Target = State.Nodes.ContainsKey(c.TargetId) ? State.Nodes[c.TargetId] : null;
 
 			State.AddNodeComponent(c);
 		}

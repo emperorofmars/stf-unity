@@ -74,11 +74,9 @@ namespace STF.Serialisation
 					else
 					{
 						var curveTarget = AnimationUtility.GetAnimatedObject(root, c);
-						var nodes = curveTarget is GameObject ? ((GameObject)curveTarget).GetComponents<ISTFNode>() : ((Transform)curveTarget).GetComponents<ISTFNode>();
-						nodes = nodes.OrderBy(k => k.PrefabHirarchy).ToArray();
-						var stfNode = nodes.FirstOrDefault();
+						var stfNode = curveTarget is GameObject ? Utils.GetNodeComponent((GameObject)curveTarget) : Utils.GetNodeComponent((Transform)curveTarget);
 						
-						curveJson.Add("node_id", rf.NodeRef(nodes.First().Id));
+						curveJson.Add("node_id", rf.NodeRef(stfNode.Id));
 						curveJson.Add("property", State.Context.NodeExporters[stfNode.Type].ConvertPropertyPath(c.propertyName));
 					}
 				}
@@ -96,8 +94,9 @@ namespace STF.Serialisation
 					else
 					{
 						var curveTarget = (Component)AnimationUtility.GetAnimatedObject(root, c);
-						var nodes = curveTarget.gameObject.GetComponents<ISTFNode>().OrderBy(k => k.PrefabHirarchy).ToArray();
-						curveJson.Add("node_id", rf.NodeRef(nodes[0].Id));
+						var stfNode = Utils.GetNodeComponent(curveTarget.gameObject);
+						//var nodes = curveTarget.gameObject.GetComponents<ISTFNode>().OrderByDescending(k => k.PrefabHirarchy).ToArray();
+						curveJson.Add("node_id", rf.NodeRef(stfNode.Id));
 						if(!c.type.IsSubclassOf(typeof(ISTFNodeComponent)))
 						{
 							var stfOwner = curveTarget.gameObject.GetComponents<ISTFNodeComponent>()?.FirstOrDefault(nc => nc.OwnedUnityComponent == curveTarget);
