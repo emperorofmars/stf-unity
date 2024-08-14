@@ -96,7 +96,7 @@ namespace STF.Tools
 			var unityContext = new EditorUnityImportContext(unpackLocation);
 			var (asset, _state) = Importer.Parse(unityContext, importer.assetPath);
 
-			var path = Path.Combine(unpackLocation, asset.Name + ".Prefab");
+			var path = Path.Combine(unpackLocation, asset.STFName + ".Prefab");
 			PrefabUtility.SaveAsPrefabAsset(asset.gameObject, path);
 
 			DestroyImmediate(asset.gameObject);

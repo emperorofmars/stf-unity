@@ -160,10 +160,10 @@ namespace STF.Serialisation
 		{
 			var meta = ScriptableObject.CreateInstance<STFAnimation>();
 			meta.Id = Id;
-			meta.Name = (string)Json["name"];
+			meta.STFName = (string)Json["name"];
 
 			var ret = new AnimationClip {
-				name = meta.Name,
+				name = meta.STFName,
 				frameRate = (float)Json["fps"]
 			};
 

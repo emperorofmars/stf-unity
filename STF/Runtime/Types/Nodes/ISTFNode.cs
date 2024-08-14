@@ -12,8 +12,8 @@ namespace STF.Types
 		public abstract string Type { get; }
 		public string Id { get => _Id; set => _Id = value; }
 		[Id] public string _Id = System.Guid.NewGuid().ToString();
-		public string Name { get => _Name; set => _Name = value; }
-		public string _Name;
+		public string STFName { get => _STFName; set => _STFName = value; }
+		public string _STFName;
 		
 		public int _PrefabHirarchy = 0;
 		public int PrefabHirarchy {get => _PrefabHirarchy; set => _PrefabHirarchy = value;}

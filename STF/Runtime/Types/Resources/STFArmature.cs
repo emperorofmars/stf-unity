@@ -81,12 +81,12 @@ namespace STF.Types
 			
 			var meta = ScriptableObject.CreateInstance<STFArmature>();
 			meta.Id = Id;
-			meta.Name = (string)Json["name"];
-			meta.name = meta.Name + "_" + Id;
+			meta.STFName = (string)Json["name"];
+			meta.name = meta.STFName + "_" + Id;
 			go.name = meta.name;
 
 			armatureInfo.ArmatureId = Id;
-			armatureInfo.ArmatureName = meta.Name;
+			armatureInfo.ArmatureName = meta.STFName;
 
 			if(Json["trs"] != null) TRSUtil.ParseTRS(go, Json);
 

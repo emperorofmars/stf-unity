@@ -40,7 +40,7 @@ namespace STF.Types
 
 			var ret = new JObject {
 				{ "type", STFTexture._TYPE },
-				{ "name", !string.IsNullOrWhiteSpace(meta?.Name) ? meta.Name : Path.GetFileNameWithoutExtension(fileName) },
+				{ "name", !string.IsNullOrWhiteSpace(meta?.STFName) ? meta.STFName : Path.GetFileNameWithoutExtension(fileName) },
 				{ "image_format", Path.GetExtension(fileName).Remove(0, 1) },
 				{ "texture_width", meta?.TextureSize != null ? meta.TextureSize.x : texture.width },
 				{ "texture_height", meta?.TextureSize != null ? meta.TextureSize.y : texture.height },
@@ -81,8 +81,8 @@ namespace STF.Types
 		{
 			var meta = ScriptableObject.CreateInstance<STFTexture>();
 			meta.Id = Id;
-			meta.Name = (string)Json["name"];
-			meta.name = meta.Name + "_" + Id;
+			meta.STFName = (string)Json["name"];
+			meta.name = meta.STFName + "_" + Id;
 			meta.TextureType = (string)Json["texture_type"];
 
 			var rf = new RefDeserializer(Json);

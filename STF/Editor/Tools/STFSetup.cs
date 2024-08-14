@@ -27,7 +27,7 @@ namespace STF.Tools
 			if(asset == null)
 			{
 				asset = root.AddComponent<STFAsset>();
-				asset.Name = root.name;
+				asset.STFName = root.name;
 				asset.Version = "0.0.1";
 			}
 			var armatureResult = STFArmatureUtil.FindAndSetupArmaturesInplace(root);

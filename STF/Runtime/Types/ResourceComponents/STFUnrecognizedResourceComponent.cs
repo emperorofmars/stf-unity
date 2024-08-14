@@ -49,8 +49,8 @@ namespace STF.Types
 			var ret = ScriptableObject.CreateInstance<STFUnrecognizedResourceComponent>();
 			ret.Id = Id;
 			ret.PreservedJson = Json.ToString();
-			ret.Name = (string)Json["name"];
-			ret.name = ret.Name;
+			ret.STFName = (string)Json["name"];
+			ret.name = ret.STFName + "_" + Id;
 			ret.Resource = new ResourceReference(Resource);
 			Resource.Components.Add(ret);
 

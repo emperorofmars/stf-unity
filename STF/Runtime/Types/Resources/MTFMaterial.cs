@@ -171,7 +171,7 @@ namespace STF.Types
 			var mat = ScriptableObject.CreateInstance<MTF.Material>();
 			
 			meta.Id = mat.Id = Id;
-			meta.Name = mat.MaterialName = (string)Json["name"];
+			meta.STFName = mat.MaterialName = (string)Json["name"];
 
 			mat.name = mat.MaterialName + "_" + Id + "_MTF";
 			meta.name = mat.MaterialName + "_" + Id;

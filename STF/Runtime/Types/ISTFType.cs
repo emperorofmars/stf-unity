@@ -5,6 +5,6 @@ namespace STF.Types
 	{
 		string Id {get; set;}
 		string Type {get;}
-		string Name {get; set;}
+		string STFName {get; set;}
 	}
 }

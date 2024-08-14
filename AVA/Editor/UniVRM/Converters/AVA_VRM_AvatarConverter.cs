@@ -31,7 +31,7 @@ namespace AVA.ApplicationConversion
 			var vrmMeta = ScriptableObject.CreateInstance<VRMMetaObject>();
 			vrmMeta.name = "VRM_Meta";
 			vrmMetaComponent.Meta = vrmMeta;
-			vrmMeta.Title = asset.Name;
+			vrmMeta.Title = asset.STFName;
 			vrmMeta.Version = asset.Version;
 			vrmMeta.Author = asset.Author;
 			vrmMeta.ExporterVersion = asset.Version;

@@ -26,7 +26,7 @@ namespace STF.Types
 			{
 				{"id", Asset.Id},
 				{"type", STFAddonAsset._TYPE},
-				{"name", Asset.Name},
+				{"name", Asset.STFName},
 				{"version", Asset.Version},
 				{"author", Asset.Author},
 				{"url", Asset.URL},
@@ -68,7 +68,7 @@ namespace STF.Types
 				
 				var asset = rootGo.AddComponent<STFAddonAsset>();
 				asset.Id = (string)JsonAsset["id"];
-				asset.Name = (string)JsonAsset["name"];
+				asset.STFName = (string)JsonAsset["name"];
 				asset.Version = (string)JsonAsset["version"];
 				asset.Author = (string)JsonAsset["author"];
 				asset.URL = (string)JsonAsset["url"];

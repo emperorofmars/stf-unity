@@ -35,14 +35,14 @@ namespace STF.Types
 			if(meta == null)
 			{
 				meta = ScriptableObject.CreateInstance<STFMesh>();
-				meta.Name = mesh.name;
+				meta.STFName = mesh.name;
 				meta.Resource = mesh;
 			}
 
 			var ret = new JObject
 			{
 				{"type", STFMesh._TYPE},
-				{"name", !string.IsNullOrWhiteSpace(meta?.Name) ? meta.Name : mesh.name},
+				{"name", !string.IsNullOrWhiteSpace(meta?.STFName) ? meta.STFName : mesh.name},
 			};
 			
 			var rf = new RefSerializer(ret);
@@ -294,8 +294,8 @@ namespace STF.Types
 
 			var meta = ScriptableObject.CreateInstance<STFMesh>();
 			meta.Id = Id;
-			meta.Name = (string)Json["name"];
-			meta.name = meta.Name + "_" + Id;
+			meta.STFName = (string)Json["name"];
+			meta.name = meta.STFName + "_" + Id;
 			mesh.name = meta.name;
 
 			meta.OriginalBufferId = rf.BufferRef(Json["buffer"]);
