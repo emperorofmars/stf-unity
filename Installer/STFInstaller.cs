@@ -1,6 +1,7 @@
 
 #if UNITY_EDITOR
 
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.PackageManager;
 using UnityEditor.PackageManager.Requests;
@@ -16,27 +17,43 @@ namespace STF.Installer
 		const string Path_MTF = "/MTF";
 		const string Path_AVA = "/AVA";
 
+		static AddRequest Request;
+		static List<string> InstallQueue = new();
+
 		private static string ConstructURL(string Base, string Path, string Version = null)
 		{
 			return string.IsNullOrWhiteSpace(Version) ? Base + "?path=" + Path : Base + "?path=" + Path + "#" + Version;
 		}
 
-		static AddRequest Request;
-
 		[MenuItem("STF Tools/Install")]
-		static void Add()
+		static void Install()
 		{
-			Install(VERSION_TAG_LATEST);
+			InstallQueue = BuildInstallQueue(VERSION_TAG_LATEST);
+			InstallNext();
 		}
 
-		static void Install(string Version = null)
+		static void InstallNext()
 		{
-			Request = Client.Add(ConstructURL(URL_BASE, Path_MTF, Version));
-			EditorApplication.update += Progress;
-			/*Request = Client.Add(ConstructURL(URL_BASE, Path_STF, Version));
-			EditorApplication.update += Progress;
-			Request = Client.Add(ConstructURL(URL_BASE, Path_AVA, Version));
-			EditorApplication.update += Progress;*/
+			lock(InstallQueue)
+			{
+				if(InstallQueue.Count > 0)
+				{
+					var url = InstallQueue[0];
+					InstallQueue.Remove(url);
+					Request = Client.Add(url);
+					EditorApplication.update += Progress;
+				}
+			}
+		}
+
+		static List<string> BuildInstallQueue(string Version = null)
+		{
+			return new List<string>
+			{
+				ConstructURL(URL_BASE, Path_MTF, Version),
+				ConstructURL(URL_BASE, Path_STF, Version),
+				ConstructURL(URL_BASE, Path_AVA, Version),
+			};
 		}
 
 		static void Progress()
@@ -44,10 +61,14 @@ namespace STF.Installer
 			if (Request.IsCompleted)
 			{
 				if (Request.Status == StatusCode.Success)
+				{
 					Debug.Log("Installed: " + Request.Result.packageId);
+					InstallNext();
+				}
 				else if (Request.Status >= StatusCode.Failure)
+				{
 					Debug.Log(Request.Error.message);
-
+				}
 				EditorApplication.update -= Progress;
 			}
 		}
@@ -55,7 +76,7 @@ namespace STF.Installer
 		
 		static STFInstaller()
 		{
-			Install(VERSION_TAG_LATEST);
+			Install();
 		}
 	}
 }
