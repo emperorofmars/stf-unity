@@ -14,6 +14,8 @@ namespace STF.Serialisation
 		public IUnityImportContext UnityContext {protected set; get;}
 		public JObject JsonRoot {protected set; get;}
 		public string AssetId {protected set; get;}
+
+		public bool AnyDegraded {protected set; get;} = false;
 		
 		// id -> node
 		public readonly Dictionary<string, ISTFNode> Nodes = new();
@@ -52,11 +54,12 @@ namespace STF.Serialisation
 			}
 		}
 
-		public virtual void AddNode(ISTFNode Node) { Nodes.Add(Node.Id, Node); }
-		public virtual void AddNodeComponent(ISTFNodeComponent Component) { NodeComponents.Add(Component.Id, Component); }
+		public virtual void AddNode(ISTFNode Node) { Nodes.Add(Node.Id, Node); if(Node.Degraded) AnyDegraded = true; }
+		public virtual void AddNodeComponent(ISTFNodeComponent Component) { NodeComponents.Add(Component.Id, Component); if(Component.Degraded) AnyDegraded = true; }
 		public virtual void AddResource(ISTFResource Resource)
 		{
 			var saved = (ISTFResource)UnityContext.SaveResource(Resource);
+			if(Resource.Degraded) AnyDegraded = true;
 			Resources.Add(saved.Id, saved);
 		}
 		public virtual void AddResourceComponent(ISTFResourceComponent Component, ISTFResource Resource)
@@ -66,6 +69,7 @@ namespace STF.Serialisation
 			if(string.IsNullOrWhiteSpace(Component.name)) Component.name = Component.Type + ":" + Component.Id;
 			UnityContext.SaveSubResource(Component, Resource);
 			ResourceComponents.Add(Component.Id, Component);
+			if(Component.Degraded) AnyDegraded = true;
 		}
 
 		public virtual void AddTask(Task task) { Tasks.Add(task); }

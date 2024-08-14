@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using Unity.Collections;
 using STF.Util;
 using STF.Serialisation;
+using System.Linq;
 
 namespace STF.Types
 {
@@ -16,6 +17,10 @@ namespace STF.Types
 		public string Id { get => _Id; set => _Id = value; }
 		[Id] public string _Id = System.Guid.NewGuid().ToString();
 		public string STFName { get => _STFName; set => _STFName = value; }
+		public bool Degraded => _Degraded;
+		bool _Degraded = false;
+		public bool AnyDegraded;
+
 		public string _STFName;
 
 		public string Version;
@@ -26,7 +31,6 @@ namespace STF.Types
 		public Texture2D Preview;
 
 		public string OriginalFileName;
-		public bool Degraded = false;
 
 		[SerializeField, ReadOnly] public STFResourceMeta ImportMeta = new(); // TODO: actually build this metaobject on import
 
@@ -47,6 +51,10 @@ namespace STF.Types
 			{
 				Preview = (Texture2D)State.Resources[Rf.ResourceRef(JsonAsset["preview"])].Resource;
 			}
+
+#if UNITY_EDITOR
+			while(UnityEditorInternal.ComponentUtility.MoveComponentUp(this));
+#endif
 		}
 
 		public (JObject, RefSerializer) SerializeDefaultValuesToJson(STFExportState State)
@@ -63,9 +71,7 @@ namespace STF.Types
 				{"license_link", LicenseLink}
 			};
 			var rf = new RefSerializer(ret);
-
 			if(Preview) ret.Add("preview", rf.ResourceRef(ExportUtil.SerializeResource(State, Preview)));
-
 			return (ret, rf);
 		}
 	}

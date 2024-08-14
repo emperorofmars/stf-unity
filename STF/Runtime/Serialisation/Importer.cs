@@ -36,7 +36,7 @@ namespace STF.Serialisation
 				Utils.RunTasks(state.PostprocessTasks);
 				RunPostProcessors(state);
 				Utils.RunTasks(state.Tasks);
-				Asset.Degraded = UnityContext.IsDegraded;
+				Asset.AnyDegraded = state.AnyDegraded;
 
 				return (Asset, state);
 			}

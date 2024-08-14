@@ -6,5 +6,6 @@ namespace STF.Types
 		string Id {get; set;}
 		string Type {get;}
 		string STFName {get; set;}
+		bool Degraded {get;}
 	}
 }

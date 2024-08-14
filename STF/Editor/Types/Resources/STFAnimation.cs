@@ -1,4 +1,6 @@
 
+#if UNITY_EDITOR
+
 using System;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
@@ -406,3 +408,5 @@ namespace STF.Serialisation
 		}
 	}
 }
+
+#endif

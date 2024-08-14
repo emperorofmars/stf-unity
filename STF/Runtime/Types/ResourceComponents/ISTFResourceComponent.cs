@@ -17,6 +17,8 @@ namespace STF.Types
 		[Id] public string _Id = System.Guid.NewGuid().ToString();
 		public string STFName { get => _STFName; set => _STFName = value; }
 		public string _STFName;
+		public bool Degraded => _Degraded;
+		bool _Degraded = false;
 		
 		public List<string> Targets = new List<string>();
 		[HideInInspector] public ResourceReference Resource = new();
