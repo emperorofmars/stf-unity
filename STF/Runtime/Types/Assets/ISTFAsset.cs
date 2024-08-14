@@ -18,7 +18,7 @@ namespace STF.Types
 		[Id] public string _Id = System.Guid.NewGuid().ToString();
 		public string STFName { get => _STFName; set => _STFName = value; }
 		public bool Degraded => _Degraded;
-		bool _Degraded = false;
+		public bool _Degraded = false;
 		public bool AnyDegraded;
 
 		public string _STFName;

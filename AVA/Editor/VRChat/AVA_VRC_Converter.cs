@@ -7,6 +7,7 @@ using AVA.Types;
 using STF.ApplicationConversion;
 using STF.Serialisation;
 using STF.Types;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Animations;
 using VRC.SDK3.Avatars.Components;
@@ -44,6 +45,15 @@ namespace AVA.ApplicationConversion
 		public override bool CanConvert(ISTFAsset Asset)
 		{
 			return Asset.Type == STFAsset._TYPE && Asset.GetComponent<AVAAvatar>() != null;
+		}
+	}
+
+	[InitializeOnLoad]
+	public class Register_AVA_VRC_Converter
+	{
+		static Register_AVA_VRC_Converter()
+		{
+			STFRegistry.RegisterApplicationConverter(new AVA_VRC_Converter());
 		}
 	}
 }

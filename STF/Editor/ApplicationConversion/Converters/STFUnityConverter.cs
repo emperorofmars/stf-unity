@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using STF.Serialisation;
 using STF.Types;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Animations;
 
@@ -36,6 +37,15 @@ namespace STF.ApplicationConversion
 		public override bool CanConvert(ISTFAsset Asset)
 		{
 			return Asset.Type == STFAsset._TYPE;
+		}
+	}
+
+	[InitializeOnLoad]
+	public class Register_STFUnityConverter
+	{
+		static Register_STFUnityConverter()
+		{
+			STFRegistry.RegisterApplicationConverter(new STFUnityConverter());
 		}
 	}
 }

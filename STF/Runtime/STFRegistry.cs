@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 using STF.Types;
+using STF.ApplicationConversion;
 
 namespace STF.Serialisation
 {
@@ -129,6 +130,8 @@ namespace STF.Serialisation
 			typeof(STFMeshInstance), typeof(STFArmatureInstanceNode), typeof(STFArmatureNodeInfo), typeof(MeshFilter)
 		};
 
+		public static readonly List<ASTFApplicationConverter> ApplicationConverters = new();
+
 		private static readonly Dictionary<string, ISTFAssetImporter> RegisteredAssetImporters = new();
 		private static readonly Dictionary<string, ISTFAssetExporter> RegisteredAssetExporters = new();
 
@@ -179,6 +182,8 @@ namespace STF.Serialisation
 		public static void RegisterResourceComponentExporter(string type, ISTFResourceComponentExporter exporter) { RegisteredResourceComponentExporters.Add(type, exporter); }
 		public static void RegisterImportPostProcessor(ISTFImportPostProcessor ImportPostProcessor) { RegisteredImportPostProcessors.Add(ImportPostProcessor); }
 		public static void RegisterExportExclusion(Type type) { RegisteredExportExclusions.Add(type); }
+
+		public static void RegisterApplicationConverter(ASTFApplicationConverter converter) { ApplicationConverters.Add(converter); }
 
 		public static STFImportContext GetDefaultImportContext()
 		{

@@ -1,10 +1,6 @@
 
 #if UNITY_EDITOR
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using Newtonsoft.Json;
 using STF.Serialisation;
 using STF.Types;
 using UnityEditor;
@@ -57,12 +53,9 @@ namespace STF.Tools
 			{
 				var exportSTFAsset = exportAsset.GetComponent<ISTFAsset>();
 				defaultExportFilaName = exportSTFAsset != null && !string.IsNullOrWhiteSpace(exportSTFAsset.OriginalFileName) ? exportSTFAsset.OriginalFileName : exportAsset.name;
-			}
 
-			if(exportAsset && GUILayout.Button("Export", GUILayout.ExpandWidth(true))) {
-				var path = EditorUtility.SaveFilePanel("STF Export", "Assets", defaultExportFilaName + ".stf", "stf");
-				if(path != null && path.Length > 0) {
-					SerializeAsSTFBinary(exportAsset, path, DebugExport);
+				if(GUILayout.Button("Export", GUILayout.ExpandWidth(true))) {
+					ExportEditor.ExportDialog(exportAsset, DebugExport);
 				}
 			}
 			
@@ -75,39 +68,6 @@ namespace STF.Tools
 			GUILayout.Space(10);
 			EditorGUI.DrawRect(EditorGUILayout.GetControlRect(false, 2), Color.gray);
 			GUILayout.Space(10);
-		}
-
-		private void SerializeAsSTFBinary(GameObject root, string ExportPath, bool DebugExport = true)
-		{
-			var trash = new List<GameObject>();
-			try
-			{
-				var exportInstance = Instantiate(root);
-				exportInstance.name = root.name;
-				trash.Add(exportInstance);
-				var setupAsset = STFSetup.SetupStandaloneAssetInplace(exportInstance);
-				trash.AddRange(setupAsset.CreatedGos);
-
-				var unityContext = new EditorUnityExportContext(ExportPath);
-				var (stfFile, json) = Exporter.Export(unityContext, exportInstance.GetComponent<ISTFAsset>(), setupAsset.ResourceMeta);
-				File.WriteAllBytes(ExportPath, stfFile.CreateBinaryFromBuffers());
-				if(DebugExport) File.WriteAllText(ExportPath + ".json", json.ToString(Formatting.Indented));
-			}
-			catch(Exception e)
-			{
-				Debug.LogError(e);
-			}
-			finally
-			{
-				foreach(var trashObject in trash)
-				{
-					if(trashObject != null)
-					{
-						UnityEngine.Object.DestroyImmediate(trashObject);
-					}
-				}
-			}
-			return;
 		}
 	}
 }

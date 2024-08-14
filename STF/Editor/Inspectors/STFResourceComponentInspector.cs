@@ -27,8 +27,6 @@ namespace STF.Types
 			var resource = (ISTFResource)target;
 			EditorGUI.BeginChangeCheck();
 			DrawPropertiesExcluding(serializedObject, "Components");
-			
-			//EditorGUILayout.PropertyField(serializedObject.FindProperty("Components"));
 
 			drawHLine();
 			EditorGUILayout.LabelField("Resource Components");
@@ -45,15 +43,11 @@ namespace STF.Types
 					
 				if(i > 0 && GUILayout.Button("Up", GUILayout.ExpandWidth(false)))
 				{
-					var tmp = resource.Components[i];
-					resource.Components[i] = resource.Components[i - 1];
-					resource.Components[i - 1] = tmp;
+					(resource.Components[i - 1], resource.Components[i]) = (resource.Components[i], resource.Components[i - 1]);
 				}
-				if(i < resource.Components.Count - 1 && GUILayout.Button("Down", GUILayout.ExpandWidth(false)))
+				if (i < resource.Components.Count - 1 && GUILayout.Button("Down", GUILayout.ExpandWidth(false)))
 				{
-					var tmp = resource.Components[i];
-					resource.Components[i] = resource.Components[i + 1];
-					resource.Components[i + 1] = tmp;
+					(resource.Components[i + 1], resource.Components[i]) = (resource.Components[i], resource.Components[i + 1]);
 				}
 				GUILayout.Space(20);
 				if(GUILayout.Button("x", GUILayout.ExpandWidth(false)))
