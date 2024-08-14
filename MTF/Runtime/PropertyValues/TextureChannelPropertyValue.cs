@@ -1,9 +1,8 @@
 using System;
-using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 
-namespace MTF
+namespace MTF.PropertyValues
 {
 	[CreateAssetMenu(fileName = "TextureChannelPropertyValue", menuName = "MTF/PropertyValues/Texture Channel", order = 1)]
 	public class TextureChannelPropertyValue : IPropertyValue
@@ -23,7 +22,7 @@ namespace MTF
 		public IPropertyValue ParseFromJson(IPropertyValueImportState State, JObject Json)
 		{
 			var prop = ScriptableObject.CreateInstance<TextureChannelPropertyValue>();
-			prop.Texture = (Texture2D)State.GetResource((string)Json["texture"]);
+			prop.Texture = (Texture2D)State.GetResource(Json["texture"]);
 			prop.Channel = (int)Json["channel"];
 			return prop;
 		}

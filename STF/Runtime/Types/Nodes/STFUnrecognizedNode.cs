@@ -19,9 +19,14 @@ namespace STF.Types
 		public List<ISTFNode> ReferencedNodes = new List<ISTFNode>();
 	}
 
-	public static class STFUnrecognizedNodeExporter
+	public class STFUnrecognizedNodeExporter : ISTFNodeExporter
 	{
-		public static string SerializeToJson(STFExportState State, GameObject Go)
+		public string ConvertPropertyPath(string UnityProperty)
+		{
+			return UnityProperty;
+		}
+
+		public string SerializeToJson(STFExportState State, GameObject Go)
 		{
 			var node = Go.GetComponent<STFUnrecognizedNode>();
 			var ret = JObject.Parse(node.PreservedJson);
@@ -31,9 +36,14 @@ namespace STF.Types
 		}
 	}
 
-	public static class STFUnrecognizedNodeImporter
+	public class STFUnrecognizedNodeImporter : ISTFNodeImporter
 	{
-		public static GameObject ParseFromJson(STFImportState State, JObject JsonAsset, string Id)
+		public string ConvertPropertyPath(string STFProperty)
+		{
+			return STFProperty;
+		}
+
+		public GameObject ParseFromJson(STFImportState State, JObject JsonAsset, string Id)
 		{
 			var ret = new GameObject();
 			var node = ret.AddComponent<STFUnrecognizedNode>();

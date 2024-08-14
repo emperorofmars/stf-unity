@@ -48,15 +48,7 @@ namespace STF.Types
 
 				var nodeType = (string)nodeJson["type"] != null && ((string)nodeJson["type"]).Length > 0 ? (string)nodeJson["type"] : STFNode._TYPE;
 				
-				GameObject rootGo;
-				if(State.Context.NodeImporters.ContainsKey(nodeType))
-				{
-					rootGo = State.Context.NodeImporters[nodeType].ParseFromJson(State, nodeJson, rootId);
-				}
-				else
-				{
-					rootGo = STFUnrecognizedNodeImporter.ParseFromJson(State, nodeJson, rootId);
-				}
+				GameObject rootGo = State.Context.GetNodeImporter(nodeType).ParseFromJson(State, nodeJson, rootId);
 
 				var asset = rootGo.AddComponent<STFAsset>();
 				asset.Id = (string)JsonAsset["id"];

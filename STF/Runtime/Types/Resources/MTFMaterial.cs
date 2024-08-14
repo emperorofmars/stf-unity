@@ -16,9 +16,9 @@ namespace STF.Types
 		public override string Type => _TYPE;
 	}
 
-	public class MTFPropertyValueExportState : MTF.IPropertyValueExportState
+	public class MTFPropertyValueExportState : MTF.PropertyValues.IPropertyValueExportState
 	{
-		STFExportState State;
+		readonly STFExportState State;
 		public List<string> UsedResources = new List<string>();
 		public MTFPropertyValueExportState(STFExportState State)
 		{
@@ -33,24 +33,24 @@ namespace STF.Types
 	}
 	public class MTFMaterialParseState : MTF.IMaterialParseState
 	{
-		public void SavePropertyValue(MTF.IPropertyValue PropertyValue, MTF.Material.Property Property, MTF.Material Material)
+		public void SavePropertyValue(MTF.PropertyValues.IPropertyValue PropertyValue, MTF.Material.Property Property, MTF.Material Material)
 		{
 			PropertyValue.name = Property.Type + ":" + PropertyValue.Type + ":" + Guid.NewGuid().ToString();
 			Property.Values.Add(PropertyValue);
 		}
 	}
 
-	public class MTFPropertyValueImportState : MTF.IPropertyValueImportState
+	public class MTFPropertyValueImportState : MTF.PropertyValues.IPropertyValueImportState
 	{
-		STFImportState State;
+		readonly STFImportState State;
 		public MTFPropertyValueImportState(STFImportState State)
 		{
 			this.State = State;
 		}
 
-		public UnityEngine.Object GetResource(string Id)
+		public UnityEngine.Object GetResource(JToken Id)
 		{
-			return State.Resources[Id].Resource;
+			return State.Resources[(string)Id].Resource;
 		}
 	}
 	public class MTFMaterialConvertState : MTF.IMaterialConvertState
@@ -135,23 +135,13 @@ namespace STF.Types
 				var valuesJson = new JArray();
 				foreach(var value in property.Values)
 				{
-					if(MTF.PropertyValueRegistry.PropertyValueExporters.ContainsKey(value.Type))
-					{
-						valuesJson.Add(MTF.PropertyValueRegistry.PropertyValueExporters[value.Type].SerializeToJson(mtfExportState, value));
-					}
-					else
-					{
-						Debug.LogWarning($"Unrecognized Material PropertyValue: {value.Type}");
-						// Unrecognized Material Property
-					}
+					valuesJson.Add(MTF.PropertyValueRegistry.GetPropertyValueExporter(value.Type).SerializeToJson(mtfExportState, value));
 				}
 				propertiesJson.Add(property.Type, valuesJson);
 			}
 			ret.Add("properties", propertiesJson);
 
 			foreach(var res in mtfExportState.UsedResources) rf.ResourceRef(res);
-
-			ret.Add("used_resources", new JArray(mtfExportState.UsedResources));
 			return State.AddResource(Resource, ret, mat.Id);
 		}
 	}
@@ -195,18 +185,10 @@ namespace STF.Types
 				foreach (var valueJson in propertyJson.Value)
 				{
 					var propertyValueType = (string)valueJson["type"];
-					if(MTF.PropertyValueRegistry.PropertyValueImporters.ContainsKey(propertyValueType))
-					{
-						var propertyValue = MTF.PropertyValueRegistry.PropertyValueImporters[propertyValueType].ParseFromJson(mtfImportState, (JObject)valueJson);
-						propertyValue.name = propertyJson.Key + ":" + propertyValueType + ":" + mtfProperty.Values.Count();
-						mtfProperty.Values.Add(propertyValue);
-						State.UnityContext.SaveSubResource(propertyValue, mat);
-					}
-					else
-					{
-						// TODO unrecognized material property value
-						Debug.LogWarning($"Unrecognized Material PropertyValue: {propertyValueType}");
-					}
+					var propertyValue = MTF.PropertyValueRegistry.GetPropertyValueImporter(propertyValueType).ParseFromJson(mtfImportState, (JObject)valueJson);
+					propertyValue.name = propertyJson.Key + ":" + propertyValueType + ":" + mtfProperty.Values.Count();
+					mtfProperty.Values.Add(propertyValue);
+					State.UnityContext.SaveSubResource(propertyValue, mat);
 				}
 				mat.Properties.Add(mtfProperty);
 			}

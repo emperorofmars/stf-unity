@@ -65,33 +65,14 @@ namespace STF.Serialisation
 
 		private static ISTFAsset ParseAsset(STFImportState State)
 		{
-			var type = (string)State.JsonRoot["asset"]["type"];
-			if(State.Context.AssetImporters.ContainsKey(type))
-			{
-				Debug.Log($"Parsing Asset: {type}");
-				return State.Context.AssetImporters[type].ParseFromJson(State, (JObject)State.JsonRoot["asset"]);
-			}
-			else
-			{
-				//Debug.LogWarning($"Unrecognized Asset: {type}");
-				throw new Exception($"Parsing unrecognized Assets is not yet supported: {type}");
-			}
+			return State.Context.GetAssetImporter((string)State.JsonRoot["asset"]["type"]).ParseFromJson(State, (JObject)State.JsonRoot["asset"]);
 		}
 
 		private static void ParseResources(STFImportState State)
 		{
 			foreach(var entry in (JObject)State.JsonRoot["resources"])
 			{
-				var type = (string)entry.Value["type"];
-				if(State.Context.ResourceImporters.ContainsKey(type))
-				{
-					State.Context.ResourceImporters[type].ParseFromJson(State, (JObject)entry.Value, entry.Key);
-				}
-				else
-				{
-					Debug.LogWarning($"Unrecognized Resource: {type}");
-					STFUnrecognizedResourceImporter.ParseFromJson(State, (JObject)entry.Value, entry.Key);
-				}
+				State.Context.GetResourceImporter((string)entry.Value["type"]).ParseFromJson(State, (JObject)entry.Value, entry.Key);
 			}
 		}
 

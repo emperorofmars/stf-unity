@@ -32,42 +32,48 @@ namespace STF.Serialisation
 	// Context's to pass into an importer and exporter respectively. Default ones are created automatically, construct these manually only for specific use cases.
 	public class STFImportContext
 	{
-		public Dictionary<string, ISTFAssetImporter> AssetImporters = new Dictionary<string, ISTFAssetImporter>();
-		public Dictionary<string, ISTFNodeImporter> NodeImporters = new Dictionary<string, ISTFNodeImporter>();
-		public Dictionary<string, ISTFNodeComponentImporter> NodeComponentImporters = new Dictionary<string, ISTFNodeComponentImporter>();
-		public Dictionary<string, ISTFResourceImporter> ResourceImporters = new Dictionary<string, ISTFResourceImporter>();
-		public Dictionary<string, ISTFResourceComponentImporter> ResourceComponentImporters = new Dictionary<string, ISTFResourceComponentImporter>();
-		public List<ISTFImportPostProcessor> ImportPostProcessors = new List<ISTFImportPostProcessor>();
+		public Dictionary<string, ISTFAssetImporter> AssetImporters = new();
+		public Dictionary<string, ISTFNodeImporter> NodeImporters = new();
+		public Dictionary<string, ISTFNodeComponentImporter> NodeComponentImporters = new();
+		public Dictionary<string, ISTFResourceImporter> ResourceImporters = new();
+		public Dictionary<string, ISTFResourceComponentImporter> ResourceComponentImporters = new();
+		public List<ISTFImportPostProcessor> ImportPostProcessors = new();
 
-		/*public ISTFAssetImporter ParseAsset(string Type) => AssetImporters.ContainsKey(Type) ? AssetImporters[Type] : null;
+		public ISTFAssetImporter GetAssetImporter(string Type) => AssetImporters.ContainsKey(Type) ? AssetImporters[Type] : null;
 		public ISTFNodeImporter GetNodeImporter(string Type) => NodeImporters.ContainsKey(Type) ? NodeImporters[Type] : new STFUnrecognizedNodeImporter();
-		public ISTFNodeComponentImporter GetComponentImporter(string Type) => NodeComponentImporters.ContainsKey(Type) ? NodeComponentImporters[Type] : null;
-		public ISTFResourceImporter GetResourceImporter(string Type) => ResourceImporters.ContainsKey(Type) ? ResourceImporters[Type] : null;
-		public ISTFResourceComponentImporter GetResourceComponentImporter(string Type) => ResourceComponentImporters.ContainsKey(Type) ? ResourceComponentImporters[Type] : null;*/
+		public ISTFNodeComponentImporter GetNodeComponentImporter(string Type) => NodeComponentImporters.ContainsKey(Type) ? NodeComponentImporters[Type] : new STFUnrecognizedNodeComponentImporter();
+		public ISTFResourceImporter GetResourceImporter(string Type) => ResourceImporters.ContainsKey(Type) ? ResourceImporters[Type] : new STFUnrecognizedResourceImporter();
+		public ISTFResourceComponentImporter GetResourceComponentImporter(string Type) => ResourceComponentImporters.ContainsKey(Type) ? ResourceComponentImporters[Type] : new STFUnrecognizedResourceComponentImporter();
 	}
 
 	public class STFExportContext
 	{
-		public Dictionary<string, ISTFAssetExporter> AssetExporters = new Dictionary<string, ISTFAssetExporter>();
-		public Dictionary<string, ISTFNodeExporter> NodeExporters = new Dictionary<string, ISTFNodeExporter>();
-		public Dictionary<Type, ISTFNodeComponentExporter> NodeComponentExporters = new Dictionary<Type, ISTFNodeComponentExporter>();
-		public Dictionary<Type, ISTFResourceExporter> ResourceExporters = new Dictionary<Type, ISTFResourceExporter>();
-		public Dictionary<string, ISTFResourceComponentExporter> ResourceComponentExporters = new Dictionary<string, ISTFResourceComponentExporter>();
-		public List<Type> ExportExclusions = new List<Type>();
+		public Dictionary<string, ISTFAssetExporter> AssetExporters = new();
+		public Dictionary<string, ISTFNodeExporter> NodeExporters = new();
+		public Dictionary<Type, ISTFNodeComponentExporter> NodeComponentExporters = new();
+		public Dictionary<Type, ISTFResourceExporter> ResourceExporters = new();
+		public Dictionary<string, ISTFResourceComponentExporter> ResourceComponentExporters = new();
+		public List<Type> ExportExclusions = new();
+
+		public ISTFAssetExporter GetAssetExporter(string Type) => AssetExporters.ContainsKey(Type) ? AssetExporters[Type] : null;
+		public ISTFNodeExporter GetNodeExporter(string Type) => NodeExporters.ContainsKey(Type) ? NodeExporters[Type] : new STFUnrecognizedNodeExporter();
+		public ISTFNodeComponentExporter GetNodeComponentExporter(Type Type) => NodeComponentExporters.ContainsKey(Type) ? NodeComponentExporters[Type] : new STFUnrecognizedNodeComponentExporter();
+		public ISTFResourceExporter GetResourceExporter(Type Type) => ResourceExporters.ContainsKey(Type) ? ResourceExporters[Type] : new STFUnrecognizedResourceExporter();
+		public ISTFResourceComponentExporter GetResourceComponentExporter(string Type) => ResourceComponentExporters.ContainsKey(Type) ? ResourceComponentExporters[Type] : new STFUnrecognizedResourceComponentExporter();
 	}
 
 	// Used to register STF object types. Default ones are included here, additional ones can be added using the appropriate method.
 	public static class STFRegistry
 	{
-		public static readonly Dictionary<string, ISTFAssetExporter> DefaultAssetExporters = new Dictionary<string, ISTFAssetExporter>() {
+		public static readonly Dictionary<string, ISTFAssetExporter> DefaultAssetExporters = new() {
 			{STFAsset._TYPE, new STFAssetExporter()},
 			{STFAddonAsset._TYPE, new STFAddonAssetExporter()}
 		};
-		public static readonly Dictionary<string, ISTFAssetImporter> DefaultAssetImporters = new Dictionary<string, ISTFAssetImporter>() {
+		public static readonly Dictionary<string, ISTFAssetImporter> DefaultAssetImporters = new() {
 			{STFAsset._TYPE, new STFAssetImporter()},
 			{STFAddonAsset._TYPE, new STFAddonAssetImporter()}
 		};
-		public static readonly Dictionary<string, ISTFNodeImporter> DefaultNodeImporters = new Dictionary<string, ISTFNodeImporter>() {
+		public static readonly Dictionary<string, ISTFNodeImporter> DefaultNodeImporters = new() {
 			{STFNode._TYPE, new STFNodeImporter()},
 			{STFArmatureInstanceNode._TYPE, new STFArmatureInstanceImporter()},
 			{STFBoneNode._TYPE, new DontInvokeNodeImporter()},
@@ -75,7 +81,7 @@ namespace STF.Serialisation
 			{STFPatchNode._TYPE, new STFPatchNodeImporter()},
 			{STFAppendageNode._TYPE, new STFAppendageNodeImporter()},
 		};
-		public static readonly Dictionary<string, ISTFNodeExporter> DefaultNodeExporters = new Dictionary<string, ISTFNodeExporter>() {
+		public static readonly Dictionary<string, ISTFNodeExporter> DefaultNodeExporters = new() {
 			{STFNode._TYPE, new STFNodeExporter()},
 			{STFArmatureInstanceNode._TYPE, new STFArmatureInstanceExporter()},
 			{STFBoneNode._TYPE, new DontInvokeNodeExporter()},
@@ -83,83 +89,83 @@ namespace STF.Serialisation
 			{STFPatchNode._TYPE, new STFPatchNodeExporter()},
 			{STFAppendageNode._TYPE, new STFAppendageNodeExporter()},
 		};
-		public static readonly Dictionary<string, ISTFNodeComponentImporter> DefaultNodeComponentImporters = new Dictionary<string, ISTFNodeComponentImporter>() {
+		public static readonly Dictionary<string, ISTFNodeComponentImporter> DefaultNodeComponentImporters = new() {
 			{STFMeshInstance._TYPE, new STFMeshInstanceImporter()},
 			{STFTwistConstraint._TYPE, new STFTwistConstraintImporter()},
 			{STFResourceHolder._TYPE, new STFResourceHolderImporter()}
 		};
-		public static readonly Dictionary<Type, ISTFNodeComponentExporter> DefaultNodeComponentExporters = new Dictionary<Type, ISTFNodeComponentExporter>() {
+		public static readonly Dictionary<Type, ISTFNodeComponentExporter> DefaultNodeComponentExporters = new() {
 			{typeof(SkinnedMeshRenderer), new STFMeshInstanceExporter()},
 			{typeof(MeshRenderer), new STFMeshInstanceExporter()},
 			{typeof(STFTwistConstraint), new STFTwistConstraintExporter()},
 			{typeof(STFResourceHolder), new STFResourceHolderExporter()}
 		};
-		public static readonly Dictionary<string, ISTFResourceImporter> DefaultResourceImporters = new Dictionary<string, ISTFResourceImporter>() {
+		public static readonly Dictionary<string, ISTFResourceImporter> DefaultResourceImporters = new() {
 			{STFMesh._TYPE, new STFMeshImporter()},
 			{STFTexture._TYPE, new STFTextureImporter()},
 			{STFArmature._TYPE, new STFArmatureImporter()},
 			{MTFMaterial._TYPE, new MTFMaterialImporter()},
 		};
-		public static readonly Dictionary<Type, ISTFResourceExporter> DefaultResourceExporters = new Dictionary<Type, ISTFResourceExporter>() {
+		public static readonly Dictionary<Type, ISTFResourceExporter> DefaultResourceExporters = new() {
 			{typeof(Mesh), new STFMeshExporter()},
 			{typeof(Texture2D), new STFTexture2dExporter()},
 			{typeof(STFArmature), new STFArmatureExporter()},
 			{typeof(MTFMaterial), new MTFMaterialExporter()},
 			{typeof(Material), new UnityMaterialExporter()},
 		};
-		public static readonly Dictionary<string, ISTFResourceComponentImporter> DefaultResourceComponentImporters = new Dictionary<string, ISTFResourceComponentImporter>() {
+		public static readonly Dictionary<string, ISTFResourceComponentImporter> DefaultResourceComponentImporters = new() {
 			{STFTextureDownscalePriority._TYPE, new STFTextureDownscalePriorityImporter()},
 			{STFTextureCompression._TYPE, new STFTextureCompressionImporter()},
 			{STFHumanoidArmature._TYPE, new STFHumanoidArmatureImporter()},
 		};
-		public static readonly Dictionary<string, ISTFResourceComponentExporter> DefaultResourceComponentExporters = new Dictionary<string, ISTFResourceComponentExporter>() {
+		public static readonly Dictionary<string, ISTFResourceComponentExporter> DefaultResourceComponentExporters = new() {
 			{STFTextureDownscalePriority._TYPE, new STFTextureDownscalePriorityExporter()},
 			{STFTextureCompression._TYPE, new STFTextureCompressionExporter()},
 			{STFHumanoidArmature._TYPE, new STFHumanoidArmatureExporter()},
 		};
-		public static readonly List<ISTFImportPostProcessor> DefaultImportPostProcessors = new List<ISTFImportPostProcessor>();
-		public static readonly List<Type> DefaultExportExclusions = new List<Type>() {
+		public static readonly List<ISTFImportPostProcessor> DefaultImportPostProcessors = new();
+		public static readonly List<Type> DefaultExportExclusions = new() {
 			typeof(Transform), typeof(ISTFNode), typeof(Animator), typeof(STFAsset), typeof(STFAddonAsset), typeof(STFNode), typeof(STFBoneNode), typeof(STFBoneInstanceNode),
 			typeof(STFMeshInstance), typeof(STFArmatureInstanceNode), typeof(STFArmatureNodeInfo), typeof(MeshFilter)
 		};
 
-		private static Dictionary<string, ISTFAssetImporter> RegisteredAssetImporters = new Dictionary<string, ISTFAssetImporter>();
-		private static Dictionary<string, ISTFAssetExporter> RegisteredAssetExporters = new Dictionary<string, ISTFAssetExporter>();
+		private static readonly Dictionary<string, ISTFAssetImporter> RegisteredAssetImporters = new();
+		private static readonly Dictionary<string, ISTFAssetExporter> RegisteredAssetExporters = new();
 
-		private static Dictionary<string, ISTFNodeImporter> RegisteredNodeImporters = new Dictionary<string, ISTFNodeImporter>();
-		private static Dictionary<string, ISTFNodeExporter> RegisteredNodeExporters = new Dictionary<string, ISTFNodeExporter>();
+		private static readonly Dictionary<string, ISTFNodeImporter> RegisteredNodeImporters = new();
+		private static readonly Dictionary<string, ISTFNodeExporter> RegisteredNodeExporters = new();
 
-		private static Dictionary<string, ISTFNodeComponentImporter> RegisteredNodeComponentImporters = new Dictionary<string, ISTFNodeComponentImporter>();
-		private static Dictionary<Type, ISTFNodeComponentExporter> RegisteredNodeComponentExporters = new Dictionary<Type, ISTFNodeComponentExporter>();
+		private static readonly Dictionary<string, ISTFNodeComponentImporter> RegisteredNodeComponentImporters = new();
+		private static readonly Dictionary<Type, ISTFNodeComponentExporter> RegisteredNodeComponentExporters = new();
 
-		private static Dictionary<string, ISTFResourceImporter> RegisteredResourceImporters = new Dictionary<string, ISTFResourceImporter>();
-		private static Dictionary<Type, ISTFResourceExporter> RegisteredResourceExporters = new Dictionary<Type, ISTFResourceExporter>();
+		private static readonly Dictionary<string, ISTFResourceImporter> RegisteredResourceImporters = new();
+		private static readonly Dictionary<Type, ISTFResourceExporter> RegisteredResourceExporters = new();
 
-		private static Dictionary<string, ISTFResourceComponentImporter> RegisteredResourceComponentImporters = new Dictionary<string, ISTFResourceComponentImporter>();
-		private static Dictionary<string, ISTFResourceComponentExporter> RegisteredResourceComponentExporters = new Dictionary<string, ISTFResourceComponentExporter>();
+		private static readonly Dictionary<string, ISTFResourceComponentImporter> RegisteredResourceComponentImporters = new();
+		private static readonly Dictionary<string, ISTFResourceComponentExporter> RegisteredResourceComponentExporters = new();
 
-		private static List<ISTFImportPostProcessor> RegisteredImportPostProcessors = new List<ISTFImportPostProcessor>();
-		private static List<Type> RegisteredExportExclusions = new List<Type>();
+		private static readonly List<ISTFImportPostProcessor> RegisteredImportPostProcessors = new();
+		private static readonly List<Type> RegisteredExportExclusions = new();
 
-		public static Dictionary<string, ISTFAssetImporter> AssetImporters {get => CollectionUtil.Combine(DefaultAssetImporters, RegisteredAssetImporters);}
-		public static Dictionary<string, ISTFAssetExporter> AssetExporters {get => CollectionUtil.Combine(DefaultAssetExporters, RegisteredAssetExporters);}
+		public static Dictionary<string, ISTFAssetImporter> AssetImporters => CollectionUtil.Combine(DefaultAssetImporters, RegisteredAssetImporters);
+		public static Dictionary<string, ISTFAssetExporter> AssetExporters => CollectionUtil.Combine(DefaultAssetExporters, RegisteredAssetExporters);
 
-		public static Dictionary<string, ISTFNodeImporter> NodeImporters {get => CollectionUtil.Combine(DefaultNodeImporters, RegisteredNodeImporters);}
-		public static Dictionary<string, ISTFNodeExporter> NodeExporters {get => CollectionUtil.Combine(DefaultNodeExporters, RegisteredNodeExporters);}
+		public static Dictionary<string, ISTFNodeImporter> NodeImporters => CollectionUtil.Combine(DefaultNodeImporters, RegisteredNodeImporters);
+		public static Dictionary<string, ISTFNodeExporter> NodeExporters => CollectionUtil.Combine(DefaultNodeExporters, RegisteredNodeExporters);
 
-		public static Dictionary<string, ISTFNodeComponentImporter> NodeComponentImporters {get => CollectionUtil.Combine(DefaultNodeComponentImporters, RegisteredNodeComponentImporters);}
-		public static Dictionary<Type, ISTFNodeComponentExporter> NodeComponentExporters {get => CollectionUtil.Combine(DefaultNodeComponentExporters, RegisteredNodeComponentExporters);}
+		public static Dictionary<string, ISTFNodeComponentImporter> NodeComponentImporters => CollectionUtil.Combine(DefaultNodeComponentImporters, RegisteredNodeComponentImporters);
+		public static Dictionary<Type, ISTFNodeComponentExporter> NodeComponentExporters => CollectionUtil.Combine(DefaultNodeComponentExporters, RegisteredNodeComponentExporters);
 
-		public static Dictionary<string, ISTFResourceImporter> ResourceImporters {get => CollectionUtil.Combine(DefaultResourceImporters, RegisteredResourceImporters);}
-		public static Dictionary<Type, ISTFResourceExporter> ResourceExporters {get => CollectionUtil.Combine(DefaultResourceExporters, RegisteredResourceExporters);}
+		public static Dictionary<string, ISTFResourceImporter> ResourceImporters => CollectionUtil.Combine(DefaultResourceImporters, RegisteredResourceImporters);
+		public static Dictionary<Type, ISTFResourceExporter> ResourceExporters => CollectionUtil.Combine(DefaultResourceExporters, RegisteredResourceExporters);
 
-		public static Dictionary<string, ISTFResourceComponentImporter> ResourceComponentImporters {get => CollectionUtil.Combine(DefaultResourceComponentImporters, RegisteredResourceComponentImporters);}
-		public static Dictionary<string, ISTFResourceComponentExporter> ResourceComponentExporters {get => CollectionUtil.Combine(DefaultResourceComponentExporters, RegisteredResourceComponentExporters);}
+		public static Dictionary<string, ISTFResourceComponentImporter> ResourceComponentImporters => CollectionUtil.Combine(DefaultResourceComponentImporters, RegisteredResourceComponentImporters);
+		public static Dictionary<string, ISTFResourceComponentExporter> ResourceComponentExporters => CollectionUtil.Combine(DefaultResourceComponentExporters, RegisteredResourceComponentExporters);
 
 		
-		public static List<ISTFImportPostProcessor> ImportPostProcessors {get => CollectionUtil.Combine(DefaultImportPostProcessors, RegisteredImportPostProcessors);}
+		public static List<ISTFImportPostProcessor> ImportPostProcessors => CollectionUtil.Combine(DefaultImportPostProcessors, RegisteredImportPostProcessors);
 
-		public static List<Type> ExportExclusions {get => CollectionUtil.Combine(DefaultExportExclusions, RegisteredExportExclusions);}
+		public static List<Type> ExportExclusions => CollectionUtil.Combine(DefaultExportExclusions, RegisteredExportExclusions);
 
 		public static void RegisterAssetImporter(string type, ISTFAssetImporter importer) { RegisteredAssetImporters.Add(type, importer); }
 		public static void RegisterAssetExporter(string type, ISTFAssetExporter exporter) { RegisteredAssetExporters.Add(type, exporter); }

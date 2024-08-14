@@ -1,9 +1,8 @@
 using System;
-using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 
-namespace MTF
+namespace MTF.PropertyValues
 {
 	[CreateAssetMenu(fileName = "StringPropertyValue", menuName = "MTF/PropertyValues/String", order = 1)]
 	public class StringPropertyValue : IPropertyValue

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 
-namespace MTF
+namespace MTF.PropertyValues
 {
 	[CreateAssetMenu(fileName = "TexturePropertyValue", menuName = "MTF/PropertyValues/Texture", order = 1)]
 	public class TexturePropertyValue : IPropertyValue
@@ -22,7 +22,7 @@ namespace MTF
 		public IPropertyValue ParseFromJson(IPropertyValueImportState State, JObject Json)
 		{
 			var prop = ScriptableObject.CreateInstance<TexturePropertyValue>();
-			prop.Texture = (Texture2D)State.GetResource((string)Json["texture"]);
+			prop.Texture = (Texture2D)State.GetResource(Json["texture"]);
 			return prop;
 		}
 	}

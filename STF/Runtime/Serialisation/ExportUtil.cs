@@ -28,15 +28,7 @@ namespace STF.Serialisation
 		{
 			if(State.Nodes.ContainsKey(Go)) return State.Nodes[Go].Id;
 			var node = Go.GetComponent<ISTFNode>();
-			if(node != null && State.Context.NodeExporters.ContainsKey(node.Type))
-			{
-				return State.Context.NodeExporters[node.Type].SerializeToJson(State, Go);
-			}
-			else
-			{
-				Debug.LogWarning($"Unrecognized Node: {node.Type}");
-				return STFUnrecognizedNodeExporter.SerializeToJson(State, Go);
-			}
+			return State.Context.GetNodeExporter(node.Type).SerializeToJson(State, Go);
 		}
 
 		public static JObject SerializeNodeComponents(STFExportState State, Component[] NodeComponents)
@@ -54,57 +46,31 @@ namespace STF.Serialisation
 
 		public static (string, JObject) SerializeNodeComponent(STFExportState State, Component NodeComponent)
 		{
-			(string Id, JObject JsonComponent) ret;
-			if(State.Context.NodeComponentExporters.ContainsKey(NodeComponent.GetType()))
-			{
-				ret = State.Context.NodeComponentExporters[NodeComponent.GetType()].SerializeToJson(State, NodeComponent);
-			}
-			else
-			{
-				Debug.LogWarning($"Unrecognized Node: {NodeComponent.GetType()}");
-				ret = STFUnrecognizedNodeComponentExporter.SerializeToJson(State, NodeComponent);
-			}
+			(string Id, JObject JsonComponent) ret = State.Context.GetNodeComponentExporter(NodeComponent.GetType()).SerializeToJson(State, NodeComponent);
 			State.AddNodeComponent(NodeComponent, ret.JsonComponent, ret.Id);
 			return ret;
 		}
 
-		public static string SerializeResource(STFExportState State, UnityEngine.Object Resource, UnityEngine.Object Context = null)
+		public static string SerializeResource(STFExportState State, Object Resource, Object Context = null)
 		{
 			if(State.Resources.ContainsKey(Resource)) return State.Resources[Resource].Id;
-			else if(State.Context.ResourceExporters.ContainsKey(Resource.GetType()))
-			{
-				return State.Context.ResourceExporters[Resource.GetType()].SerializeToJson(State, Resource, Context);
-			}
-			else
-			{
-				Debug.LogWarning($"Unrecognized Resource: {Resource.GetType()}");
-				return null;
-			}
+			else return State.Context.GetResourceExporter(Resource.GetType()).SerializeToJson(State, Resource, Context);
 		}
 
 		public static JObject SerializeResourceComponents(STFExportState State, ISTFResource Resource)
 		{
 			var ret = new JObject();
-			if(Resource?.Components != null) foreach(var component in Resource.Components)
+			if(Resource.Components != null) foreach(var component in Resource.Components)
 			{
 				var serializedComponent = SerializeResourceComponent(State, component);
-				if(serializedComponent.Item1 != null) ret.Add(serializedComponent.Item1, serializedComponent.Item2);
-				else Debug.LogWarning($"Skipping Unrecognized Resource Component: {component}");
+				ret.Add(serializedComponent.Item1, serializedComponent.Item2);
 			}
 			return ret;
 		}
 
 		public static (string, JObject) SerializeResourceComponent(STFExportState State, ISTFResourceComponent ResourceComponent)
 		{
-			if(State.Context.ResourceComponentExporters.ContainsKey(ResourceComponent.Type))
-			{
-				return State.Context.ResourceComponentExporters[ResourceComponent.Type].SerializeToJson(State, ResourceComponent);
-			}
-			else
-			{
-				Debug.LogWarning($"Unrecognized Resource Component: {ResourceComponent.Type}");
-				return STFUnrecognizedResourceComponentExporter.SerializeToJson(State, ResourceComponent);
-			}
+			return State.Context.GetResourceComponentExporter(ResourceComponent.Type).SerializeToJson(State, ResourceComponent);
 		}
 	}
 }

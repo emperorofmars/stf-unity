@@ -1,7 +1,7 @@
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 
-namespace MTF
+namespace MTF.PropertyValues
 {
 	public abstract class IPropertyValue : ScriptableObject
 	{
@@ -9,12 +9,12 @@ namespace MTF
 	}
 	public interface IPropertyValueImportState
 	{
-		UnityEngine.Object GetResource(string Id);
+		Object GetResource(JToken Id);
 	}
 
 	public interface IPropertyValueExportState
 	{
-		string AddResource(UnityEngine.Object Resource);
+		string AddResource(Object Resource);
 	}
 
 	public interface IPropertyValueExporter

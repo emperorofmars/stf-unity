@@ -20,23 +20,31 @@ namespace STF.Types
 		public List<ISTFNodeComponent> ReferencedNodeComponentss = new List<ISTFNodeComponent>();
 	}
 
-	public class STFUnrecognizedNodeComponentExporter
+	public class STFUnrecognizedNodeComponentExporter : ISTFNodeComponentExporter
 	{
-		public static (string, JObject) SerializeToJson(STFExportState State, Component Component)
+		public string ConvertPropertyPath(STFExportState State, Component Component, string UnityProperty)
+		{
+			return UnityProperty;
+		}
+
+		public (string, JObject) SerializeToJson(STFExportState State, Component Component)
 		{
 			var c = (STFUnrecognizedNodeComponent)Component;
 			var ret = JObject.Parse(c.PreservedJson);
-			//ASTFNodeComponentExporter.SerializeRelationships(c, ret);
 			foreach(var usedResource in c.ReferencedResources) ExportUtil.SerializeResource(State, usedResource);
 			foreach(var usedNode in c.ReferencedNodes) ExportUtil.SerializeNode(State, usedNode);
-			// no need to explicitely export node components
 			return (c.Id, ret);
 		}
 	}
 
-	public class STFUnrecognizedNodeComponentImporter
+	public class STFUnrecognizedNodeComponentImporter : ISTFNodeComponentImporter
 	{
-		public static void ParseFromJson(STFImportState State, JObject Json, string Id, GameObject Go)
+		public string ConvertPropertyPath(STFImportState State, Component Component, string STFProperty)
+		{
+			return STFProperty;
+		}
+
+		public void ParseFromJson(STFImportState State, JObject Json, string Id, GameObject Go)
 		{
 			var c = Go.AddComponent<STFUnrecognizedNodeComponent>();
 			c.Id = Id;

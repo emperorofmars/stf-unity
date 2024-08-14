@@ -19,9 +19,14 @@ namespace STF.Types
 		public List<STFBuffer> PreservedBuffers = new List<STFBuffer>();
 	}
 
-	public class STFUnrecognizedResourceExporter
+	public class STFUnrecognizedResourceExporter : ISTFResourceExporter
 	{
-		public static string SerializeToJson(STFExportState State, Object Resource)
+		public string ConvertPropertyPath(STFExportState State, Object Resource, string UnityProperty)
+		{
+			return UnityProperty;
+		}
+
+		public string SerializeToJson(STFExportState State, Object Resource, Object Context = null)
 		{
 			var r = (STFUnrecognizedResource)Resource;
 			if(r.Fallback.IsRef) ExportUtil.SerializeResource(State, r.Fallback);
@@ -34,9 +39,14 @@ namespace STF.Types
 		}
 	}
 
-	public class STFUnrecognizedResourceImporter
+	public class STFUnrecognizedResourceImporter : ISTFResourceImporter
 	{
-		public static void ParseFromJson(STFImportState State, JObject Json, string Id)
+		public string ConvertPropertyPath(STFImportState State, Object Resource, string STFProperty)
+		{
+			return STFProperty;
+		}
+
+		public void ParseFromJson(STFImportState State, JObject Json, string Id)
 		{
 			var ret = ScriptableObject.CreateInstance<STFUnrecognizedResource>();
 			ret.Id = Id;

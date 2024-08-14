@@ -18,14 +18,14 @@ namespace STF.Types
 		public List<ISTFNode> ReferencedNodes = new();
 	}
 	
-	public static class STFUnrecognizedResourceComponentExporter
+	public class STFUnrecognizedResourceComponentExporter : ISTFResourceComponentExporter
 	{
-		public static string ConvertPropertyPath(string UnityProperty)
+		public string ConvertPropertyPath(string UnityProperty)
 		{
 			return UnityProperty;
 		}
 
-		public static (string Id, JObject JsonComponent) SerializeToJson(STFExportState State, ISTFResourceComponent Component)
+		public (string Id, JObject JsonComponent) SerializeToJson(STFExportState State, ISTFResourceComponent Component)
 		{
 			var r = (STFUnrecognizedResourceComponent)Component;
 			foreach(var usedResource in r.ReferencedResources) ExportUtil.SerializeResource(State, usedResource);
@@ -37,14 +37,14 @@ namespace STF.Types
 		}
 	}
 	
-	public static class STFUnrecognizedResourceComponentImporter
+	public class STFUnrecognizedResourceComponentImporter : ISTFResourceComponentImporter
 	{
-		public static string ConvertPropertyPath(string STFProperty)
+		public string ConvertPropertyPath(string STFProperty)
 		{
 			return STFProperty;
 		}
 
-		public static void ParseFromJson(STFImportState State, JObject Json, string Id, ISTFResource Resource)
+		public void ParseFromJson(STFImportState State, JObject Json, string Id, ISTFResource Resource)
 		{
 			var ret = ScriptableObject.CreateInstance<STFUnrecognizedResourceComponent>();
 			ret.Id = Id;
