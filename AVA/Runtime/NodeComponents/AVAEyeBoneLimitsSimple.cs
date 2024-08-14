@@ -10,6 +10,7 @@ using UnityEditor;
 
 namespace AVA.Types
 {
+	[DisallowMultipleComponent]
 	public class AVAEyeBoneLimitsSimple : ISTFNodeComponent
 	{
 		public const string _TYPE = "AVA.eye_bone_limits_simple";

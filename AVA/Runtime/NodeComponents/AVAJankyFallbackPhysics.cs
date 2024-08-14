@@ -15,6 +15,7 @@ using UnityEditor;
 namespace AVA.Types
 {
 	// absolute jank, only for proof of concept purposes
+	[DisallowMultipleComponent]
 	public class AVAJankyFallbackPhysics : ISTFNodeComponent
 	{
 		public static string _TYPE = "AVA.janky_fallback_physics";

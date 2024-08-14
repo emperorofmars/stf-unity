@@ -13,6 +13,7 @@ using UnityEditor;
 
 namespace AVA.Types
 {
+	[DisallowMultipleComponent]
 	public class AVAAvatar : ISTFNodeComponent
 	{
 		public const string _TYPE = "AVA.avatar";

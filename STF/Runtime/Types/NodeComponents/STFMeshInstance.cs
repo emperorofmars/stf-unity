@@ -12,6 +12,7 @@ using UnityEngine;
 
 namespace STF.Types
 {
+	[DisallowMultipleComponent]
 	public class STFMeshInstance : ISTFNodeComponent
 	{
 		public const string _TYPE = "STF.mesh_instance";

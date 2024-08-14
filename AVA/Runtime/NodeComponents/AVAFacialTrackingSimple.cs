@@ -14,6 +14,7 @@ using UnityEditor;
 
 namespace AVA.Types
 {
+	[DisallowMultipleComponent]
 	public class AVAFacialTrackingSimple : ISTFNodeComponent
 	{
 		public const string _TYPE = "AVA.facial_tracking_simple";

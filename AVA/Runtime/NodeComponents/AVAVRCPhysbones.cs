@@ -13,6 +13,7 @@ using UnityEditor;
 namespace AVA.Types
 {
 	// partial implementation, to be completed whenever, currently exists only for proof of concept purposes
+	[DisallowMultipleComponent]
 	public class AVAVRCPhysbones : ISTFNodeComponent
 	{
 		public static string _TYPE = "AVA.VRC.physbones";

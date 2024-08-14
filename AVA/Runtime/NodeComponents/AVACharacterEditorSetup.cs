@@ -12,7 +12,7 @@ using UnityEditor;
 // This exists for now purely to showcase how data could be stored to populate the ui of a character editor application
 namespace AVA.Types
 {
-	[Serializable]
+	[Serializable, DisallowMultipleComponent]
 	public class CharacterEditorEntry
 	{
 		public string type;
