@@ -95,7 +95,7 @@ namespace STF.Tools
 			DirectoryUtil.EnsureUnpackLocation(importer.assetPath);
 			var unpackLocation = DirectoryUtil.GetUnpackLocation(importer.assetPath);
 
-			var unityContext = new EditorUnityImportContext(unpackLocation);
+			var unityContext = new UnpackingUnityImportContext(unpackLocation);
 			var (asset, _state) = Importer.Parse(unityContext, importer.assetPath);
 
 			var path = Path.Combine(unpackLocation, asset.STFName + ".Prefab");

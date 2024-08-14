@@ -9,12 +9,12 @@ using STF.Types;
 
 namespace STF.Serialisation
 {
-	public class EditorUnityImportContext : IUnityImportContext
+	public class UnpackingUnityImportContext : IUnityImportContext
 	{
 		public bool IsDegraded => false;
 		string TargetLocation;
 
-		public EditorUnityImportContext(string TargetLocation)
+		public UnpackingUnityImportContext(string TargetLocation)
 		{
 			this.TargetLocation = TargetLocation;
 			EnsureFolderStructure(TargetLocation);

@@ -13,11 +13,11 @@ namespace STF.Serialisation
 	{
 		public STFObjectType STFObjectType => STFObjectType.Resource;
 
-		public Type TargetType => typeof(STFTexture);
+		public Type TargetType => typeof(EditorSTFTexture);
 
 		public void PostProcess(STFImportState State, object Resource)
 		{
-			var meta = (STFTexture)Resource;
+			var meta = (EditorSTFTexture)Resource;
 			TextureImporter textureImporter = (TextureImporter)TextureImporter.GetAtPath(AssetDatabase.GetAssetPath(meta.Resource));
 
 			if(meta && textureImporter)

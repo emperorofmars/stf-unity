@@ -13,11 +13,12 @@ namespace STF.Tools
 	public static class DirectoryUtil
 	{
 		public const string DefaultUnpackFolder = "STF Imports";
-		public static string AssetResourceFolder { get {
-			return Path.GetFullPath(Path.Combine(Path.GetDirectoryName(GetThisFilePath()), "..", "..", "Imports"));
-		}}
 		public const string ResourceFolderName = "Resources";
 
+		public static string AssetResourceFolder { get {
+			var full = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(GetThisFilePath()), "..", "..", "Imports"));
+			return full.Substring(full.IndexOf(Path.DirectorySeparatorChar + "Assets" + Path.DirectorySeparatorChar) + 1);
+		}}
 		private static string GetThisFilePath([CallerFilePath] string path = null) { return path; }
 
 		public static string GetFolderName(string assetPath)
