@@ -44,7 +44,7 @@ namespace AVA.ApplicationConversion
 			if(tmpAsset != Asset)
 			{
 				Asset = tmpAsset;
-				path = STFDirectoryUtil.EnsureConvertLocation(Asset, STFUnityConverter._TARGET_NAME);
+				path = DirectoryUtil.EnsureConvertLocation(Asset, STFUnityConverter._TARGET_NAME);
 			}
 			
 			drawHLine();

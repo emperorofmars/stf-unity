@@ -1,16 +1,24 @@
 
 #if UNITY_EDITOR
 
+using System;
 using System.IO;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 using STF.Types;
 using UnityEditor;
 
 namespace STF.Tools
 {
-	public static class STFDirectoryUtil
+	public static class DirectoryUtil
 	{
 		public const string DefaultUnpackFolder = "STF Imports";
-		public const string ResourceFolder = "Resources";
+		public static string AssetResourceFolder { get {
+			return Path.GetFullPath(Path.Combine(Path.GetDirectoryName(GetThisFilePath()), "..", "..", "Imports"));
+		}}
+		public const string ResourceFolderName = "Resources";
+
+		private static string GetThisFilePath([CallerFilePath] string path = null) { return path; }
 
 		public static string GetFolderName(string assetPath)
 		{
@@ -19,7 +27,7 @@ namespace STF.Tools
 
 		public static string GetUnpackLocation(string assetPath)
 		{
-			return Path.Combine("Assets", STFDirectoryUtil.DefaultUnpackFolder, GetFolderName(assetPath));
+			return Path.Combine("Assets", DefaultUnpackFolder, GetFolderName(assetPath));
 		}
 
 		public static string EnsureUnpackLocation(string assetPath)
@@ -35,9 +43,9 @@ namespace STF.Tools
 				AssetDatabase.CreateFolder(Path.Combine("Assets", DefaultUnpackFolder), foldername);
 				AssetDatabase.Refresh();
 			}
-			if(!Directory.Exists(Path.Combine("Assets", DefaultUnpackFolder, foldername, ResourceFolder)))
+			if(!Directory.Exists(Path.Combine("Assets", DefaultUnpackFolder, foldername, ResourceFolderName)))
 			{
-				AssetDatabase.CreateFolder(Path.Combine("Assets", DefaultUnpackFolder, foldername), ResourceFolder);
+				AssetDatabase.CreateFolder(Path.Combine("Assets", DefaultUnpackFolder, foldername), ResourceFolderName);
 				AssetDatabase.Refresh();
 			}
 			return GetUnpackLocation(assetPath);

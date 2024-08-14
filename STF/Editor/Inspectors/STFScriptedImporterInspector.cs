@@ -32,6 +32,8 @@ namespace STF.Tools
 			ChangedUnpackingImport = EditorGUILayout.Toggle(ChangedUnpackingImport);
 			EditorGUILayout.EndHorizontal();
 
+			//EditorGUILayout.LabelField(DirectoryUtil.AssetResourceFolder);
+
 			if(ChangedUnpackingImport != importer.UnpackingImport && GUILayout.Button("Reimport to apply!"))
 			{
 				importer.UnpackingImport = ChangedUnpackingImport;
@@ -58,10 +60,10 @@ namespace STF.Tools
 			{
 				drawHLine();
 				
-				if(importer.AssetInfo != null && Directory.Exists(Path.Combine(STFDirectoryUtil.GetUnpackLocation(importer.assetPath))) && File.Exists(Path.Combine(STFDirectoryUtil.GetUnpackLocation(importer.assetPath), importer.AssetInfo.Name + ".Prefab")))
+				if(importer.AssetInfo != null && Directory.Exists(Path.Combine(DirectoryUtil.GetUnpackLocation(importer.assetPath))) && File.Exists(Path.Combine(DirectoryUtil.GetUnpackLocation(importer.assetPath), importer.AssetInfo.Name + ".Prefab")))
 				{
 					if(GUILayout.Button("Instantiate", GUILayout.ExpandWidth(true))) {
-						var assetObject = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(Path.Combine(STFDirectoryUtil.GetUnpackLocation(importer.assetPath), importer.AssetInfo.Name + ".Prefab"));
+						var assetObject = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(Path.Combine(DirectoryUtil.GetUnpackLocation(importer.assetPath), importer.AssetInfo.Name + ".Prefab"));
 						PrefabUtility.InstantiatePrefab(assetObject);
 					}
 					GUILayout.Space(10f);
@@ -90,8 +92,8 @@ namespace STF.Tools
 		private void importUnpacking() {
 			var importer = (STFScriptedImporter)target;
 
-			STFDirectoryUtil.EnsureUnpackLocation(importer.assetPath);
-			var unpackLocation = STFDirectoryUtil.GetUnpackLocation(importer.assetPath);
+			DirectoryUtil.EnsureUnpackLocation(importer.assetPath);
+			var unpackLocation = DirectoryUtil.GetUnpackLocation(importer.assetPath);
 
 			var unityContext = new EditorUnityImportContext(unpackLocation);
 			var (asset, _state) = Importer.Parse(unityContext, importer.assetPath);
