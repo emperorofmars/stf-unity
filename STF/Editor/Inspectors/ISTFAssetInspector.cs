@@ -18,6 +18,9 @@ namespace STF.Types
 		public override void OnInspectorGUI()
 		{
 			var asset = (ISTFAsset)target;
+			Undo.RecordObject(asset, "STF asset");
+
+			EditorGUI.BeginChangeCheck();
 
 			EditorGUILayout.LabelField(asset.Type, EditorStyles.whiteLargeLabel);
 
@@ -101,24 +104,16 @@ namespace STF.Types
 			EditorGUI.indentLevel++;
 			DrawPropertiesExcluding(serializedObject, "m_Script", "_Id", "_STFName", "_Degraded", "AnyDegraded", "ImportMeta", "AppliedAddonMetas", "OriginalFileName");
 			EditorGUI.indentLevel--;
-		}
-		
-		private void drawHLine() {
-			GUILayout.Space(10);
-			EditorGUI.DrawRect(EditorGUILayout.GetControlRect(false, 2), Color.gray);
-			GUILayout.Space(10);
-		}
-	}
-	
-	public class ISTFAssetDefaultInspector : Editor
-	{
-		public override void OnInspectorGUI()
-		{
-			var asset = (ISTFAsset)target;
 
-			//EditorGUILayout.LabelField()
-
-			base.DrawDefaultInspector();
+			if(EditorGUI.EndChangeCheck())
+			{
+				serializedObject.ApplyModifiedProperties();
+				EditorUtility.SetDirty(asset);
+				if(PrefabUtility.IsPartOfAnyPrefab(asset))
+				{
+					PrefabUtility.RecordPrefabInstancePropertyModifications(asset);
+				}
+			}
 		}
 		
 		private void drawHLine() {
