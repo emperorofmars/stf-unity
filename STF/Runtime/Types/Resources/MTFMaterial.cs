@@ -69,7 +69,8 @@ namespace STF.Types
 		}
 		public Texture2D SaveImageResource(byte[] Bytes, string Name, string Extension)
 		{
-			return (Texture2D)State.UnityContext.SaveGeneratedResource(Bytes, this.Name + Name, Extension);
+			(var texture, var _) = State.UnityContext.SaveGeneratedResource(Bytes, this.Name + Name, Extension);
+			return (Texture2D)texture;
 		}
 	}
 

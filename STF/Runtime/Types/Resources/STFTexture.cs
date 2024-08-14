@@ -21,7 +21,8 @@ namespace STF.Types
 
 		public string TextureType = "color"; // linear | normal
 		public Vector2Int TextureSize;
-		public STFBuffer Buffer;
+		//public string OriginalBufferId;
+		public ISTFBuffer Buffer;
 	}
 
 	public class STFTexture2dExporter : ISTFResourceExporter
@@ -57,7 +58,7 @@ namespace STF.Types
 			else ret.Add("texture_type", texture.graphicsFormat.ToString().ToLower().EndsWith("unorm") ? "linear" : "color");
 #endif
 
-			if(meta != null && meta.Buffer != null) ret.Add("buffer", rf.BufferRef(State.AddBuffer(meta.Buffer.Data, meta.Buffer.Id)));
+			if(meta != null && meta.Buffer != null) ret.Add("buffer", rf.BufferRef(State.AddBuffer(meta.Buffer.GetData(), meta.Buffer.Id)));
 			else ret.Add("buffer", rf.BufferRef(State.AddBuffer(arrayBuffer)));
 
 			// serialize resource components
@@ -91,18 +92,10 @@ namespace STF.Types
 
 			var bufferId = rf.BufferRef(Json["buffer"]);
 			meta.Buffer = ScriptableObject.CreateInstance<STFBuffer>();
-
-			meta.Buffer.Id = bufferId;
-			meta.Buffer.Data = State.Buffers[bufferId];
-			meta.Buffer.name = meta.name + "_Buffer_" + meta.Buffer.Id;
 			
-			var tex = new Texture2D(meta.TextureSize.x, meta.TextureSize.y);
-			tex.LoadImage(meta.Buffer.Data);
-			tex.name = meta.name;
-			
-			//meta.Resource = (Texture2D)State.UnityContext.SaveGeneratedResource(arrayBuffer, meta.name, (string)Json["image_format"]);
-			meta.Resource = (Texture2D)State.UnityContext.SaveGeneratedResource(tex, "texture2d");
-			meta.Buffer = (STFBuffer)State.UnityContext.SaveGeneratedResource(meta.Buffer, "Asset");
+			(UnityEngine.Object textureResource, ISTFBuffer textureBuffer) = State.UnityContext.SaveGeneratedResource(State.Buffers[bufferId], meta.name, (string)Json["image_format"], bufferId);
+			meta.Resource = textureResource;
+			meta.Buffer = textureBuffer;
 			State.AddResource(meta);
 			ImportUtil.ParseResourceComponents(State, meta, Json);
 			return;

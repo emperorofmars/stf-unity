@@ -11,7 +11,7 @@ using STF.Types;
 namespace STF.Tools
 {
 	[Serializable]
-	public class STFImportInfo// : ScriptableObject
+	public class STFImportInfo
 	{
 		public string Id = Guid.NewGuid().ToString();
 		public string Type = "STF.asset";
@@ -27,7 +27,7 @@ namespace STF.Tools
 		public STFFile Buffers;
 		public JObject JsonRoot;
 
-		public STFImportInfo(STFFile Buffers, string path)
+		public STFImportInfo(STFFile Buffers)
 		{
 			this.Buffers = Buffers;
 			JsonRoot = JObject.Parse(Buffers.Json);
@@ -46,7 +46,7 @@ namespace STF.Tools
 			if(!string.IsNullOrWhiteSpace(previewID))
 			{
 				var previewJson = (JObject)JsonRoot[STFKeywords.ObjectType.Resources][previewID];
-				var previewImporter = STFRegistry.ResourceImporters[(string)previewJson[STFKeywords.Keys.Type]];
+				var previewImporter = new STFTextureImporter();
 				var importContext = STFRegistry.GetDefaultImportContext();
 				var unityContext = new RuntimeUnityImportContext();
 				var importState = new STFImportState(importContext, unityContext, Buffers);
@@ -55,38 +55,6 @@ namespace STF.Tools
 				Preview = (Texture2D)previewResource.Resource;
 			}
 		}
-
-		/*public static STFImportInfo CreateInstance(STFFile Buffers, string path)
-		{
-			var ret = ScriptableObject.CreateInstance<STFImportInfo>();
-			ret.Buffers = Buffers;
-			ret.JsonRoot = JObject.Parse(Buffers.Json);
-
-			var jsonAsset = ret.JsonRoot[STFKeywords.ObjectType.Asset];
-			ret.Id = (string)jsonAsset[STFKeywords.Keys.Id];
-			ret.Type = (string)jsonAsset[STFKeywords.Keys.Type];
-			ret.Name = (string)jsonAsset[STFKeywords.Keys.Name];
-			ret.Version = (string)jsonAsset["version"];
-			ret.Author = (string)jsonAsset["author"];
-			ret.URL = (string)jsonAsset["url"];
-			ret.License = (string)jsonAsset["license"];
-			ret.LicenseLink = (string)jsonAsset["license_link"];
-
-			var previewID = (string)jsonAsset["preview"];
-			if(!string.IsNullOrWhiteSpace(previewID))
-			{
-				var previewJson = (JObject)ret.JsonRoot[STFKeywords.ObjectType.Resources][previewID];
-				var previewImporter = STFRegistry.ResourceImporters[(string)previewJson[STFKeywords.Keys.Type]];
-				var importContext = STFRegistry.GetDefaultImportContext();
-				var unityContext = new RuntimeUnityImportContext();
-				var importState = new STFImportState(importContext, unityContext, Buffers);
-				previewImporter.ParseFromJson(importState, previewJson, previewID);
-				var previewResource = (STFTexture)importState.Resources[previewID];
-				ret.Preview = (Texture2D)previewResource.Resource;
-			}
-
-			return ret;
-		}*/
 	}
 }
 

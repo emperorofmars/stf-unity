@@ -18,11 +18,10 @@ namespace STF.Tools
 
 		public override void OnImportAsset(UnityEditor.AssetImporters.AssetImportContext ctx)
 		{
-			AssetInfo = new STFImportInfo(new STFFile(ctx.assetPath), ctx.assetPath);
+			AssetInfo = new STFImportInfo(new STFFile(ctx.assetPath));
 			
 			if(UnpackingImport)
 			{
-				AssetInfo = new STFImportInfo(new STFFile(ctx.assetPath), ctx.assetPath);
 				if(AssetInfo.Preview)
 				{
 					ctx.AddObjectToAsset("preview", AssetInfo.Preview);

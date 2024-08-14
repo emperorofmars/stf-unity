@@ -31,7 +31,7 @@ namespace STF.Serialisation
 			AssetCtxObjects.Add(Resource);
 			return Resource;
 		}
-		public Object SaveGeneratedResource(byte[] Resource, string Name, string FileExtension)
+		public (Object, ISTFBuffer) SaveGeneratedResource(byte[] Resource, string Name, string FileExtension, string BufferId = null)
 		{
 			if(!FileExtension.StartsWith(".")) FileExtension = "." + FileExtension;
 			if(FileExtension == ".png")
@@ -39,10 +39,15 @@ namespace STF.Serialisation
 				var tex = new Texture2D(2, 2);
 				tex.LoadImage(Resource);
 				tex.name = Name;
+				var buf = ScriptableObject.CreateInstance<STFBuffer>();
+				buf.Id = BufferId;
+				buf.Data = Resource;
+				buf.name = BufferId;
 				AssetCtxObjects.Add(tex);
-				return tex;
+				AssetCtxObjects.Add(buf);
+				return (tex, buf);
 			}
-			return null;
+			return (null, null);
 		}
 		public Object Instantiate(Object Resource)
 		{

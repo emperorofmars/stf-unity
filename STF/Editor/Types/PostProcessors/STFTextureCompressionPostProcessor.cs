@@ -13,22 +13,26 @@ namespace STF.Serialisation
 	{
 		public STFObjectType STFObjectType => STFObjectType.Resource;
 
-		public Type TargetType => typeof(EditorSTFTexture);
+		public Type TargetType => typeof(STFTexture);
 
 		public void PostProcess(STFImportState State, object Resource)
 		{
-			var meta = (EditorSTFTexture)Resource;
-			TextureImporter textureImporter = (TextureImporter)TextureImporter.GetAtPath(AssetDatabase.GetAssetPath(meta.Resource));
-
-			if(meta && textureImporter)
+			var meta = (STFTexture)Resource;
+			var importer = AssetImporter.GetAtPath(AssetDatabase.GetAssetPath(meta.Resource));
+			if(importer is TextureImporter)
 			{
-				var textureCompression = meta.Components.FirstOrDefault(c => c.Type == STFTextureCompression._TYPE);
-				if(textureCompression)
+				TextureImporter textureImporter = (TextureImporter)importer;
+
+				if(meta && textureImporter)
 				{
-					textureImporter.textureCompression = TextureImporterCompression.CompressedHQ;
-					textureImporter.SetPlatformTextureSettings(new TextureImporterPlatformSettings { name = "Standalone", format = TextureImporterFormat.BC7 });
-					
-					textureImporter.SaveAndReimport();
+					var textureCompression = meta.Components.FirstOrDefault(c => c.Type == STFTextureCompression._TYPE);
+					if(textureCompression)
+					{
+						textureImporter.textureCompression = TextureImporterCompression.CompressedHQ;
+						textureImporter.SetPlatformTextureSettings(new TextureImporterPlatformSettings { name = "Standalone", format = TextureImporterFormat.BC7 });
+						
+						textureImporter.SaveAndReimport();
+					}
 				}
 			}
 		}

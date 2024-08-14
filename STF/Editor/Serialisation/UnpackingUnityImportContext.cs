@@ -63,13 +63,20 @@ namespace STF.Serialisation
 			AssetDatabase.Refresh();
 			return Resource;
 		}
-		public Object SaveGeneratedResource(byte[] Resource, string Name, string FileExtension)
+		public (Object, ISTFBuffer) SaveGeneratedResource(byte[] Resource, string Name, string FileExtension, string BufferId = null)
 		{
 			if(!FileExtension.StartsWith(".")) FileExtension = "." + FileExtension;
 			var location = Path.Combine(TargetLocation, STFConstants.ResourceDirectoryName, Name + FileExtension);
 			File.WriteAllBytes(location, Resource);
 			AssetDatabase.Refresh();
-			return AssetDatabase.LoadAssetAtPath<Object>(location);
+			var fileAsset = AssetDatabase.LoadAssetAtPath<Object>(location);
+			
+			var buf = ScriptableObject.CreateInstance<STFFileAssetBuffer>();
+			buf.Id = BufferId;
+			buf.FileAsset = fileAsset;
+			buf.name = BufferId;
+			AssetDatabase.CreateAsset(buf, Path.Combine(TargetLocation, STFConstants.PreservedBuffersDirectoryName, BufferId + ".Asset"));
+			return (fileAsset, buf);
 		}
 		public Object Instantiate(Object Resource)
 		{
