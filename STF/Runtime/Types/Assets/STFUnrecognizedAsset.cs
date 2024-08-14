@@ -21,57 +21,45 @@ namespace STF.Types
 
 	public class STFUnrecognizedAssetExporter : ISTFAssetExporter
 	{
-		/*public string SerializeToJson(STFExportState State, GameObject Go)
-		{
-			var node = Go.GetComponent<STFUnrecognizedNode>();
-			var ret = JObject.Parse(node.PreservedJson);
-			foreach(var usedResource in node.ReferencedResources) ExportUtil.SerializeResource(State, usedResource);
-			foreach(var usedNode in node.ReferencedNodes) ExportUtil.SerializeNode(State, usedNode);
-			return State.AddNode(Go, ret, node.Id);
-		}*/
-
 		public JObject SerializeToJson(STFExportState State, ISTFAsset Asset)
 		{
-			throw new System.NotImplementedException();
+			//var (ret, rf) = Asset.SerializeDefaultValuesToJson(State);
+			var unrecognized = (STFUnrecognizedAsset)Asset;
+			var ret = JObject.Parse(unrecognized.PreservedJson);
+			
+			foreach(var usedResource in unrecognized.ReferencedResources) ExportUtil.SerializeResource(State, usedResource);
+			foreach(var usedNode in unrecognized.ReferencedNodes) ExportUtil.SerializeNode(State, usedNode);
+
+			return ret;
 		}
 	}
 
 	public class STFUnrecognizedAssetImporter : ISTFAssetImporter
 	{
-		/*public GameObject ParseFromJson(STFImportState State, JObject JsonAsset, string Id)
+		public ISTFAsset ParseFromJson(STFImportState State, JObject JsonAsset)
 		{
-			var ret = new GameObject();
-			var node = ret.AddComponent<STFUnrecognizedNode>();
-			State.AddNode(node);
-
-			node.Id = Id;
-			node.name = (string)JsonAsset["name"];
-			node.Origin = State.AssetId;
+			var rootGo = new GameObject();
+			var asset = rootGo.AddComponent<STFUnrecognizedAsset>();
+			var rf = new RefDeserializer(JsonAsset);
+			asset.ParseDefaultValuesFromJson(State, JsonAsset, rf);
 			
-			node._Type = (string)JsonAsset["type"];
-			node.PreservedJson = JsonAsset.ToString();
+			asset._Type = (string)JsonAsset["type"];
+			asset.PreservedJson = JsonAsset.ToString();
 			State.AddTask(new Task(() => {
 				if(JsonAsset[STFKeywords.Keys.References] != null)
 				{
 					if(JsonAsset[STFKeywords.Keys.References][STFKeywords.ObjectType.Resources] != null) foreach(string resourceId in JsonAsset[STFKeywords.Keys.References][STFKeywords.ObjectType.Resources])
 					{
-						node.ReferencedResources.Add(State.Resources[resourceId]);
+						asset.ReferencedResources.Add(State.Resources[resourceId]);
 					}
 					if(JsonAsset[STFKeywords.Keys.References][STFKeywords.ObjectType.Nodes] != null) foreach(string nodeId in JsonAsset[STFKeywords.Keys.References][STFKeywords.ObjectType.Nodes])
 					{
-						node.ReferencedNodes.Add(State.Nodes[nodeId]);
+						asset.ReferencedNodes.Add(State.Nodes[nodeId]);
 					}
 				}
 			}));
 
-			TRSUtil.ParseTRS(ret, JsonAsset);
-			ImportUtil.ParseNodeChildrenAndComponents(State, ret, JsonAsset);
-			return ret;
-		}*/
-
-		public ISTFAsset ParseFromJson(STFImportState State, JObject JsonAsset)
-		{
-			throw new System.NotImplementedException();
+			return asset;
 		}
 	}
 }

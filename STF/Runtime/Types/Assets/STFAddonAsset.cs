@@ -3,6 +3,8 @@ using System;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using STF.Serialisation;
+using STF.Util;
+using UnityEngine;
 
 namespace STF.Types
 {
@@ -22,18 +24,9 @@ namespace STF.Types
 	{
 		public JObject SerializeToJson(STFExportState State, ISTFAsset Asset)
 		{
-			var ret = new JObject
-			{
-				{"id", Asset.Id},
-				{"type", STFAddonAsset._TYPE},
-				{"name", Asset.STFName},
-				{"version", Asset.Version},
-				{"author", Asset.Author},
-				{"url", Asset.URL},
-				{"license", Asset.License},
-				{"license_link", Asset.LicenseLink}
-			};
-			if(Asset.Preview) ret.Add("preview", ExportUtil.SerializeResource(State, Asset.Preview));
+			var (ret, rf) = Asset.SerializeDefaultValuesToJson(State);
+
+			var rootNodes = new JArray();
 
 			for(int i = 0; i < Asset.gameObject.transform.childCount; i++)
 			{
@@ -45,9 +38,13 @@ namespace STF.Types
 					{
 						throw new Exception($"Addon Asset can only containt root nodes of the types '{ STFPatchNode._TYPE }' or '{ STFAppendageNode._TYPE }' !\nWrong node type: {nodeInfo.Type}");
 					}
+					else
+					{
+						rootNodes.Add(rf.NodeRef(ExportUtil.SerializeNode(State, child.gameObject)));
+					}
 				}
 			}
-			ret.Add("root_node", ExportUtil.SerializeNode(State, Asset.gameObject));
+			ret.Add("root_nodes", rootNodes);
 
 			return ret;
 		}
@@ -57,30 +54,24 @@ namespace STF.Types
 	{
 		public ISTFAsset ParseFromJson(STFImportState State, JObject JsonAsset)
 		{
+			GameObject rootGo = new GameObject();
 			try
 			{
-				var rootId = (string)JsonAsset["root_node"];
-				var nodeJson = (JObject)State.JsonRoot["nodes"][rootId];
+				var rf = new RefDeserializer(JsonAsset);
 
-				var nodeType = (string)nodeJson["type"] != null && ((string)nodeJson["type"]).Length > 0 ? (string)nodeJson["type"] : STFNode._TYPE;
-				// Check node type validity
-				var rootGo = State.Context.NodeImporters[nodeType].ParseFromJson(State, nodeJson, rootId);
+				foreach(var nodeIdx in JsonAsset["root_nodes"])
+				{
+					var childGo = ImportUtil.ParseNode(State, rf.NodeRef(nodeIdx));
+					childGo.transform.parent = rootGo.transform;
+				}
 				
 				var asset = rootGo.AddComponent<STFAddonAsset>();
-				asset.Id = (string)JsonAsset["id"];
-				asset.STFName = (string)JsonAsset["name"];
-				asset.Version = (string)JsonAsset["version"];
-				asset.Author = (string)JsonAsset["author"];
-				asset.URL = (string)JsonAsset["url"];
-				asset.License = (string)JsonAsset["license"];
-				asset.LicenseLink = (string)JsonAsset["license_link"];
-
-				//asset.ImportPath = State.TargetLocation;
-
+				asset.ParseDefaultValuesFromJson(State, JsonAsset, rf);
 				return asset;
 			}
 			catch(Exception e)
 			{
+				if(rootGo != null) UnityEngine.Object.DestroyImmediate(rootGo);
 				throw new Exception("Error during Asset import: ", e);
 			}
 		}

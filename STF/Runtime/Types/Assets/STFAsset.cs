@@ -19,23 +19,8 @@ namespace STF.Types
 	{
 		public JObject SerializeToJson(STFExportState State, ISTFAsset Asset)
 		{
-			var ret = new JObject
-			{
-				{"id", Asset.Id},
-				{"type", STFAsset._TYPE},
-				{"name", Asset.STFName},
-				{"version", Asset.Version},
-				{"author", Asset.Author},
-				{"url", Asset.URL},
-				{"license", Asset.License},
-				{"license_link", Asset.LicenseLink}
-			};
-			var rf = new RefSerializer(ret);
-
-			if(Asset.Preview) ret.Add("preview", rf.ResourceRef(ExportUtil.SerializeResource(State, Asset.Preview)));
-
+			var (ret, rf) = Asset.SerializeDefaultValuesToJson(State);
 			ret.Add("root_node", rf.NodeRef(ExportUtil.SerializeNode(State, Asset.gameObject)));
-
 			return ret;
 		}
 	}
@@ -48,28 +33,10 @@ namespace STF.Types
 			try
 			{
 				var rf = new RefDeserializer(JsonAsset);
-
-				var rootId = rf.NodeRef(JsonAsset["root_node"]);
-				var nodeJson = (JObject)State.JsonRoot["nodes"][rootId];
-
-				var nodeType = (string)nodeJson["type"] != null && ((string)nodeJson["type"]).Length > 0 ? (string)nodeJson["type"] : STFNode._TYPE;
+				rootGo = ImportUtil.ParseNode(State, rf.NodeRef(JsonAsset["root_node"]));
 				
-				rootGo = State.Context.GetNodeImporter(nodeType).ParseFromJson(State, nodeJson, rootId);
-
 				var asset = rootGo.AddComponent<STFAsset>();
-				asset.Id = (string)JsonAsset["id"];
-				asset.STFName = (string)JsonAsset["name"];
-				asset.Version = (string)JsonAsset["version"];
-				asset.Author = (string)JsonAsset["author"];
-				asset.URL = (string)JsonAsset["url"];
-				asset.License = (string)JsonAsset["license"];
-				asset.LicenseLink = (string)JsonAsset["license_link"];
-
-				if(JsonAsset["preview"] != null)
-				{
-					asset.Preview = (Texture2D)State.Resources[rf.ResourceRef(JsonAsset["preview"])].Resource;
-				}
-
+				asset.ParseDefaultValuesFromJson(State, JsonAsset, rf);
 				return asset;
 			}
 			catch(Exception e)

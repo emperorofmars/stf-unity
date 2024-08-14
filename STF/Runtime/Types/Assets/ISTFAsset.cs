@@ -32,6 +32,42 @@ namespace STF.Types
 
 		[Serializable] public class AppliedAddonMeta { public string AddonId; public STFResourceMeta AddonMeta = new STFResourceMeta(); }
 		[ReadOnly] public List<AppliedAddonMeta> AppliedAddonMetas = new List<AppliedAddonMeta>();
+
+		public void ParseDefaultValuesFromJson(STFImportState State, JObject JsonAsset, RefDeserializer Rf)
+		{
+			Id = (string)JsonAsset["id"];
+			STFName = (string)JsonAsset["name"];
+			Version = (string)JsonAsset["version"];
+			Author = (string)JsonAsset["author"];
+			URL = (string)JsonAsset["url"];
+			License = (string)JsonAsset["license"];
+			LicenseLink = (string)JsonAsset["license_link"];
+
+			if(JsonAsset["preview"] != null)
+			{
+				Preview = (Texture2D)State.Resources[Rf.ResourceRef(JsonAsset["preview"])].Resource;
+			}
+		}
+
+		public (JObject, RefSerializer) SerializeDefaultValuesToJson(STFExportState State)
+		{
+			var ret = new JObject
+			{
+				{"id", Id},
+				{"type", Type},
+				{"name", STFName},
+				{"version", Version},
+				{"author", Author},
+				{"url", URL},
+				{"license", License},
+				{"license_link", LicenseLink}
+			};
+			var rf = new RefSerializer(ret);
+
+			if(Preview) ret.Add("preview", rf.ResourceRef(ExportUtil.SerializeResource(State, Preview)));
+
+			return (ret, rf);
+		}
 	}
 	
 	public interface ISTFAssetExporter
