@@ -8,12 +8,6 @@ using STF.Serialisation;
 
 namespace STF.Types
 {
-	public class STFBuffer : ScriptableObject
-	{
-		public string Id;
-		[HideInInspector] public byte[] Data;
-	}
-
 	public class STFUnrecognizedResource : ISTFResource
 	{
 		public string _Type;
