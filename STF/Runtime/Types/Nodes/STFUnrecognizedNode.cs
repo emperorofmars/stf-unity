@@ -15,8 +15,8 @@ namespace STF.Types
 
 		[TextArea]
 		public string PreservedJson;
-		public List<ISTFResource> ReferencedResources = new List<ISTFResource>();
-		public List<ISTFNode> ReferencedNodes = new List<ISTFNode>();
+		public List<ISTFResource> ReferencedResources = new();
+		public List<ISTFNode> ReferencedNodes = new();
 	}
 
 	public class STFUnrecognizedNodeExporter : ISTFNodeExporter
@@ -45,6 +45,8 @@ namespace STF.Types
 
 		public GameObject ParseFromJson(STFImportState State, JObject JsonAsset, string Id)
 		{
+			Debug.LogWarning($"Unrecognized node type: {JsonAsset[STFKeywords.Keys.Type]}");
+
 			var ret = new GameObject();
 			var node = ret.AddComponent<STFUnrecognizedNode>();
 			State.AddNode(node);

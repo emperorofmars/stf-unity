@@ -91,14 +91,18 @@ namespace STF.Types
 			{
 				var mtfMaterial = MTF.ShaderConverterRegistry.MaterialParsers[mat.shader.name].ParseFromUnityMaterial(mtfExportState, mat);
 				mtfMaterial.MaterialName = Resource.name;
-				return ExportUtil.SerializeResource(State, mtfMaterial);
+				var stfmtfMaterial = ScriptableObject.CreateInstance<MTFMaterial>();
+				stfmtfMaterial.Resource = mtfMaterial;
+				return ExportUtil.SerializeResource(State, stfmtfMaterial);
 			}
 			else
 			{
 				Debug.LogWarning("Material Converter Not registered for shader: " + mat.shader.name + ", falling back.");
 				var mtfMaterial = MTF.ShaderConverterRegistry.MaterialParsers[MTF.StandardConverter._SHADER_NAME].ParseFromUnityMaterial(mtfExportState, mat);
 				mtfMaterial.MaterialName = Resource.name;
-				return ExportUtil.SerializeResource(State, mtfMaterial);
+				var stfmtfMaterial = ScriptableObject.CreateInstance<MTFMaterial>();
+				stfmtfMaterial.Resource = mtfMaterial;
+				return ExportUtil.SerializeResource(State, stfmtfMaterial);
 			}
 		}
 	}

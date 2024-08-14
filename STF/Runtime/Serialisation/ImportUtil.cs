@@ -28,7 +28,7 @@ namespace STF.Serialisation
 
 		public static void ParseNodeChildren(STFImportState State, GameObject Go, JObject Json)
 		{
-			if(Json.ContainsKey("children") || Json["children"].Type == JTokenType.Null) return;
+			if(!Json.ContainsKey("children") || Json["children"].Type == JTokenType.Null) return;
 			foreach(string childId in Json["children"])
 			{
 				var childGo = ParseNode(State, childId);
@@ -38,12 +38,13 @@ namespace STF.Serialisation
 
 		public static void ParseNodeComponents(STFImportState State, GameObject Go, JObject Json)
 		{
-			if(Json.ContainsKey("components") || Json["components"].Type == JTokenType.Null) return;
+			if(!Json.ContainsKey("components") || Json["components"].Type == JTokenType.Null) return;
 			foreach(var entry in (JObject)Json["components"])
 			{
 				State.Context.GetNodeComponentImporter((string)entry.Value["type"]).ParseFromJson(State, (JObject)entry.Value, entry.Key, Go);
 			}
 		}
+		
 		public static void ParseResource(STFImportState State, JObject Json, string Id)
 		{
 			State.Context.GetResourceImporter((string)Json["type"]).ParseFromJson(State, Json, Id);

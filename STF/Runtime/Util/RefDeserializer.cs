@@ -7,7 +7,7 @@ namespace STF.Util
 {
 	public class RefDeserializer
 	{
-		JObject References;
+		readonly JObject References;
 		public RefDeserializer(JObject Json)
 		{
 			References = (JObject)Json[STFKeywords.Keys.References];

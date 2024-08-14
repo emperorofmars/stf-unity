@@ -42,7 +42,8 @@ namespace STF.Types
 			};
 
 			var rf = new RefSerializer(ret);
-			ret.Add("armature", rf.ResourceRef(ExportUtil.SerializeResource(State, node.Armature.Ref)));
+			var armatureId = node.Armature.IsRef ? ExportUtil.SerializeResource(State, node.Armature.Ref) : node.Armature.Id;
+			ret.Add("armature", rf.ResourceRef(armatureId));
 
 			foreach(var entry in node.Bones)
 			{

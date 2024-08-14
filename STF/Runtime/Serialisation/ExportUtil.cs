@@ -60,7 +60,7 @@ namespace STF.Serialisation
 		public static JObject SerializeResourceComponents(STFExportState State, ISTFResource Resource)
 		{
 			var ret = new JObject();
-			if(Resource.Components != null) foreach(var component in Resource.Components)
+			foreach(var component in Resource.Components)
 			{
 				var serializedComponent = SerializeResourceComponent(State, component);
 				ret.Add(serializedComponent.Item1, serializedComponent.Item2);

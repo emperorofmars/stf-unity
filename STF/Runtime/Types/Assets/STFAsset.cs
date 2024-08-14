@@ -4,6 +4,7 @@ using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using STF.Serialisation;
+using STF.Util;
 
 namespace STF.Types
 {
@@ -11,7 +12,7 @@ namespace STF.Types
 	{
 		public const string _TYPE = "STF.asset";
 		public override string Type => _TYPE;
-		public Dictionary<UnityEngine.Object, UnityEngine.Object> ResourceMeta = new Dictionary<UnityEngine.Object, UnityEngine.Object>();
+		public Dictionary<UnityEngine.Object, UnityEngine.Object> ResourceMeta = new();
 	}
 
 	public class STFAssetExporter : ISTFAssetExporter
@@ -29,9 +30,11 @@ namespace STF.Types
 				{"license", Asset.License},
 				{"license_link", Asset.LicenseLink}
 			};
-			if(Asset.Preview) ret.Add("preview", ExportUtil.SerializeResource(State, Asset.Preview));
+			var rf = new RefSerializer(ret);
 
-			ret.Add("root_node", ExportUtil.SerializeNode(State, Asset.gameObject));
+			if(Asset.Preview) ret.Add("preview", rf.ResourceRef(ExportUtil.SerializeResource(State, Asset.Preview)));
+
+			ret.Add("root_node", rf.NodeRef(ExportUtil.SerializeNode(State, Asset.gameObject)));
 
 			return ret;
 		}
@@ -41,14 +44,17 @@ namespace STF.Types
 	{
 		public ISTFAsset ParseFromJson(STFImportState State, JObject JsonAsset)
 		{
+			GameObject rootGo = null;
 			try
 			{
-				var rootId = (string)JsonAsset["root_node"];
+				var rf = new RefDeserializer(JsonAsset);
+
+				var rootId = rf.NodeRef(JsonAsset["root_node"]);
 				var nodeJson = (JObject)State.JsonRoot["nodes"][rootId];
 
 				var nodeType = (string)nodeJson["type"] != null && ((string)nodeJson["type"]).Length > 0 ? (string)nodeJson["type"] : STFNode._TYPE;
 				
-				GameObject rootGo = State.Context.GetNodeImporter(nodeType).ParseFromJson(State, nodeJson, rootId);
+				rootGo = State.Context.GetNodeImporter(nodeType).ParseFromJson(State, nodeJson, rootId);
 
 				var asset = rootGo.AddComponent<STFAsset>();
 				asset.Id = (string)JsonAsset["id"];
@@ -61,13 +67,14 @@ namespace STF.Types
 
 				if(JsonAsset["preview"] != null)
 				{
-					asset.Preview = (Texture2D)(State.Resources[(string)JsonAsset["preview"]] as ISTFResource).Resource;
+					asset.Preview = (Texture2D)State.Resources[rf.ResourceRef(JsonAsset["preview"])].Resource;
 				}
 
 				return asset;
 			}
 			catch(Exception e)
 			{
+				if(rootGo != null) UnityEngine.Object.DestroyImmediate(rootGo);
 				throw new Exception("Error during Asset import: ", e);
 			}
 		}

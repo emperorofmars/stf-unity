@@ -16,7 +16,7 @@ namespace STF.Types
 		public string _STFName;
 		
 		public Object Resource;
-		public List<ISTFResourceComponent> Components = new List<ISTFResourceComponent>();
+		public readonly List<ISTFResourceComponent> Components = new();
 		public ResourceReference Fallback = new();
 	}
 

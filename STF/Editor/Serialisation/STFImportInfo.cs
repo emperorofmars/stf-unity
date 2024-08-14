@@ -32,7 +32,7 @@ namespace STF.Tools
 			this.Buffers = Buffers;
 			JsonRoot = JObject.Parse(Buffers.Json);
 
-			var jsonAsset = JsonRoot[STFKeywords.ObjectType.Asset];
+			var jsonAsset = (JObject)JsonRoot[STFKeywords.ObjectType.Asset];
 			Id = (string)jsonAsset[STFKeywords.Keys.Id];
 			Type = (string)jsonAsset[STFKeywords.Keys.Type];
 			Name = (string)jsonAsset[STFKeywords.Keys.Name];
@@ -42,7 +42,8 @@ namespace STF.Tools
 			License = (string)jsonAsset["license"];
 			LicenseLink = (string)jsonAsset["license_link"];
 
-			var previewID = (string)jsonAsset["preview"];
+			var rf = new RefDeserializer(jsonAsset);
+			var previewID = rf.ResourceRef(jsonAsset["preview"]);
 			if(!string.IsNullOrWhiteSpace(previewID))
 			{
 				var previewJson = (JObject)JsonRoot[STFKeywords.ObjectType.Resources][previewID];

@@ -39,7 +39,7 @@ namespace STF.Serialisation
 		public Dictionary<string, ISTFResourceComponentImporter> ResourceComponentImporters = new();
 		public List<ISTFImportPostProcessor> ImportPostProcessors = new();
 
-		public ISTFAssetImporter GetAssetImporter(string Type) => AssetImporters.ContainsKey(Type) ? AssetImporters[Type] : null;
+		public ISTFAssetImporter GetAssetImporter(string Type) => AssetImporters.ContainsKey(Type) ? AssetImporters[Type] : new STFUnrecognizedAssetImporter();
 		public ISTFNodeImporter GetNodeImporter(string Type) => NodeImporters.ContainsKey(Type) ? NodeImporters[Type] : new STFUnrecognizedNodeImporter();
 		public ISTFNodeComponentImporter GetNodeComponentImporter(string Type) => NodeComponentImporters.ContainsKey(Type) ? NodeComponentImporters[Type] : new STFUnrecognizedNodeComponentImporter();
 		public ISTFResourceImporter GetResourceImporter(string Type) => ResourceImporters.ContainsKey(Type) ? ResourceImporters[Type] : new STFUnrecognizedResourceImporter();
@@ -55,10 +55,10 @@ namespace STF.Serialisation
 		public Dictionary<string, ISTFResourceComponentExporter> ResourceComponentExporters = new();
 		public List<Type> ExportExclusions = new();
 
-		public ISTFAssetExporter GetAssetExporter(string Type) => AssetExporters.ContainsKey(Type) ? AssetExporters[Type] : null;
+		public ISTFAssetExporter GetAssetExporter(string Type) => AssetExporters.ContainsKey(Type) ? AssetExporters[Type] : new STFUnrecognizedAssetExporter();
 		public ISTFNodeExporter GetNodeExporter(string Type) => NodeExporters.ContainsKey(Type) ? NodeExporters[Type] : new STFUnrecognizedNodeExporter();
-		public ISTFNodeComponentExporter GetNodeComponentExporter(Type Type) => NodeComponentExporters.ContainsKey(Type) ? NodeComponentExporters[Type] : new STFUnrecognizedNodeComponentExporter();
-		public ISTFResourceExporter GetResourceExporter(Type Type) => ResourceExporters.ContainsKey(Type) ? ResourceExporters[Type] : new STFUnrecognizedResourceExporter();
+		public ISTFNodeComponentExporter GetNodeComponentExporter(Type Type) => NodeComponentExporters.ContainsKey(Type) ? NodeComponentExporters[Type] : Type == typeof(STFUnrecognizedNodeComponent) ? new STFUnrecognizedNodeComponentExporter() : throw new Exception($"Cannot export unrecognized Unity type: {Type}");
+		public ISTFResourceExporter GetResourceExporter(Type Type) => ResourceExporters.ContainsKey(Type) ? ResourceExporters[Type] : Type == typeof(STFUnrecognizedResource) ? new STFUnrecognizedResourceExporter() : throw new Exception($"Cannot export unrecognized Unity type: {Type}");
 		public ISTFResourceComponentExporter GetResourceComponentExporter(string Type) => ResourceComponentExporters.ContainsKey(Type) ? ResourceComponentExporters[Type] : new STFUnrecognizedResourceComponentExporter();
 	}
 

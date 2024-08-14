@@ -23,10 +23,9 @@ namespace STF.Tools
 		{
 			var CreatedGos = new List<GameObject>();
 			// Setup main asset info
-			var asset = root.GetComponent<ISTFAsset>();
-			if(asset == null)
+			if (!root.TryGetComponent<ISTFAsset>(out _))
 			{
-				asset = root.AddComponent<STFAsset>();
+				ISTFAsset asset = root.AddComponent<STFAsset>();
 				asset.STFName = root.name;
 				asset.Version = "0.0.1";
 			}
@@ -55,8 +54,8 @@ namespace STF.Tools
 	{
 		public class Result
 		{
-			public STFResourceMeta ResourceMeta = new STFResourceMeta();
-			public List<GameObject> CreatedGos = new List<GameObject>();
+			public STFResourceMeta ResourceMeta = new();
+			public List<GameObject> CreatedGos = new();
 		}
 
 		public static Result FindAndSetupArmaturesInplace(GameObject Root)
@@ -67,10 +66,9 @@ namespace STF.Tools
 			foreach(var smr in Root.GetComponentsInChildren<SkinnedMeshRenderer>())
 			{
 				// Check if meshInstance is already set up
-				var meshInstance = smr.GetComponent<STFMeshInstance>();
-				if(meshInstance == null) meshInstance = smr.gameObject.AddComponent<STFMeshInstance>();
+				if(!smr.TryGetComponent<STFMeshInstance>(out var meshInstance)) meshInstance = smr.gameObject.AddComponent<STFMeshInstance>();
 				// Check if an armatureInstance exists
-				var armatureInstanceGo = smr.rootBone?.parent?.gameObject;
+				var armatureInstanceGo = smr.rootBone.parent.gameObject;
 				if(armatureInstanceGo == null)
 				{
 					Debug.LogWarning("Incorrectly setup SkinnedMeshRenderer: " + smr);
@@ -78,19 +76,22 @@ namespace STF.Tools
 				}
 
 				var armatureInstance = armatureInstanceGo.GetComponent<STFArmatureInstanceNode>();
-				if(armatureInstance == null) armatureInstance = armatureInstanceGo.AddComponent<STFArmatureInstanceNode>();
+				if(armatureInstance == null)
+				{
+					armatureInstance = armatureInstanceGo.AddComponent<STFArmatureInstanceNode>();
+				}
 
 				// Setup armatureInstance to the definetively correct values
 				meshInstance.ArmatureInstance = armatureInstance;
-				armatureInstance.Root = smr.rootBone?.gameObject;
+				armatureInstance.Root = smr.rootBone.gameObject;
 
-				if(smr.bones != null) armatureInstance.Bones = new List<GameObject>(smr.bones.Select(b => b?.gameObject));
+				if(smr.bones != null) armatureInstance.Bones = new List<GameObject>(smr.bones.Select(b => b.gameObject));
 
 				// If the armatureInstance doesn't have an armature (eg was just created), then determine the armature from the smr bone hirarchy and the smr bind poses
-				if(armatureInstance.Armature.IsRef && !armatureInstancesToSetup.Contains(armatureInstance))
+				if(!armatureInstance.Armature.IsRef && !armatureInstancesToSetup.Contains(armatureInstance))
 				{
+					armatureInstance.Armature = SetupArmature(smr, armatureInstance, ret.CreatedGos);
 					armatureInstancesToSetup.Add(armatureInstance);
-					ret.CreatedGos.Add(SetupArmature(smr, armatureInstance));
 				}
 				if(!ret.ResourceMeta.ContainsKey(smr.sharedMesh))
 				{
@@ -100,11 +101,11 @@ namespace STF.Tools
 						var metaPath = Path.ChangeExtension(assetPath, "Asset");
 						ret.ResourceMeta.Add(smr.sharedMesh, AssetDatabase.LoadAssetAtPath<STFMesh>(metaPath));
 					}
-					// search in subassets, only then fall back on creating a new one
+					// sTODO earch in subassets, only then fall back on creating a new one
 					else
 					{
 						var stfMesh = ScriptableObject.CreateInstance<STFMesh>();
-						stfMesh.Armature = new ResourceReference(armatureInstance.Armature.Id);
+						stfMesh.Armature = armatureInstance.Armature;
 						ret.ResourceMeta.Add(smr.sharedMesh, stfMesh);
 					}
 				}
@@ -114,9 +115,10 @@ namespace STF.Tools
 			return ret;
 		}
 
-		public static GameObject SetupArmature(SkinnedMeshRenderer Smr, STFArmatureInstanceNode ArmatureInstance)
+		public static STFArmature SetupArmature(SkinnedMeshRenderer Smr, STFArmatureInstanceNode ArmatureInstance, List<GameObject> CreatedGos)
 		{
 			var armatureGo = new GameObject();
+			CreatedGos.Add(armatureGo);
 			var armatureResource = armatureGo.AddComponent<STFArmatureNodeInfo>();
 			armatureResource.ArmatureName = Smr.rootBone.parent.name;
 			armatureResource.name = Smr.rootBone.parent.name;
@@ -196,7 +198,7 @@ namespace STF.Tools
 				armatureResource.transform.localRotation = new Quaternion(Smr.rootBone.parent.localRotation.x, Smr.rootBone.parent.localRotation.y, Smr.rootBone.parent.localRotation.z, Smr.rootBone.parent.localRotation.w);
 				armatureResource.transform.localScale = new Vector3(Smr.rootBone.parent.localScale.x, Smr.rootBone.parent.localScale.y, Smr.rootBone.parent.localScale.z);
 			}
-			return armatureGo;
+			return armatureMeta;
 		}
 	}
 }

@@ -44,8 +44,8 @@ namespace STF.Serialisation
 		{
 			var assetPath = AssetDatabase.GetAssetPath(Resource);
 			Debug.Assert(assetPath != null);
-			AssetDatabase.AddObjectToAsset(SubResource, assetPath);
-			AssetDatabase.ImportAsset(assetPath);
+			AssetDatabase.AddObjectToAsset(SubResource, Resource);
+			AssetDatabase.ImportAsset(assetPath, ImportAssetOptions.ForceUpdate & ImportAssetOptions.ForceSynchronousImport);
 			AssetDatabase.Refresh();
 			return SubResource;
 		}
@@ -66,6 +66,8 @@ namespace STF.Serialisation
 		public (Object, ISTFBuffer) SaveGeneratedResource(byte[] Resource, string Name, string FileExtension, string BufferId = null)
 		{
 			if(!FileExtension.StartsWith(".")) FileExtension = "." + FileExtension;
+			if(string.IsNullOrWhiteSpace(BufferId)) BufferId = System.Guid.NewGuid().ToString();
+
 			var location = Path.Combine(TargetLocation, STFConstants.ResourceDirectoryName, Name + FileExtension);
 			File.WriteAllBytes(location, Resource);
 			AssetDatabase.Refresh();
