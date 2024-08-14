@@ -32,7 +32,7 @@ namespace STF.Types
 
 		public string OriginalFileName;
 
-		[SerializeField, ReadOnly] public STFResourceMeta ImportMeta = new(); // TODO: actually build this metaobject on import
+		[ReadOnly] public STFResourceMeta ImportMeta = new(); // TODO: actually build this metaobject on import
 
 		[Serializable] public class AppliedAddonMeta { public string AddonId; public STFResourceMeta AddonMeta = new(); }
 		[ReadOnly] public List<AppliedAddonMeta> AppliedAddonMetas = new();

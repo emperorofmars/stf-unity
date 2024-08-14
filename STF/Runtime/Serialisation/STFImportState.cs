@@ -41,6 +41,8 @@ namespace STF.Serialisation
 
 		public readonly Dictionary<Object, Object> PostprocessContext = new();
 
+		public readonly STFResourceMeta ImportMeta = new();
+
 		public STFImportState(STFImportContext Context, IUnityImportContext UnityContext, STFFile Buffers)
 		{
 			this.Context = Context;
@@ -61,6 +63,7 @@ namespace STF.Serialisation
 			var saved = (ISTFResource)UnityContext.SaveResource(Resource);
 			if(Resource.Degraded) AnyDegraded = true;
 			Resources.Add(saved.Id, saved);
+			ImportMeta.Add(Resource.Resource, Resource);
 		}
 		public virtual void AddResourceComponent(ISTFResourceComponent Component, ISTFResource Resource)
 		{

@@ -37,6 +37,7 @@ namespace STF.Serialisation
 				RunPostProcessors(state);
 				Utils.RunTasks(state.Tasks);
 				Asset.AnyDegraded = state.AnyDegraded;
+				Asset.ImportMeta = state.ImportMeta;
 
 				return (Asset, state);
 			}

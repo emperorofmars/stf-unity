@@ -12,7 +12,6 @@ namespace STF.Types
 	{
 		public const string _TYPE = "STF.asset";
 		public override string Type => _TYPE;
-		public Dictionary<UnityEngine.Object, UnityEngine.Object> ResourceMeta = new();
 	}
 
 	public class STFAssetExporter : ISTFAssetExporter
