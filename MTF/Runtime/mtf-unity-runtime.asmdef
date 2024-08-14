@@ -2,8 +2,7 @@
     "name": "mtf-unity-runtime",
     "rootNamespace": "MTF",
     "references": [
-        "GUID:3d1fb76a17114c9469f4f41657963541",
-        "GUID:147638a07a86a2c49aea697f9a772570"
+        "GUID:3d1fb76a17114c9469f4f41657963541"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

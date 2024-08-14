@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace STF_Util
+namespace STF.Serialisation
 {
 	static class CollectionUtil
 	{

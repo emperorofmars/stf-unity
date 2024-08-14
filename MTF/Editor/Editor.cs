@@ -2,20 +2,17 @@
 #if UNITY_EDITOR
 
 using UnityEngine;
-using System.Collections;
 using UnityEditor;
 using System.Collections.Generic;
 using System;
 using System.IO;
-using System.CodeDom.Compiler;
-using STF_Util;
 using System.Linq;
 using MTF.PropertyValues;
 
-namespace MTF
+namespace MTF.Editor.Util
 {
 	[CustomEditor(typeof(Material))]
-	public class MaterialInspector : Editor
+	public class MaterialInspector : UnityEditor.Editor
 	{
 		readonly string[] Converters = DetectConverters();
 		int ShaderSelection = 0;

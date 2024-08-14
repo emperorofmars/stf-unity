@@ -7,29 +7,6 @@ using STF.ApplicationConversion;
 
 namespace STF.Serialisation
 {
-	static class CollectionUtil
-	{
-		public static Dictionary<A, B> Combine<A, B>(Dictionary<A, B> Base, Dictionary<A, B> ToBeMerged)
-		{
-			var ret = new Dictionary<A, B>(Base);
-			foreach(var e in ToBeMerged)
-			{
-				if(ret.ContainsKey(e.Key)) ret[e.Key] = e.Value;
-				else ret.Add(e.Key, e.Value);
-			}
-			return ret;
-		}
-		public static List<A> Combine<A>(List<A> Base, List<A> ToBeMerged)
-		{
-			var ret = new List<A>(Base);
-			foreach(var e in ToBeMerged)
-			{
-				if(!ret.Contains(e)) ret.Add(e);
-			}
-			return ret;
-		}
-	}
-
 	// Context's to pass into an importer and exporter respectively. Default ones are created automatically, construct these manually only for specific use cases.
 	public class STFImportContext
 	{

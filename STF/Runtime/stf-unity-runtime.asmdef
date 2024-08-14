@@ -2,8 +2,7 @@
     "name": "stf-unity-runtime",
     "rootNamespace": "STF",
     "references": [
-        "GUID:f6e45c355aca57346b2551ce3fb43d6e",
-        "GUID:147638a07a86a2c49aea697f9a772570"
+        "GUID:f6e45c355aca57346b2551ce3fb43d6e"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
