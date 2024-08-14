@@ -30,6 +30,7 @@ namespace STF.Types
 		public static string SerializeToJson(STFExportState State, Object Resource)
 		{
 			var r = (STFUnrecognizedResource)Resource;
+			if(r.Fallback.IsRef) ExportUtil.SerializeResource(State, r.Fallback);
 			foreach(var usedResource in r.ReferencedResources) ExportUtil.SerializeResource(State, usedResource);
 			foreach(var referencedResourceComponent in r.ReferencedResourceComponents) ExportUtil.SerializeResourceComponent(State, referencedResourceComponent);
 			foreach(var usedNode in r.ReferencedNodes) ExportUtil.SerializeNode(State, usedNode);
@@ -73,11 +74,8 @@ namespace STF.Types
 						}
 						else
 						{
-							/*var type = (string)State.JsonRoot[STFKeywords.ObjectType.Nodes][nodeId][STFKeywords.Keys.Type];
-							if(type == null || type.Length == 0) type = STFNode._TYPE;
-							var go = State.Context.NodeImporters[type].ParseFromJson(State, (JObject)State.JsonRoot[STFKeywords.ObjectType.Nodes][nodeId], nodeId);
-							go.name = (string)State.JsonRoot[STFKeywords.ObjectType.Nodes][nodeId]["name"];
-							State.UnityContext.SaveResource(go, ret, nodeId);*/
+							var go = ImportUtil.ParseNode(State, (JObject)State.JsonRoot[STFKeywords.ObjectType.Nodes][nodeId], nodeId);
+							ret.ReferencedNodes.Add(Utils.GetNodeComponent((GameObject)State.UnityContext.SaveGeneratedResource(go)));
 						}
 
 						ret.ReferencedNodes.Add(State.Nodes[nodeId]);

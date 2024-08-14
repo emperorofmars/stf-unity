@@ -22,19 +22,19 @@ namespace STF.Util
 			else throw new Exception("Invalid Reference Index!");
 		}
 
-		public string NodeRef(int Idx) { return Ref(STFKeywords.ObjectType.Nodes, Idx); }
-		public string NodeComponentRef(int Idx) { return Ref(STFKeywords.ObjectType.NodeComponents, Idx); }
-		public string ResourceRef(int Idx) { return Ref(STFKeywords.ObjectType.Resources, Idx); }
-		public string ResourceComponentRef(int Idx) { return Ref(STFKeywords.ObjectType.ResourceComponents, Idx); }
-		public string BufferRef(int Idx) { return Ref(STFKeywords.ObjectType.Buffers, Idx); }
+		public string NodeRef(int Idx) => Ref(STFKeywords.ObjectType.Nodes, Idx);
+		public string NodeComponentRef(int Idx) => Ref(STFKeywords.ObjectType.NodeComponents, Idx);
+		public string ResourceRef(int Idx) => Ref(STFKeywords.ObjectType.Resources, Idx);
+		public string ResourceComponentRef(int Idx) => Ref(STFKeywords.ObjectType.ResourceComponents, Idx);
+		public string BufferRef(int Idx) => Ref(STFKeywords.ObjectType.Buffers, Idx);
 
-		public string NodeRef(JToken Idx) { return Ref(STFKeywords.ObjectType.Nodes, (int)Idx); }
-		public string NodeComponentRef(JToken Idx) { return Ref(STFKeywords.ObjectType.NodeComponents, (int)Idx); }
-		public string ResourceRef(JToken Idx) { return Ref(STFKeywords.ObjectType.Resources, (int)Idx); }
-		public string ResourceComponentRef(JToken Idx) { return Ref(STFKeywords.ObjectType.ResourceComponents, (int)Idx); }
-		public string BufferRef(JToken Idx) { return Ref(STFKeywords.ObjectType.Buffers, (int)Idx); }
+		public string NodeRef(JToken Idx) => Idx != null ? Ref(STFKeywords.ObjectType.Nodes, (int)Idx) : null;
+		public string NodeComponentRef(JToken Idx) => Idx != null ? Ref(STFKeywords.ObjectType.NodeComponents, (int)Idx) : null;
+		public string ResourceRef(JToken Idx) => Idx != null ? Ref(STFKeywords.ObjectType.Resources, (int)Idx) : null;
+		public string ResourceComponentRef(JToken Idx) => Idx != null ? Ref(STFKeywords.ObjectType.ResourceComponents, (int)Idx) : null;
+		public string BufferRef(JToken Idx) => Idx != null ? Ref(STFKeywords.ObjectType.Buffers, (int)Idx) : null;
 
-		public List<string> Refs(string ObjectType) { return References[ObjectType].ToObject<List<string>>(); }
+		public List<string> Refs(string ObjectType) { return References[ObjectType]?.ToObject<List<string>>(); }
 		public List<string> NodeRefs() { return Refs(STFKeywords.ObjectType.Nodes); }
 		public List<string> NodeComponentRefs() { return Refs(STFKeywords.ObjectType.NodeComponents); }
 		public List<string> ResourceRefs() { return Refs(STFKeywords.ObjectType.Resources); }

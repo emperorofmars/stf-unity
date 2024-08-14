@@ -161,10 +161,12 @@ namespace STF.Serialisation
 			var meta = ScriptableObject.CreateInstance<STFAnimation>();
 			meta.Id = Id;
 			meta.Name = (string)Json["name"];
+
 			var ret = new AnimationClip {
 				name = meta.Name,
 				frameRate = (float)Json["fps"]
 			};
+
 			var rf = new RefDeserializer(Json);
 			switch ((string)Json["loop_type"])
 			{
@@ -197,10 +199,7 @@ namespace STF.Serialisation
 							var curve = new AnimationCurve();
 							foreach(JObject key in track["keys"])
 							{
-								var keyframe = new Keyframe {
-									time = (float)key["time"],
-									value = (float)key["value"],
-								};
+								var keyframe = new Keyframe { time = (float)key["time"], value = (float)key["value"], };
 								if(key.ContainsKey("in_tangent") && key.ContainsKey("out_tangent"))
 								{
 									keyframe.inTangent = (float)key["in_tangent"];
@@ -269,7 +268,7 @@ namespace STF.Serialisation
 								{
 									var targetNode = Root.GetComponentsInChildren<ISTFNode>().FirstOrDefault(n => n.Id == nodeId);
 									var translatedProperty = State.Context.NodeImporters[targetType].ConvertPropertyPath(property);
-									var path = Utils.getPath(Root.transform, ((Component)targetNode).transform, true);
+									var path = Utils.getPath(Root.transform, targetNode.transform, true);
 
 									var newBinding = new EditorCurveBinding {
 										path = path,
@@ -295,12 +294,12 @@ namespace STF.Serialisation
 								try
 								{
 									var targetNode = Root.GetComponentsInChildren<ISTFNode>().FirstOrDefault(n => n.Id == nodeId);
-									var targetSTFComponent = ((Component)targetNode).GetComponents<ISTFNodeComponent>().FirstOrDefault(nc => nc.Id == componentId);
+									var targetSTFComponent = targetNode.GetComponents<ISTFNodeComponent>().FirstOrDefault(nc => nc.Id == componentId);
 
 									var targetComponent =  targetSTFComponent.OwnedUnityComponent != null ? targetSTFComponent.OwnedUnityComponent : targetSTFComponent;
 									var translatedProperty = State.Context.NodeComponentImporters[targetSTFComponent.Type].ConvertPropertyPath(State, targetSTFComponent, property);
 									
-									var path = Utils.getPath(Root.transform, ((Component)targetNode).transform, true);
+									var path = Utils.getPath(Root.transform, targetNode.transform, true);
 
 									var newBinding = new EditorCurveBinding {
 										path = path,
@@ -376,7 +375,6 @@ namespace STF.Serialisation
 					{
 						var translated = State.ConverterContext.NodeComponent[curveTarget.GetType()].ConvertPropertyPath(State, curveTarget, Bindings[i].propertyName);
 						Bindings[i].propertyName = translated;
-						Debug.Log(Bindings[i].propertyName);
 					}
 				}
 				AnimationUtility.SetEditorCurve(Clip, Bindings[i], editorCurve);
@@ -390,7 +388,7 @@ namespace STF.Serialisation
 				var editorCurve = AnimationUtility.GetObjectReferenceCurve(Clip, Bindings[i]);
 				AnimationUtility.SetObjectReferenceCurve(Clip, Bindings[i], null);
 				// TODO actually implement object reference curves
-				/*if(Bindings[i].type == typeof(GameObject) || Bindings[i].type == typeof(Transform))
+				if(Bindings[i].type == typeof(GameObject) || Bindings[i].type == typeof(Transform))
 				{
 					var curveTarget = AnimationUtility.GetAnimatedObject(Root, Bindings[i]);
 				}
@@ -402,9 +400,8 @@ namespace STF.Serialisation
 					{
 						var translated = State.ConverterContext.NodeComponent[curveTarget.GetType()].ConvertPropertyPath(State, curveTarget, Bindings[i].propertyName);
 						Bindings[i].propertyName = translated;
-						Debug.Log(Bindings[i].propertyName);
 					}
-				}*/
+				}
 				AnimationUtility.SetObjectReferenceCurve(Clip, Bindings[i], editorCurve);
 			}
 		}

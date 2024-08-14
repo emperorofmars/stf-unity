@@ -80,22 +80,22 @@ namespace STF.Serialisation
 
 		public virtual NodeReference GetNodeReference(string Id)
 		{
-			return Nodes.ContainsKey(Id) ? new NodeReference(Nodes[Id]) : new NodeReference(Id);
+			return !string.IsNullOrWhiteSpace(Id) && Nodes.ContainsKey(Id) ? new NodeReference(Nodes[Id]) : new NodeReference(Id);
 		}
 
 		public virtual NodeComponentReference GetNodeComponentReference(string Id)
 		{
-			return NodeComponents.ContainsKey(Id) ? new NodeComponentReference(NodeComponents[Id]) : new NodeComponentReference(Id);
+			return !string.IsNullOrWhiteSpace(Id) && NodeComponents.ContainsKey(Id) ? new NodeComponentReference(NodeComponents[Id]) : new NodeComponentReference(Id);
 		}
 
 		public virtual ResourceReference GetResourceReference(string Id)
 		{
-			return Resources.ContainsKey(Id) ? new ResourceReference(Resources[Id]) : new ResourceReference(Id);
+			return !string.IsNullOrWhiteSpace(Id) && Resources.ContainsKey(Id) ? new ResourceReference(Resources[Id]) : new ResourceReference(Id);
 		}
 
 		public virtual ResourceComponentReference GetResourceComponentReference(string Id)
 		{
-			return ResourceComponents.ContainsKey(Id) ? new ResourceComponentReference(ResourceComponents[Id]) : new ResourceComponentReference(Id);
+			return !string.IsNullOrWhiteSpace(Id) && ResourceComponents.ContainsKey(Id) ? new ResourceComponentReference(ResourceComponents[Id]) : new ResourceComponentReference(Id);
 		}
 	}
 }

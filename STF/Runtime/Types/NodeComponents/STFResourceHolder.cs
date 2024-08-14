@@ -79,12 +79,12 @@ namespace STF.Types
 
 		public void Convert(ISTFApplicationConvertState State, Component Component)
 		{
-			//var newResources = new List<ResourceReference>();
+			var newResources = new List<ResourceReference>();
 			foreach(var r in (Component as STFResourceHolder).Resources)
 			{
-				//newResources.Add((ResourceReference)(State.ConvertedResources.ContainsKey(r.Ref) ? State.ConvertedResources[r.Ref] : r));
+				newResources.Add((ResourceReference)(State.ConvertedResources.ContainsKey(r.Ref) ? State.ConvertedResources[r.Ref] : r));
 			}
-			//(Component as STFResourceHolder).Resources = newResources;
+			(Component as STFResourceHolder).Resources = newResources;
 		}
 	}
 }
