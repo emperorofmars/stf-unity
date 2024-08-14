@@ -45,7 +45,7 @@ namespace MTF
 		}
 	}
 
-	public class ImageUtil
+	public static class ImageUtil
 	{
 		private static TextureChannel ChannelIdxToEnum(int Idx)
 		{

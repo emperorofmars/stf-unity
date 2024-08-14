@@ -14,6 +14,30 @@ namespace STF.Serialisation
 		public IUnityImportContext UnityContext {protected set; get;}
 		public JObject JsonRoot {protected set; get;}
 		public string AssetId {protected set; get;}
+		
+		// id -> node
+		public readonly Dictionary<string, ISTFNode> Nodes = new();
+
+		// id -> node_component
+		public readonly Dictionary<string, ISTFNodeComponent> NodeComponents = new();
+
+		// id -> resource
+		public readonly Dictionary<string, ISTFResource> Resources = new();
+
+		// id -> resource_component
+		public readonly Dictionary<string, ISTFResourceComponent> ResourceComponents = new();
+
+		// id -> buffer
+		public readonly Dictionary<string, byte[]> Buffers = new();
+
+
+		// stuff to throw away before the import finishes
+		public readonly List<Object> Trash = new();
+
+		public List<Task> Tasks = new();
+		public List<Task> PostprocessTasks = new();
+
+		public readonly Dictionary<Object, Object> PostprocessContext = new();
 
 		public STFImportState(STFImportContext Context, IUnityImportContext UnityContext, STFFile Buffers)
 		{
@@ -27,30 +51,6 @@ namespace STF.Serialisation
 				this.Buffers.Add((string)JsonRoot[STFKeywords.ObjectType.Buffers][i], Buffers.Buffers[i]);
 			}
 		}
-		
-		// id -> node
-		public Dictionary<string, ISTFNode> Nodes {protected set; get;} = new Dictionary<string, ISTFNode>();
-
-		// id -> node_component
-		public Dictionary<string, ISTFNodeComponent> NodeComponents {protected set; get;} = new Dictionary<string, ISTFNodeComponent>();
-
-		// id -> resource
-		public Dictionary<string, ISTFResource> Resources {protected set; get;} = new Dictionary<string, ISTFResource>();
-
-		// id -> resource_component
-		public Dictionary<string, ISTFResourceComponent> ResourceComponents {protected set; get;} = new Dictionary<string, ISTFResourceComponent>();
-
-		// id -> buffer
-		public Dictionary<string, byte[]> Buffers {protected set; get;} = new Dictionary<string, byte[]>();
-
-
-		// stuff to throw away before the import finishes
-		public List<Object> Trash = new List<Object>();
-
-		public List<Task> Tasks = new List<Task>();
-
-		public List<Task> PostprocessTasks = new List<Task>();
-		public Dictionary<Object, Object> PostprocessContext {protected set; get;} = new Dictionary<Object, Object>();
 
 		public virtual void AddNode(ISTFNode Node) { Nodes.Add(Node.Id, Node); }
 		public virtual void AddNodeComponent(ISTFNodeComponent Component) { NodeComponents.Add(Component.Id, Component); }

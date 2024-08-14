@@ -10,7 +10,6 @@ namespace AVA.ApplicationConversion
 {
 	public class AVA_VRM_FacialTrackingSimpleConverter : ISTFNodeComponentApplicationConverter
 	{
-
 		private void createBlendshapeClip(string visemeName, BlendShapePreset blendshapePreset, AVAFacialTrackingSimple c, VRMBlendShapeProxy vrmBlendshapeProxy, ISTFApplicationConvertState State)
 		{
 			BlendShapeClip clip = new BlendShapeClip();

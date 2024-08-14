@@ -29,7 +29,7 @@ namespace AVA.Types
 	public class CharacterEditorCategory
 	{
 		public string display_name;
-		public List<CharacterEditorEntry> entries = new List<CharacterEditorEntry>();
+		public List<CharacterEditorEntry> entries = new();
 	}
 
 	public class AVACharacterEditorSetup : ISTFNodeComponent
@@ -40,7 +40,7 @@ namespace AVA.Types
 		public string model_description;
 		public string help_text;
 
-		public List<CharacterEditorCategory> categories = new List<CharacterEditorCategory>();
+		public List<CharacterEditorCategory> categories = new();
 	}
 
 /*

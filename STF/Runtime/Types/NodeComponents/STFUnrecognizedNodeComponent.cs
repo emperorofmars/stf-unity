@@ -15,9 +15,9 @@ namespace STF.Types
 
 		[TextArea]
 		public string PreservedJson;
-		public List<ISTFResource> ReferencedResources = new List<ISTFResource>();
-		public List<ISTFNode> ReferencedNodes = new List<ISTFNode>();
-		public List<ISTFNodeComponent> ReferencedNodeComponentss = new List<ISTFNodeComponent>();
+		public List<ISTFResource> ReferencedResources = new();
+		public List<ISTFNode> ReferencedNodes = new();
+		public List<ISTFNodeComponent> ReferencedNodeComponentss = new();
 	}
 
 	public class STFUnrecognizedNodeComponentExporter : ISTFNodeComponentExporter
@@ -46,6 +46,8 @@ namespace STF.Types
 
 		public void ParseFromJson(STFImportState State, JObject Json, string Id, GameObject Go)
 		{
+			Debug.LogWarning($"Unrecognized node component type: {Json[STFKeywords.Keys.Type]}");
+
 			var c = Go.AddComponent<STFUnrecognizedNodeComponent>();
 			c.Id = Id;
 			//ASTFNodeComponentImporter.ParseRelationships(Json, c);

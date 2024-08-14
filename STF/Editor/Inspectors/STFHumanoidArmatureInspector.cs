@@ -11,8 +11,8 @@ namespace STF.Types
 	public class STFHumanoidArmatureInspector : Editor
 	{
 		private int locomotionSelection = 0;
-		private string[] locomotionOptions = new string[] { "plantigrade", "digitigrade" };
-		private string[] locomotionDisplayOptions = new string[] { "Plantigrade", "Digitigrade" };
+		private readonly string[] locomotionOptions = new string[] { "plantigrade", "digitigrade" };
+		private readonly string[] locomotionDisplayOptions = new string[] { "Plantigrade", "Digitigrade" };
 		private bool _foldoutMappings = true;
 
 		void OnEnable()

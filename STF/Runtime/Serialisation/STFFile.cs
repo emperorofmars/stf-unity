@@ -16,7 +16,7 @@ namespace STF.Serialisation
 		public int VersionMajor = 0;
 		public int VersionMinor = 3;
 		public string Json;
-		public List<byte[]> Buffers = new List<byte[]>();
+		public List<byte[]> Buffers = new();
 		public string OriginalFileName;
 
 		public STFFile(string Json, List<byte[]> Buffers)
@@ -27,16 +27,16 @@ namespace STF.Serialisation
 
 		public STFFile(string ImportPath)
 		{
-			this.OriginalFileName = Path.GetFileNameWithoutExtension(ImportPath);
-			this.parse(File.ReadAllBytes(ImportPath));
+			OriginalFileName = Path.GetFileNameWithoutExtension(ImportPath);
+			Parse(File.ReadAllBytes(ImportPath));
 		}
 
 		public STFFile(byte[] ByteArray)
 		{
-			this.parse(ByteArray);
+			Parse(ByteArray);
 		}
 
-		private void parse(byte[] ByteArray)
+		private void Parse(byte[] ByteArray)
 		{
 			// I know its stupid having to convert it to int everywhere.
 			// TODO find a better solution for binary parsing / serialisation.

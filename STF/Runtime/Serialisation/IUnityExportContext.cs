@@ -1,11 +1,4 @@
 
-using System;
-using System.Collections.Generic;
-using UnityEngine;
-using System.Linq;
-using Newtonsoft.Json.Linq;
-using System.Threading.Tasks;
-using System.IO;
 using STF.Types;
 
 namespace STF.Serialisation

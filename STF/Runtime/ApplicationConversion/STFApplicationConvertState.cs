@@ -8,7 +8,7 @@ namespace STF.ApplicationConversion
 {
 	public class STFApplicationConvertState : ISTFApplicationConvertState
 	{
-		private ISTFApplicationConvertStorageContext StorageContext;
+		private readonly ISTFApplicationConvertStorageContext StorageContext;
 
 		public STFRelationshipMatrix _RelMat;
 		public STFRelationshipMatrix RelMat => _RelMat;
@@ -17,7 +17,7 @@ namespace STF.ApplicationConversion
 		public STFApplicationConverterContext _ConverterContext;
 		public STFApplicationConverterContext ConverterContext => _ConverterContext;
 
-		public Dictionary<UnityEngine.Object, UnityEngine.Object> _ConvertedResources = new Dictionary<UnityEngine.Object, UnityEngine.Object>();
+		public Dictionary<UnityEngine.Object, UnityEngine.Object> _ConvertedResources = new();
 		public Dictionary<UnityEngine.Object, UnityEngine.Object> ConvertedResources => _ConvertedResources;
 
 		public GameObject _Root;
@@ -27,13 +27,13 @@ namespace STF.ApplicationConversion
 		public string _TargetApplication;
 		public string TargetApplication => TargetApplication;
 
-		public List<Task> _Tasks = new List<Task>();
-		public List<UnityEngine.Object> _Trash = new List<UnityEngine.Object>();
+		public List<Task> _Tasks = new();
+		public List<UnityEngine.Object> _Trash = new();
 
-		public List<UnityEngine.Object> _RegisteredResources = new List<UnityEngine.Object>();
+		public List<UnityEngine.Object> _RegisteredResources = new();
 		public List<UnityEngine.Object> RegisteredResources => _RegisteredResources;
 
-		public Dictionary<UnityEngine.Object, UnityEngine.Object> _RegisteredResourcesContext = new Dictionary<UnityEngine.Object, UnityEngine.Object>();
+		public Dictionary<UnityEngine.Object, UnityEngine.Object> _RegisteredResourcesContext = new();
 		public Dictionary<UnityEngine.Object, UnityEngine.Object> RegisteredResourcesContext => _RegisteredResourcesContext;
 
 		public STFApplicationConvertState(ISTFApplicationConvertStorageContext StorageContext, STFApplicationConverterContext ConverterContext, GameObject Root, string Target, List<string> ValidTargets, List<Type> ConversibleTypes)

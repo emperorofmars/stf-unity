@@ -38,6 +38,8 @@ namespace STF.Types
 	{
 		public ISTFAsset ParseFromJson(STFImportState State, JObject JsonAsset)
 		{
+			Debug.LogWarning($"Unrecognized asset type: {JsonAsset[STFKeywords.Keys.Type]}");
+
 			var rootGo = new GameObject();
 			var asset = rootGo.AddComponent<STFUnrecognizedAsset>();
 			var rf = new RefDeserializer(JsonAsset);

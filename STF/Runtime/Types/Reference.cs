@@ -153,8 +153,8 @@ namespace STF.Types
 		public bool IsId {get => !string.IsNullOrWhiteSpace(Id); }
 		public bool IsRef {get => Ref != null || IsFallback; }
 
-		public static implicit operator ResourceReference<T>(T Resource) => new ResourceReference<T>(Resource);
-		public static implicit operator ResourceReference<T>(string Id) => new ResourceReference<T>(Id);
+		public static implicit operator ResourceReference<T>(T Resource) => new(Resource);
+		public static implicit operator ResourceReference<T>(string Id) => new(Id);
 			
 		public static implicit operator T(ResourceReference<T> Reference) => Reference.Resource;
 		public static implicit operator string(ResourceReference<T> Reference) => Reference.Id;

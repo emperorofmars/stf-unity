@@ -15,9 +15,9 @@ namespace STF.Types
 		
 		// Give information onto which asset this addon can be applied. Very temporary implementation, should be more thought out.
 		// Possibilities: Restrict to ID(s), to type(s), check if a type/ID or something is present, etc...
-		public List<string> TargetConstraints = new List<string>();
+		public List<string> TargetConstraints = new();
 		
-		public Dictionary<UnityEngine.Object, UnityEngine.Object> ResourceMeta = new Dictionary<UnityEngine.Object, UnityEngine.Object>();
+		public Dictionary<UnityEngine.Object, UnityEngine.Object> ResourceMeta = new();
 	}
 
 	public class STFAddonAssetExporter : ISTFAssetExporter

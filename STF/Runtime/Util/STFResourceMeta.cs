@@ -9,7 +9,7 @@ namespace STF.Util
 	public class STFResourceMeta
 	{
 		[Serializable] public class Entry { public UnityEngine.Object UnityObject; public ISTFResource STFResource; }
-		List<Entry> Entries = new List<Entry>();
+		public readonly List<Entry> Entries = new();
 
 		public bool ContainsKey(UnityEngine.Object Key)
 		{

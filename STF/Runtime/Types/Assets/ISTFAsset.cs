@@ -28,10 +28,10 @@ namespace STF.Types
 		public string OriginalFileName;
 		public bool Degraded = false;
 
-		[SerializeField, ReadOnly] public STFResourceMeta ImportMeta = new STFResourceMeta(); // TODO: actually build this metaobject on import
+		[SerializeField, ReadOnly] public STFResourceMeta ImportMeta = new(); // TODO: actually build this metaobject on import
 
-		[Serializable] public class AppliedAddonMeta { public string AddonId; public STFResourceMeta AddonMeta = new STFResourceMeta(); }
-		[ReadOnly] public List<AppliedAddonMeta> AppliedAddonMetas = new List<AppliedAddonMeta>();
+		[Serializable] public class AppliedAddonMeta { public string AddonId; public STFResourceMeta AddonMeta = new(); }
+		[ReadOnly] public List<AppliedAddonMeta> AppliedAddonMetas = new();
 
 		public void ParseDefaultValuesFromJson(STFImportState State, JObject JsonAsset, RefDeserializer Rf)
 		{

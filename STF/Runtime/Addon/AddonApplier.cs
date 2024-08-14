@@ -12,10 +12,11 @@ namespace STF.Addon
 {
 	public static class STFAddonApplierRegistry
 	{
-		public static readonly Dictionary<Type, ISTFNodeComponentAddonApplier> DefaultAddonAppliers = new Dictionary<Type, ISTFNodeComponentAddonApplier> {
+		public static readonly Dictionary<Type, ISTFNodeComponentAddonApplier> DefaultAddonAppliers = new()
+		{
 			{typeof(SkinnedMeshRenderer), new STFMeshInstanceAddonApplier()},
 		};
-		private static Dictionary<Type, ISTFNodeComponentAddonApplier> RegisteredAddonAppliers = new Dictionary<Type, ISTFNodeComponentAddonApplier>();
+		private static Dictionary<Type, ISTFNodeComponentAddonApplier> RegisteredAddonAppliers = new();
 		public static Dictionary<Type, ISTFNodeComponentAddonApplier> AddonAppliers => CollectionUtil.Combine(DefaultAddonAppliers, RegisteredAddonAppliers);
 
 		public static void RegisterAddonApplier(Type Type, ISTFNodeComponentAddonApplier Applier) { RegisteredAddonAppliers.Add(Type, Applier); }
@@ -33,7 +34,7 @@ namespace STF.Addon
 		public GameObject _Root;
 		public GameObject Root => _Root;
 
-		public List<Task> Tasks = new List<Task>();
+		public List<Task> Tasks = new();
 		public void AddTask(Task Task) { Tasks.Add(Task); }
 
 		public DefaultSTFAddonApplierContext(GameObject Root)

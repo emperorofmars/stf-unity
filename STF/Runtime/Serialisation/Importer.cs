@@ -10,7 +10,7 @@ namespace STF.Serialisation
 {
 	// The main star for import!
 	// Parses the Json and buffers based on the provided importers from the STFImportContext.
-	public class Importer
+	public static class Importer
 	{
 		public static (ISTFAsset Asset, STFImportState State) Parse(IUnityImportContext UnityContext, string ImportPath)
 		{

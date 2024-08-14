@@ -12,14 +12,14 @@ namespace STF.ApplicationConversion
 	// Technically this is not a matrix. I dont care.
 	public class STFRelationshipMatrix
 	{
-		private Dictionary<Component, string> ComponentToId = new Dictionary<Component, string>();
-		private Dictionary<string, Component> IdToComponent = new Dictionary<string,Component>();
-		private Dictionary<Component, List<Component>> Extends = new Dictionary<Component, List<Component>>();
-		private Dictionary<Component, List<Component>> ExtendedBys = new Dictionary<Component, List<Component>>();
-		private List<Component> IsOverridden = new List<Component>();
-		private Dictionary<Component, List<Component>> Overrides = new Dictionary<Component, List<Component>>();		
-		private Dictionary<Component, bool> TargetMatch = new Dictionary<Component, bool>();
-		private Dictionary<Component, List<Component>> STFToConverted = new Dictionary<Component, List<Component>>();
+		private readonly Dictionary<Component, string> ComponentToId = new();
+		private readonly Dictionary<string, Component> IdToComponent = new();
+		private readonly Dictionary<Component, List<Component>> Extends = new();
+		private readonly Dictionary<Component, List<Component>> ExtendedBys = new();
+		private readonly List<Component> IsOverridden = new List<Component>();
+		private readonly Dictionary<Component, List<Component>> Overrides = new();		
+		private readonly Dictionary<Component, bool> TargetMatch = new();
+		private readonly Dictionary<Component, List<Component>> STFToConverted = new();
 
 		public STFRelationshipMatrix(GameObject root, List<string> targets, List<Type> conversibleTypes)
 		{

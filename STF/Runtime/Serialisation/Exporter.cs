@@ -11,7 +11,7 @@ using STF.Types;
 namespace STF.Serialisation
 {
 	// The main star for export!
-	public class Exporter
+	public static class Exporter
 	{
 		public static (STFFile stfFIle, JObject Json) Export(IUnityExportContext UnityContext, ISTFAsset Asset, STFResourceMeta ResourceMeta = null)
 		{

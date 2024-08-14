@@ -16,9 +16,9 @@ namespace STF.Types
 		public string _STFName;
 
 		public string ParentNodeId;
-		public List<string> Extends = new List<string>();
-		public List<string> Overrides = new List<string>();
-		public List<string> Targets = new List<string>();
+		public List<string> Extends = new();
+		public List<string> Overrides = new();
+		public List<string> Targets = new();
 		
 		public Component OwnedUnityComponent;
 	}

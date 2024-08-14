@@ -26,7 +26,7 @@ namespace MTF
 		}
 	}
 
-	public class PropertyValueRegistry
+	public static class PropertyValueRegistry
 	{
 		public static readonly Dictionary<string, IPropertyValueImporter> DefaultPropertyValueImporters = new()
 		{
@@ -66,7 +66,7 @@ namespace MTF
 		}
 	}
 
-	public class ShaderConverterRegistry
+	public static class ShaderConverterRegistry
 	{
 		public static readonly Dictionary<string, IMaterialConverter> DefaultMaterialConverters = new()
 		{

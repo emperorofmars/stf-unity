@@ -13,10 +13,10 @@ namespace STF.Types
 		public string _Type;
 		public override string Type => _Type;
 		[TextArea] public string PreservedJson;
-		public List<ISTFResource> ReferencedResources = new List<ISTFResource>();
-		public List<ISTFResourceComponent> ReferencedResourceComponents = new List<ISTFResourceComponent>();
-		public List<ISTFNode> ReferencedNodes = new List<ISTFNode>();
-		public List<STFBuffer> PreservedBuffers = new List<STFBuffer>();
+		public List<ISTFResource> ReferencedResources = new();
+		public List<ISTFResourceComponent> ReferencedResourceComponents = new();
+		public List<ISTFNode> ReferencedNodes = new();
+		public List<ISTFBuffer> PreservedBuffers = new();
 	}
 
 	public class STFUnrecognizedResourceExporter : ISTFResourceExporter
@@ -33,7 +33,7 @@ namespace STF.Types
 			foreach(var usedResource in r.ReferencedResources) ExportUtil.SerializeResource(State, usedResource);
 			foreach(var referencedResourceComponent in r.ReferencedResourceComponents) ExportUtil.SerializeResourceComponent(State, referencedResourceComponent);
 			foreach(var usedNode in r.ReferencedNodes) ExportUtil.SerializeNode(State, usedNode);
-			foreach(var usedbuffer in r.PreservedBuffers) State.AddBuffer(usedbuffer.Data, usedbuffer.Id);
+			foreach(var usedbuffer in r.PreservedBuffers) State.AddBuffer(usedbuffer.GetData(), usedbuffer.Id);
 
 			return State.AddResource(r, JObject.Parse(r.PreservedJson), r.Id);
 		}
@@ -48,6 +48,8 @@ namespace STF.Types
 
 		public void ParseFromJson(STFImportState State, JObject Json, string Id)
 		{
+			Debug.LogWarning($"Unrecognized resource type: {Json[STFKeywords.Keys.Type]}");
+
 			var ret = ScriptableObject.CreateInstance<STFUnrecognizedResource>();
 			ret.Id = Id;
 			ret.STFName = (string)Json["name"];

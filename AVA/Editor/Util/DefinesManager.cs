@@ -13,11 +13,13 @@ namespace AVA.ApplicationConversion
     [InitializeOnLoad]
     public static class ScriptDefinesManager
     {
-        /// <summary>
-        /// Adds define strings to 'Edit > Project Settings > Player > Scripting Define Symbols' for the currently selected platform
-        /// </summary>
-        /// <param name="newDefines">New defines to add</param>
-        public static void AddDefinesIfMissing(params string[] newDefines)
+		static ScriptDefinesManager() {}
+
+		/// <summary>
+		/// Adds define strings to 'Edit > Project Settings > Player > Scripting Define Symbols' for the currently selected platform
+		/// </summary>
+		/// <param name="newDefines">New defines to add</param>
+		public static void AddDefinesIfMissing(params string[] newDefines)
         {
             AddDefinesIfMissing(EditorUserBuildSettings.selectedBuildTargetGroup, newDefines);
         }

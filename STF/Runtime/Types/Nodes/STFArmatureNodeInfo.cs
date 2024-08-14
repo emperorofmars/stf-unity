@@ -13,6 +13,6 @@ namespace STF.Types
 		public string ArmatureId = Guid.NewGuid().ToString();
 		public string ArmatureName;
 		public GameObject Root;
-		public List<GameObject> Bones = new List<GameObject>();
+		public List<GameObject> Bones = new();
 	}
 }

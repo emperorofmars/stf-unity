@@ -17,7 +17,8 @@ namespace AVA.ApplicationConversion
 	{
 		public const string _TARGET_NAME = "vrm";
 		public override string TargetName => _TARGET_NAME;
-		public override STFApplicationConverterContext ConverterContext => new STFApplicationConverterContext {
+		public override STFApplicationConverterContext ConverterContext => new()
+		{
 			NodeComponent = new Dictionary<Type, ISTFNodeComponentApplicationConverter>() {
 				{typeof(STFTwistConstraint), new STFTwistConstraintConverter()},
 				{typeof(AVAAvatar), new AVA_VRM_AvatarConverter()},
@@ -30,11 +31,12 @@ namespace AVA.ApplicationConversion
 				{typeof(AnimationClip), new STFAnimationApplicationConverter()}
 			}
 		};
-		public override List<Type> WhitelistedComponents => new List<Type> {
+		public override List<Type> WhitelistedComponents => new()
+		{
 			typeof(Transform), typeof(Animator), typeof(RotationConstraint), typeof(SkinnedMeshRenderer), typeof(MeshFilter), typeof(MeshRenderer), typeof(VRMMeta), typeof(VRMLookAtHead),
 			typeof(VRMHumanoidDescription), typeof(VRMFirstPerson), typeof(VRMLookAtBoneApplyer), typeof(VRMBlendShapeProxy), typeof(VRMSpringBone)
 		};
-		public override List<string> Targets => new List<string> {TargetName, "gltf"};
+		public override List<string> Targets => new() { TargetName, "gltf" };
 
 		public override bool CanConvert(ISTFAsset Asset)
 		{

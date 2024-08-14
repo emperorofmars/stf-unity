@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace STF.Serialisation
 {
-	public class TRSUtil
+	public static class TRSUtil
 	{
 		public static Vector3 ParseLocation(JObject Json)
 		{

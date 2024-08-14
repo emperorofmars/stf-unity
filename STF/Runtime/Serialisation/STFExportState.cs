@@ -15,27 +15,27 @@ namespace STF.Serialisation
 		public IUnityExportContext UnityContext {protected set; get;}
 
 		// Unity GameObject -> STF Json Node
-		public Dictionary<GameObject, (string Id, JObject JsonNode)> Nodes {protected set; get;} = new Dictionary<GameObject, (string Id, JObject JsonNode)>();
+		public readonly Dictionary<GameObject, (string Id, JObject JsonNode)> Nodes = new();
 
 		// Unity Component -> STF Json NodeComponent
-		public Dictionary<Component, (string Id, JObject JsonComponent)> NodeComponents {protected set; get;} = new Dictionary<Component, (string Id, JObject JsonNodeComponent)>();
+		public readonly Dictionary<Component, (string Id, JObject JsonComponent)> NodeComponents = new();
 
 		// Unity Resource -> Json Resource
-		public Dictionary<UnityEngine.Object, (string Id, JObject JsonResource)> Resources {protected set; get;} = new Dictionary<UnityEngine.Object, (string Id, JObject JsonResource)>();
+		public readonly Dictionary<UnityEngine.Object, (string Id, JObject JsonResource)> Resources = new();
 
 		// Unity ResourceComponent -> Json ResourceComponent
-		public Dictionary<ISTFResourceComponent, (string Id, JObject JsonResourceComponent)> ResourceComponents {protected set; get;} = new Dictionary<ISTFResourceComponent, (string Id, JObject JsonResourceComponent)>();
+		public readonly Dictionary<ISTFResourceComponent, (string Id, JObject JsonResourceComponent)> ResourceComponents = new();
 		
 
 		// id -> buffer
-		public Dictionary<string, byte[]> Buffers = new Dictionary<string, byte[]>();
+		public readonly Dictionary<string, byte[]> Buffers = new();
 
 		// stuff to delete before the import finishes
-		public List<UnityEngine.Object> Trash = new List<UnityEngine.Object>();
+		public readonly List<UnityEngine.Object> Trash = new();
 
-		public List<Task> Tasks = new List<Task>();
+		public List<Task> Tasks = new();
 
-		public STFResourceMeta ResourceMeta = new STFResourceMeta();
+		public STFResourceMeta ResourceMeta = new();
 
 		public STFExportState(STFExportContext Context, IUnityExportContext UnityContext, STFResourceMeta ResourceMeta)
 		{

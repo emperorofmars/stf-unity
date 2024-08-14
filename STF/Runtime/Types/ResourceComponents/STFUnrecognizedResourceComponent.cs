@@ -46,6 +46,8 @@ namespace STF.Types
 
 		public void ParseFromJson(STFImportState State, JObject Json, string Id, ISTFResource Resource)
 		{
+			Debug.LogWarning($"Unrecognized resource component type: {Json[STFKeywords.Keys.Type]}");
+
 			var ret = ScriptableObject.CreateInstance<STFUnrecognizedResourceComponent>();
 			ret.Id = Id;
 			ret.PreservedJson = Json.ToString();

@@ -14,7 +14,8 @@ namespace STF.ApplicationConversion
 	{
 		public const string _TARGET_NAME = "unity3d";
 		public override string TargetName => _TARGET_NAME;
-		public override STFApplicationConverterContext ConverterContext => new STFApplicationConverterContext {
+		public override STFApplicationConverterContext ConverterContext => new()
+		{
 			NodeComponent = new Dictionary<Type, ISTFNodeComponentApplicationConverter>() {
 				{typeof(STFTwistConstraint), new STFTwistConstraintConverter()},
 				{typeof(STFResourceHolder), new STFResourceHolderApplicationConverter()},
@@ -26,10 +27,11 @@ namespace STF.ApplicationConversion
 			}
 		};
 
-		public override List<Type> WhitelistedComponents => new List<Type> {
+		public override List<Type> WhitelistedComponents => new()
+		{
 			typeof(Transform), typeof(Animator), typeof(RotationConstraint), typeof(SkinnedMeshRenderer), typeof(STFResourceHolder)
 		};
-		public override List<string> Targets => new List<string> {TargetName};
+		public override List<string> Targets => new() { TargetName };
 
 		public override bool CanConvert(ISTFAsset Asset)
 		{

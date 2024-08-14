@@ -8,7 +8,7 @@ namespace STF.Serialisation
 	public class RuntimeUnityImportContext : IUnityImportContext
 	{
 		public bool IsDegraded => true;
-		public List<Object> AssetCtxObjects = new List<Object>();
+		public List<Object> AssetCtxObjects = new();
 
 		public Object SaveResource(ISTFResource Resource)
 		{

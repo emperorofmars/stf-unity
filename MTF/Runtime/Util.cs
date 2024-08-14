@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace MTF
 {
-	public class MaterialConverterUtil
+	public static class MaterialConverterUtil
 	{
 		public static bool HasProperty(Material MTFMaterial, string MTFPropertyType)
 		{

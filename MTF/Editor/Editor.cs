@@ -17,10 +17,8 @@ namespace MTF
 	[CustomEditor(typeof(Material))]
 	public class MaterialInspector : Editor
 	{
-		string[] Converters = DetectConverters();
+		readonly string[] Converters = DetectConverters();
 		int ShaderSelection = 0;
-		private Vector2 ShaderScrollPos;
-
 		private string[] PropertyOptionLabels;
 		private Type[] PropertyOptions;
 		private int PropertyIndex;
