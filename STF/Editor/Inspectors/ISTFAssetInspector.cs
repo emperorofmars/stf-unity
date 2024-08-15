@@ -95,11 +95,12 @@ namespace STF.Types
 						var path = DirectoryUtil.EnsureConvertLocation(asset, converter.TargetName);
 						converter.Convert(new STFApplicationConvertStorageContext(path), asset);
 					}
-					if(GUILayout.Button("Apply with Addons"))
+					if(SetAddons.Find(a => a != null) && GUILayout.Button("Apply with Addons"))
 					{
 						var path = DirectoryUtil.EnsureConvertLocation(asset, converter.TargetName);
 						var addonsApplied = ApplyAddons(asset);
 						converter.Convert(new STFApplicationConvertStorageContext(path), addonsApplied.GetComponent<ISTFAsset>());
+						DestroyImmediate(addonsApplied);
 					}
 					EditorGUILayout.EndHorizontal();
 				}
