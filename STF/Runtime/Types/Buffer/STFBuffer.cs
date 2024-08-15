@@ -1,6 +1,5 @@
 
 using UnityEngine;
-using YamlDotNet.Core.Tokens;
 
 namespace STF.Types
 {
