@@ -8,6 +8,7 @@ namespace STF.ApplicationConversion
 {
 	public interface ISTFApplicationConverter
 	{
+		string TargetName {get;}
 		bool CanConvert(ISTFAsset Asset);
 		GameObject Convert(ISTFApplicationConvertStorageContext StorageContext, ISTFAsset Asset);
 	}

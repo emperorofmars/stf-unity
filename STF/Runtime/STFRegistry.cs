@@ -108,7 +108,7 @@ namespace STF.Serialisation
 			typeof(STFMeshInstance), typeof(STFArmatureInstanceNode), typeof(STFArmatureNodeInfo), typeof(MeshFilter)
 		};
 
-		public static readonly List<ASTFApplicationConverter> ApplicationConverters = new();
+		public static readonly List<ISTFApplicationConverter> ApplicationConverters = new();
 
 		private static readonly Dictionary<string, ISTFAssetImporter> RegisteredAssetImporters = new();
 		private static readonly Dictionary<string, ISTFAssetExporter> RegisteredAssetExporters = new();

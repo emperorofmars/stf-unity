@@ -5,6 +5,8 @@ using System.IO;
 using UnityEditor;
 using UnityEngine;
 using STF.Serialisation;
+using STF.ApplicationConversion;
+using System.Linq;
 
 namespace STF.Tools
 {
@@ -14,28 +16,52 @@ namespace STF.Tools
 	[CustomEditor(typeof(STFScriptedImporter))]
 	public class STFScriptedImporterInspector : Editor
 	{
-		bool ChangedUnpackingImport = false;
+		//string[] ConversionOptions;
+		//int ConverterSelection = 0;
 
-		public void OnEnable()
+		/*public void OnEnable()
 		{
 			var importer = (STFScriptedImporter)target;
-			ChangedUnpackingImport = importer.UnpackingImport;
-		}
+			Converters = STFRegistry.ApplicationConverters.ToArray();
+			ConversionOptions = Converters.Select(c => c.TargetName).ToArray();
+			importer.ConverterSelection = importer.ConverterSelection < ConversionOptions.Length ? importer.ConverterSelection : 0;
+		}*/
 
 		public override void OnInspectorGUI()
 		{
 			var importer = (STFScriptedImporter)target;
+			
+			EditorGUI.BeginChangeCheck();
 
 			GUILayout.Space(10f);
 			EditorGUILayout.BeginHorizontal();
-			EditorGUILayout.PrefixLabel("Unpack into Filesystem");
-			ChangedUnpackingImport = EditorGUILayout.Toggle(ChangedUnpackingImport);
+			EditorGUILayout.PrefixLabel("Unpack into Assets");
+			importer.UnpackingImport = EditorGUILayout.Toggle(importer.UnpackingImport);
 			EditorGUILayout.EndHorizontal();
 
-			if(ChangedUnpackingImport != importer.UnpackingImport && GUILayout.Button("Reimport to apply!"))
+			/*if(!importer.UnpackingImport)
 			{
-				importer.UnpackingImport = ChangedUnpackingImport;
+				EditorGUILayout.BeginHorizontal();
+				EditorGUILayout.PrefixLabel("Convert into application target");
+				importer.ConvertImmediately = EditorGUILayout.Toggle(importer.ConvertImmediately);
+				EditorGUILayout.EndHorizontal();
+				if(importer.ConvertImmediately)
+				{
+					EditorGUILayout.BeginHorizontal();
+					EditorGUILayout.PrefixLabel("Select target");
+					ConverterSelection = EditorGUILayout.Popup(ConverterSelection, ConversionOptions);
+					EditorGUILayout.EndHorizontal();
+				}
+			}*/
+
+
+			if(EditorGUI.EndChangeCheck())
+			{
 				EditorUtility.SetDirty(importer);
+			}
+			if(EditorUtility.IsDirty(importer) && GUILayout.Button("Reimport to apply!"))
+			{
+				GUILayout.Space(10);
 				importer.SaveAndReimport();
 			}
 
@@ -54,7 +80,7 @@ namespace STF.Tools
 			
 			renderAsset(importer.AssetInfo);
 
-			if(importer.UnpackingImport && importer.UnpackingImport == ChangedUnpackingImport)
+			if(importer.UnpackingImport)
 			{
 				drawHLine();
 				
@@ -80,6 +106,14 @@ namespace STF.Tools
 				drawHLine();
 
 				if(GUILayout.Button("Reload"))
+				{
+					EditorUtility.SetDirty(importer);
+					importer.SaveAndReimport();
+				}
+			}
+			else
+			{
+				if(GUILayout.Button("Reimport"))
 				{
 					EditorUtility.SetDirty(importer);
 					importer.SaveAndReimport();

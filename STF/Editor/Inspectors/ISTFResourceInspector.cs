@@ -10,7 +10,7 @@ using STF_Util;
 namespace STF.Types
 {
 	[CustomEditor(typeof(ISTFResource), true)]
-	public class STFResourceComponentInspector : Editor
+	public class ISTFResourceInspector : Editor
 	{
 		private string[] ComponentOptionLabels;
 		private Type[] ComponentOptions;

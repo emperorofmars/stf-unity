@@ -1,7 +1,9 @@
 
 #if UNITY_EDITOR
 
+using STF.ApplicationConversion;
 using STF.Serialisation;
+using UnityEngine;
 
 namespace STF.Tools
 {
@@ -14,6 +16,9 @@ namespace STF.Tools
 	public class STFScriptedImporter : UnityEditor.AssetImporters.ScriptedImporter
 	{
 		public bool UnpackingImport = true;
+		//public bool ConvertImmediately = true;
+		//public int ConverterSelection = 0;
+		
 		public STFImportInfo AssetInfo;
 
 		public override void OnImportAsset(UnityEditor.AssetImporters.AssetImportContext ctx)
@@ -34,11 +39,25 @@ namespace STF.Tools
 				var unityContext = new RuntimeUnityImportContext();
 				var (asset, _state) = Importer.Parse(unityContext, ctx.assetPath);
 				ctx.AddObjectToAsset("main", asset.gameObject);
-				ctx.SetMainObject(asset.gameObject);
 				foreach(var resource in unityContext.AssetCtxObjects)
 				{
 					if(resource != null) ctx.AddObjectToAsset("resource" + resource.GetInstanceID(), resource);
 				}
+
+				/*if(ConvertImmediately && ConverterSelection >= 0 && ConverterSelection < STFRegistry.ApplicationConverters.Count)
+				{
+					var converter = STFRegistry.ApplicationConverters[ConverterSelection];
+					if(!converter.CanConvert(asset)) throw new System.Exception($"{converter.TargetName} Can't convert imported asset!");
+
+					var path = DirectoryUtil.EnsureConvertLocation(asset, converter.TargetName);
+					var converted = converter.Convert(new STFApplicationConvertStorageContext(path), asset); // TODO make a runtime variant of this
+					ctx.AddObjectToAsset("converted", converted);
+					ctx.SetMainObject(converted);
+				}
+				else
+				{*/
+					ctx.SetMainObject(asset.gameObject);
+				//}
 			}
 		}
 	}

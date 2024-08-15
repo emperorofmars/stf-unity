@@ -36,7 +36,7 @@ namespace STF.ApplicationConversion
 			File.WriteAllBytes(resourceTargetPath, File.ReadAllBytes(path));
 			AssetDatabase.Refresh();
 			var ret = AssetDatabase.LoadAssetAtPath(resourceTargetPath, Resource.GetType());
-			ret.name = ret.name + "_Converted";
+			ret.name += "_Converted";
 			AssetDatabase.SaveAssets();
 			return ret;
 		}
