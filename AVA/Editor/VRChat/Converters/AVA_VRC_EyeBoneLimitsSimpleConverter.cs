@@ -33,8 +33,8 @@ namespace AVA.ApplicationConversion
 				var avatar = (VRCAvatarDescriptor)State.RelMat.GetConverted(avaAvatar).FirstOrDefault(component => component.GetType() == typeof(VRCAvatarDescriptor));
 
 				avatar.enableEyeLook = true;
-				avatar.customEyeLookSettings.leftEye = humanoid.Mappings.Find(m => m.humanoidName == "EyeLeft")?.bone.transform;
-				avatar.customEyeLookSettings.rightEye = humanoid.Mappings.Find(m => m.humanoidName == "EyeRight")?.bone.transform;
+				avatar.customEyeLookSettings.leftEye = humanoid?.Mappings.Find(m => m.humanoidName == "EyeLeft")?.bone.transform;
+				avatar.customEyeLookSettings.rightEye = humanoid?.Mappings.Find(m => m.humanoidName == "EyeRight")?.bone.transform;
 
 				avatar.customEyeLookSettings.eyesLookingUp = new VRCAvatarDescriptor.CustomEyeLookSettings.EyeRotations
 						{left = Quaternion.Euler(-c.up, 0f, 0f), right = Quaternion.Euler(-c.up, 0f, 0f), linked = true};

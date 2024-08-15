@@ -4,7 +4,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using STF.Addon;
+using STF.ApplicationConversion;
 using STF.Serialisation;
+using STF.Tools;
 using UnityEditor;
 using UnityEngine;
 
@@ -74,14 +76,7 @@ namespace STF.Types
 			}
 			if(SetAddons.Find(a => a != null) && GUILayout.Button("Apply"))
 			{
-				var trash = new List<GameObject>();
-				GameObject final = null;
-				foreach(var addon in SetAddons.Where(a => a != null))
-				{
-					if(final != null) trash.Add(final);
-					final = STFAddonApplier.Apply(asset, addon);
-				}
-				foreach(var t in trash) if(trash != null) DestroyImmediate(t);
+				ApplyAddons(asset);
 			}
 			EditorGUI.indentLevel--;
 			
@@ -97,11 +92,14 @@ namespace STF.Types
 					EditorGUILayout.PrefixLabel(converter.TargetName);
 					if(GUILayout.Button("Apply"))
 					{
-						Debug.Log("TODO convert");
+						var path = DirectoryUtil.EnsureConvertLocation(asset, converter.TargetName);
+						converter.Convert(new STFApplicationConvertStorageContext(path), asset);
 					}
 					if(GUILayout.Button("Apply with Addons"))
 					{
-						Debug.Log("TODO convert with addons");
+						var path = DirectoryUtil.EnsureConvertLocation(asset, converter.TargetName);
+						var addonsApplied = ApplyAddons(asset);
+						converter.Convert(new STFApplicationConvertStorageContext(path), addonsApplied.GetComponent<ISTFAsset>());
 					}
 					EditorGUILayout.EndHorizontal();
 				}
@@ -124,6 +122,19 @@ namespace STF.Types
 					PrefabUtility.RecordPrefabInstancePropertyModifications(asset);
 				}
 			}
+		}
+
+		private GameObject ApplyAddons(ISTFAsset Asset)
+		{
+			var trash = new List<GameObject>();
+			GameObject final = null;
+			foreach(var addon in SetAddons.Where(a => a != null))
+			{
+				if(final != null) trash.Add(final);
+				final = STFAddonApplier.Apply(Asset, addon);
+			}
+			foreach(var t in trash) if(trash != null) DestroyImmediate(t);
+			return final;
 		}
 		
 		private void drawHLine() {

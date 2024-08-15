@@ -14,6 +14,13 @@ namespace STF.ApplicationConversion
 		public STFApplicationConvertStorageContext(string TargetPath)
 		{
 			_TargetPath = TargetPath;
+			
+			var existingEntries = Directory.EnumerateFileSystemEntries(TargetPath); foreach(var entry in existingEntries)
+			{
+				if(File.Exists(entry)) File.Delete(entry);
+				else Directory.Delete(entry, true);
+			}
+			AssetDatabase.Refresh();
 		}
 
 		public void SaveGeneratedResource(Object Resource, string FileExtension)

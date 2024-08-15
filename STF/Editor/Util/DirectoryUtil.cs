@@ -12,6 +12,7 @@ namespace STF.Tools
 	{
 		public const string DefaultUnpackFolder = "STF Imports";
 		public const string ResourceFolderName = "Resources";
+		public const string ApplicationConversionFolderName = "ApplicationConversions";
 
 		public static string AssetResourceFolder { get {
 			var full = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(GetThisFilePath()), "..", "..", "Imports"));
@@ -50,18 +51,23 @@ namespace STF.Tools
 			return GetUnpackLocation(assetPath);
 		}
 
+		public static string GetConvertLocation(ISTFAsset Asset, string TargetName)
+		{
+			return Path.Combine(Path.GetDirectoryName(PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(Asset)), ApplicationConversionFolderName, GetFolderName(TargetName));
+		}
+
 		public static string EnsureConvertLocation(ISTFAsset Asset, string TargetName)
 		{
-			string path = null;
-			if(PrefabUtility.IsPartOfAnyPrefab(Asset))
+			string path;
+			if (PrefabUtility.IsPartOfAnyPrefab(Asset))
 			{
 				path = Path.GetDirectoryName(PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(Asset));
-				if(!Directory.Exists(path))
+				if(!Directory.Exists(Path.Combine(path, ApplicationConversionFolderName)))
 				{
-					AssetDatabase.CreateFolder(path, DefaultUnpackFolder);
+					AssetDatabase.CreateFolder(path, ApplicationConversionFolderName);
 					AssetDatabase.Refresh();
 				}
-				path = Path.Combine(path, DefaultUnpackFolder);
+				path = Path.Combine(path, ApplicationConversionFolderName);
 			}
 			else
 			{

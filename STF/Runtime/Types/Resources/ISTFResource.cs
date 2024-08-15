@@ -18,7 +18,7 @@ namespace STF.Types
 		bool _Degraded = false;
 		
 		public Object Resource;
-		public readonly List<ISTFResourceComponent> Components = new();
+		public List<ISTFResourceComponent> Components = new();
 		public ResourceReference Fallback = new();
 	}
 

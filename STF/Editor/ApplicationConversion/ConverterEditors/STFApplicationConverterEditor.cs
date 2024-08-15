@@ -54,13 +54,6 @@ namespace STF.ApplicationConversion.Editors
 
 			if(Asset && GUILayout.Button("Convert", GUILayout.ExpandWidth(true))) {
 				if(path != null && path.Length > 0) {
-					var existingEntries = Directory.EnumerateFileSystemEntries(path); foreach(var entry in existingEntries)
-					{
-						if(File.Exists(entry)) File.Delete(entry);
-						else Directory.Delete(entry, true);
-					}
-					AssetDatabase.Refresh();
-
 					var c = new STFUnityConverter();
 					c.Convert(new STFApplicationConvertStorageContext(path), Asset);
 				}
