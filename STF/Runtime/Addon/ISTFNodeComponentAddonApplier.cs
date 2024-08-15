@@ -14,11 +14,13 @@ namespace STF.Addon
 	{
 		public static void Apply(ISTFAddonApplierContext Context, GameObject Target, Component SourceComponent)
 		{
-			var newComponent = Target.AddComponent(SourceComponent.GetType());
+			Component newComponent = Target.GetComponent(SourceComponent.GetType());
+			if(newComponent == null) newComponent = Target.AddComponent(SourceComponent.GetType());
+			
 			System.Reflection.FieldInfo[] fields = SourceComponent.GetType().GetFields(); 
 			foreach (System.Reflection.FieldInfo field in fields)
 			{
-				field.SetValue(newComponent, field.GetValue(SourceComponent));
+				if(!field.IsStatic) field.SetValue(newComponent, field.GetValue(SourceComponent));
 			}
 		}
 	}

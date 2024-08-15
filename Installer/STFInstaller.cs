@@ -15,7 +15,7 @@ namespace STF.Installer
 		const string VERSION_TAG_LATEST = null;//"v0.3.0";
 		const string Path_STF = "/STF";
 		const string Path_MTF = "/MTF";
-		const string Path_AVA = "/AVA";
+		//const string Path_AVA = "/AVA";
 
 		static AddRequest Request;
 		static List<string> InstallQueue = new();
@@ -25,7 +25,7 @@ namespace STF.Installer
 			return string.IsNullOrWhiteSpace(Version) ? Base + "?path=" + Path : Base + "?path=" + Path + "#" + Version;
 		}
 
-		[MenuItem("STF Tools/Install")]
+		//[MenuItem("STF Tools/Install")]
 		static void Install()
 		{
 			InstallQueue = BuildInstallQueue(VERSION_TAG_LATEST);
@@ -56,9 +56,9 @@ namespace STF.Installer
 				#if !STF
 				ConstructURL(URL_BASE, Path_STF, Version),
 				#endif
-				#if !AVA
+				/*#if !AVA
 				ConstructURL(URL_BASE, Path_AVA, Version),
-				#endif
+				#endif*/
 			};
 		}
 

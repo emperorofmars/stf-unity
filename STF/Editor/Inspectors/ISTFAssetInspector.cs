@@ -2,6 +2,8 @@
 #if UNITY_EDITOR
 
 using System.Collections.Generic;
+using System.Linq;
+using STF.Addon;
 using STF.Serialisation;
 using UnityEditor;
 using UnityEngine;
@@ -60,18 +62,26 @@ namespace STF.Types
 			for(int i = 0; i < SetAddons.Count; i++)
 			{
 				var wasNull = SetAddons[i] == null;
+				var wasDeleted = false;
 				
 				EditorGUILayout.BeginHorizontal();
 				SetAddons[i] = (STFAddonAsset)EditorGUILayout.ObjectField(SetAddons[i], typeof(STFAddonAsset), true);
-				if(SetAddons[i] != null && GUILayout.Button("Remove", GUILayout.ExpandWidth(false))) { SetAddons.RemoveAt(i); i--; }
+				if(SetAddons[i] != null && GUILayout.Button("Remove", GUILayout.ExpandWidth(false))) { SetAddons.RemoveAt(i); i--; wasDeleted = true; }
 				EditorGUILayout.EndHorizontal();
 
-				if(wasNull && SetAddons[i] != null) SetAddons.Add(null);
-				if(!wasNull && SetAddons[i] == null) { SetAddons.RemoveAt(i); i--; }
+				if(!wasDeleted && wasNull && SetAddons[i] != null) SetAddons.Add(null);
+				if(!wasDeleted && !wasNull && SetAddons[i] == null) { SetAddons.RemoveAt(i); i--; }
 			}
 			if(SetAddons.Find(a => a != null) && GUILayout.Button("Apply"))
 			{
-				Debug.Log("TODO apply addons");
+				var trash = new List<GameObject>();
+				GameObject final = null;
+				foreach(var addon in SetAddons.Where(a => a != null))
+				{
+					if(final != null) trash.Add(final);
+					final = STFAddonApplier.Apply(asset, addon);
+				}
+				foreach(var t in trash) if(trash != null) DestroyImmediate(t);
 			}
 			EditorGUI.indentLevel--;
 			

@@ -32,8 +32,6 @@ namespace STF.Tools
 			ChangedUnpackingImport = EditorGUILayout.Toggle(ChangedUnpackingImport);
 			EditorGUILayout.EndHorizontal();
 
-			//EditorGUILayout.LabelField(DirectoryUtil.AssetResourceFolder);
-
 			if(ChangedUnpackingImport != importer.UnpackingImport && GUILayout.Button("Reimport to apply!"))
 			{
 				importer.UnpackingImport = ChangedUnpackingImport;
@@ -81,7 +79,7 @@ namespace STF.Tools
 
 				drawHLine();
 
-				if(GUILayout.Button("Refresh"))
+				if(GUILayout.Button("Reload"))
 				{
 					EditorUtility.SetDirty(importer);
 					importer.SaveAndReimport();

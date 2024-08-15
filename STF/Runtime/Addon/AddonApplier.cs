@@ -58,7 +58,7 @@ namespace STF.Addon
 				var addonNode = addonGo.GetComponent<ISTFNode>();
 				if(addonNode.Type == STFAppendageNode._TYPE)
 				{
-					var target = ret.transform.GetComponentsInChildren<ISTFNode>().FirstOrDefault(c => c.Id == (addonNode as STFAppendageNode).TargetId);
+					var target = ret.GetComponentsInChildren<ISTFNode>().FirstOrDefault(c => c.Id == (addonNode as STFAppendageNode).TargetId);
 					if(target != null)
 					{
 						var t = UnityEngine.Object.Instantiate(addonGo);
@@ -84,11 +84,11 @@ namespace STF.Addon
 					if(target != null)
 					{
 						// copy children
-						for(int addonChildIdx = 0; addonChildIdx < target.transform.childCount; addonChildIdx++)
+						for(int addonChildIdx = 0; addonChildIdx < addonGo.transform.childCount; addonChildIdx++)
 						{
-							var t = UnityEngine.Object.Instantiate(addonGo.GetChild(addonChildIdx));
-							t.SetParent(target.transform);
-							t.name = addonGo.GetChild(addonChildIdx).name;
+							var instance = UnityEngine.Object.Instantiate(addonGo.transform.GetChild(addonChildIdx).gameObject);
+							instance.transform.SetParent(target.transform);
+							instance.name = addonGo.transform.GetChild(addonChildIdx).name;
 						}
 						// copy acomponents
 						foreach(var component in addonGo.GetComponents<Component>())
