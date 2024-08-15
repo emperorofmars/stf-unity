@@ -4,6 +4,7 @@ using System;
 using UnityEngine;
 using STF.Types;
 using STF.ApplicationConversion;
+using STF.Util;
 
 namespace STF.Serialisation
 {

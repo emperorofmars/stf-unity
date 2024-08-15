@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using STF.Serialisation;
-using STF.Types;
-using STF_Util;
+using STF.Util;
 using UnityEngine;
 
 namespace STF.Types
 {
-	public class ResourceIdPair { public string Id; public UnityEngine.Object Resource;}
+	public class ResourceIdPair { public string Id; public Object Resource;}
 
 	public abstract class ISTFResourceComponent : ScriptableObject, ISTFType
 	{
@@ -20,7 +19,7 @@ namespace STF.Types
 		public bool Degraded => _Degraded;
 		bool _Degraded = false;
 		
-		public List<string> Targets = new List<string>();
+		public List<string> Targets = new();
 		[HideInInspector] public ResourceReference Resource = new();
 	}
 	

@@ -1,8 +1,7 @@
 #if UNITY_EDITOR
 
-using System;
 using System.IO;
-using System.Linq;
+using STF.Util;
 using UnityEditor;
 using UnityEngine;
 

@@ -14,7 +14,7 @@
     "defineConstraints": [],
     "versionDefines": [
         {
-            "name": "Unity",
+            "name": "Select...",
             "expression": "",
             "define": "STF_EDITOR"
         }

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace STF_Util
+namespace STF.Util
 {
 	public class IdAttribute : PropertyAttribute
 	{

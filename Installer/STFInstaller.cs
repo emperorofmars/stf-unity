@@ -12,7 +12,7 @@ namespace STF.Installer
 	static class STFInstaller
 	{
 		const string URL_BASE = "https://github.com/emperorofmars/stf-unity.git";
-		const string VERSION_TAG_LATEST = null;//"v0.2.0";
+		const string VERSION_TAG_LATEST = null;//"v0.3.0";
 		const string Path_STF = "/STF";
 		const string Path_MTF = "/MTF";
 		const string Path_AVA = "/AVA";
@@ -50,9 +50,15 @@ namespace STF.Installer
 		{
 			return new List<string>
 			{
+				#if !MTF
 				ConstructURL(URL_BASE, Path_MTF, Version),
+				#endif
+				#if !STF
 				ConstructURL(URL_BASE, Path_STF, Version),
+				#endif
+				#if !AVA
 				ConstructURL(URL_BASE, Path_AVA, Version),
+				#endif
 			};
 		}
 

@@ -2,8 +2,8 @@
 using System;
 using UnityEngine;
 using Newtonsoft.Json.Linq;
-using STF_Util;
 using STF.Serialisation;
+using STF.Util;
 
 namespace STF.Types
 {

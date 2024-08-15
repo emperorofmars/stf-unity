@@ -3,7 +3,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace STF_Util
+namespace STF.Util
 {
 	[CustomPropertyDrawer(typeof(IdAttribute))]
 	public class IdPropertyDrawer : PropertyDrawer

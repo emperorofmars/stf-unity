@@ -1,13 +1,11 @@
 
 using System;
 using UnityEngine;
-using STF_Util;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using Unity.Collections;
 using STF.Util;
 using STF.Serialisation;
-using System.Linq;
 
 namespace STF.Types
 {
