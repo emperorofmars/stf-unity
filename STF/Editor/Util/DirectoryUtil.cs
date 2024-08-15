@@ -5,6 +5,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using STF.Types;
 using UnityEditor;
+using UnityEngine;
 
 namespace STF.Tools
 {
@@ -53,26 +54,46 @@ namespace STF.Tools
 
 		public static string GetConvertLocation(ISTFAsset Asset, string TargetName)
 		{
-			return Path.Combine(Path.GetDirectoryName(PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(Asset)), ApplicationConversionFolderName, GetFolderName(TargetName));
+			string path;
+			if(PrefabUtility.IsPartOfAnyPrefab(Asset))
+			{
+				path = Path.GetDirectoryName(PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(Asset));
+				var dirname = ApplicationConversionFolderName;
+				if(Path.GetDirectoryName(path) != DefaultUnpackFolder)
+				{
+					dirname = Asset.name + "_" + ApplicationConversionFolderName;
+				}
+				path = Path.Combine(path, dirname);
+			}
+			else
+			{
+				path = GetUnpackLocation("__TMP_" + Asset.name);
+			}
+			return Path.Combine(path, TargetName);
 		}
 
 		public static string EnsureConvertLocation(ISTFAsset Asset, string TargetName)
 		{
 			string path;
-			if (PrefabUtility.IsPartOfAnyPrefab(Asset))
+			if(PrefabUtility.IsPartOfAnyPrefab(Asset))
 			{
 				path = Path.GetDirectoryName(PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(Asset));
-				if(!Directory.Exists(Path.Combine(path, ApplicationConversionFolderName)))
+				var dirname = ApplicationConversionFolderName;
+				if(!path.StartsWith("Assets" + Path.DirectorySeparatorChar + DefaultUnpackFolder + Path.DirectorySeparatorChar))
 				{
-					AssetDatabase.CreateFolder(path, ApplicationConversionFolderName);
+					dirname = Asset.name + "_" + ApplicationConversionFolderName;
+				}
+				if(!Directory.Exists(Path.Combine(path, dirname)))
+				{
+					AssetDatabase.CreateFolder(path, dirname);
 					AssetDatabase.Refresh();
 				}
-				path = Path.Combine(path, ApplicationConversionFolderName);
+				path = Path.Combine(path, dirname);
 			}
 			else
 			{
-				EnsureUnpackLocation("__TMP");
-				path = GetUnpackLocation("__TMP");
+				EnsureUnpackLocation("__TMP_" + Asset.name);
+				path = GetUnpackLocation("__TMP_" + Asset.name);
 			}
 			if(!Directory.Exists(Path.Combine(path, TargetName)))
 			{
