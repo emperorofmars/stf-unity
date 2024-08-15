@@ -19,7 +19,7 @@ namespace AVA.Types
 		public string display_name;
 		public string tooltip;
 		public Texture2D icon;
-		public List<ResourceReference<STFAnimation>> options = new();
+		//public List<ResourceReference<STFAnimation>> options = new();
 	}
 	/*public class CharacterEditorSliderEntry : ACharacterEditorEntry
 	{

@@ -29,12 +29,6 @@ namespace AVA.ApplicationConversion
 		
 		void OnGUI()
 		{
-			#if STF_EDITOR
-			Debug.Log("STF_EDITOR");
-			#else
-			Debug.Log("FAIL");
-			#endif
-
 			GUILayout.Label("Convert To VRChat SDK3 Avatar", EditorStyles.whiteLargeLabel);
 			drawHLine();
 			scrollPos = GUILayout.BeginScrollView(scrollPos, GUIStyle.none);
