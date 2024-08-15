@@ -6,11 +6,11 @@ using UnityEngine;
 namespace STF.Util
 {
 	[InitializeOnLoad, ExecuteInEditMode]
-	public class RegisterSTFDefine
+	public class RegisterAVADefine
 	{
-		const string DefineString = "STF";
+		const string DefineString = "AVA";
 
-		static RegisterSTFDefine()
+		static RegisterAVADefine()
 		{
 			ScriptDefinesManager.AddDefinesIfMissing(BuildTargetGroup.Standalone, DefineString);
 		}
