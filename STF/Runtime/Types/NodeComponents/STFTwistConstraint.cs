@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using STF.ApplicationConversion;
 using STF.Serialisation;
@@ -32,7 +33,7 @@ namespace STF.Types
 			};
 			var rf = new RefSerializer(ret);
 
-			ret.Add("source", rf.NodeRef(c.Source.Id));
+			if(c.Source.IsId) ret.Add("source", rf.NodeRef(c.Source.Id));
 
 			SerializeRelationships(c, ret);
 			return (c.Id, ret);
@@ -54,7 +55,9 @@ namespace STF.Types
 
 			c.Id = Id;
 			c.Weight = (float)Json["weight"];
-			c.Source = Json.ContainsKey("source") ? State.GetNodeReference(rf.NodeRef(Json["source"])) : new NodeReference(Utils.GetNodeComponent(Go.transform.parent?.parent?.gameObject));
+			State.AddTask(new Task(() => {
+				if(Json.ContainsKey("source")) c.Source = State.GetNodeReference(rf.NodeRef(Json["source"]));
+			}));
 
 			State.AddNodeComponent(c);
 		}

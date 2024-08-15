@@ -26,7 +26,7 @@ namespace AVA.Types.Editors
 				GUILayout.Space(10f);
 			}
 
-			if(c.MainMeshInstance == null)
+			if(!c.MainMeshInstance.IsRef)
 			{
 				if(GUILayout.Button("Try Auto-Setup", GUILayout.ExpandWidth(false))) c.TrySetup();
 				GUILayout.Space(20f);

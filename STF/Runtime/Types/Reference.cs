@@ -23,7 +23,6 @@ namespace STF.Types
 		public T GetRef<T>() where T : UnityEngine.Object => (T)Ref;
 		public bool IsId {get => !string.IsNullOrWhiteSpace(Id); }
 		public bool IsRef {get => Ref != null; }
-		public bool IsValid() => !string.IsNullOrWhiteSpace(Id) && Ref != null;
 
 		public NodeReference() {}
 		public NodeReference(string NodeId) {Node = null; this.NodeId = NodeId;}

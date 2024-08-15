@@ -62,9 +62,9 @@ namespace STF.Types
 			else ret.Add("buffer", rf.BufferRef(State.AddBuffer(arrayBuffer)));
 
 			// serialize resource components
-			ret.Add("components", ExportUtil.SerializeResourceComponents(State, meta));
+			if(meta != null) ret.Add("components", ExportUtil.SerializeResourceComponents(State, meta));
 
-			if(meta.Fallback.IsRef) ret.Add("fallback", rf.ResourceRef(ExportUtil.SerializeResource(State, meta.Fallback.Ref)));
+			if(meta != null && meta.Fallback.IsRef) ret.Add("fallback", rf.ResourceRef(ExportUtil.SerializeResource(State, meta.Fallback.Ref)));
 
 			return State.AddResource(Resource, ret, meta ? meta.Id : Guid.NewGuid().ToString());
 		}
