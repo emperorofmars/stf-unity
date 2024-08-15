@@ -87,23 +87,12 @@ namespace STF.Types
 			var mat = (Material)Resource;
 			// Convert to MTF.Material
 			var mtfExportState = new MTFMaterialParseState();
-			if(MTF.ShaderConverterRegistry.MaterialParsers.ContainsKey(mat.shader.name))
-			{
-				var mtfMaterial = MTF.ShaderConverterRegistry.MaterialParsers[mat.shader.name].ParseFromUnityMaterial(mtfExportState, mat);
-				mtfMaterial.MaterialName = Resource.name;
-				var stfmtfMaterial = ScriptableObject.CreateInstance<MTFMaterial>();
-				stfmtfMaterial.Resource = mtfMaterial;
-				return ExportUtil.SerializeResource(State, stfmtfMaterial);
-			}
-			else
-			{
-				Debug.LogWarning("Material Converter Not registered for shader: " + mat.shader.name + ", falling back.");
-				var mtfMaterial = MTF.ShaderConverterRegistry.MaterialParsers[MTF.StandardConverter._SHADER_NAME].ParseFromUnityMaterial(mtfExportState, mat);
-				mtfMaterial.MaterialName = Resource.name;
-				var stfmtfMaterial = ScriptableObject.CreateInstance<MTFMaterial>();
-				stfmtfMaterial.Resource = mtfMaterial;
-				return ExportUtil.SerializeResource(State, stfmtfMaterial);
-			}
+
+			var mtfMaterial = MTF.ShaderConverterRegistry.GetMaterialParser(mat.shader.name).ParseFromUnityMaterial(mtfExportState, mat);
+			mtfMaterial.MaterialName = Resource.name;
+			var stfmtfMaterial = ScriptableObject.CreateInstance<MTFMaterial>();
+			stfmtfMaterial.Resource = mtfMaterial;
+			return ExportUtil.SerializeResource(State, stfmtfMaterial);
 		}
 	}
 

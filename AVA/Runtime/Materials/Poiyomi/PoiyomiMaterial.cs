@@ -1,13 +1,9 @@
 
 #if UNITY_EDITOR
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Win32;
 using UnityEngine;
 using UnityEditor;
-using System.IO;
 
 namespace MTF.Addons
 {
@@ -103,8 +99,11 @@ namespace MTF.Addons
 	{
 		static Register_PoiyomiMaterial()
 		{
-			ShaderConverterRegistry.RegisterMaterialConverter(PoiyomiConverter._SHADER_NAME, new PoiyomiConverter());
-			ShaderConverterRegistry.RegisterMaterialParser(PoiyomiConverter._SHADER_NAME, new PoiyomiParser());
+			if(Shader.Find(PoiyomiConverter._SHADER_NAME))
+			{
+				ShaderConverterRegistry.RegisterMaterialConverter(PoiyomiConverter._SHADER_NAME, new PoiyomiConverter());
+				ShaderConverterRegistry.RegisterMaterialParser(PoiyomiConverter._SHADER_NAME, new PoiyomiParser());
+			}
 		}
 	}
 }

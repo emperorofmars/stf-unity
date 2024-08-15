@@ -85,5 +85,14 @@ namespace MTF
 
 		public static void RegisterMaterialConverter(string Type, IMaterialConverter Converter) { RegisteredMaterialConverters.Add(Type, Converter); }
 		public static void RegisterMaterialParser(string Type, IMaterialParser Exporter) { RegisteredMaterialParsers.Add(Type, Exporter); }
+
+		public static IMaterialConverter GetMaterialConverter(string Type)
+		{
+			return MaterialConverters.ContainsKey(Type) ? MaterialConverters[Type] : MaterialConverters[StandardConverter._SHADER_NAME];
+		}
+		public static IMaterialParser GetMaterialParser(string Type)
+		{
+			return MaterialParsers.ContainsKey(Type) ? MaterialParsers[Type] : MaterialParsers[StandardConverter._SHADER_NAME];
+		}
 	}
 }
