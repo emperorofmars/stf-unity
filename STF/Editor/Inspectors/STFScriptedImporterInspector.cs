@@ -16,17 +16,6 @@ namespace STF.Tools
 	[CustomEditor(typeof(STFScriptedImporter))]
 	public class STFScriptedImporterInspector : Editor
 	{
-		//string[] ConversionOptions;
-		//int ConverterSelection = 0;
-
-		/*public void OnEnable()
-		{
-			var importer = (STFScriptedImporter)target;
-			Converters = STFRegistry.ApplicationConverters.ToArray();
-			ConversionOptions = Converters.Select(c => c.TargetName).ToArray();
-			importer.ConverterSelection = importer.ConverterSelection < ConversionOptions.Length ? importer.ConverterSelection : 0;
-		}*/
-
 		public override void OnInspectorGUI()
 		{
 			var importer = (STFScriptedImporter)target;
@@ -38,22 +27,6 @@ namespace STF.Tools
 			EditorGUILayout.PrefixLabel("Unpack into Assets");
 			importer.UnpackingImport = EditorGUILayout.Toggle(importer.UnpackingImport);
 			EditorGUILayout.EndHorizontal();
-
-			/*if(!importer.UnpackingImport)
-			{
-				EditorGUILayout.BeginHorizontal();
-				EditorGUILayout.PrefixLabel("Convert into application target");
-				importer.ConvertImmediately = EditorGUILayout.Toggle(importer.ConvertImmediately);
-				EditorGUILayout.EndHorizontal();
-				if(importer.ConvertImmediately)
-				{
-					EditorGUILayout.BeginHorizontal();
-					EditorGUILayout.PrefixLabel("Select target");
-					ConverterSelection = EditorGUILayout.Popup(ConverterSelection, ConversionOptions);
-					EditorGUILayout.EndHorizontal();
-				}
-			}*/
-
 
 			if(EditorGUI.EndChangeCheck())
 			{
