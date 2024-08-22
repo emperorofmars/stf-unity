@@ -1,12 +1,6 @@
 
-#if UNITY_EDITOR
-
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using Microsoft.Win32;
-using UnityEditor;
 using UnityEngine;
 
 namespace MTF
@@ -84,5 +78,3 @@ namespace MTF
 		}
 	}
 }
-
-#endif
