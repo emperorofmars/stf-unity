@@ -76,7 +76,7 @@ Alone, I can't bring a project like this to completion, as I can work on this on
 
 I am available for questions and discussions.
 
-My next step is likely going to be a cleanup of the functionality, and then an implementation for the Godot 4 engine. Once Blender's project 'Baklava' is released (Support for full animation**s**) I may implement STF also in Blender.
+My next step is likely going to be a cleanup of the functionality, and then an implementation for the Godot 4 engine. Once Blender's project [Baklava](https://developer.blender.org/docs/features/animation/animation_system/baklava/) is released (Support for full animation**s**) I may implement STF also in Blender.
 
 ---
 

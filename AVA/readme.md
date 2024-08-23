@@ -22,10 +22,10 @@ For example, bone physics:
 * VRChat has physics bones.
 * ChilloutVR has dynamic bones or magicka cloth.
 
-There is no possibility to create a superset setup for bone physics. The next best way would be to have a small fallback setup, which can be reasonably converted into any of these, at the cost of not supporting all features and potentially different resulting physics behaviour.
+There is no possibility to create a superset setup for bone physics. The next best way would be to have a small fallback setup, which can be reasonably converted into any of these, at the cost of not supporting all features and potentially different resulting physics behavior.
 
 On top of that, these application specific bone physics setups can also be included and override the generic component
 
-If a generic fallback and a physics bone component targeting the same bone is present, and the avatar is being converted into a VRChat avatar, then the physics bone component will be choosen and the generic fallback will be ignored.
+If a generic fallback and a physics bone component targeting the same bone is present, and the avatar is being converted into a VRChat avatar, then the physics bone component will be chosen, and the generic fallback will be ignored.
 
 With this approach, it is possible to support all the common functionality of avatars without redundancy, while also supporting application specific and mutually exclusive features.

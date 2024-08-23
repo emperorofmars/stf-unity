@@ -1,5 +1,5 @@
 # MTF - Material Transfer Format [v0.3]
-**An Shader & Gameengine Agnostic Material System**
+**An Shader & Game Engine Agnostic Material System**
 
 Implementation for Unity 2022.3 or higher.
 
