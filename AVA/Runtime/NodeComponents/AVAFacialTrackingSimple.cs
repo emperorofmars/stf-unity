@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 using System.Threading.Tasks;
+
+#if STF
 using STF.Serialisation;
 using STF.Util;
 using STF.Types;
-
+#endif
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -77,6 +79,7 @@ namespace AVA.Types
 		}
 	}
 
+#if STF
 	public class AVAFacialTrackingSimpleExporter : ASTFNodeComponentExporter
 	{
 		public override string ConvertPropertyPath(STFExportState State, Component Component, string UnityProperty)
@@ -141,5 +144,6 @@ namespace AVA.Types
 			STFRegistry.RegisterNodeComponentExporter(typeof(AVAFacialTrackingSimple), new AVAFacialTrackingSimpleExporter());
 		}
 	}
+#endif
 #endif
 }

@@ -1,67 +1,59 @@
-# STF - Scene Transfer Format [v0.3]
-**Extensible Interchange Format for 3d Assets**
+# Monorepo for Unity Implementations of STF and Related Projects
 
-Implementation for Unity 2022.3 or higher.
+For Unity 2022.3 or higher.
 
 # **! This is a WIP and not ready for productive use !**
+
+## [STF - Scene Transfer Format](./STF/readme.md)
+STF is an extensible interchange & authoring format for 3d assets.\
+It is a binary format consisting of a definition in JSON and a bunch of binary buffers.
+
+## [MTF - Material Transfer Format](./MTF/readme.md)
+MTF is a shader & game engine agnostic material system used by STF.
+
+## [NNA - Node Name Abuse](./NNA/readme.md)
+Since establishing a new file format as a single developer with a limited amount of free time is rather unlikely, this provides a way to make `.fbx` files extensible, by serializing JSON into node names.\
+This project is an abomination, but it should be achievable in reasonable time.
+
+## [AVA - Components For VR & V-Tubing Avatars](./AVA/readme.md)
+AVA is a proof-of-concept set of extensions for STF and NNA, which support VR & V-tubing avatar components.
+
+# How to Use
+* Create a Unity 2022.3 or higher Project.
+* Ensure you have the Newtonsoft JSON package imported in Unity. If you set up your Unity project with the VRC Creator Companion, it will be already imported. If not, install the official package in UPM.
+* Import the all-in-one `.unitypackage` from the latest release.
+* Play around!
+
 [Find an example model here!](https://emperorofmars.itch.io/stf-avatar-showcase)
 
-[Watch the video presentation!](https://www.youtube.com/watch?v=cgY-faQrv78)
+![Screenshot of an STF file's inspector in Unity.](./STF/Docs/Images/import_settings.png)
+![Screenshot of an STF model with its authoring components shown in the Unity inspector.](./STF/Docs/Images/scene.png)
 
-## Introduction
+# Why
 I am in need of an open & extensible interchange format for 3d assets.
 
 Unfortunately, such a format does not exist.
 
 `fbx` is the next best thing, being the most widely supported and able to store the most of my models.
-However, it is proprietary, undocumented and not extensible. Some open source implementations are unfortunately faulty. Blender for example won't export animation curves, baking animations instead and making them useless for further editing. The paid [Better Fbx Importer & Exporter](https://blendermarket.com/products/better-fbx-importer--exporter) addon for Blender does the job.
+However, it is proprietary, undocumented and not extensible. Some open source implementations are unfortunately faulty. Blender for example won't export animation curves, baking animations instead and making them useless for further editing. The paid [Better FBX Importer & Exporter](https://blendermarket.com/products/better-fbx-importer--exporter) addon for Blender does the job.
 
-`glTF 2.0` was originally designed as a distribution format, intended to be easily loaded into GPU memory. Some projects are trying to use it as an authoring/interchange format. Apparently this is a matter of a somewhat active debate. After trying to work with glTF 2.0 in this manner and analyzing its spec I don't think it can work for interchange/authoring. [Read in detail why here!](./Docs/gltf_doesnt_work_as_an_interchange_format.md)
+`glTF 2.0` was originally designed as a distribution format, intended to be easily loaded into GPU memory. Some projects are trying to use it as an authoring/interchange format. Apparently this is a matter of a somewhat active debate. After trying to work with glTF 2.0 in this manner and analyzing its spec I don't think it can work for interchange/authoring. [Read in detail why here!](./STF/Docs/gltf_doesnt_work_as_an_interchange_format.md)
 
 **My core requirements for an open & extensible 3d interchange format are:**
-* Extensions must be hot loadable and trivial to implement, enabling rapid prototyping of extensions.
-* Between import and export, the file can not change (except for some metadata perhaps). If an extension is not supported, it and all of its dependencies must be preserved and reexported, unless manually removed by the author.
+* Extensions must be hot loadable and trivial to implement, enabling the rapid prototyping of extensions.
+* Between import and export, the file can not change (except for some metadata perhaps). If an extension is not supported, it and all of its dependencies must be preserved and re-exported, unless manually removed by the author.
 * Everything must be addressed by a unique ID. This makes third party addons for a base model more robust for example.
 * Materials must be arbitrary and shader agnostic.
 
-## STF Format
-STF is a binary format based on the concept of glTF 2.0, consisting of a definition in JSON and a bunch of binary buffers.
+STF is supposed to become the ideal 3d interchange & authoring format.
 
-The JSON definition consists of 4 `UUID → object` dictionaries in the root object. All objects must contain a `type` property.
-- `asset` Information about the file. Has to define one or more root-nodes, depending on the `type`. The default asset-type has a single root node.
-- `nodes` An object of UUID → node pairs.
-	- `components` A node's components describe additional information and behavior. For example mesh-instances or rotation constraints.
-- `resources` An object of UUID → resource pairs.
-	- `components` A resource's components describe additional information and behavior. For example humanoid-mappings for armatures or LOD's for meshes.
-- `buffers` A list of buffer UUID's in the order of the binary chunks. The index of the buffer UUID corresponds to the index of the buffer in the STF file + 1. (The JSON definition is at the first index)
+NNA is an abomination that makes `fbx` extensible and should become quickly practicable.
 
-By default, only the basic types a 3d format has to support are included. These include for example meshes, armatures, images/textures, and a shader agnostic material.
-Support for additional types can be easily hot-loaded.
-
-### [Read up on how the STF Format works in more detail here.](./Docs/stf_format.md)
-
-## How to Use
-- Ensure you have the Newtonsoft JSON package imported in Unity. If you set up your Unity project with the VRC Creator Companion, it will be already imported. If not, install the official package in UPM.
-- Either:
-	- Download the latest release from this repository and import the `.unitypackage` into Unity.
-	- Or clone this repository into the 'Assets' folder of your Unity project.
-- Import a `.fbx` model, put it into the scene and export it as STF by going to `STF Tools` → `Export`.
-- If you exported it into the Assets hierarchy, just press `CTRL+R` for Unity to refresh its asset database and see it appear.
-- Play around!
-
-![Screenshot of an STF model with its authoring components shown in the Unity inspector.](./Docs/Images/scene.png)
-![Screenshot of an STF file's inspector in Unity.](./Docs/Images/import_settings.png)
-
-# This Repository
-Apart from the core STF format implementation, this repository contains a subproject called MTF, which adds support for arbitrary and shader-agnostic materials. It's independent of STF and could be further expanded into its own project.
-
-Support for VR-Avatars is contained in the AVA directory. It's a proof-of-concept set of application-agnostic avatar components and converters for VRChat and VRM.
-
-A good place to start exploring the codebase is [./STF/Runtime/STFRegistry.cs](./STF/Runtime/STFRegistry.cs), where types get registered, or [./STF/Runtime/Serialisation/ImportExport/STFFile.cs](./STF/Runtime/Serialisation/ImportExport/STFFile.cs) which handles the parsing and serialisation of binary STF files.
+---
 
 **You are very welcome to open discussions & issues with your ideas, suggestions and questions about the format and its possibilities. Pull requests are very welcome!**
 
-# Original Motivation
+# My Motivation
 I make avatars for VR. The by far most popular and relevant social VR application is VRChat. VR avatars can also be used for V-Tubing, rendering/filmmaking and various other applications.
 
 The single relevant format for VR & V-Tubing avatars is a `.unitypackage` that contains a scene with a setup for a specific application, usually VRChat only, somewhere in its hierarchy.
@@ -84,7 +76,7 @@ Alone, I can't bring a project like this to completion, as I can work on this on
 
 I am available for questions and discussions.
 
-My next step is likely going to be a cleanup of the functionality, and then an implementation for the Godot 4 engine. Once Blender's project 'Baklava' is released (Support for full animations) I may implement STF also in Blender.
+My next step is likely going to be a cleanup of the functionality, and then an implementation for the Godot 4 engine. Once Blender's project 'Baklava' is released (Support for full animation**s**) I may implement STF also in Blender.
 
 ---
 

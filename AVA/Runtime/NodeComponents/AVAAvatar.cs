@@ -2,10 +2,13 @@ using System;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 using System.Threading.Tasks;
+using System.Linq;
+
+#if STF
 using STF.Serialisation;
 using STF.Util;
-using System.Linq;
 using STF.Types;
+#endif
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -37,12 +40,6 @@ namespace AVA.Types
 
 		public STFHumanoidArmature TryGetHumanoidDefinition()
 		{
-			/*Debug.Log(MainMeshInstance.GetRef());
-			Debug.Log(MainMeshInstance.GetRef()?.ArmatureInstance.GetRef());
-			Debug.Log(MainMeshInstance.GetRef()?.ArmatureInstance.GetRef()?.Armature);
-			Debug.Log(MainMeshInstance.GetRef()?.ArmatureInstance.GetRef()?.Armature.Resource);*/
-			//Debug.Log(MainMeshInstance.GetRef()?.ArmatureInstance.GetRef()?.Armature.GetRef<STFArmature>().Components.Count);
-			//Debug.Log(MainMeshInstance.GetRef()?.ArmatureInstance.GetRef()?.Armature.Resource?.Components.FirstOrDefault(comp => comp.Type == STFHumanoidArmature._TYPE));
 			return (STFHumanoidArmature)MainMeshInstance.GetRef()?.ArmatureInstance.GetRef()?.Armature.GetRef<STFArmature>().Components.FirstOrDefault(comp => comp.Type == STFHumanoidArmature._TYPE);
 		}
 
@@ -73,6 +70,7 @@ namespace AVA.Types
 		}
 	}
 
+#if STF
 	public class AVAAvatarExporter : ASTFNodeComponentExporter
 	{
 		public override string ConvertPropertyPath(STFExportState State, Component Component, string UnityProperty)
@@ -129,6 +127,7 @@ namespace AVA.Types
 			STFRegistry.RegisterNodeComponentExporter(typeof(AVAAvatar), new AVAAvatarExporter());
 		}
 	}
+#endif
 #endif
 
 }

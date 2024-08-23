@@ -1,10 +1,13 @@
 using System;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
-using STF.Serialisation;
 using System.Linq;
+
+#if STF
 using STF.Util;
 using STF.Types;
+using STF.Serialisation;
+#endif
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -31,6 +34,7 @@ namespace AVA.Types
 		public float immobile;
 	}
 
+#if STF
 	public class AVAVRCPhysbonesImporter : ASTFNodeComponentImporter
 	{
 		public override string ConvertPropertyPath(STFImportState State, Component Component, string STFProperty)
@@ -103,5 +107,6 @@ namespace AVA.Types
 			STFRegistry.RegisterNodeComponentExporter(typeof(AVAVRCPhysbones), new AVAVRCPhysbonesExporter());
 		}
 	}
+#endif
 #endif
 }

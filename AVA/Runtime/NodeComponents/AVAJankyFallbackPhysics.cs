@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
-using STF.Serialisation;
 using System.Linq;
+
+#if STF
 using STF.Util;
 using STF.Types;
-
+using STF.Serialisation;
+#endif
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -27,6 +29,7 @@ namespace AVA.Types
 		public float stiffness = 0.2f;
 	}
 
+#if STF
 	public class AVAJankyFallbackPhysicsImporter : ASTFNodeComponentImporter
 	{
 		public override string ConvertPropertyPath(STFImportState State, Component Component, string STFProperty)
@@ -87,5 +90,6 @@ namespace AVA.Types
 			STFRegistry.RegisterNodeComponentExporter(typeof(AVAJankyFallbackPhysics), new AVAJankyFallbackPhysicsExporter());
 		}
 	}
+#endif
 #endif
 }

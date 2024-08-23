@@ -1,8 +1,10 @@
 using Newtonsoft.Json.Linq;
 using UnityEngine;
+
+#if STF
 using STF.Serialisation;
 using STF.Types;
-
+#endif
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -21,6 +23,7 @@ namespace AVA.Types
 		public float outer = 18;
 	}
 
+#if STF
 	public class AVAEyeBoneLimitsSimpleExporter : ASTFNodeComponentExporter
 	{
 		public override string ConvertPropertyPath(STFExportState State, Component Component, string UnityProperty)
@@ -74,5 +77,6 @@ namespace AVA.Types
 			STFRegistry.RegisterNodeComponentExporter(typeof(AVAEyeBoneLimitsSimple), new AVAEyeBoneLimitsSimpleExporter());
 		}
 	}
+#endif
 #endif
 }
