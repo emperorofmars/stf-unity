@@ -16,7 +16,7 @@ Since establishing a new file format as a single developer with a limited amount
 This project is an abomination, but it should be achievable in reasonable time.
 
 ## [AVA - Components For VR & V-Tubing Avatars](./AVA/readme.md)
-AVA is a proof-of-concept set of extensions for STF and NNA, which support VR & V-tubing avatar components.
+AVA is a proof-of-concept set of extensions for STF and (soon also) NNA, which support VR & V-tubing avatar components.
 
 # How to Use
 * Create a Unity 2022.3 or higher Project.
