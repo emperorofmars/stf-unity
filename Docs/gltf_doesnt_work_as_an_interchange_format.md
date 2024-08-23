@@ -1,5 +1,5 @@
 
-# GLTF 2.0 Fails As An Interchange Format
+# GLTF 2.0 Doesn't Work As An Interchange Format
 
 Originally, glTF's tagline was 'The JPEG of 3d'. For a format to work for 3d interchange/authoring, something which qualifies more as an 'open PSD of 3d' would be needed.
 
