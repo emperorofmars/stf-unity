@@ -11,6 +11,8 @@ It is a binary format consisting of a definition in JSON and a bunch of binary b
 ## [MTF - Material Transfer Format](./MTF/readme.md)
 MTF is a shader & game engine agnostic material system used by STF.
 
+[Video Showcase (1 Minute)](https://youtu.be/VJUYrmEb-WQ?si=HTr7UoJRZlGc0YfE)
+
 ## [NNA - Node Name Abuse](./NNA/readme.md)
 Since establishing a new file format as a single developer with a limited amount of free time is rather unlikely, this provides a way to make `.fbx` files extensible, by serializing JSON into node names.\
 This project is an abomination, but it should be achievable in reasonable time.

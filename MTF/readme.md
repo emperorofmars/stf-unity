@@ -5,6 +5,8 @@ Implementation for Unity 2022.3 or higher.
 
 # **! This is a WIP and not ready for productive use !**
 
+[Watch the video showcase (~1 minute)](https://youtu.be/VJUYrmEb-WQ?si=HTr7UoJRZlGc0YfE)
+
 ## Example MTF Material
 ![Example MTF material](./Docs/Images/MTF_Setup.png)
 
