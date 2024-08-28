@@ -1,5 +1,5 @@
 # AVA [v0.3]
-**An Application & Game Engine Agnostic VR & V-Tubing Avatar Extension-Set For STF & (soon also) NNA**
+**An Application & Game Engine Agnostic VR & V-Tubing Avatar Extension-Set For STF**
 
 Implementation for Unity 2022.3 or higher.
 

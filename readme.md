@@ -13,12 +13,8 @@ MTF is a shader & game engine agnostic material system used by STF.
 
 [Video Showcase (1 Minute)](https://youtu.be/VJUYrmEb-WQ?si=HTr7UoJRZlGc0YfE)
 
-## [NNA - Node Name Abuse](./NNA/readme.md)
-Since establishing a new file format as a single developer with a limited amount of free time is rather unlikely, this provides a way to make `.fbx` files extensible, by serializing JSON into node names.\
-This project is an abomination, but it should be achievable in reasonable time.
-
 ## [AVA - Components For VR & V-Tubing Avatars](./AVA/readme.md)
-AVA is a proof-of-concept set of extensions for STF and (soon also) NNA, which support VR & V-tubing avatar components.
+AVA is a proof-of-concept set of extensions for STF, which support VR & V-tubing avatar components.
 
 # How to Use
 * Create a Unity 2022.3 or higher Project.
@@ -48,8 +44,6 @@ However, it is proprietary, undocumented and not extensible. Some open source im
 * Materials must be arbitrary and shader agnostic.
 
 STF is supposed to become the ideal 3d interchange & authoring format.
-
-NNA is an abomination that makes `fbx` extensible and should become quickly practicable.
 
 ---
 
