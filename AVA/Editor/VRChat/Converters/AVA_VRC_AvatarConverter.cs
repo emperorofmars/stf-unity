@@ -4,6 +4,7 @@
 
 using AVA.Types;
 using STF.ApplicationConversion;
+using STF.Types;
 using UnityEngine;
 using VRC.SDK3.Avatars.Components;
 
@@ -34,7 +35,12 @@ namespace AVA.ApplicationConversion
 				animator.applyRootMotion = true;
 				animator.updateMode = AnimatorUpdateMode.Normal;
 				animator.cullingMode = AnimatorCullingMode.CullUpdateTransforms;
-				animator.avatar = avaAvatar.TryGetHumanoidDefinition()?.GeneratedAvatar;
+				var humanoid = avaAvatar.TryGetHumanoidDefinition();
+				if(humanoid)
+				{
+					animator.avatar = STFHumanoidArmature.GenerateAvatar(humanoid, avaAvatar.TryGetHumanoidArmature().gameObject, State.Root);
+					// TODO: save resource on disk
+				}
 				
 				State.RelMat.AddConverted(Component, animator);
 			}

@@ -43,6 +43,11 @@ namespace AVA.Types
 			return (STFHumanoidArmature)MainMeshInstance.GetRef()?.ArmatureInstance.GetRef()?.Armature.GetRef<STFArmature>().Components.FirstOrDefault(comp => comp.Type == STFHumanoidArmature._TYPE);
 		}
 
+		public STFArmatureInstanceNode TryGetHumanoidArmature()
+		{
+			return MainMeshInstance.GetRef()?.ArmatureInstance.GetRef();
+		}
+
 		public GameObject FindBoneInstance(STFHumanoidArmature HumanoidDefinition, string HumanoidBoneName)
 		{
 			var humanoidBone = HumanoidDefinition.Mappings.Find(m => m.humanoidName == HumanoidBoneName)?.bone;

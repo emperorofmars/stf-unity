@@ -203,7 +203,7 @@ namespace STF.Types
 			this.Mappings = tmpMappings.Select(m => new BoneMappingPair(m.Key, m.Value)).ToList();
 		}
 
-		public static Avatar GenerateAvatar(STFHumanoidArmature stfComponent, STFArmatureNodeInfo Armature)
+		public static Avatar GenerateAvatar(STFHumanoidArmature stfComponent, GameObject Armature, GameObject Root)
 		{
 			try
 			{
@@ -222,7 +222,7 @@ namespace STF.Types
 					lowerLegTwist = 0.5f,
 					upperArmTwist = 0.5f,
 					upperLegTwist = 0.5f,
-					skeleton = Armature.GetComponentsInChildren<Transform>().Select(t => {
+					skeleton = Root.GetComponentsInChildren<Transform>().Select(t => {
 						return new SkeletonBone()
 						{
 							name = t.name,
@@ -301,14 +301,14 @@ namespace STF.Types
 
 			foreach(var entry in (JObject)Json["mappings"])
 			{
-				ret.Mappings.Add(new STFHumanoidArmature.BoneMappingPair(entry.Key, ((ISTFNode)armature.Root.GetComponentsInChildren<ISTFNode>()?.FirstOrDefault(c => c.Id == (string)entry.Value))?.gameObject));
+				ret.Mappings.Add(new STFHumanoidArmature.BoneMappingPair(entry.Key, (armature.Root.GetComponentsInChildren<ISTFNode>()?.FirstOrDefault(c => c.Id == (string)entry.Value))?.gameObject));
 			}
-			var avatar = STFHumanoidArmature.GenerateAvatar(ret, armature);
+			/*var avatar = STFHumanoidArmature.GenerateAvatar(ret, armature);
 			if(avatar != null)
 			{
 				State.UnityContext.SaveGeneratedResource(avatar, "asset");
 				ret.GeneratedAvatar = avatar;
-			}
+			}*/
 			State.AddResourceComponent(ret, Resource);
 		}
 	}

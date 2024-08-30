@@ -1,4 +1,4 @@
-
+/*
 #if UNITY_EDITOR
 
 using System.Collections.Generic;
@@ -56,9 +56,9 @@ namespace STF.Installer
 				#if !STF
 				ConstructURL(URL_BASE, Path_STF, Version),
 				#endif
-				/*#if !AVA
-				ConstructURL(URL_BASE, Path_AVA, Version),
-				#endif*/
+				//#if !AVA
+				//ConstructURL(URL_BASE, Path_AVA, Version),
+				//#endif
 			};
 		}
 
@@ -88,3 +88,4 @@ namespace STF.Installer
 }
 
 #endif
+*/

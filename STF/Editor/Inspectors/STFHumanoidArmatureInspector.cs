@@ -81,7 +81,7 @@ namespace STF.Types
 					c.Map(armature.Bones.Select(b => b.transform).ToArray());
 				}
 
-				if(c.Mappings != null && c.Mappings.Count > 0)
+				/*if(c.Mappings != null && c.Mappings.Count > 0)
 				{
 					GUILayout.Space(10f);
 					if(GUILayout.Button("Create Unity Avatar", GUILayout.ExpandWidth(false))) {
@@ -93,7 +93,7 @@ namespace STF.Types
 						AssetDatabase.CreateAsset(avatar, path);
 						c.GeneratedAvatar = avatar;
 					}
-				}
+				}*/
 				
 				GUILayout.Space(10f);
 
