@@ -242,7 +242,7 @@ namespace STF.Types
 					}).ToArray()
 				};
 
-				var avatar = AvatarBuilder.BuildHumanAvatar(Armature.gameObject, humanDescription);
+				var avatar = AvatarBuilder.BuildHumanAvatar(Root, humanDescription);
 				avatar.name = Armature.name + "Avatar";
 
 				if (!avatar.isValid)

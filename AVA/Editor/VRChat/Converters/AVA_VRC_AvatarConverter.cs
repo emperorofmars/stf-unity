@@ -39,7 +39,7 @@ namespace AVA.ApplicationConversion
 				if(humanoid)
 				{
 					animator.avatar = STFHumanoidArmature.GenerateAvatar(humanoid, avaAvatar.TryGetHumanoidArmature().gameObject, State.Root);
-					// TODO: save resource on disk
+					State.SaveGeneratedResource(animator.avatar, "Asset");
 				}
 				
 				State.RelMat.AddConverted(Component, animator);
