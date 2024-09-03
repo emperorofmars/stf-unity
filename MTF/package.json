@@ -1,6 +1,6 @@
 {
   "name": "com.squirrelbite.mtf-unity",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "displayName": "MTF Unity",
   "description": "Shader & Engine Agnostic Material Format",
   "unity": "2022.3",

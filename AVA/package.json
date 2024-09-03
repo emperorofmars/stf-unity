@@ -1,6 +1,6 @@
 {
   "name": "com.squirrelbite.ava-unity",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "displayName": "AVA Unity",
   "description": "Extensions for STF & NNA to support VR avatars.",
   "unity": "2022.3",

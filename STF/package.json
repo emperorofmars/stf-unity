@@ -1,6 +1,6 @@
 {
   "name": "com.squirrelbite.stf-unity",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "displayName": "STF Unity",
   "description": "Import and export support for STF files.",
   "unity": "2022.3",
