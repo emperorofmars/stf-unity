@@ -22,7 +22,13 @@ namespace AVA.ApplicationConversion
 				animator.applyRootMotion = true;
 				animator.updateMode = AnimatorUpdateMode.Normal;
 				animator.cullingMode = AnimatorCullingMode.CullUpdateTransforms;
-				animator.avatar = avaAvatar.TryGetHumanoidDefinition()?.GeneratedAvatar;
+
+				var humanoid = avaAvatar.TryGetHumanoidDefinition();
+				if(humanoid)
+				{
+					animator.avatar = STFHumanoidArmature.GenerateAvatar(humanoid, avaAvatar.TryGetHumanoidArmature().gameObject, State.Root);
+					State.SaveGeneratedResource(animator.avatar, "Asset");
+				}
 				
 				State.RelMat.AddConverted(Component, animator);
 			}
