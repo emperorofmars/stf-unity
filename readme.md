@@ -12,6 +12,7 @@ Such a format does not exist, unfortunately, but having one would be incredibly 
 STF is at a point where I'm pretty confident about the container format and the core concept.
 At this point a lot more people than just me would have to have a go at it, people with different use cases and experiences, to get this somewhere.
 Of course, I was aware that alone it is impossible to create a serious file format like that, but unfortunately this failed to gain any real attention.
+
 It was an interesting project, but I made my point with this.
 I am thankful for the people that cared and listened.
 It is time to move on to something that I can develop in reasonable time to be practically useful for me.
@@ -21,7 +22,9 @@ FBX reigns supreme for now. Sadly, it is undocumented and non-extensible. But at
 ---
 
 So I started work on an extension system for FBX! (or any file format really)
+
 Introducing [NNA - Node Name Abuse](https://github.com/emperorofmars/nna-unity).
+
 It works by serializing JSON into node-names. These get parsed in a Unity AssetPostprocessor for example.
 It is a horrible abomination, it works, very well. And it eases my workflow right now (or at least very soon).
 
@@ -85,36 +88,3 @@ However, it is proprietary, undocumented and not extensible. Some open source im
 * Materials must be arbitrary and shader agnostic.
 
 STF is supposed to become the ideal 3d interchange & authoring format.
-
----
-
-**You are very welcome to open discussions & issues with your ideas, suggestions and questions about the format and its possibilities. Pull requests are very welcome!**
-
-# My Motivation
-I make avatars for VR. The by far most popular and relevant social VR application is VRChat. VR avatars can also be used for V-Tubing, rendering/filmmaking and various other applications.
-
-The single relevant format for VR & V-Tubing avatars is a `.unitypackage` that contains a scene with a setup for a specific application, usually VRChat only, somewhere in its hierarchy.
-
-There is no interoperability for avatars. Using those avatars as an end-user is prohibitively difficult as it requires the use of a Game-Engine like Unity.
-
-STF should be able to easily host an extension for application agnostic & fully featured VR & V-Tubing avatars.
-
-Once such a format exists, I hope a sort of 'Character Editor' application can be created. End-users would be able to adapt their avatars as easily as in a video-game character creation screen and easily use them in applications like VRChat and VSeeFace. Currently, there is not even a 3d asset interchange format that satisfies basic needs, so this lies in the far future.
-
-# Current Status
-* This codebase, as well as the format itself, are the result of a lot of experimentation.
-* Most functionality which can be expected of a 3d model format is implemented, not to full production readiness, but enough to show how the format is supposed to work. The focus is to make the 'container' format work. Specific types can be perfected at a later date.
-* The UI/UX of STF tooling is not a priority, but some work has been done to make it reasonable.
-* The codebase is tested only in a 'good weather flight' manner.
-
-Alone, I can't bring a project like this to completion, as I can work on this only in my free time, while also making VR avatars as a hobby.
-
-**I alone can only try to prove that this works and is very possible.**
-
-I am available for questions and discussions.
-
-My next step is likely going to be a cleanup of the functionality, and then an implementation for the Godot 4 engine. Once Blender's project [Baklava](https://developer.blender.org/docs/features/animation/animation_system/baklava/) is released (Support for full animation**s**) I may implement STF also in Blender.
-
----
-
-Cheers!
