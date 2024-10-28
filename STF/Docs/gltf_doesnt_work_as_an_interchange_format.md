@@ -1,3 +1,4 @@
+**Warning, includes my clumsy wording :P**
 
 # GLTF 2.0 Doesn't Work As An Interchange Format
 
@@ -5,7 +6,7 @@ Originally, glTF's tagline was 'The JPEG of 3d'. For a format to work for 3d int
 
 Many people especially in the 'open source gamedev sphere' seem to believe that glTF 2.0 is qualified for that.
 
-Yet, I was not able to do even the most basic of things with glTF 2.0. I specifically tried to work with its Blender, Godot 4 and UnityGLTF & GLTFast implementations, so my judgement is derived from working with these.
+Unfortunately, I was not able to reasonably do even the most basic things with glTF 2.0. I specifically tried to work with its Blender, Godot 4 and UnityGLTF & GLTFast implementations, so my judgement is derived from working with these.
 
 ## The biggest issues with glTF 2.0 as an interchange format:
 * The animation system doesn't support animation curves, only an interpolation type parameter.
@@ -31,9 +32,9 @@ Sometimes people send me large lists of extensions which they think would solve 
 glTF 2.0 was released over 8 years ago. This is its current state.
 
 # Conclusion
-At least a JPEG is smaller than the PNG image. glTF files tend to be far larger than the original project file, for example due to the need to bake animations, while still loosing a lot of information.
+At least a JPEG is smaller than the PNG or PSD image. glTF files tend to be far larger than the original project file, for example due to the need to bake animations, while still loosing a lot of information.
 
-I am not convinced glTF 2.0 is intended for 3d Assets in a video game context.
+I am not convinced glTF 2.0 is intended for 3d Assets in a video game developement context.
 
 I would like for a format to exist which is.
 
