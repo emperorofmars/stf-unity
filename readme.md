@@ -19,26 +19,7 @@ It is time to move on to something that I can develop in reasonable time to be p
 
 FBX reigns supreme for now. Sadly, it is undocumented and non-extensible. But at least it works.
 
----
-
-So I started work on an extension system for FBX! (or any file format really)
-
-Introducing [NNA - Node Name Abuse](https://github.com/emperorofmars/nna-unity).
-
-It works by serializing JSON into node-names. These get parsed in a Unity AssetPostprocessor for example.
-It is a horrible abomination, it works, very well. And it eases my workflow right now (or at least very soon).
-
-With this, I hope to be finally able to create a universal avatar format, based on FBX I guess.
-I hope to be able to distribute full VR avatars as a single file, compatible with as many target applications (like VRChat or VSF/VRM) as somebody bothers to implement a converter for.
-Realistically, this will work only whenever Blender finally gets a proper animation system (sometime 2025 according to https://code.blender.org/2024/02/animation-2025-progress-planning/#-what-were-working-on-right-now).
-
-Should I feel really depraved at some point, I may even encode binary data as base64 into FBX node-names.
-
----
-
-Cheers!
-
-\- Mars
+Find the successor project to this here: [NNA - Node Name Abuse](https://github.com/emperorofmars/nna-unity)
 
 ---
 
@@ -52,10 +33,12 @@ For Unity 2022.3 or higher.
 STF is an extensible interchange & authoring format for 3d assets.\
 It is a binary format consisting of a definition in JSON and a bunch of binary buffers.
 
+[Video Showcase (~1 Minute)]([https://youtu.be/VJUYrmEb-WQ?si=HTr7UoJRZlGc0YfE](https://youtu.be/LF-7Atpddrg))
+
 ## [MTF - Material Transfer Format](./MTF/readme.md)
 MTF is a shader & game engine agnostic material system used by STF.
 
-[Video Showcase (1 Minute)](https://youtu.be/VJUYrmEb-WQ?si=HTr7UoJRZlGc0YfE)
+[Video Showcase (~1 Minute)](https://youtu.be/VJUYrmEb-WQ?si=HTr7UoJRZlGc0YfE)
 
 ## [AVA - Components For VR & V-Tubing Avatars](./AVA/readme.md)
 AVA is a proof-of-concept set of extensions for STF, which support VR & V-tubing avatar components.
