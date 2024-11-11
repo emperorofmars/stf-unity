@@ -1,13 +1,8 @@
 I have been working on my STF project for more or less two years!
 It's a prototype of a 3D asset interchange format, with extensibility being a primary feature!
 
-But for now I have decided to retire it.
-
 Here is the final showcase!
 https://youtu.be/LF-7Atpddrg
-
-I have been trying to create an easily extensible file format for 3D asset interchange & authoring.
-Such a format does not exist, unfortunately, but having one would be incredibly useful for my VR avatar making hobby.
 
 STF is at a point where I'm pretty confident about the container format and the core concept.
 At this point a lot more people than just me would have to have a go at it, people with different use cases and experiences, to get this somewhere.
@@ -62,7 +57,7 @@ Unfortunately, such a format does not exist.
 `fbx` is the next best thing, being the most widely supported and able to store the most of my models.
 However, it is proprietary, undocumented and not extensible. Some open source implementations are unfortunately faulty. Blender for example won't export animation curves, baking animations instead and making them useless for further editing. The paid [Better FBX Importer & Exporter](https://blendermarket.com/products/better-fbx-importer--exporter) addon for Blender does the job.
 
-`glTF 2.0` was originally designed as a distribution format, intended to be easily loaded into GPU memory. Some projects are trying to use it as an authoring/interchange format. Apparently this is a matter of a somewhat active debate. After trying to work with glTF 2.0 in this manner and analyzing its spec I don't think it can work for interchange/authoring. [Read in detail why here!](./STF/Docs/gltf_doesnt_work_as_an_interchange_format.md)
+`glTF 2.0` was originally designed as a distribution format, intended to be easily loaded into GPU memory. Some projects are trying to use it as an authoring/interchange format. Apparently this is a matter of a somewhat active debate. After trying to work with glTF 2.0 in this manner and analyzing its spec I don't think it can work for interchange/authoring. [Read in detail why here!](https://gist.github.com/emperorofmars/d8abf0f4b9bd5434f9543511b243a254)
 
 **My core requirements for an open & extensible 3d interchange format are:**
 * Extensions must be hot loadable and trivial to implement, enabling the rapid prototyping of extensions.
