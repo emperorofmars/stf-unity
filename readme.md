@@ -23,7 +23,7 @@ For Unity 2022.3 or higher.
 STF is an extensible interchange & authoring format for 3d assets.\
 It is a binary format consisting of a definition in JSON and a bunch of binary buffers.
 
-[Video Showcase (~1 Minute)]([https://youtu.be/VJUYrmEb-WQ?si=HTr7UoJRZlGc0YfE](https://youtu.be/LF-7Atpddrg))
+[Video Showcase (~1 Minute)](https://youtu.be/LF-7Atpddrg)
 
 ## [MTF - Material Transfer Format](./MTF/readme.md)
 MTF is a shader & game engine agnostic material system used by STF.
@@ -59,5 +59,3 @@ However, it is proprietary, undocumented and not extensible. Some open source im
 * Between import and export, the file can not change (except for some metadata perhaps). If an extension is not supported, it and all of its dependencies must be preserved and re-exported, unless manually removed by the author.
 * Everything must be addressed by a unique ID. This makes third party addons for a base model more robust for example.
 * Materials must be arbitrary and shader agnostic.
-
-STF is supposed to become the ideal 3d interchange & authoring format.
