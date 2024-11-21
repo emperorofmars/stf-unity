@@ -1,5 +1,5 @@
 # STF Format [v0.3]
-The STF format is based on the concept of GLTF 2.0.
+The STF format is based on the concept of GLTF 2.0, but applied to interchange use-cases.
 
 It is a binary format made up of at least one buffer, which is always a UTF-8 encoded definition in the JSON format. All further buffer are optional and have to be referenced by the JSON definition.
 
@@ -90,7 +90,6 @@ Example:
 				]
 			}
 		},
-		}
 		"c152e896-aba8-44d8-a810-724bc619abb1": {
 			"type": "STF.mesh",
 			"buffer": "4812027a-671e-42a2-8e29-187b08e8ce93",
