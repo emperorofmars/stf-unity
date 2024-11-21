@@ -1,49 +1,23 @@
-I have been working on my STF project for more or less two years!
-It's a prototype of a 3D asset interchange format, with extensibility being a primary feature!
+**A proof-of-concept of an extensible 3D asset interchange format**
 
-But for now I have decided to retire it.
+After almost two years, I have put into this everything I can.
 
-Here is the final showcase!
-https://youtu.be/LF-7Atpddrg
+**[Here is the final showcase](https://youtu.be/LF-7Atpddrg)**
 
-I have been trying to create an easily extensible file format for 3D asset interchange & authoring.
-Such a format does not exist, unfortunately, but having one would be incredibly useful for my VR avatar making hobby.
+This project is at a point where I'm pretty confident about the container-format and the core concept.
 
-STF is at a point where I'm pretty confident about the container format and the core concept.
 At this point a lot more people than just me would have to have a go at it, people with different use cases and experiences, to get this somewhere.
-Of course, I was aware that alone it is impossible to create a serious file format like that, but unfortunately this failed to gain any real attention.
-It was an interesting project, but I made my point with this.
-I am thankful for the people that cared and listened.
-It is time to move on to something that I can develop in reasonable time to be practically useful for me.
 
-FBX reigns supreme for now. Sadly, it is undocumented and non-extensible. But at least it works.
+If you are looking to extend your 3D assets right now, I've started working on [NNA - Node Name Abuse](https://github.com/emperorofmars/nna-unity).\
+It is an extension system for any 3D format, primarily FBX.
 
 ---
 
-So I started work on an extension system for FBX! (or any file format really)
-Introducing [NNA - Node Name Abuse](https://github.com/emperorofmars/nna-unity).
-It works by serializing JSON into node-names. These get parsed in a Unity AssetPostprocessor for example.
-It is a horrible abomination, it works, very well. And it eases my workflow right now (or at least very soon).
-
-With this, I hope to be finally able to create a universal avatar format, based on FBX I guess.
-I hope to be able to distribute full VR avatars as a single file, compatible with as many target applications (like VRChat or VSF/VRM) as somebody bothers to implement a converter for.
-Realistically, this will work only whenever Blender finally gets a proper animation system (sometime 2025 according to https://code.blender.org/2024/02/animation-2025-progress-planning/#-what-were-working-on-right-now).
-
-Should I feel really depraved at some point, I may even encode binary data as base64 into FBX node-names.
-
----
-
-Cheers!
-
-\- Mars
-
----
-
-# Original Readme
+**Original Readme:**
 
 For Unity 2022.3 or higher.
 
-# **! This is a WIP and not ready for productive use !**
+# **! Do Not Use Productively !**
 
 ## [STF - Scene Transfer Format](./STF/readme.md)
 STF is an extensible interchange & authoring format for 3d assets.\
