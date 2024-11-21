@@ -29,7 +29,9 @@ Resources can reference: `nodes`, `node_components`, `resources`, `resource_comp
 	- `components` A resource's components describe additional information and behavior. For example humanoid-mappings for armatures or LOD's for meshes.\
 	Resource Components can reference: `nodes`, `node_components`, `resources`, `resource_components`, `buffers`
 - `buffers` A list of buffer UUID's in the order of the binary chunks. The index of the buffer UUID corresponds to the index of the buffer in the STF file + 1. (The JSON definition is at the first index)\
-A buffer can be only referenced once. Should the need arise for a buffer to be referenced in multiple places, it should be represented as a resource or resource component. The resource or resource component can be referenced multiple times.
+	A buffer can be only referenced once. Should the need arise for a buffer to be referenced in multiple places, it should be represented as a resource or resource component. The resource or resource component can be referenced multiple times.
+
+References to other UUID's are stored within `references` on each STF object. These references are specified by their index within the STF object. This way an implementation can figure out and preserve the dependencies for unrecognized types.
 
 Example:
 ```
@@ -58,8 +60,13 @@ Example:
 		"4147da6b-e4ca-42db-826e-46a5dda9322f": {
 			"name": "armature"
 			"type": "STF.armature_instance",
-			"armature": "eb563e89-1e7c-40de-8c52-8a14e252f400",
-			"children": [...]
+			"armature": 0,
+			"children": [...],
+			"references": {
+				"resources": [
+					"eb563e89-1e7c-40de-8c52-8a14e252f400"
+				]
+			}
 		},
 		"300799c5-0941-471f-b7a0-7cf17dcd1f10": {
 			"name": "Super Awsome Mesh",
@@ -67,10 +74,18 @@ Example:
 			"components": {
 				"beeed3cb-9a6f-45ac-b41b-5bdf8e773ed3": {
 					"type": "STF.mesh_instance",
-					"mesh": "c152e896-aba8-44d8-a810-724bc619abb1",
-					"armature_instance": "4147da6b-e4ca-42db-826e-46a5dda9322f",
+					"mesh": 0,
+					"armature_instance": 0,
 					"materials": [...],
-					"morphtarget_values": [...]
+					"morphtarget_values": [...],
+					"references": {
+						"resources": [
+							"c152e896-aba8-44d8-a810-724bc619abb1"
+						],
+						"nodes": [
+							"4147da6b-e4ca-42db-826e-46a5dda9322f"
+						]
+					}
 				}
 			}
 		}
@@ -83,7 +98,7 @@ Example:
 			"texture_width": 512,
 			"texture_height": 512,
 			"texture_type": "color",
-			"buffer": "db07e0ad-4f2b-4555-b61d-220fbf6397ac",
+			"buffer": 0,
 			"references": {
 				"buffers": [
 					"db07e0ad-4f2b-4555-b61d-220fbf6397ac"
@@ -92,8 +107,13 @@ Example:
 		},
 		"c152e896-aba8-44d8-a810-724bc619abb1": {
 			"type": "STF.mesh",
-			"buffer": "4812027a-671e-42a2-8e29-187b08e8ce93",
+			"buffer": 0,
 			...
+			"references": {
+				"buffers": [
+					"4812027a-671e-42a2-8e29-187b08e8ce93"
+				]
+			}
 		},
 		"eb563e89-1e7c-40de-8c52-8a14e252f400": {
 			"type": "STF.armature",
