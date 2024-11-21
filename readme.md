@@ -2,7 +2,7 @@
 
 After almost two years, I have put into this everything I can.
 
-**[Here is the final showcase](https://youtu.be/LF-7Atpddrg)**
+**[Watch the final showcase!](https://youtu.be/LF-7Atpddrg)**
 
 This project is at a point where I'm pretty confident about the container-format and the core concept.
 
@@ -23,10 +23,12 @@ For Unity 2022.3 or higher.
 STF is an extensible interchange & authoring format for 3d assets.\
 It is a binary format consisting of a definition in JSON and a bunch of binary buffers.
 
+[Video Showcase (~1 Minute)]([https://youtu.be/VJUYrmEb-WQ?si=HTr7UoJRZlGc0YfE](https://youtu.be/LF-7Atpddrg))
+
 ## [MTF - Material Transfer Format](./MTF/readme.md)
 MTF is a shader & game engine agnostic material system used by STF.
 
-[Video Showcase (1 Minute)](https://youtu.be/VJUYrmEb-WQ?si=HTr7UoJRZlGc0YfE)
+[Video Showcase (~1 Minute)](https://youtu.be/VJUYrmEb-WQ?si=HTr7UoJRZlGc0YfE)
 
 ## [AVA - Components For VR & V-Tubing Avatars](./AVA/readme.md)
 AVA is a proof-of-concept set of extensions for STF, which support VR & V-tubing avatar components.
@@ -50,7 +52,7 @@ Unfortunately, such a format does not exist.
 `fbx` is the next best thing, being the most widely supported and able to store the most of my models.
 However, it is proprietary, undocumented and not extensible. Some open source implementations are unfortunately faulty. Blender for example won't export animation curves, baking animations instead and making them useless for further editing. The paid [Better FBX Importer & Exporter](https://blendermarket.com/products/better-fbx-importer--exporter) addon for Blender does the job.
 
-`glTF 2.0` was originally designed as a distribution format, intended to be easily loaded into GPU memory. Some projects are trying to use it as an authoring/interchange format. Apparently this is a matter of a somewhat active debate. After trying to work with glTF 2.0 in this manner and analyzing its spec I don't think it can work for interchange/authoring. [Read in detail why here!](./STF/Docs/gltf_doesnt_work_as_an_interchange_format.md)
+`glTF 2.0` was originally designed as a distribution format, intended to be easily loaded into GPU memory. Some projects are trying to use it as an authoring/interchange format. Apparently this is a matter of a somewhat active debate. After trying to work with glTF 2.0 in this manner and analyzing its spec I don't think it can work for interchange/authoring. [Read in detail why here!](https://gist.github.com/emperorofmars/d8abf0f4b9bd5434f9543511b243a254)
 
 **My core requirements for an open & extensible 3d interchange format are:**
 * Extensions must be hot loadable and trivial to implement, enabling the rapid prototyping of extensions.
@@ -59,36 +61,3 @@ However, it is proprietary, undocumented and not extensible. Some open source im
 * Materials must be arbitrary and shader agnostic.
 
 STF is supposed to become the ideal 3d interchange & authoring format.
-
----
-
-**You are very welcome to open discussions & issues with your ideas, suggestions and questions about the format and its possibilities. Pull requests are very welcome!**
-
-# My Motivation
-I make avatars for VR. The by far most popular and relevant social VR application is VRChat. VR avatars can also be used for V-Tubing, rendering/filmmaking and various other applications.
-
-The single relevant format for VR & V-Tubing avatars is a `.unitypackage` that contains a scene with a setup for a specific application, usually VRChat only, somewhere in its hierarchy.
-
-There is no interoperability for avatars. Using those avatars as an end-user is prohibitively difficult as it requires the use of a Game-Engine like Unity.
-
-STF should be able to easily host an extension for application agnostic & fully featured VR & V-Tubing avatars.
-
-Once such a format exists, I hope a sort of 'Character Editor' application can be created. End-users would be able to adapt their avatars as easily as in a video-game character creation screen and easily use them in applications like VRChat and VSeeFace. Currently, there is not even a 3d asset interchange format that satisfies basic needs, so this lies in the far future.
-
-# Current Status
-* This codebase, as well as the format itself, are the result of a lot of experimentation.
-* Most functionality which can be expected of a 3d model format is implemented, not to full production readiness, but enough to show how the format is supposed to work. The focus is to make the 'container' format work. Specific types can be perfected at a later date.
-* The UI/UX of STF tooling is not a priority, but some work has been done to make it reasonable.
-* The codebase is tested only in a 'good weather flight' manner.
-
-Alone, I can't bring a project like this to completion, as I can work on this only in my free time, while also making VR avatars as a hobby.
-
-**I alone can only try to prove that this works and is very possible.**
-
-I am available for questions and discussions.
-
-My next step is likely going to be a cleanup of the functionality, and then an implementation for the Godot 4 engine. Once Blender's project [Baklava](https://developer.blender.org/docs/features/animation/animation_system/baklava/) is released (Support for full animation**s**) I may implement STF also in Blender.
-
----
-
-Cheers!
